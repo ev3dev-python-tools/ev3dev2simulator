@@ -1,0 +1,14 @@
+image_paths:
+  body: "../assets/images/body.png"
+  color_sensor: "../assets/images/color_sensor.png"
+  color_sensor_blue: "../assets/images/color_sensor_blue.png"
+  color_sensor_green: "../assets/images/color_sensor_green.png"
+  color_sensor_red: "../assets/images/color_sensor_red.png"
+  touch_sensor_left: "../assets/images/touch_sensor_left.png"
+  touch_sensor_right: "../assets/images/touch_sensor_right.png"
+  wheel: "../assets/images/wheel.png"
+
+screen_settings:
+  screen_height: 750
+  screen_width: 1000
+  screen_title: "Lego ev3dev2 simulator"
