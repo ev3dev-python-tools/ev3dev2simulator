@@ -7,6 +7,7 @@ import arcade
 
 from source.UserThread import UserThread
 from source.job.JobHandler import JobHandler
+from source.obstacle.Border import Border
 from source.obstacle.Lake import Lake
 from source.obstacle.Rock import Rock
 from source.robot.Robot import Robot
@@ -20,17 +21,16 @@ class Simulator(arcade.Window):
         self.cfg = config
         self.job_handler = job_handler
 
-        screen_width = self.cfg["screen_settings"]["screen_width"]
-        screen_height = self.cfg["screen_settings"]["screen_height"]
+        self.screen_width = self.cfg["screen_settings"]["screen_width"]
+        self.screen_height = self.cfg["screen_settings"]["screen_height"]
         screen_title = self.cfg["screen_settings"]["screen_title"]
 
-        super().__init__(screen_width, screen_height, screen_title)
+        super().__init__(self.screen_width, self.screen_height, screen_title)
 
         arcade.set_background_color(arcade.color.GOLDEN_BROWN)
 
         self.robot_elements = None
-        self.lake_elements = None
-        self.rock_elements = None
+        self.obstacle_elements = None
 
         self.robot = None
 
@@ -41,6 +41,8 @@ class Simulator(arcade.Window):
         self.rock1 = None
         self.rock2 = None
 
+        self.border = None
+
     def setup(self):
         """
         Set up all the necessary shapes and sprites which are used in the simulation.
@@ -48,8 +50,7 @@ class Simulator(arcade.Window):
         """
 
         self.robot_elements = arcade.SpriteList()
-        self.lake_elements = arcade.ShapeElementList()
-        self.rock_elements = arcade.ShapeElementList()
+        self.obstacle_elements = arcade.ShapeElementList()
 
         self.robot = Robot(self.cfg['image_paths'], 300, 300)
 
@@ -63,14 +64,19 @@ class Simulator(arcade.Window):
         self.rock1 = Rock(100, 100, 100, 40, arcade.color.DARK_GRAY, 10)
         self.rock2 = Rock(600, 300, 200, 20, arcade.color.DARK_GRAY, 40)
 
-        self.lake_elements.append(self.green_lake.create())
-        self.lake_elements.append(self.blue_lake.create())
-        self.lake_elements.append(self.red_lake.create())
+        self.obstacle_elements.append(self.green_lake.create())
+        self.obstacle_elements.append(self.blue_lake.create())
+        self.obstacle_elements.append(self.red_lake.create())
 
-        self.rock_elements.append(self.rock1.create())
-        self.rock_elements.append(self.rock1.create_outline())
-        self.rock_elements.append(self.rock2.create())
-        self.rock_elements.append(self.rock2.create_outline())
+        self.obstacle_elements.append(self.rock1.create())
+        self.obstacle_elements.append(self.rock1.create_outline())
+        self.obstacle_elements.append(self.rock2.create())
+        self.obstacle_elements.append(self.rock2.create_outline())
+
+        self.border = Border(self.screen_width, self.screen_height, 16, 30, arcade.color.WHITE)
+
+        for b in self.border.create():
+            self.obstacle_elements.append(b)
 
         pass
 
@@ -82,21 +88,19 @@ class Simulator(arcade.Window):
         arcade.start_render()
 
         self.robot_elements.draw()
-        self.lake_elements.draw()
-        self.rock_elements.draw()
+        self.obstacle_elements.draw()
 
     def update(self, delta_time):
         """
-        All the logic to move the robot. Collison detection is also performed.
+        All the logic to move the robot. Collision detection is also performed.
         """
 
         move_job = self.job_handler.get_next_move_job()
-        rotate_job = self.job_handler.get_next_rotate_job()
 
         self.robot.move_x(move_job.delta_x)
         self.robot.move_y(move_job.delta_y)
 
-        self.robot.rotate(rotate_job.degrees)
+        self.robot.rotate(move_job.rotation)
 
 
 def main():
