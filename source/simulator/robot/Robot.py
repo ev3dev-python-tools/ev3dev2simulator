@@ -1,9 +1,9 @@
 from arcade import Sprite
 
-from source.robot.Body import Body
-from source.robot.ColorSensor import ColorSensor
-from source.robot.TouchSensor import TouchSensor
-from source.robot.Wheel import Wheel
+from source.simulator.robot.Body import Body
+from source.simulator.robot.ColorSensor import ColorSensor
+from source.simulator.robot.TouchSensor import TouchSensor
+from source.simulator.robot.Wheel import Wheel
 
 
 class Robot:

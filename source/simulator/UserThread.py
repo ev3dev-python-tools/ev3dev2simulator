@@ -1,7 +1,7 @@
 import threading
 
-from source.Main import main
-from source.job import JobHandler
+from source.simulator.Main import main
+from source.simulator.job import JobHandler
 
 
 class UserThread(threading.Thread):

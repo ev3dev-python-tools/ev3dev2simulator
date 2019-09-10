@@ -1,4 +1,4 @@
-from source.robot.BodyPart import BodyPart
+from source.simulator.robot.BodyPart import BodyPart
 
 
 class Body(BodyPart):

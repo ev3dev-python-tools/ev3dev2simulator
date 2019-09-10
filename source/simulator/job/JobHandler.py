@@ -1,6 +1,6 @@
 from queue import Queue
 
-from source.job.MoveJob import MoveJob
+from source.simulator.job.MoveJob import MoveJob
 
 
 class JobHandler:

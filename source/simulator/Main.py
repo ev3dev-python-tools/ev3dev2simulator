@@ -1,5 +1,5 @@
-from source.job.JobHandler import JobHandler
-from source.job.MoveJob import MoveJob
+from source.simulator.job.JobHandler import JobHandler
+from source.simulator.job.MoveJob import MoveJob
 
 
 def main(job_handler: JobHandler):

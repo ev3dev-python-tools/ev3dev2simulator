@@ -1,7 +1,7 @@
 import math
 
-from source.robot.BodyPart import BodyPart
-from source.util.Util import pythagoras
+from source.simulator.robot.BodyPart import BodyPart
+from source.simulator.util.Util import pythagoras
 
 
 class ExtraBodyPart(BodyPart):

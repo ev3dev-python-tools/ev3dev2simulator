@@ -5,14 +5,14 @@ This class extends from arcade.Window and manages the updates and rendering of t
 
 import arcade
 
-from source.UserThread import UserThread
-from source.job.JobHandler import JobHandler
-from source.obstacle.Border import Border
-from source.obstacle.Lake import Lake
-from source.obstacle.Rock import Rock
-from source.robot.Robot import Robot
-from source.util.Color import GREEN, BLUE, RED
-from source.util.Util import load_config
+from source.simulator.UserThread import UserThread
+from source.simulator.job.JobHandler import JobHandler
+from source.simulator.obstacle.Border import Border
+from source.simulator.obstacle.Lake import Lake
+from source.simulator.obstacle.Rock import Rock
+from source.simulator.robot.Robot import Robot
+from source.simulator.util.Color import GREEN, BLUE, RED
+from source.simulator.util.Util import load_config
 
 
 class Simulator(arcade.Window):

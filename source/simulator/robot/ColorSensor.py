@@ -1,7 +1,7 @@
 import arcade
 
-from source.robot.Body import Body
-from source.robot.ExtraBodyPart import ExtraBodyPart
+from source.simulator.robot.Body import Body
+from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
 
 
 class ColorSensor(ExtraBodyPart):

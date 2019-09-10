@@ -1,7 +1,7 @@
 import arcade
 from arcade import Shape
 
-from source.util.Util import get_circle_points
+from source.simulator.util.Util import get_circle_points
 
 
 class Lake:
