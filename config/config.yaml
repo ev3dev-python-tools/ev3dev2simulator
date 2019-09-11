@@ -13,7 +13,10 @@ screen_settings:
   screen_width: 1000
   screen_title: "Lego ev3dev2 simulator"
 
-motor_alloc:
+motor_alloc_settings:
   left_motor: 'OUTPUT_A'
   right_motor: 'OUTPUT_B'
   center_motor: 'OUTPUT_C'
+
+exec_settings:
+  frames_per_second: 60

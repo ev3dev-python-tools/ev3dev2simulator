@@ -543,7 +543,7 @@ class MockMotor(MockDevice):
         the action specified by `stop_action`.
         """
 
-        self.connector.execute(self.address, '')
+        self.connector.execute(self.address, self.COMMAND_RUN_TO_REL_POS)
         self.command = self.COMMAND_RUN_TO_REL_POS
 
     def run_timed(self):

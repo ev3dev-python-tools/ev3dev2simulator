@@ -10,6 +10,7 @@ class JobHandler(metaclass=Singleton):
         self.move_queue = Queue()
 
     def next_move_job(self) -> MoveJob:
+        print('GET ' + str(self.move_queue.qsize()))
         if self.move_queue.empty():
             return None
         else:
@@ -17,3 +18,4 @@ class JobHandler(metaclass=Singleton):
 
     def put_move_job(self, job):
         self.move_queue.put(job)
+        print('ADD ' + str(self.move_queue.qsize()))
