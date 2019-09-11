@@ -1,16 +1,17 @@
 from queue import Queue
 
+from ev3dev2.util.Singleton import Singleton
 from source.simulator.job.MoveJob import MoveJob
 
 
-class JobHandler:
+class JobHandler(metaclass=Singleton):
 
     def __init__(self):
         self.move_queue = Queue()
 
-    def get_next_move_job(self) -> MoveJob:
+    def next_move_job(self) -> MoveJob:
         if self.move_queue.empty():
-            return MoveJob(0, 0, 0)
+            return None
         else:
             return self.move_queue.get()
 

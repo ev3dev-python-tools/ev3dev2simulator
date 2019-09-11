@@ -1,3 +1,5 @@
+import math
+
 from source.simulator.robot.BodyPart import BodyPart
 
 
@@ -12,5 +14,5 @@ class Body(BodyPart):
         self.center_x = center_x
         self.center_y = center_y
 
-    def rotate(self, degrees):
-        self.angle += degrees
+    def rotate(self, radians: float):
+        self.angle += math.degrees(radians)

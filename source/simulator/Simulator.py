@@ -17,9 +17,9 @@ from source.simulator.util.Util import load_config
 
 class Simulator(arcade.Window):
 
-    def __init__(self, config, job_handler):
+    def __init__(self, config):
         self.cfg = config
-        self.job_handler = job_handler
+        self.job_handler = JobHandler()
 
         self.screen_width = self.cfg["screen_settings"]["screen_width"]
         self.screen_height = self.cfg["screen_settings"]["screen_height"]
@@ -27,7 +27,7 @@ class Simulator(arcade.Window):
 
         super().__init__(self.screen_width, self.screen_height, screen_title)
 
-        arcade.set_background_color(arcade.color.GOLDEN_BROWN)
+        arcade.set_background_color(arcade.color.BLACK_OLIVE)
 
         self.robot_elements = None
         self.obstacle_elements = None
@@ -57,12 +57,12 @@ class Simulator(arcade.Window):
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
 
-        self.green_lake = Lake(200, 200, 30, GREEN)
-        self.blue_lake = Lake(300, 300, 30, BLUE)
-        self.red_lake = Lake(400, 400, 30, RED)
+        self.green_lake = Lake(200, 250, 30, GREEN)
+        self.blue_lake = Lake(800, 600, 30, BLUE)
+        self.red_lake = Lake(500, 150, 30, RED)
 
-        self.rock1 = Rock(100, 100, 100, 40, arcade.color.DARK_GRAY, 10)
-        self.rock2 = Rock(600, 300, 200, 20, arcade.color.DARK_GRAY, 40)
+        self.rock1 = Rock(150, 600, 100, 40, arcade.color.DARK_GRAY, 0)
+        self.rock2 = Rock(700, 250, 200, 60, arcade.color.DARK_GRAY, 130)
 
         self.obstacle_elements.append(self.green_lake.create())
         self.obstacle_elements.append(self.blue_lake.create())
@@ -95,12 +95,10 @@ class Simulator(arcade.Window):
         All the logic to move the robot. Collision detection is also performed.
         """
 
-        move_job = self.job_handler.get_next_move_job()
+        move_job = self.job_handler.next_move_job()
 
-        self.robot.move_x(move_job.delta_x)
-        self.robot.move_y(move_job.delta_y)
-
-        self.robot.rotate(move_job.rotation)
+        if move_job is not None:
+            self.robot.execute_move_job(move_job)
 
 
 def main():
@@ -109,12 +107,11 @@ def main():
     """
 
     config = load_config()
-    job_handler = JobHandler()
 
-    user_thread = UserThread(job_handler)
+    user_thread = UserThread()
     user_thread.start()
 
-    sim = Simulator(config, job_handler)
+    sim = Simulator(config)
     sim.setup()
     arcade.run()
 

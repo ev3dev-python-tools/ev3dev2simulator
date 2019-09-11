@@ -12,3 +12,8 @@ screen_settings:
   screen_height: 750
   screen_width: 1000
   screen_title: "Lego ev3dev2 simulator"
+
+motor_alloc:
+  left_motor: 'OUTPUT_A'
+  right_motor: 'OUTPUT_B'
+  center_motor: 'OUTPUT_C'

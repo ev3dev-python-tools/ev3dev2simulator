@@ -18,11 +18,11 @@ class ExtraBodyPart(BodyPart):
         self.center_x = body.center_x + delta_x
         self.center_y = body.center_y + delta_y
 
-        self.angle_addition = math.atan(delta_x / delta_y)
+        self.angle_addition = -math.atan(delta_x / delta_y)
         self.sweep_length = pythagoras(delta_x, delta_y)
 
-    def rotate(self, degrees: int):
-        self.angle += degrees
+    def rotate(self, radians: float):
+        self.angle += math.degrees(radians)
 
         rad = math.radians(self.angle) + self.angle_addition
 

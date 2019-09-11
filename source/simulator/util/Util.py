@@ -45,3 +45,22 @@ def load_config():
             return yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
+
+
+def calc_differential_steering_angle_x_y(b, vr, vl, o):
+    """
+    Calculate the next orientation, x and y values of a two-wheel
+    propelled object based on the differential steering principle.
+    - 'b' the distance between the two wheels.
+    - 'vr' velocity of the right motor.
+    - 'vl' velocity of the left motor.
+    - 'o' current orientation of the object.
+    """
+
+    vc = (vr + vl) / 2
+    diff_angle = (vr - vl) / b
+
+    diff_x = vc * math.cos(diff_angle + o)
+    diff_y = vc * math.sin(diff_angle + o)
+
+    return diff_angle, diff_x, diff_y
