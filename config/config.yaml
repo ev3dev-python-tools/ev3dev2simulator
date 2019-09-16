@@ -6,6 +6,7 @@ image_paths:
   color_sensor_red: "../../assets/images/color_sensor_red.png"
   touch_sensor_left: "../../assets/images/touch_sensor_left.png"
   touch_sensor_right: "../../assets/images/touch_sensor_right.png"
+  ultrasonic_sensor: "../../assets/images/ultrasonic_sensor.png"
   wheel: "../../assets/images/wheel.png"
 
 obstacle_settings:

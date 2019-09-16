@@ -2,11 +2,11 @@ from source.simulator.robot.Body import Body
 from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
 
 
-class Wheel(ExtraBodyPart):
+class UltrasonicSensor(ExtraBodyPart):
 
     def __init__(self,
                  img_cfg,
                  body: Body,
                  delta_x: int,
                  delta_y: int):
-        super().__init__(img_cfg['wheel'], 0.22, body, delta_x, delta_y)
+        super().__init__(img_cfg['ultrasonic_sensor'], 0.13, body, delta_x, delta_y)

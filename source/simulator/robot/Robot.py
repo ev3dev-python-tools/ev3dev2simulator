@@ -3,6 +3,7 @@ import math
 from arcade import Sprite
 
 from simulator.job.MoveJob import MoveJob
+from simulator.robot.UltrasonicSensor import UltrasonicSensor
 from simulator.util.Util import calc_differential_steering_angle_x_y
 from source.simulator.robot.Body import Body
 from source.simulator.robot.ColorSensor import ColorSensor
@@ -16,24 +17,27 @@ class Robot:
     def __init__(self, img_cfg, center_x: int, center_y: int):
 
         self.body = Body(img_cfg, center_x, center_y)
-        self.left_wheel = Wheel(img_cfg, self.body, -45, 1)
-        self.right_wheel = Wheel(img_cfg, self.body, 45, 1)
+        self.left_wheel = Wheel(img_cfg, self.body, -40, 1)
+        self.right_wheel = Wheel(img_cfg, self.body, 40, 1)
 
-        self.left_color_sensor = ColorSensor(img_cfg, self.body, -45, 70)
-        self.center_color_sensor = ColorSensor(img_cfg, self.body, 1, 65)
-        self.right_color_sensor = ColorSensor(img_cfg, self.body, 45, 70)
+        # self.left_color_sensor = ColorSensor(img_cfg, self.body, -45, 70)
+        self.center_color_sensor = ColorSensor(img_cfg, self.body, 0, 69)
+        # self.right_color_sensor = ColorSensor(img_cfg, self.body, 45, 70)
 
-        self.left_touch_sensor = TouchSensor(img_cfg, self.body, -50, 85, True)
-        self.right_touch_sensor = TouchSensor(img_cfg, self.body, 50, 85, False)
+        self.left_touch_sensor = TouchSensor(img_cfg, self.body, -50, 83, True)
+        self.right_touch_sensor = TouchSensor(img_cfg, self.body, 50, 83, False)
+
+        self.ultrasonic_sensor = UltrasonicSensor(img_cfg, self.body, 0, -46)
 
         self.sprites = [self.body,
                         self.left_wheel,
                         self.right_wheel,
-                        self.left_color_sensor,
+                        # self.left_color_sensor,
                         self.center_color_sensor,
-                        self.right_color_sensor,
+                        # self.right_color_sensor,
                         self.left_touch_sensor,
-                        self.right_touch_sensor]
+                        self.right_touch_sensor,
+                        self.ultrasonic_sensor]
 
     def _move_x(self, x: float):
         for s in self.get_sprites():

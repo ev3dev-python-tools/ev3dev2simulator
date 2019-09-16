@@ -21,6 +21,9 @@ class ExtraBodyPart(BodyPart):
         self.angle_addition = -math.atan(delta_x / delta_y)
         self.sweep_length = pythagoras(delta_x, delta_y)
 
+        if delta_y < 0:
+            self.angle_addition += math.radians(180)
+
     def rotate(self, radians: float):
         self.angle += math.degrees(radians)
 

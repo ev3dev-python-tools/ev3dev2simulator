@@ -9,7 +9,7 @@ class Body(BodyPart):
                  img_cfg,
                  center_x: int,
                  center_y: int):
-        super().__init__(img_cfg['body'], 0.20)
+        super().__init__(img_cfg['body'], 0.10)
 
         self.center_x = center_x
         self.center_y = center_y
