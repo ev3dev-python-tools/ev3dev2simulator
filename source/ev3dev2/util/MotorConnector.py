@@ -12,7 +12,7 @@ COMMAND_RUN_DIRECT = 'run-direct'
 
 class MotorConnector(metaclass=Singleton):
 
-    def __init__(self):
+    def __init__(self, job_handler):
         cfg = load_config()
         self.address_motor_left = cfg['motor_alloc_settings']['left_motor']
         self.address_motor_right = cfg['motor_alloc_settings']['right_motor']
@@ -23,7 +23,7 @@ class MotorConnector(metaclass=Singleton):
         self.pid_left = 0
         self.pid_right = 0
 
-        self.job_creator = JobCreator()
+        self.job_creator = JobCreator(job_handler)
 
     def _get_motor_side(self, address):
         if self.address_motor_left == address:

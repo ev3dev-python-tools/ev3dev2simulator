@@ -1,15 +1,14 @@
 from ev3dev2.util.Singleton import Singleton
-from simulator.job.JobHandler import JobHandler
 from simulator.util.Util import load_config
 from source.simulator.job.MoveJob import MoveJob
 
 
 class JobCreator(metaclass=Singleton):
 
-    def __init__(self):
+    def __init__(self, job_handler):
         cfg = load_config()
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
-        self.job_handler = JobHandler()
+        self.job_handler = job_handler
 
     def create_arm_job(self):
         pass

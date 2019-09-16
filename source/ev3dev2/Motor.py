@@ -153,8 +153,8 @@ class SpeedNativeUnits(SpeedValue):
 
 class Motor(MockMotor):
 
-    def __init__(self, address, **kwargs):
-        super(Motor, self).__init__(address)
+    def __init__(self, address, job_handler, **kwargs):
+        super(Motor, self).__init__(address, job_handler)
 
 
 class LargeMotor(Motor):

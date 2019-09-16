@@ -6,7 +6,7 @@ This class extends from arcade.Window and manages the updates and rendering of t
 import arcade
 
 from source.simulator.UserThread import UserThread
-from source.simulator.job.JobHandler import JobHandler
+from source.simulator.job.JobHandler import get_job_handler
 from source.simulator.obstacle.Border import Border
 from source.simulator.obstacle.Lake import Lake
 from source.simulator.obstacle.Rock import Rock
@@ -17,9 +17,9 @@ from source.simulator.util.Util import load_config
 
 class Simulator(arcade.Window):
 
-    def __init__(self, config):
+    def __init__(self, config, job_handler):
         self.cfg = config
-        self.job_handler = JobHandler()
+        self.job_handler = job_handler
 
         self.screen_width = self.cfg["screen_settings"]["screen_width"]
         self.screen_height = self.cfg["screen_settings"]["screen_height"]
@@ -108,10 +108,13 @@ def main():
 
     config = load_config()
 
-    user_thread = UserThread()
+    job_handler = get_job_handler()
+
+    user_thread = UserThread(job_handler)
+    user_thread.setDaemon(True)
     user_thread.start()
 
-    sim = Simulator(config)
+    sim = Simulator(config, job_handler)
     sim.setup()
     arcade.run()
 

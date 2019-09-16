@@ -130,7 +130,7 @@ class MockMotor(MockDevice):
     #: will `push back` to maintain its position.
     STOP_ACTION_HOLD = 'hold'
 
-    def __init__(self, address):
+    def __init__(self, address, job_handler):
         super(MockMotor, self).__init__()
 
         self._address = address
@@ -166,7 +166,7 @@ class MockMotor(MockDevice):
         self.max_dps = self.max_rps * 360
         self.max_dpm = self.max_rpm * 360
 
-        self.connector = MotorConnector()
+        self.connector = MotorConnector(job_handler)
 
     @property
     def address(self):
