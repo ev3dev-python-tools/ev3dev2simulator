@@ -8,10 +8,9 @@ import arcade
 from source.simulator.UserThread import UserThread
 from source.simulator.job.JobHandler import get_job_handler
 from source.simulator.obstacle.Border import Border
-from source.simulator.obstacle.Lake import Lake
+from source.simulator.obstacle.Lake import GreenLake, BlueLake, RedLake
 from source.simulator.obstacle.Rock import Rock
 from source.simulator.robot.Robot import Robot
-from source.simulator.util.Color import GREEN, BLUE, RED
 from source.simulator.util.Util import load_config
 
 
@@ -21,9 +20,9 @@ class Simulator(arcade.Window):
         self.cfg = config
         self.job_handler = job_handler
 
-        self.screen_width = self.cfg["screen_settings"]["screen_width"]
-        self.screen_height = self.cfg["screen_settings"]["screen_height"]
-        screen_title = self.cfg["screen_settings"]["screen_title"]
+        self.screen_width = self.cfg['screen_settings']['screen_width']
+        self.screen_height = self.cfg['screen_settings']['screen_height']
+        screen_title = self.cfg['screen_settings']['screen_title']
 
         super().__init__(self.screen_width, self.screen_height, screen_title)
 
@@ -34,9 +33,9 @@ class Simulator(arcade.Window):
 
         self.robot = None
 
+        self.red_lake = None
         self.green_lake = None
         self.blue_lake = None
-        self.red_lake = None
 
         self.rock1 = None
         self.rock2 = None
@@ -57,23 +56,23 @@ class Simulator(arcade.Window):
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
 
-        self.green_lake = Lake(200, 250, 30, GREEN)
-        self.blue_lake = Lake(800, 600, 30, BLUE)
-        self.red_lake = Lake(500, 150, 30, RED)
+        self.red_lake = RedLake(self.cfg)
+        self.green_lake = GreenLake(self.cfg)
+        self.blue_lake = BlueLake(self.cfg)
 
-        self.rock1 = Rock(150, 600, 100, 40, arcade.color.DARK_GRAY, 0)
-        self.rock2 = Rock(700, 250, 200, 60, arcade.color.DARK_GRAY, 130)
+        self.rock1 = Rock(550, 700, 100, 40, arcade.color.DARK_GRAY, 10)
+        self.rock2 = Rock(650, 250, 200, 60, arcade.color.DARK_GRAY, 130)
 
+        self.obstacle_elements.append(self.red_lake.create())
         self.obstacle_elements.append(self.green_lake.create())
         self.obstacle_elements.append(self.blue_lake.create())
-        self.obstacle_elements.append(self.red_lake.create())
 
         self.obstacle_elements.append(self.rock1.create())
         self.obstacle_elements.append(self.rock1.create_outline())
         self.obstacle_elements.append(self.rock2.create())
         self.obstacle_elements.append(self.rock2.create_outline())
 
-        self.border = Border(self.screen_width, self.screen_height, 16, 30, arcade.color.WHITE)
+        self.border = Border(self.cfg, arcade.color.WHITE)
 
         for b in self.border.create():
             self.obstacle_elements.append(b)

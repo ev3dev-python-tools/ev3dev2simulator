@@ -8,10 +8,26 @@ image_paths:
   touch_sensor_right: "../../assets/images/touch_sensor_right.png"
   wheel: "../../assets/images/wheel.png"
 
+obstacle_settings:
+  lake_settings:
+    inner_radius: 25
+    border_width: 19
+    lake_red_x: 220
+    lake_red_y: 110
+    lake_green_x: 657
+    lake_green_y: 333
+    lake_blue_x: 47
+    lake_blue_y: 570
+
+  border_settings:
+    border_depth: 10
+
+
 screen_settings:
-  screen_height: 750
-  screen_width: 1000
+  screen_height: 860 # 833 == 1250mm * 2/3 + 27 edge spacing
+  screen_width: 860
   screen_title: "Lego ev3dev2 simulator"
+  edge_spacing: 27
 
 motor_alloc_settings:
   left_motor: 'OUTPUT_A'
