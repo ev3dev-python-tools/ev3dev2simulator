@@ -1,4 +1,3 @@
-import select
 import time
 
 import ev3dev2.Motor
@@ -55,6 +54,7 @@ class MockMotor(MockDevice):
         'max_dps',
         'max_dpm',
         'connector',
+        'running_until',
     ]
 
     #: Run the motor until another command is sent.
@@ -136,20 +136,20 @@ class MockMotor(MockDevice):
         self._address = address
         self._command = None
         self._commands = None
-        self._count_per_rot = 10
-        self._count_per_m = 200
-        self._driver_name = 'lego'
-        self._duty_cycle = 1
-        self._duty_cycle_sp = 0
-        self._full_travel_count = 100
-        self._polarity = 'normal'
-        self._position = 0
+        self._count_per_rot = 360  # 360
+        self._count_per_m = 200  # ?
+        self._driver_name = 'lego'  # lego-ev3-l-motor
+        self._duty_cycle = 1  # 0
+        self._duty_cycle_sp = 0  # 0
+        self._full_travel_count = 100  # ?
+        self._polarity = 'normal'  # 'normal'
+        self._position = 0  # 0
         self._position_p = 0
         self._position_i = 0
         self._position_d = 0
-        self._position_sp = 0
-        self._max_speed = 20
-        self._speed = 10
+        self._position_sp = 0  # 0
+        self._max_speed = 1050  # 1050
+        self._speed = 10  # 0
         self._speed_sp = 20
         self._ramp_up_sp = 0  # Default
         self._ramp_down_sp = 0  # Default
@@ -159,7 +159,7 @@ class MockMotor(MockDevice):
         self._state = None
         self._stop_action = None
         self._stop_actions = None
-        self._time_sp = 0
+        self._time_sp = 0  # 0
         self._poll = None
         self.max_rps = float(self.max_speed / self.count_per_rot)
         self.max_rpm = self.max_rps * 60
@@ -167,6 +167,7 @@ class MockMotor(MockDevice):
         self.max_dpm = self.max_rpm * 360
 
         self.connector = MotorConnector(job_handler)
+        self.running_until = None
 
     @property
     def address(self):
@@ -584,6 +585,8 @@ class MockMotor(MockDevice):
         """
         Power is being sent to the motor.
         """
+
+        # check if job_handler queue is not empty
         return self.STATE_RUNNING in self.state
 
     @property
@@ -591,13 +594,15 @@ class MockMotor(MockDevice):
         """
         The motor is ramping up or down and has not yet reached a constant output level.
         """
-        return self.STATE_RAMPING in self.state
+        return False
 
     @property
     def is_holding(self):
         """
         The motor is not turning, but rather attempting to hold a fixed position.
         """
+
+        # check if job_handler queue is empty
         return self.STATE_HOLDING in self.state
 
     @property
@@ -605,14 +610,14 @@ class MockMotor(MockDevice):
         """
         The motor is turning, but cannot reach its `speed_sp`.
         """
-        return self.STATE_OVERLOADED in self.state
+        return False
 
     @property
     def is_stalled(self):
         """
         The motor is not turning when it should be.
         """
-        return self.STATE_STALLED in self.state
+        return False
 
     def wait(self, cond, timeout=None):
         """
@@ -624,31 +629,23 @@ class MockMotor(MockDevice):
         is reached.
         """
 
-        tic = time.time()
+        start = time.time()
 
-        if self._poll is None:
-            if self._state is None:
-                self._state = self._attribute_file_open('state')
-            self._poll = select.poll()
-            self._poll.register(self._state, select.POLLPRI)
-
-        # Set poll timeout to something small. For more details, see
-        # https://github.com/ev3dev/ev3dev-lang-python/issues/583
         if timeout:
-            poll_tm = min(timeout, 100)
+            sleep_time = min(timeout, 100)
         else:
-            poll_tm = 100
+            sleep_time = 100
 
         while True:
-            # This check is now done every poll_tm even if poll has nothing to report:
-            if cond(self.state):
+            now = time.time()
+            if cond(now):
                 return True
 
-            self._poll.poll(poll_tm)
+            time.sleep(sleep_time)
 
-            if timeout is not None and time.time() >= tic + timeout / 1000:
+            if timeout is not None and time.time() >= start + timeout / 1000:
                 # Final check when user timeout is reached
-                return cond(self.state)
+                return cond(now)
 
     def wait_until_not_moving(self, timeout=None):
         """
@@ -664,7 +661,9 @@ class MockMotor(MockDevice):
 
             m.wait_until_not_moving()
         """
-        return self.wait(lambda state: self.STATE_RUNNING not in state or self.STATE_STALLED in state, timeout)
+
+        l = lambda now: True if self.running_until is None else now < self.running_until
+        return self.wait(l, timeout)
 
     def wait_until(self, s, timeout=None):
         """
@@ -679,7 +678,9 @@ class MockMotor(MockDevice):
 
             m.wait_until('stalled')
         """
-        return self.wait(lambda state: s in state, timeout)
+
+        l = lambda now: False if self.running_until is None else self.running_until < now
+        return self.wait(l, timeout)
 
     def wait_while(self, s, timeout=None):
         """
@@ -694,7 +695,9 @@ class MockMotor(MockDevice):
 
             m.wait_while('running')
         """
-        return self.wait(lambda state: s not in state, timeout)
+
+        l = lambda now: True if self.running_until is None else now < self.running_until
+        return self.wait(l, timeout)
 
     def _speed_native_units(self, speed, label=None):
 

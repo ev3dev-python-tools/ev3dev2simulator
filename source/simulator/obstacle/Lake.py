@@ -26,8 +26,7 @@ class Lake:
     def create(self) -> Shape:
         points = get_circle_points(self.center_x,
                                    self.center_y,
-                                   self.radius,
-                                   48)
+                                   self.radius)
 
         return arcade.create_line_strip(points, self.color, self.border_width)
 

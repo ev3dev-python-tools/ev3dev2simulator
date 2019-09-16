@@ -11,23 +11,16 @@ class JobHandler:
 
     def next_move_job(self) -> MoveJob:
         try:
-            job = self.move_queue.get_nowait()
-            # self.move_queue.task_done()
-
-            print('GET2: ' + str(self.move_queue))
-            return job
+            return self.move_queue.get_nowait()
         except Empty:
-            print('GET: ' + str(self.move_queue))
             return None
 
     def put_move_job(self, job):
         self.move_queue.put_nowait(job)
-        # self.move_queue.task_done()
-        print('PUT: ' + str(self.move_queue))
 
 
-jh = JobHandler()
+job_handler = JobHandler()
 
 
 def get_job_handler():
-    return jh;
+    return job_handler

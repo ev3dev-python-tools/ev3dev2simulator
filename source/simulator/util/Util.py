@@ -24,6 +24,7 @@ def get_circle_points(center_x: float,
         points.append((x, y))
 
     points.append(points[0])
+    points.append(points[1])
     return points
 
 
