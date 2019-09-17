@@ -24,6 +24,7 @@ class ExtraBodyPart(BodyPart):
         if delta_y < 0:
             self.angle_addition += math.radians(180)
 
+
     def rotate(self, radians: float):
         self.angle += math.degrees(radians)
 

@@ -48,20 +48,20 @@ def load_config():
             print(exc)
 
 
-def calc_differential_steering_angle_x_y(b, vr, vl, o):
+def calc_differential_steering_angle_x_y(b, ul, ur, o):
     """
     Calculate the next orientation, x and y values of a two-wheel
     propelled object based on the differential steering principle.
     - 'b' the distance between the two wheels.
-    - 'vr' velocity of the right motor.
-    - 'vl' velocity of the left motor.
+    - 'ul' linear displacement of the left motor.
+    - 'ur' linear displacement of the right motor.
     - 'o' current orientation of the object.
     """
 
-    vc = (vr + vl) / 2
-    diff_angle = (vr - vl) / b
+    uc = (ur + ul) / 2
+    diff_angle = (ur - ul) / b
 
-    diff_x = vc * math.cos(diff_angle + o)
-    diff_y = vc * math.sin(diff_angle + o)
+    diff_x = uc * math.cos(diff_angle + o)
+    diff_y = uc * math.sin(diff_angle + o)
 
     return diff_angle, diff_x, diff_y

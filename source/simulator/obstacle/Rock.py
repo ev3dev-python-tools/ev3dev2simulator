@@ -18,6 +18,7 @@ class Rock:
         self.color = color
         self.angle = angle
 
+
     def create(self) -> Shape:
         return arcade.create_rectangle_filled(self.center_x,
                                               self.center_y,
@@ -25,6 +26,7 @@ class Rock:
                                               self.height,
                                               self.color,
                                               self.angle)
+
 
     def create_outline(self) -> Shape:
         return arcade.create_rectangle_outline(self.center_x,

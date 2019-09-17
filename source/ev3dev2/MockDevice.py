@@ -7,6 +7,7 @@ class MockDevice(object):
         'kwargs',
     ]
 
+
     def __init__(self, **kwargs):
         """Spin through the Linux sysfs class for the device type and find
         a device that matches the provided name pattern and attributes (if any).
@@ -35,14 +36,17 @@ class MockDevice(object):
         self.kwargs = kwargs
         self._attr_cache = {}
 
+
     def __str__(self):
         if 'address' in self.kwargs:
             return "%s(%s)" % (self.__class__.__name__, self.kwargs.get('address'))
         else:
             return self.__class__.__name__
 
+
     def __repr__(self):
         return self.__str__()
+
 
     # This allows us to sort lists of Device objects
     def __lt__(self, other):

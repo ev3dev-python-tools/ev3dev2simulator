@@ -130,6 +130,7 @@ class MockMotor(MockDevice):
     #: will `push back` to maintain its position.
     STOP_ACTION_HOLD = 'hold'
 
+
     def __init__(self, address, job_handler):
         super(MockMotor, self).__init__()
 
@@ -169,6 +170,7 @@ class MockMotor(MockDevice):
         self.connector = MotorConnector(job_handler)
         self.running_until = None
 
+
     @property
     def address(self):
         """
@@ -176,6 +178,7 @@ class MockMotor(MockDevice):
         """
 
         return self._address
+
 
     @property
     def command(self):
@@ -185,9 +188,11 @@ class MockMotor(MockDevice):
         """
         raise Exception("command is a write-only property!")
 
+
     @command.setter
     def command(self, value):
         self._command = value
+
 
     @property
     def commands(self):
@@ -215,6 +220,7 @@ class MockMotor(MockDevice):
 
         return self._commands
 
+
     @property
     def count_per_rot(self):
         """
@@ -224,6 +230,7 @@ class MockMotor(MockDevice):
         """
 
         return self._count_per_rot
+
 
     @property
     def count_per_m(self):
@@ -235,6 +242,7 @@ class MockMotor(MockDevice):
 
         return self._count_per_m
 
+
     @property
     def driver_name(self):
         """
@@ -242,6 +250,7 @@ class MockMotor(MockDevice):
         """
 
         return self._driver_name
+
 
     @property
     def duty_cycle(self):
@@ -251,6 +260,7 @@ class MockMotor(MockDevice):
         """
 
         return self._duty_cycle
+
 
     @property
     def duty_cycle_sp(self):
@@ -262,9 +272,11 @@ class MockMotor(MockDevice):
 
         return self._duty_cycle_sp
 
+
     @duty_cycle_sp.setter
     def duty_cycle_sp(self, value):
         self._duty_cycle_sp = value
+
 
     @property
     def full_travel_count(self):
@@ -275,6 +287,7 @@ class MockMotor(MockDevice):
         """
 
         return self._full_travel_count
+
 
     @property
     def polarity(self):
@@ -287,9 +300,11 @@ class MockMotor(MockDevice):
 
         return self._polarity
 
+
     @polarity.setter
     def polarity(self, value):
         self._polarity = value
+
 
     @property
     def position(self):
@@ -302,9 +317,11 @@ class MockMotor(MockDevice):
 
         return self._position
 
+
     @position.setter
     def position(self, value):
         self._position = value
+
 
     @property
     def position_p(self):
@@ -314,9 +331,11 @@ class MockMotor(MockDevice):
 
         return self._position_p
 
+
     @position_p.setter
     def position_p(self, value):
         self._position_p = value
+
 
     @property
     def position_i(self):
@@ -326,9 +345,11 @@ class MockMotor(MockDevice):
 
         return self._position_i
 
+
     @position_i.setter
     def position_i(self, value):
         self._position_i = value
+
 
     @property
     def position_d(self):
@@ -338,9 +359,11 @@ class MockMotor(MockDevice):
 
         return self._position_d
 
+
     @position_d.setter
     def position_d(self, value):
         self._position_d = value
+
 
     @property
     def position_sp(self):
@@ -353,12 +376,13 @@ class MockMotor(MockDevice):
 
         return self._position_sp
 
+
     @position_sp.setter
     def position_sp(self, value):
-        degrees = value / self.count_per_rot
 
-        self.connector.set_degrees(self.address, value / degrees)
         self._position_sp = value
+        self.connector.set_distance(self.address, value)
+
 
     @property
     def max_speed(self):
@@ -370,6 +394,7 @@ class MockMotor(MockDevice):
 
         return self._max_speed
 
+
     @property
     def speed(self):
         """
@@ -379,6 +404,7 @@ class MockMotor(MockDevice):
         """
 
         return self._speed
+
 
     @property
     def speed_sp(self):
@@ -393,10 +419,12 @@ class MockMotor(MockDevice):
 
         return self._speed_sp
 
+
     @speed_sp.setter
     def speed_sp(self, value):
-        self.connector.set_speed(self.address, value)
         self._speed_sp = value
+        self.connector.set_speed(self.address, value)
+
 
     @property
     def ramp_up_sp(self):
@@ -410,9 +438,11 @@ class MockMotor(MockDevice):
 
         return self._ramp_up_sp
 
+
     @ramp_up_sp.setter
     def ramp_up_sp(self, value):
         self._ramp_up_sp = value
+
 
     @property
     def ramp_down_sp(self):
@@ -426,9 +456,11 @@ class MockMotor(MockDevice):
 
         return self._ramp_down_sp
 
+
     @ramp_down_sp.setter
     def ramp_down_sp(self, value):
         self._ramp_down_sp = value
+
 
     @property
     def speed_p(self):
@@ -438,9 +470,11 @@ class MockMotor(MockDevice):
 
         return self._speed_p
 
+
     @speed_p.setter
     def speed_p(self, value):
         self._speed_p = value
+
 
     @property
     def speed_i(self):
@@ -450,9 +484,11 @@ class MockMotor(MockDevice):
 
         return self._speed_i
 
+
     @speed_i.setter
     def speed_i(self, value):
         self._speed_i = value
+
 
     @property
     def speed_d(self):
@@ -462,9 +498,11 @@ class MockMotor(MockDevice):
 
         return self._speed_d
 
+
     @speed_d.setter
     def speed_d(self, value):
         self._speed_d = value
+
 
     @property
     def state(self):
@@ -474,6 +512,7 @@ class MockMotor(MockDevice):
         """
 
         return self._state
+
 
     @property
     def stop_action(self):
@@ -486,9 +525,11 @@ class MockMotor(MockDevice):
 
         return self._stop_action
 
+
     @stop_action.setter
     def stop_action(self, value):
         self._stop_action = value
+
 
     @property
     def stop_actions(self):
@@ -507,6 +548,7 @@ class MockMotor(MockDevice):
 
         return self._stop_actions
 
+
     @property
     def time_sp(self):
         """
@@ -517,9 +559,12 @@ class MockMotor(MockDevice):
 
         return self._time_sp
 
+
     @time_sp.setter
     def time_sp(self, value):
         self._time_sp = value
+        self.connector.set_time(self.address, value)
+
 
     def run_forever(self):
         """
@@ -527,6 +572,8 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RUN_FOREVER
+        self.connector.run_forever(self.address)
+
 
     def run_to_abs_pos(self):
         """
@@ -534,7 +581,8 @@ class MockMotor(MockDevice):
         stop using the action specified in `stop_action`.
         """
 
-        self.command = self.COMMAND_RUN_TO_ABS_POS
+        self._command = self.COMMAND_RUN_TO_ABS_POS
+
 
     def run_to_rel_pos(self):
         """
@@ -544,8 +592,9 @@ class MockMotor(MockDevice):
         the action specified by `stop_action`.
         """
 
-        self.connector.execute(self.address, self.COMMAND_RUN_TO_REL_POS)
         self.command = self.COMMAND_RUN_TO_REL_POS
+        self.connector.run_forever(self.address)
+
 
     def run_timed(self):
         """
@@ -554,6 +603,8 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RUN_TIMED
+        self.connector.run_timed(self.address)
+
 
     def run_direct(self):
         """
@@ -564,6 +615,7 @@ class MockMotor(MockDevice):
 
         self.command = self.COMMAND_RUN_DIRECT
 
+
     def stop(self):
         """
         Stop any of the run commands before they are complete using the
@@ -572,6 +624,7 @@ class MockMotor(MockDevice):
 
         self.command = self.COMMAND_STOP
 
+
     def reset(self):
         """
         Reset all of the motor parameter attributes to their default value.
@@ -579,6 +632,7 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RESET
+
 
     @property
     def is_running(self):
@@ -589,12 +643,14 @@ class MockMotor(MockDevice):
         # check if job_handler queue is not empty
         return self.STATE_RUNNING in self.state
 
+
     @property
     def is_ramping(self):
         """
         The motor is ramping up or down and has not yet reached a constant output level.
         """
         return False
+
 
     @property
     def is_holding(self):
@@ -605,6 +661,7 @@ class MockMotor(MockDevice):
         # check if job_handler queue is empty
         return self.STATE_HOLDING in self.state
 
+
     @property
     def is_overloaded(self):
         """
@@ -612,12 +669,14 @@ class MockMotor(MockDevice):
         """
         return False
 
+
     @property
     def is_stalled(self):
         """
         The motor is not turning when it should be.
         """
         return False
+
 
     def wait(self, cond, timeout=None):
         """
@@ -647,6 +706,7 @@ class MockMotor(MockDevice):
                 # Final check when user timeout is reached
                 return cond(now)
 
+
     def wait_until_not_moving(self, timeout=None):
         """
         Blocks until ``running`` is not in ``self.state`` or ``stalled`` is in
@@ -665,6 +725,7 @@ class MockMotor(MockDevice):
         l = lambda now: True if self.running_until is None else now < self.running_until
         return self.wait(l, timeout)
 
+
     def wait_until(self, s, timeout=None):
         """
         Blocks until ``s`` is in ``self.state``.  The condition is checked when
@@ -681,6 +742,7 @@ class MockMotor(MockDevice):
 
         l = lambda now: False if self.running_until is None else self.running_until < now
         return self.wait(l, timeout)
+
 
     def wait_while(self, s, timeout=None):
         """
@@ -699,6 +761,7 @@ class MockMotor(MockDevice):
         l = lambda now: True if self.running_until is None else now < self.running_until
         return self.wait(l, timeout)
 
+
     def _speed_native_units(self, speed, label=None):
 
         # If speed is not a SpeedValue object we treat it as a percentage
@@ -710,6 +773,7 @@ class MockMotor(MockDevice):
 
         return speed.to_native_units(self)
 
+
     def _set_rel_position_degrees_and_speed_sp(self, degrees, speed):
         degrees = degrees if speed >= 0 else -degrees
         speed = abs(speed)
@@ -720,11 +784,13 @@ class MockMotor(MockDevice):
         self.position_sp = position_delta
         self.speed_sp = speed_sp
 
+
     def _set_brake(self, brake):
         if brake:
             self.stop_action = self.STOP_ACTION_HOLD
         else:
             self.stop_action = self.STOP_ACTION_COAST
+
 
     def on_for_rotations(self, speed, rotations, brake=True, block=True):
         """
@@ -742,6 +808,7 @@ class MockMotor(MockDevice):
             self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
             self.wait_until_not_moving()
 
+
     def on_for_degrees(self, speed, degrees, brake=True, block=True):
         """
         Rotate the motor at ``speed`` for ``degrees``
@@ -757,6 +824,7 @@ class MockMotor(MockDevice):
         if block:
             self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
             self.wait_until_not_moving()
+
 
     def on_to_position(self, speed, position, brake=True, block=True):
         """
@@ -774,6 +842,7 @@ class MockMotor(MockDevice):
         if block:
             self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
             self.wait_until_not_moving()
+
 
     def on_for_seconds(self, speed, seconds, brake=True, block=True):
         """
@@ -796,6 +865,7 @@ class MockMotor(MockDevice):
             self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
             self.wait_until_not_moving()
 
+
     def on(self, speed, brake=True, block=False):
         """
         Rotate the motor at ``speed`` for forever
@@ -815,13 +885,16 @@ class MockMotor(MockDevice):
             self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
             self.wait_until_not_moving()
 
+
     def off(self, brake=True):
         self._set_brake(brake)
         self.stop()
 
+
     @property
     def rotations(self):
         return float(self.position / self.count_per_rot)
+
 
     @property
     def degrees(self):

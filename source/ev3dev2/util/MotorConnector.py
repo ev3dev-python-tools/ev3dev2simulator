@@ -2,30 +2,117 @@ from ev3dev2.util.Singleton import Singleton
 from simulator.job.JobCreator import JobCreator
 from simulator.util.Util import load_config
 
-#: See MockMotor for variable explanation
-COMMAND_RUN_FOREVER = 'run-forever'
-COMMAND_RUN_TO_ABS_POS = 'run-to-abs-pos'
-COMMAND_RUN_TO_REL_POS = 'run-to-rel-pos'
-COMMAND_RUN_TIMED = 'run-timed'
-COMMAND_RUN_DIRECT = 'run-direct'
+FOREVER_MOCK_SECONDS = 3600
 
 
 class MotorConnector(metaclass=Singleton):
+    """
+    The MotorConnector class provides a translation layer between the raw motor classes
+    and the motors on the actual robot. This includes motor positioning and speed/distance data.
+    This class is responsible for calling the JobCreator to create movement jobs for
+    the simulator.
+    """
+
 
     def __init__(self, job_handler):
         cfg = load_config()
+        self.address_motor_center = cfg['motor_alloc_settings']['center_motor']
         self.address_motor_left = cfg['motor_alloc_settings']['left_motor']
         self.address_motor_right = cfg['motor_alloc_settings']['right_motor']
-        self.address_motor_center = cfg['motor_alloc_settings']['center_motor']
 
         self.dict = {}
-
-        self.pid_left = 0
-        self.pid_right = 0
-
         self.job_creator = JobCreator(job_handler)
 
-    def _get_motor_side(self, address):
+
+    def set_time(self, address, time):
+        """
+        Set the time to run of the motor belonging to the given address.
+        :param address: of the motor
+        :param time: in milliseconds.
+        """
+
+        self.dict['time_' + self._get_motor_side(address)] = time
+
+
+    def set_speed(self, address, speed):
+        """
+        Set the speed to run at of the motor belonging to the given address.
+        :param address: of the motor
+        :param speed: in degrees per second.
+        """
+
+        self.dict['speed_' + self._get_motor_side(address)] = speed
+
+
+    def set_distance(self, address, distance):
+        """
+        Set the distance to run of the motor belonging to the given address.
+        :param address: of the motor
+        :param distance: in degrees.
+        """
+
+        self.dict['distance_' + self._get_motor_side(address)] = distance
+
+
+    def run_forever(self, address):
+        """
+        Run the motor indefinitely. This is translated to 3600 seconds.
+        :param address: of the motor to run forever.
+        """
+
+        side = self._get_motor_side(address)
+
+        speed = self.dict['speed_' + side]
+        distance = speed * FOREVER_MOCK_SECONDS
+
+        if side == 'left':
+            self.job_creator.create_jobs_left(speed, distance)
+        else:
+            self.job_creator.create_jobs_right(speed, distance)
+
+
+    def run_to_rel_pos(self, address):
+        """
+        Run the motor for the distance needed to reach a certain position.
+        :param address: of the motor to run.
+        """
+
+        side = self._get_motor_side(address)
+
+        speed = self.dict['speed_' + side]
+        distance = self.dict['distance_' + side]
+
+        if side == 'left':
+            self.job_creator.create_jobs_left(speed, distance)
+        else:
+            self.job_creator.create_jobs_right(speed, distance)
+
+
+    def run_timed(self, address):
+        """
+        Run the motor for a number of milliseconds.
+        :param address: of the motor to run for a number of milliseconds.
+        """
+
+        side = self._get_motor_side(address)
+
+        speed = self.dict['speed_' + side]
+        time = self.dict['time_' + side]
+        distance = speed * (time / 1000)
+
+        if side == 'left':
+            self.job_creator.create_jobs_left(speed, distance)
+        else:
+            self.job_creator.create_jobs_right(speed, distance)
+
+
+    def _get_motor_side(self, address) -> str:
+        """
+        Get the location of the motor on the actual robot based on its address.
+        :param address: of the motor
+        :return 'left', 'right' or 'center'
+        """
+
         if self.address_motor_left == address:
             return 'left'
 
@@ -34,63 +121,3 @@ class MotorConnector(metaclass=Singleton):
 
         if self.address_motor_center == address:
             return 'center'
-
-    def set_speed(self, address, speed):
-        print(address + " SPEED: " + str(speed))
-
-        side = self._get_motor_side(address)
-        self.dict['speed_' + side] = speed
-
-    def set_degrees(self, address, degrees):
-        print(address + " DISTANCE: " + str(degrees))
-
-        side = self._get_motor_side(address)
-        self.dict['distance_' + side] = degrees
-
-    def execute(self, address, command, pid=0):
-        if pid == 0:
-            self.execute_single(address, command)
-        else:
-            self.execute_dual(address, command, pid)
-
-    def execute_single(self, address, command):
-
-        if COMMAND_RUN_FOREVER == command:
-            self.run_forever(address)
-        elif COMMAND_RUN_TO_ABS_POS == command:
-            self.run_to_abs_pos(address)
-        elif COMMAND_RUN_TO_REL_POS == command:
-            self.run_to_rel_pos(address)
-
-    def execute_dual(self, address, command, pid):
-        if self.address_motor_left == address and self.pid_right == pid \
-                or self.address_motor_right == address and self.pid_left == pid:
-
-            if COMMAND_RUN_FOREVER == command:
-                self.run_forever(address)
-            elif COMMAND_RUN_TO_ABS_POS == command:
-                self.run_to_abs_pos_dual()
-
-    def run_forever(self, address):
-        pass
-
-    def run_to_abs_pos(self, address):
-        side = self._get_motor_side(address)
-
-        self.job_creator.create_single_job_left(
-            self.dict['speed_' + side],
-            self.dict['distance_' + side])
-
-    def run_to_rel_pos(self, address):
-        side = self._get_motor_side(address)
-
-        self.job_creator.create_single_job_left(
-            self.dict['speed_' + side],
-            self.dict['distance_' + side])
-
-    def run_to_abs_pos_dual(self):
-        velocity_max = max(self.dict['speed_left'], self.dict['speed_right'])
-
-        self.job_creator.create_dual_job(velocity_max,
-                                         self.dict['distance_left'],
-                                         self.dict['distance_right'])

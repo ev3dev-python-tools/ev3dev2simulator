@@ -4,54 +4,101 @@ from source.simulator.job.MoveJob import MoveJob
 
 
 class JobCreator(metaclass=Singleton):
+    """
+    The JobCreator class is responsible for creating movement jobs for the simulated robot.
+    These jobs are processed by the simulator every update. The Python Arcade library used
+    for the simulator provides a logic update every frame. Meaning 'frames_per_second' number of jobs
+    are processed per second.
+    """
+
 
     def __init__(self, job_handler):
         cfg = load_config()
+
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
+        self.wheel_circumference = cfg['wheel_settings']['circumference']
+
         self.job_handler = job_handler
 
-    def create_arm_job(self):
-        pass
 
-    def create_single_job_left(self,
-                               velocity: float,
-                               distance: float):
-        frames = self._frames_required(velocity, distance)
+    def create_jobs_left(self, speed: float, distance: float):
+        """
+        Create the jobs required to rotate the left motor of the robot for a distance at a speed.
+        :param speed: in degrees per second.
+        :param distance: in degrees.
+        """
+
+        frames = self._frames_required(speed, distance)
         pixels_per_frame = self._to_pixels_per_frame(frames, distance)
 
-        self.create_jobs(frames, pixels_per_frame, 0)
+        self._create_left_move_jobs(frames, pixels_per_frame)
 
-    def create_single_job_right(self,
-                                velocity: float,
-                                distance: float):
-        frames = self._frames_required(velocity, distance)
+
+    def create_jobs_right(self, speed: float, distance: float):
+        """
+        Create the jobs required to rotate the right motor of the robot for a distance at a speed.
+        :param speed: in degrees per second.
+        :param distance: in degrees.
+        """
+
+        frames = self._frames_required(speed, distance)
         pixels_per_frame = self._to_pixels_per_frame(frames, distance)
 
-        self.create_jobs(frames, 0, pixels_per_frame)
+        self._create_right_move_jobs(frames, pixels_per_frame)
 
-    def create_dual_job(self,
-                        velocity_max: float,
-                        distance_left: float,
-                        distance_right: float):
-        distance_max = max(distance_left, distance_right)
-        frames = self._frames_required(velocity_max, distance_max)
 
-        ppf_left = self._to_pixels_per_frame(frames, distance_left)
-        ppf_right = self._to_pixels_per_frame(frames, distance_right)
+    def _frames_required(self, speed: float, distance: float) -> int:
+        """
+        Calculate the number of frames required to rotate a motor for a distance at a speed.
+        :param speed: in degrees per second.
+        :param distance: in degrees.
+        :return: an integer representing the number of frames
+        """
 
-        self.create_jobs(frames, ppf_left, ppf_right)
+        seconds = distance / speed
+        return int(round(seconds * self.frames_per_second))
 
-    def _to_pixels_per_frame(self, frames, distance):
+
+    def _to_pixels_per_frame(self, frames: int, distance: float) -> float:
+        """
+        Calculate the number of pixels required per frame to rotate a motor a distance within frames.
+        :param frames: available.
+        :param distance: in degrees.
+        :return: an floating point number representing the number of pixels per frame.
+        """
+
         pixel_distance = self._to_pixels(distance)
         return pixel_distance / frames
 
-    def _to_pixels(self, distance: float):
-        return distance / 1
 
-    def _frames_required(self, velocity, distance):
-        seconds = distance / velocity
-        return int(round(seconds * self.frames_per_second))
+    def _to_pixels(self, distance: float) -> float:
+        """
+        Convert a distance in degrees to a distance in pixels. Calculation is done
+        based on the circumference of the wheel attached to the motor.
+        :param distance: in degrees.
+        :return: an integer representing the distance in pixels.
+        """
 
-    def create_jobs(self, frames, ppf_left, ppf_right):
+        return self.wheel_circumference * (distance / 360)
+
+
+    def _create_left_move_jobs(self, frames: int, ppf: float):
+        """
+        Create a movement job for the left motor for every frame.
+        :param frames: to create jobs for.
+        :param ppf: distance in pixels per frame.
+        """
+
         for i in range(frames):
-            self.job_handler.put_move_job(MoveJob(ppf_left, ppf_right))
+            self.job_handler.put_left_move_job(MoveJob(ppf))
+
+
+    def _create_right_move_jobs(self, frames: int, ppf: float):
+        """
+        Create a movement job for the right motor for every frame.
+        :param frames: to create jobs for.
+        :param ppf: distance in pixels per frame.
+        """
+
+        for i in range(frames):
+            self.job_handler.put_right_move_job(MoveJob(ppf))

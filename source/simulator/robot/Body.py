@@ -14,5 +14,6 @@ class Body(BodyPart):
         self.center_x = center_x
         self.center_y = center_y
 
+
     def rotate(self, radians: float):
         self.angle += math.degrees(radians)

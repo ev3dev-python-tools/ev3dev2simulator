@@ -1,6 +1,6 @@
 import unittest
 
-from util.Util import pythagoras, get_circle_points
+from simulator.util.Util import get_circle_points, pythagoras
 
 
 class UtilTest(unittest.TestCase):
@@ -8,12 +8,14 @@ class UtilTest(unittest.TestCase):
     def test_get_circle_points_base(self):
         points = get_circle_points(100, 100, 10)
 
-        self.assertEqual(len(points), 33)
+        self.assertEqual(len(points), 34)
+
 
     def test_get_circle_points_diff(self):
         points = get_circle_points(100, 100, 10, 64)
 
-        self.assertEqual(len(points), 65)
+        self.assertEqual(len(points), 66)
+
 
     def test_pythagoras(self):
         result = pythagoras(2, 3)

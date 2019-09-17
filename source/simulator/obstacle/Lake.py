@@ -11,6 +11,7 @@ class Lake:
     the arcade library's "Sprite" class.
     """
 
+
     def __init__(self,
                  center_x: int,
                  center_y: int,
@@ -23,6 +24,7 @@ class Lake:
         self.color = color
         self.border_width = border_width
 
+
     def create(self) -> Shape:
         points = get_circle_points(self.center_x,
                                    self.center_y,
@@ -31,7 +33,8 @@ class Lake:
         return arcade.create_line_strip(points, self.color, self.border_width)
 
 
-class RedLake(Lake):
+class BlueLake(Lake):
+
     def __init__(self, cfg):
         lake_cfg = cfg['obstacle_settings']['lake_settings']
 
@@ -39,13 +42,14 @@ class RedLake(Lake):
         border_width = lake_cfg['border_width']
         edge_spacing = cfg['screen_settings']['edge_spacing']
 
-        x = lake_cfg['lake_red_x'] + inner_radius + (border_width / 2) + edge_spacing
-        y = lake_cfg['lake_red_y'] + inner_radius + (border_width / 2) + edge_spacing
+        x = lake_cfg['lake_blue_x'] + inner_radius + (border_width / 2) + edge_spacing
+        y = lake_cfg['lake_blue_y'] + inner_radius + (border_width / 2) + edge_spacing
 
-        super().__init__(x, y, inner_radius, RED, border_width)
+        super().__init__(x, y, inner_radius, BLUE, border_width)
 
 
 class GreenLake(Lake):
+
     def __init__(self, cfg):
         lake_cfg = cfg['obstacle_settings']['lake_settings']
 
@@ -59,7 +63,8 @@ class GreenLake(Lake):
         super().__init__(x, y, inner_radius, GREEN, border_width)
 
 
-class BlueLake(Lake):
+class RedLake(Lake):
+
     def __init__(self, cfg):
         lake_cfg = cfg['obstacle_settings']['lake_settings']
 
@@ -67,7 +72,7 @@ class BlueLake(Lake):
         border_width = lake_cfg['border_width']
         edge_spacing = cfg['screen_settings']['edge_spacing']
 
-        x = lake_cfg['lake_blue_x'] + inner_radius + (border_width / 2) + edge_spacing
-        y = lake_cfg['lake_blue_y'] + inner_radius + (border_width / 2) + edge_spacing
+        x = lake_cfg['lake_red_x'] + inner_radius + (border_width / 2) + edge_spacing
+        y = lake_cfg['lake_red_y'] + inner_radius + (border_width / 2) + edge_spacing
 
-        super().__init__(x, y, inner_radius, BLUE, border_width)
+        super().__init__(x, y, inner_radius, RED, border_width)

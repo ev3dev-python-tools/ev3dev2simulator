@@ -11,6 +11,7 @@ class Border:
         self.border_spacing = cfg['screen_settings']['edge_spacing']
         self.color = color
 
+
     def create(self) -> [Shape]:
         screen_center_x = self.screen_width / 2
         screen_center_y = self.screen_height / 2

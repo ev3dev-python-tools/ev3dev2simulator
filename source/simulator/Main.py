@@ -1,4 +1,4 @@
-from ev3dev2.Motor import Motor, SpeedPercent
+from ev3dev2.Motor import SpeedPercent, MoveTank
 
 
 def main(job_handler):
@@ -18,8 +18,8 @@ def main(job_handler):
     #     print('RUNNINGG')
 
     print('MAININGGGG')
-    m = Motor('OUTPUT_A', job_handler)
-    m.on_for_degrees(SpeedPercent(1), 2000, block=False)
+    m = MoveTank('OUTPUT_A', 'OUTPUT_B', job_handler)
+    m.on_for_seconds(SpeedPercent(-40), SpeedPercent(-10), 2, block=False)
 
     # print('LEL')
     #
@@ -27,7 +27,5 @@ def main(job_handler):
 
     # for x in range(500):
     #     job_handler.put_move_job(MoveJob(0.6, 0.2))
-
-
 
     pass

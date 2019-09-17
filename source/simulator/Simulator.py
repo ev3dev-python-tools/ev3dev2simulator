@@ -42,6 +42,7 @@ class Simulator(arcade.Window):
 
         self.border = None
 
+
     def setup(self):
         """
         Set up all the necessary shapes and sprites which are used in the simulation.
@@ -56,16 +57,16 @@ class Simulator(arcade.Window):
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
 
-        self.red_lake = RedLake(self.cfg)
-        self.green_lake = GreenLake(self.cfg)
         self.blue_lake = BlueLake(self.cfg)
+        self.green_lake = GreenLake(self.cfg)
+        self.red_lake = RedLake(self.cfg)
 
         self.rock1 = Rock(550, 700, 100, 40, arcade.color.DARK_GRAY, 10)
         self.rock2 = Rock(650, 250, 200, 60, arcade.color.DARK_GRAY, 130)
 
-        self.obstacle_elements.append(self.red_lake.create())
-        self.obstacle_elements.append(self.green_lake.create())
         self.obstacle_elements.append(self.blue_lake.create())
+        self.obstacle_elements.append(self.green_lake.create())
+        self.obstacle_elements.append(self.red_lake.create())
 
         self.obstacle_elements.append(self.rock1.create())
         self.obstacle_elements.append(self.rock1.create_outline())
@@ -79,6 +80,7 @@ class Simulator(arcade.Window):
 
         pass
 
+
     def on_draw(self):
         """
         Render the simulation. This is done in 60 frames per second.
@@ -89,15 +91,17 @@ class Simulator(arcade.Window):
         self.robot_elements.draw()
         self.obstacle_elements.draw()
 
+
     def update(self, delta_time):
         """
         All the logic to move the robot. Collision detection is also performed.
         """
 
-        move_job = self.job_handler.next_move_job()
+        left_move_job = self.job_handler.next_left_move_job()
+        right_move_job = self.job_handler.next_right_move_job()
 
-        if move_job is not None:
-            self.robot.execute_move_job(move_job)
+        if not (left_move_job is None and right_move_job is None):
+            self.robot.execute_move_job(left_move_job, right_move_job)
 
 
 def main():
