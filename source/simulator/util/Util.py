@@ -25,8 +25,8 @@ def get_circle_points(center_x: float,
     for segment in range(num_segments):
         theta = 2.0 * 3.1415926 * segment / num_segments
 
-        x = 2.0 * radius * math.cos(theta) + center_x
-        y = 2.0 * radius * math.sin(theta) + center_y
+        x = radius * math.cos(theta) + center_x
+        y = radius * math.sin(theta) + center_y
 
         points.append((x, y))
 

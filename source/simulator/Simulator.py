@@ -52,7 +52,7 @@ class Simulator(arcade.Window):
         self.robot_elements = arcade.SpriteList()
         self.obstacle_elements = arcade.ShapeElementList()
 
-        self.robot = Robot(self.cfg['image_paths'], 300, 300)
+        self.robot = Robot(self.cfg['image_paths'], 300, 400)
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)

@@ -43,14 +43,17 @@ class BlueLake(Lake):
     def __init__(self, cfg):
         lake_cfg = cfg['obstacle_settings']['lake_settings']
 
-        inner_radius = lake_cfg['inner_radius']
         border_width = lake_cfg['border_width']
+        inner_radius = lake_cfg['inner_radius']
+        radius = inner_radius + (border_width / 2)
+
         edge_spacing = cfg['screen_settings']['edge_spacing']
+        border_depth = cfg['obstacle_settings']['border_settings']['border_depth']
 
-        x = lake_cfg['lake_blue_x'] + inner_radius + (border_width / 2) + edge_spacing
-        y = lake_cfg['lake_blue_y'] + inner_radius + (border_width / 2) + edge_spacing
+        x = lake_cfg['lake_blue_x'] + edge_spacing + border_depth
+        y = lake_cfg['lake_blue_y'] + edge_spacing + border_depth
 
-        super().__init__(x, y, inner_radius, BLUE, border_width)
+        super().__init__(x, y, radius, BLUE, border_width)
 
 
 class GreenLake(Lake):
@@ -58,14 +61,17 @@ class GreenLake(Lake):
     def __init__(self, cfg):
         lake_cfg = cfg['obstacle_settings']['lake_settings']
 
-        inner_radius = lake_cfg['inner_radius']
         border_width = lake_cfg['border_width']
+        inner_radius = lake_cfg['inner_radius']
+        radius = inner_radius + (border_width / 2)
+
         edge_spacing = cfg['screen_settings']['edge_spacing']
+        border_depth = cfg['obstacle_settings']['border_settings']['border_depth']
 
-        x = lake_cfg['lake_green_x'] + inner_radius + (border_width / 2) + edge_spacing
-        y = lake_cfg['lake_green_y'] + inner_radius + (border_width / 2) + edge_spacing
+        x = lake_cfg['lake_green_x'] + edge_spacing + border_depth
+        y = lake_cfg['lake_green_y'] + edge_spacing + border_depth
 
-        super().__init__(x, y, inner_radius, GREEN, border_width)
+        super().__init__(x, y, radius, GREEN, border_width)
 
 
 class RedLake(Lake):
@@ -73,11 +79,14 @@ class RedLake(Lake):
     def __init__(self, cfg):
         lake_cfg = cfg['obstacle_settings']['lake_settings']
 
-        inner_radius = lake_cfg['inner_radius']
         border_width = lake_cfg['border_width']
+        inner_radius = lake_cfg['inner_radius']
+        radius = inner_radius + (border_width / 2)
+
         edge_spacing = cfg['screen_settings']['edge_spacing']
+        border_depth = cfg['obstacle_settings']['border_settings']['border_depth']
 
-        x = lake_cfg['lake_red_x'] + inner_radius + (border_width / 2) + edge_spacing
-        y = lake_cfg['lake_red_y'] + inner_radius + (border_width / 2) + edge_spacing
+        x = lake_cfg['lake_red_x'] + edge_spacing + border_depth
+        y = lake_cfg['lake_red_y'] + edge_spacing + border_depth
 
-        super().__init__(x, y, inner_radius, RED, border_width)
+        super().__init__(x, y, radius, RED, border_width)
