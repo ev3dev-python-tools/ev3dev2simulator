@@ -24,7 +24,7 @@ class MotorConnector(metaclass=Singleton):
         self.job_creator = JobCreator(job_handler)
 
 
-    def set_time(self, address, time):
+    def set_time(self, address: str, time: int):
         """
         Set the time to run of the motor belonging to the given address.
         :param address: of the motor
@@ -34,7 +34,7 @@ class MotorConnector(metaclass=Singleton):
         self.dict['time_' + self._get_motor_side(address)] = time
 
 
-    def set_speed(self, address, speed):
+    def set_speed(self, address: str, speed: float):
         """
         Set the speed to run at of the motor belonging to the given address.
         :param address: of the motor
@@ -44,7 +44,7 @@ class MotorConnector(metaclass=Singleton):
         self.dict['speed_' + self._get_motor_side(address)] = speed
 
 
-    def set_distance(self, address, distance):
+    def set_distance(self, address: str, distance: float):
         """
         Set the distance to run of the motor belonging to the given address.
         :param address: of the motor
@@ -54,7 +54,7 @@ class MotorConnector(metaclass=Singleton):
         self.dict['distance_' + self._get_motor_side(address)] = distance
 
 
-    def run_forever(self, address):
+    def run_forever(self, address: str):
         """
         Run the motor indefinitely. This is translated to 3600 seconds.
         :param address: of the motor to run forever.
@@ -71,7 +71,7 @@ class MotorConnector(metaclass=Singleton):
             self.job_creator.create_jobs_right(speed, distance)
 
 
-    def run_to_rel_pos(self, address):
+    def run_to_rel_pos(self, address: str):
         """
         Run the motor for the distance needed to reach a certain position.
         :param address: of the motor to run.
@@ -88,7 +88,7 @@ class MotorConnector(metaclass=Singleton):
             self.job_creator.create_jobs_right(speed, distance)
 
 
-    def run_timed(self, address):
+    def run_timed(self, address: str):
         """
         Run the motor for a number of milliseconds.
         :param address: of the motor to run for a number of milliseconds.
@@ -106,7 +106,7 @@ class MotorConnector(metaclass=Singleton):
             self.job_creator.create_jobs_right(speed, distance)
 
 
-    def _get_motor_side(self, address) -> str:
+    def _get_motor_side(self, address: str) -> str:
         """
         Get the location of the motor on the actual robot based on its address.
         :param address: of the motor

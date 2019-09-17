@@ -3,6 +3,10 @@ from arcade import Shape
 
 
 class Border:
+    """
+    The outer line surrounding the playing field.
+    """
+
 
     def __init__(self, cfg, color: arcade.Color):
         self.screen_width = cfg['screen_settings']['screen_width']
@@ -13,6 +17,11 @@ class Border:
 
 
     def create(self) -> [Shape]:
+        """
+        Create a list of shapes representing the four lines that make up this border.
+        :return: a list of Arcade shapes.
+        """
+
         screen_center_x = self.screen_width / 2
         screen_center_y = self.screen_height / 2
 

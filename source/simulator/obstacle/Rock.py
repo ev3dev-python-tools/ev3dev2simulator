@@ -3,6 +3,11 @@ from arcade import Shape
 
 
 class Rock:
+    """
+    This class represents a 'rock'. Rocks consist of an inner rectangle
+    with outer outline rectangle functioning as the border.
+    """
+
 
     def __init__(self,
                  center_x: int,
@@ -20,6 +25,11 @@ class Rock:
 
 
     def create(self) -> Shape:
+        """
+        Create a shape representing the inner rectangle of this rock.
+        :return: a Arcade shape object.
+        """
+
         return arcade.create_rectangle_filled(self.center_x,
                                               self.center_y,
                                               self.width,
@@ -29,6 +39,11 @@ class Rock:
 
 
     def create_outline(self) -> Shape:
+        """
+        Create a shape representing the outline rectangle of this rock.
+        :return: a Arcade shape object.
+        """
+
         return arcade.create_rectangle_outline(self.center_x,
                                                self.center_y,
                                                self.width,

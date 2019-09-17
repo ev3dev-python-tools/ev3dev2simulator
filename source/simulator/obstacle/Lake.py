@@ -7,8 +7,8 @@ from source.simulator.util.Util import get_circle_points
 
 class Lake:
     """
-    This class represents the coins on our screen. It is a child class of
-    the arcade library's "Sprite" class.
+    This class represents a 'lake'. Lakes consist of a transparent circle
+    with a thick colored border.
     """
 
 
@@ -26,6 +26,11 @@ class Lake:
 
 
     def create(self) -> Shape:
+        """
+        Create a shape representing this lake.
+        :return: a Arcade shape object.
+        """
+
         points = get_circle_points(self.center_x,
                                    self.center_y,
                                    self.radius)
