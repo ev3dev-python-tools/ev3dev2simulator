@@ -54,6 +54,16 @@ class MotorConnector(metaclass=Singleton):
         self.dict['distance_' + self._get_motor_side(address)] = distance
 
 
+    def set_stop_action(self, address: str, action: str):
+        """
+        Set the speed to run at of the motor belonging to the given address.
+        :param address: of the motor.
+        :param action: stop action of the motor, this can be 'hold' or 'coast'.
+        """
+
+        self.dict['stop_action_' + self._get_motor_side(address)] = action
+
+
     def run_forever(self, address: str):
         """
         Run the motor indefinitely. This is translated to 3600 seconds.
@@ -65,10 +75,7 @@ class MotorConnector(metaclass=Singleton):
         speed = self.dict['speed_' + side]
         distance = speed * FOREVER_MOCK_SECONDS
 
-        if side == 'left':
-            self.job_creator.create_jobs_left(speed, distance)
-        else:
-            self.job_creator.create_jobs_right(speed, distance)
+        self._run(side, speed, distance)
 
 
     def run_to_rel_pos(self, address: str):
@@ -82,10 +89,7 @@ class MotorConnector(metaclass=Singleton):
         speed = self.dict['speed_' + side]
         distance = self.dict['distance_' + side]
 
-        if side == 'left':
-            self.job_creator.create_jobs_left(speed, distance)
-        else:
-            self.job_creator.create_jobs_right(speed, distance)
+        self._run(side, speed, distance)
 
 
     def run_timed(self, address: str):
@@ -100,10 +104,22 @@ class MotorConnector(metaclass=Singleton):
         time = self.dict['time_' + side]
         distance = speed * (time / 1000)
 
-        if side == 'left':
-            self.job_creator.create_jobs_left(speed, distance)
-        else:
-            self.job_creator.create_jobs_right(speed, distance)
+        self._run(side, speed, distance)
+
+
+    def _run(self, side: str, speed: float, distance: float):
+        """
+        Run the motor at a speed for a distance.
+        :param side: location of the motor, 'left', 'right' or 'center'.
+        :param speed: in degrees per second.
+        :param distance: in degrees.
+        """
+
+        if speed == 0:
+            return
+
+        stop_action = self.dict['stop_action_' + side]
+        self.job_creator.create_jobs(speed, distance, stop_action, side)
 
 
     def _get_motor_side(self, address: str) -> str:

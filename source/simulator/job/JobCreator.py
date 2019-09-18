@@ -2,6 +2,8 @@ from ev3dev2.util.Singleton import Singleton
 from simulator.util.Util import load_config
 from source.simulator.job.MoveJob import MoveJob
 
+COASTING_SUB = 0.05
+
 
 class JobCreator(metaclass=Singleton):
     """
@@ -21,30 +23,22 @@ class JobCreator(metaclass=Singleton):
         self.job_handler = job_handler
 
 
-    def create_jobs_left(self, speed: float, distance: float):
+    def create_jobs(self, speed: float, distance: float, stop_action: str, side: str):
         """
-        Create the jobs required to rotate the left motor of the robot for a distance at a speed.
+        Create the jobs required to rotate the motor of the robot for a distance at a speed.
         :param speed: in degrees per second.
         :param distance: in degrees.
+        :param stop_action: of the motor, this can be 'hold' or 'coast'.
+        :param side: location of the motor, 'left', 'right' or 'center'.
         """
 
         frames = self._frames_required(speed, distance)
         pixels_per_frame = self._to_pixels_per_frame(frames, distance)
 
-        self._create_left_move_jobs(frames, pixels_per_frame)
+        self._create_move_jobs(frames, pixels_per_frame, side)
 
-
-    def create_jobs_right(self, speed: float, distance: float):
-        """
-        Create the jobs required to rotate the right motor of the robot for a distance at a speed.
-        :param speed: in degrees per second.
-        :param distance: in degrees.
-        """
-
-        frames = self._frames_required(speed, distance)
-        pixels_per_frame = self._to_pixels_per_frame(frames, distance)
-
-        self._create_right_move_jobs(frames, pixels_per_frame)
+        if stop_action == 'coast':
+            self._create_move_jobs_coast(pixels_per_frame, side)
 
 
     def _frames_required(self, speed: float, distance: float) -> int:
@@ -82,23 +76,35 @@ class JobCreator(metaclass=Singleton):
         return self.wheel_circumference * (distance / 360)
 
 
-    def _create_left_move_jobs(self, frames: int, ppf: float):
+    def _create_move_jobs(self, frames: int, ppf: float, side: str):
         """
-        Create a movement job for the left motor for every frame.
+        Create a movement job for the motor for every frame.
         :param frames: to create jobs for.
         :param ppf: distance in pixels per frame.
+        :param side: location of the motor, 'left', 'right' or 'center'.
         """
 
         for i in range(frames):
-            self.job_handler.put_left_move_job(MoveJob(ppf))
+            if side == 'left':
+                self.job_handler.put_left_move_job(MoveJob(ppf))
+            else:
+                self.job_handler.put_right_move_job(MoveJob(ppf))
 
 
-    def _create_right_move_jobs(self, frames: int, ppf: float):
+    def _create_move_jobs_coast(self, ppf: float, side: str):
         """
-        Create a movement job for the right motor for every frame.
-        :param frames: to create jobs for.
-        :param ppf: distance in pixels per frame.
+        Create a number of move jobs for the motor based on coasting speed subtraction.
+        Every move job contains a smaller travel distance until the motor does not move anymore.
+        :param ppf: speed in pixels per frame
+        :param side: location of the motor, 'left', 'right' or 'center'.
         """
+
+        frames = int(round(ppf / COASTING_SUB))
 
         for i in range(frames):
-            self.job_handler.put_right_move_job(MoveJob(ppf))
+            ppf = max(ppf - COASTING_SUB, 0)
+
+            if side == 'left':
+                self.job_handler.put_left_move_job(MoveJob(ppf))
+            else:
+                self.job_handler.put_right_move_job(MoveJob(ppf))

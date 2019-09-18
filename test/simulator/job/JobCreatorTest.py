@@ -10,7 +10,7 @@ class JobCreatorTest(unittest.TestCase):
         job_handler = get_job_handler()
         job_creator = JobCreator(job_handler)
 
-        job_creator.create_jobs_left(20, 100)
+        job_creator.create_jobs(20, 100, 'hold', 'left')
         for i in range(300):
             job = job_handler.next_left_move_job()
             self.assertAlmostEqual(job.distance, 0.106, 3)
@@ -23,10 +23,29 @@ class JobCreatorTest(unittest.TestCase):
         job_handler = get_job_handler()
         job_creator = JobCreator(job_handler)
 
-        job_creator.create_jobs_right(80, 200)
+        job_creator.create_jobs(80, 200, 'hold', 'right')
         for i in range(150):
             job = job_handler.next_right_move_job()
             self.assertAlmostEqual(job.distance, 0.426, 3)
+
+        self.assertIsNone(job_handler.next_left_move_job())
+        self.assertIsNone(job_handler.next_right_move_job())
+
+
+    def test_create_jobs_coast(self):
+        job_handler = get_job_handler()
+        job_creator = JobCreator(job_handler)
+
+        job_creator.create_jobs(20, 100, 'coast', 'left')
+        for i in range(300):
+            job = job_handler.next_left_move_job()
+            self.assertAlmostEqual(job.distance, 0.106, 3)
+
+        ppf = 0.106 - 0.05
+        for i in range(2):
+            job = job_handler.next_left_move_job()
+            self.assertAlmostEqual(job.distance, ppf, 3)
+            ppf -= 0.05
 
         self.assertIsNone(job_handler.next_left_move_job())
         self.assertIsNone(job_handler.next_right_move_job())

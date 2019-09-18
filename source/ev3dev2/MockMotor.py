@@ -529,6 +529,7 @@ class MockMotor(MockDevice):
     @stop_action.setter
     def stop_action(self, value):
         self._stop_action = value
+        self.connector.set_stop_action(self.address, value)
 
 
     @property
@@ -593,7 +594,7 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RUN_TO_REL_POS
-        self.connector.run_forever(self.address)
+        self.connector.run_to_rel_pos(self.address)
 
 
     def run_timed(self):
