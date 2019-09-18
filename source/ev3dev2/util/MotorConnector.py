@@ -16,9 +16,9 @@ class MotorConnector(metaclass=Singleton):
 
     def __init__(self, job_handler):
         cfg = load_config()
-        self.address_motor_center = cfg['motor_alloc_settings']['center_motor']
-        self.address_motor_left = cfg['motor_alloc_settings']['left_motor']
-        self.address_motor_right = cfg['motor_alloc_settings']['right_motor']
+        self.address_motor_center = cfg['alloc_settings']['motor']['center']
+        self.address_motor_left = cfg['alloc_settings']['motor']['left']
+        self.address_motor_right = cfg['alloc_settings']['motor']['right']
 
         self.dict = {}
         self.job_creator = JobCreator(job_handler)
@@ -133,25 +133,25 @@ class MotorConnector(metaclass=Singleton):
 
 
     def stop(self, address: str):
-
-        side = self._get_motor_side(address)
-        stop_action = self.dict['stop_action_' + side]
-
-        self.job_creator.stop_jobs(stop_action, side)
+        pass
+        # side = self._get_motor_side(address)
+        # stop_action = self.dict['stop_action_' + side]
+        #
+        # self.job_creator.stop_jobs(stop_action, side)
 
 
     def _get_motor_side(self, address: str) -> str:
         """
         Get the location of the motor on the actual robot based on its address.
         :param address: of the motor
-        :return 'left', 'right' or 'center'
+        :return 'center', 'left' or 'right'
         """
+
+        if self.address_motor_center == address:
+            return 'center'
 
         if self.address_motor_left == address:
             return 'left'
 
         if self.address_motor_right == address:
             return 'right'
-
-        if self.address_motor_center == address:
-            return 'center'

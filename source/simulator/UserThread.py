@@ -9,12 +9,13 @@ class UserThread(threading.Thread):
     """
 
 
-    def __init__(self, job_handler):
+    def __init__(self, job_handler, sensor_handler):
         threading.Thread.__init__(self)
         self.job_handler = job_handler
+        self.sensor_handler = sensor_handler
 
 
     def run(self):
         print('Starting User thread')
 
-        main(self.job_handler)
+        main(self.job_handler, self.sensor_handler)

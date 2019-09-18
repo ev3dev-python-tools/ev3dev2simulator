@@ -3,6 +3,7 @@ import math
 from arcade import Sprite
 
 from simulator.job.MoveJob import MoveJob
+from simulator.obstacle import Obstacle
 from simulator.robot.UltrasonicSensor import UltrasonicSensor
 from simulator.util.Util import calc_differential_steering_angle_x_y
 from source.simulator.robot.Body import Body
@@ -56,10 +57,6 @@ class Robot:
             s.rotate(radians)
 
 
-    def get_sprites(self) -> [Sprite]:
-        return self.sprites
-
-
     def execute_move_job(self, left_job: MoveJob, right_job: MoveJob):
         distance_left = left_job.distance if left_job is not None else 0
         distance_right = right_job.distance if right_job is not None else 0
@@ -75,3 +72,18 @@ class Robot:
         self._rotate(diff_angle)
         self._move_x(diff_x)
         self._move_y(diff_y)
+
+
+    def get_sprites(self) -> [Sprite]:
+        return self.sprites
+
+
+    def set_color_obstacles(self, obstacles: [Obstacle]):
+        self.center_color_sensor.set_sensible_obstacles(obstacles)
+        # self.left_color_sensor.set_sensible_obstacles(obstacles)
+        # self.right_color_sensor.set_sensible_obstacles(obstacles)
+
+
+    def set_touch_obstacles(self, obstacles: [Obstacle]):
+        self.left_touch_sensor.set_sensible_obstacles(obstacles)
+        self.right_touch_sensor.set_sensible_obstacles(obstacles)

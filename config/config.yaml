@@ -1,3 +1,14 @@
+alloc_settings:
+  motor:
+    center: 'OUTPUT_C'
+    left: 'OUTPUT_A'
+    right: 'OUTPUT_B'
+
+  color_sensor:
+    center: 'INPUT_3'
+    left: 'INPUT_1'
+    right: 'INPUT_2'
+
 exec_settings:
   frames_per_second: 60
 
@@ -11,11 +22,6 @@ image_paths:
   touch_sensor_right: "../../assets/images/touch_sensor_right.png"
   ultrasonic_sensor: "../../assets/images/ultrasonic_sensor.png"
   wheel: "../../assets/images/wheel.png"
-
-motor_alloc_settings:
-  center_motor: 'OUTPUT_C'
-  left_motor: 'OUTPUT_A'
-  right_motor: 'OUTPUT_B'
 
 obstacle_settings:
   border_settings:

@@ -5,6 +5,7 @@ This class extends from arcade.Window and manages the updates and rendering of t
 
 import arcade
 
+from simulator.sensor.SensorHandler import get_sensor_handler
 from source.simulator.UserThread import UserThread
 from source.simulator.job.JobHandler import get_job_handler
 from source.simulator.obstacle.Border import Border
@@ -16,9 +17,10 @@ from source.simulator.util.Util import load_config
 
 class Simulator(arcade.Window):
 
-    def __init__(self, config, job_handler):
+    def __init__(self, config, job_handler, sensor_handler):
         self.cfg = config
         self.job_handler = job_handler
+        self.sensor_handler = sensor_handler
 
         self.screen_width = self.cfg['screen_settings']['screen_width']
         self.screen_height = self.cfg['screen_settings']['screen_height']
@@ -69,16 +71,18 @@ class Simulator(arcade.Window):
         self.obstacle_elements.append(self.red_lake.create())
 
         self.obstacle_elements.append(self.rock1.create())
-        self.obstacle_elements.append(self.rock1.create_outline())
         self.obstacle_elements.append(self.rock2.create())
-        self.obstacle_elements.append(self.rock2.create_outline())
 
         self.border = Border(self.cfg, arcade.color.WHITE)
 
         for b in self.border.create():
             self.obstacle_elements.append(b)
 
-        pass
+        color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
+        touch_obstacles = [self.rock1, self.rock2]
+
+        self.robot.set_color_obstacles(color_obstacles)
+        self.robot.set_touch_obstacles(touch_obstacles)
 
 
     def on_draw(self):
@@ -103,6 +107,10 @@ class Simulator(arcade.Window):
         if not (left_move_job is None and right_move_job is None):
             self.robot.execute_move_job(left_move_job, right_move_job)
 
+        c = self.robot.center_color_sensor.get_sensed_color()
+        print(str(c))
+        # self.sensor_handler.color_center = c
+
 
 def main():
     """
@@ -112,12 +120,13 @@ def main():
     config = load_config()
 
     job_handler = get_job_handler()
+    sensor_handler = get_sensor_handler()
 
-    user_thread = UserThread(job_handler)
+    user_thread = UserThread(job_handler, sensor_handler)
     user_thread.setDaemon(True)
     user_thread.start()
 
-    sim = Simulator(config, job_handler)
+    sim = Simulator(config, job_handler, sensor_handler)
     sim.setup()
     arcade.run()
 

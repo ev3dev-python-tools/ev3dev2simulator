@@ -1,11 +1,12 @@
 import arcade
 from arcade import Shape
 
-from simulator.util.Color import RED, GREEN, BLUE
+from simulator.obstacle.Obstacle import Obstacle
+from simulator.util.Color import RED, GREEN, BLUE, to_color_code
 from source.simulator.util.Util import get_circle_points
 
 
-class Lake:
+class Lake(Obstacle):
     """
     This class represents a 'lake'. Lakes consist of a transparent circle
     with a thick colored border.
@@ -18,6 +19,8 @@ class Lake:
                  radius: float,
                  color: arcade.Color,
                  border_width: int):
+        super().__init__(to_color_code(color))
+
         self.center_x = center_x
         self.center_y = center_y
         self.radius = radius
@@ -31,11 +34,13 @@ class Lake:
         :return: a Arcade shape object.
         """
 
-        points = get_circle_points(self.center_x,
-                                   self.center_y,
-                                   self.radius)
+        self.points = get_circle_points(self.center_x,
+                                        self.center_y,
+                                        self.radius)
 
-        return arcade.create_line_strip(points, self.color, self.border_width)
+        return arcade.create_line_strip(self.points,
+                                        self.color,
+                                        self.border_width)
 
 
 class BlueLake(Lake):

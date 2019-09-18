@@ -22,3 +22,12 @@ class ColorSensor(ExtraBodyPart):
         self.textures.append(green_texture)
         self.textures.append(red_texture)
         self.cur_texture_index = 3
+
+
+    def get_sensed_color(self) -> int:
+
+        for o in self.sensible_obstacles:
+            if o.collided_with(self):
+                return o.color_code
+
+        return 0
