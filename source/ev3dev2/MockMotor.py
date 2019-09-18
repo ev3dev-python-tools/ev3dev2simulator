@@ -573,7 +573,9 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RUN_FOREVER
-        self.connector.run_forever(self.address)
+
+        run_time = self.connector.run_forever(self.address)
+        self.running_until = time.time() + run_time
 
 
     def run_to_abs_pos(self):
@@ -594,7 +596,9 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RUN_TO_REL_POS
-        self.connector.run_to_rel_pos(self.address)
+
+        run_time = self.connector.run_to_rel_pos(self.address)
+        self.running_until = time.time() + run_time
 
 
     def run_timed(self):
@@ -604,7 +608,9 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RUN_TIMED
-        self.connector.run_timed(self.address)
+
+        run_time = self.connector.run_timed(self.address)
+        self.running_until = time.time() + run_time
 
 
     def run_direct(self):
@@ -692,12 +698,13 @@ class MockMotor(MockDevice):
         start = time.time()
 
         if timeout:
-            sleep_time = min(timeout, 100)
+            sleep_time = min(timeout, 0.1)
         else:
-            sleep_time = 100
+            sleep_time = 0.1
 
         while True:
             now = time.time()
+
             if cond(now):
                 return True
 
@@ -723,7 +730,7 @@ class MockMotor(MockDevice):
             m.wait_until_not_moving()
         """
 
-        l = lambda now: True if self.running_until is None else now < self.running_until
+        l = lambda now: True if self.running_until is None else self.running_until < now
         return self.wait(l, timeout)
 
 
@@ -741,7 +748,7 @@ class MockMotor(MockDevice):
             m.wait_until('stalled')
         """
 
-        l = lambda now: False if self.running_until is None else self.running_until < now
+        l = lambda now: False if self.running_until is None else now < self.running_until
         return self.wait(l, timeout)
 
 
@@ -759,7 +766,7 @@ class MockMotor(MockDevice):
             m.wait_while('running')
         """
 
-        l = lambda now: True if self.running_until is None else now < self.running_until
+        l = lambda now: True if self.running_until is None else self.running_until < now
         return self.wait(l, timeout)
 
 

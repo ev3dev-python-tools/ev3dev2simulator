@@ -2,7 +2,7 @@ from ev3dev2.util.Singleton import Singleton
 from simulator.util.Util import load_config
 from source.simulator.job.MoveJob import MoveJob
 
-COASTING_SUB = 0.05
+COASTING_SUB = 0.03
 
 
 class JobCreator(metaclass=Singleton):
@@ -23,7 +23,7 @@ class JobCreator(metaclass=Singleton):
         self.job_handler = job_handler
 
 
-    def create_jobs(self, speed: float, distance: float, stop_action: str, side: str):
+    def create_jobs(self, speed: float, distance: float, stop_action: str, side: str) -> float:
         """
         Create the jobs required to rotate the motor of the robot for a distance at a speed.
         :param speed: in degrees per second.
@@ -38,7 +38,12 @@ class JobCreator(metaclass=Singleton):
         self._create_move_jobs(frames, pixels_per_frame, side)
 
         if stop_action == 'coast':
-            self._create_move_jobs_coast(pixels_per_frame, side)
+            coast_frames = int(round(pixels_per_frame / COASTING_SUB))
+            self._create_move_jobs_coast(coast_frames, pixels_per_frame, side)
+
+            return (frames + coast_frames) / self.frames_per_second
+
+        return frames / self.frames_per_second
 
 
     def _frames_required(self, speed: float, distance: float) -> int:
@@ -46,10 +51,10 @@ class JobCreator(metaclass=Singleton):
         Calculate the number of frames required to rotate a motor for a distance at a speed.
         :param speed: in degrees per second.
         :param distance: in degrees.
-        :return: an integer representing the number of frames
+        :return: an integer representing the number of frames.
         """
 
-        seconds = distance / speed
+        seconds = abs(distance) / abs(speed)
         return int(round(seconds * self.frames_per_second))
 
 
@@ -91,15 +96,14 @@ class JobCreator(metaclass=Singleton):
                 self.job_handler.put_right_move_job(MoveJob(ppf))
 
 
-    def _create_move_jobs_coast(self, ppf: float, side: str):
+    def _create_move_jobs_coast(self, frames: int, ppf: float, side: str):
         """
         Create a number of move jobs for the motor based on coasting speed subtraction.
         Every move job contains a smaller travel distance until the motor does not move anymore.
-        :param ppf: speed in pixels per frame
+        :param frames: to create jobs for.
+        :param ppf: speed in pixels per frame before coasting starts.
         :param side: location of the motor, 'left', 'right' or 'center'.
         """
-
-        frames = int(round(ppf / COASTING_SUB))
 
         for i in range(frames):
             ppf = max(ppf - COASTING_SUB, 0)

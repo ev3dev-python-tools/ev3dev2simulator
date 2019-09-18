@@ -15,4 +15,6 @@ class UserThread(threading.Thread):
 
 
     def run(self):
+        print('Starting User thread')
+
         main(self.job_handler)

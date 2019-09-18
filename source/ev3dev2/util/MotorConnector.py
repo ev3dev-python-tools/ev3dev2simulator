@@ -64,10 +64,13 @@ class MotorConnector(metaclass=Singleton):
         self.dict['stop_action_' + self._get_motor_side(address)] = action
 
 
-    def run_forever(self, address: str):
+    def run_forever(self, address: str) -> float:
         """
         Run the motor indefinitely. This is translated to 3600 seconds.
         :param address: of the motor to run forever.
+        :return an floating point value representing the number of seconds
+        the given run operation will take. Here a large number is returned.
+        In the real world this would be infinity.
         """
 
         side = self._get_motor_side(address)
@@ -76,12 +79,15 @@ class MotorConnector(metaclass=Singleton):
         distance = speed * FOREVER_MOCK_SECONDS
 
         self._run(side, speed, distance)
+        return 100000
 
 
-    def run_to_rel_pos(self, address: str):
+    def run_to_rel_pos(self, address: str) -> float:
         """
         Run the motor for the distance needed to reach a certain position.
         :param address: of the motor to run.
+        :return an floating point value representing the number of seconds
+        the given run operation will take.
         """
 
         side = self._get_motor_side(address)
@@ -89,13 +95,15 @@ class MotorConnector(metaclass=Singleton):
         speed = self.dict['speed_' + side]
         distance = self.dict['distance_' + side]
 
-        self._run(side, speed, distance)
+        return self._run(side, speed, distance)
 
 
-    def run_timed(self, address: str):
+    def run_timed(self, address: str) -> float:
         """
         Run the motor for a number of milliseconds.
         :param address: of the motor to run for a number of milliseconds.
+        :return an floating point value representing the number of seconds
+        the given run operation will take.
         """
 
         side = self._get_motor_side(address)
@@ -104,22 +112,24 @@ class MotorConnector(metaclass=Singleton):
         time = self.dict['time_' + side]
         distance = speed * (time / 1000)
 
-        self._run(side, speed, distance)
+        return self._run(side, speed, distance)
 
 
-    def _run(self, side: str, speed: float, distance: float):
+    def _run(self, side: str, speed: float, distance: float) -> float:
         """
         Run the motor at a speed for a distance.
         :param side: location of the motor, 'left', 'right' or 'center'.
         :param speed: in degrees per second.
         :param distance: in degrees.
+        :return an floating point value representing the number of seconds
+        the given run operation will take.
         """
 
-        if speed == 0:
-            return
+        if speed == 0 or distance == 0:
+            return 0
 
         stop_action = self.dict['stop_action_' + side]
-        self.job_creator.create_jobs(speed, distance, stop_action, side)
+        return self.job_creator.create_jobs(speed, distance, stop_action, side)
 
 
     def _get_motor_side(self, address: str) -> str:
