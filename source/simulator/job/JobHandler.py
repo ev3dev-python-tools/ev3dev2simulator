@@ -59,6 +59,14 @@ class JobHandler:
         self.right_move_queue.put_nowait(job)
 
 
+    def clear_left_jobs(self):
+        pass
+
+
+    def clear_right_jobs(self):
+        pass
+
+
 job_handler = JobHandler()
 
 

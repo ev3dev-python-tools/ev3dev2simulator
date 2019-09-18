@@ -630,6 +630,7 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_STOP
+        self.connector.stop(self.address)
 
 
     def reset(self):
@@ -639,6 +640,7 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RESET
+        self.connector.stop(self.address)
 
 
     @property
@@ -648,7 +650,7 @@ class MockMotor(MockDevice):
         """
 
         # check if job_handler queue is not empty
-        return self.STATE_RUNNING in self.state
+        return time.time() < self.running_until
 
 
     @property

@@ -132,6 +132,14 @@ class MotorConnector(metaclass=Singleton):
         return self.job_creator.create_jobs(speed, distance, stop_action, side)
 
 
+    def stop(self, address: str):
+
+        side = self._get_motor_side(address)
+        stop_action = self.dict['stop_action_' + side]
+
+        self.job_creator.stop_jobs(stop_action, side)
+
+
     def _get_motor_side(self, address: str) -> str:
         """
         Get the location of the motor on the actual robot based on its address.

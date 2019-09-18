@@ -112,3 +112,10 @@ class JobCreator(metaclass=Singleton):
                 self.job_handler.put_left_move_job(MoveJob(ppf))
             else:
                 self.job_handler.put_right_move_job(MoveJob(ppf))
+
+
+    def stop_jobs(self, stop_action: str, side: str):
+        if side == 'left':
+            self.job_handler.clear_left_jobs()
+        else:
+            self.job_handler.clear_right_jobs()
