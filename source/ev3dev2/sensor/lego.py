@@ -33,5 +33,5 @@ if sys.version_info < (3, 4):
 
 class ColorSensor(MockColorSensor):
 
-    def __init__(self, address, sensor_handler, **kwargs):
-        super(ColorSensor, self).__init__(address, sensor_handler, **kwargs)
+    def __init__(self, address, **kwargs):
+        super(ColorSensor, self).__init__(address, **kwargs)

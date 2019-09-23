@@ -5,22 +5,20 @@ This class extends from arcade.Window and manages the updates and rendering of t
 
 import arcade
 
-from simulator.sensor.SensorHandler import get_sensor_handler
-from source.simulator.UserThread import UserThread
-from source.simulator.job.JobHandler import get_job_handler
-from source.simulator.obstacle.Border import Border
-from source.simulator.obstacle.Lake import GreenLake, BlueLake, RedLake
-from source.simulator.obstacle.Rock import Rock
-from source.simulator.robot.Robot import Robot
-from source.simulator.util.Util import load_config
+from simulator.connection.ServerSocket import ServerSocket
+from simulator.job.RobotState import get_robot_state
+from simulator.obstacle.Border import Border
+from simulator.obstacle.Lake import GreenLake, BlueLake, RedLake
+from simulator.obstacle.Rock import Rock
+from simulator.robot.Robot import Robot
+from simulator.util.Util import load_config
 
 
 class Simulator(arcade.Window):
 
-    def __init__(self, config, job_handler, sensor_handler):
+    def __init__(self, config, robot_state):
         self.cfg = config
-        self.job_handler = job_handler
-        self.sensor_handler = sensor_handler
+        self.robot_state = robot_state
 
         self.screen_width = self.cfg['screen_settings']['screen_width']
         self.screen_height = self.cfg['screen_settings']['screen_height']
@@ -54,7 +52,7 @@ class Simulator(arcade.Window):
         self.robot_elements = arcade.SpriteList()
         self.obstacle_elements = arcade.ShapeElementList()
 
-        self.robot = Robot(self.cfg['image_paths'], 300, 400)
+        self.robot = Robot(self.cfg, 300, 400)
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
@@ -101,15 +99,20 @@ class Simulator(arcade.Window):
         All the logic to move the robot. Collision detection is also performed.
         """
 
-        left_move_job = self.job_handler.next_left_move_job()
-        right_move_job = self.job_handler.next_right_move_job()
+        left_ppf = self.robot_state.next_left_move_job()
+        right_ppf = self.robot_state.next_right_move_job()
 
-        if not (left_move_job is None and right_move_job is None):
-            self.robot.execute_move_job(left_move_job, right_move_job)
+        if left_ppf or right_ppf:
+            self.robot.execute_movement(left_ppf, right_ppf)
 
-        c = self.robot.center_color_sensor.get_sensed_color()
-        print(str(c))
-        # self.sensor_handler.color_center = c
+        address_center_cs = self.robot.center_color_sensor.address
+        self.robot_state.d[address_center_cs] = self.robot.center_color_sensor.get_sensed_color()
+
+        # address_left_ts = self.robot.left_touch_sensor.address
+        # self.robot_state.values[address_left_ts] = self.robot.left_touch_sensor.get_sensed_color()
+        #
+        # address_right_ts = self.robot.right_touch_sensor.address
+        # self.robot_state.values[address_right_ts] = self.robot.right_touch_sensor.get_sensed_color()
 
 
 def main():
@@ -119,14 +122,13 @@ def main():
 
     config = load_config()
 
-    job_handler = get_job_handler()
-    sensor_handler = get_sensor_handler()
+    robot_state = get_robot_state()
 
-    user_thread = UserThread(job_handler, sensor_handler)
-    user_thread.setDaemon(True)
-    user_thread.start()
+    server_thread = ServerSocket(robot_state)
+    server_thread.setDaemon(True)
+    server_thread.start()
 
-    sim = Simulator(config, job_handler, sensor_handler)
+    sim = Simulator(config, robot_state)
     sim.setup()
     arcade.run()
 

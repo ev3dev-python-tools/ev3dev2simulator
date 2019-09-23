@@ -7,11 +7,17 @@ from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
 class ColorSensor(ExtraBodyPart):
 
     def __init__(self,
+                 address: str,
                  img_cfg,
                  body: Body,
                  delta_x: int,
                  delta_y: int):
-        super().__init__(img_cfg['color_sensor'], 0.18, body, delta_x, delta_y)
+        super().__init__(address,
+                         img_cfg['color_sensor'],
+                         0.18,
+                         body,
+                         delta_x,
+                         delta_y)
 
         blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=0.25)
         green_texture = arcade.load_texture(img_cfg['color_sensor_green'], scale=0.25)

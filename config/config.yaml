@@ -9,6 +9,14 @@ alloc_settings:
     left: 'INPUT_1'
     right: 'INPUT_2'
 
+  touch_sensor:
+    left: 'INPUT_4'
+    right: 'INPUT_5'
+
+  ultrasonic_sensor:
+    top: 'INPUT_6'
+    bottom: 'INPUT_7'
+
 exec_settings:
   frames_per_second: 60
 
@@ -45,4 +53,6 @@ screen_settings:
 
 wheel_settings:
   circumference: 115
+  spacing: 80
+  coasting_subtraction: 0.03
 

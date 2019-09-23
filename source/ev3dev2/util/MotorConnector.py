@@ -1,6 +1,5 @@
+from ev3dev2.util.MotorCommandCreator import MotorCommandCreator
 from ev3dev2.util.Singleton import Singleton
-from simulator.job.JobCreator import JobCreator
-from simulator.util.Util import load_config
 
 FOREVER_MOCK_SECONDS = 3600
 
@@ -9,19 +8,14 @@ class MotorConnector(metaclass=Singleton):
     """
     The MotorConnector class provides a translation layer between the raw motor classes
     and the motors on the actual robot. This includes motor positioning and speed/distance data.
-    This class is responsible for calling the JobCreator to create movement jobs for
+    This class is responsible for calling the MotorCommandCreator to create movement commands for
     the simulator.
     """
 
 
-    def __init__(self, job_handler):
-        cfg = load_config()
-        self.address_motor_center = cfg['alloc_settings']['motor']['center']
-        self.address_motor_left = cfg['alloc_settings']['motor']['left']
-        self.address_motor_right = cfg['alloc_settings']['motor']['right']
-
+    def __init__(self):
         self.dict = {}
-        self.job_creator = JobCreator(job_handler)
+        self.job_creator = MotorCommandCreator()
 
 
     def set_time(self, address: str, time: int):
@@ -31,7 +25,7 @@ class MotorConnector(metaclass=Singleton):
         :param time: in milliseconds.
         """
 
-        self.dict['time_' + self._get_motor_side(address)] = time
+        self.dict['time_' + address] = time
 
 
     def set_speed(self, address: str, speed: float):
@@ -41,7 +35,7 @@ class MotorConnector(metaclass=Singleton):
         :param speed: in degrees per second.
         """
 
-        self.dict['speed_' + self._get_motor_side(address)] = speed
+        self.dict['speed_' + address] = speed
 
 
     def set_distance(self, address: str, distance: float):
@@ -51,7 +45,7 @@ class MotorConnector(metaclass=Singleton):
         :param distance: in degrees.
         """
 
-        self.dict['distance_' + self._get_motor_side(address)] = distance
+        self.dict['distance_' + address] = distance
 
 
     def set_stop_action(self, address: str, action: str):
@@ -61,7 +55,7 @@ class MotorConnector(metaclass=Singleton):
         :param action: stop action of the motor, this can be 'hold' or 'coast'.
         """
 
-        self.dict['stop_action_' + self._get_motor_side(address)] = action
+        self.dict['stop_action_' + address] = action
 
 
     def run_forever(self, address: str) -> float:
@@ -73,12 +67,10 @@ class MotorConnector(metaclass=Singleton):
         In the real world this would be infinity.
         """
 
-        side = self._get_motor_side(address)
-
-        speed = self.dict['speed_' + side]
+        speed = self.dict['speed_' + address]
         distance = speed * FOREVER_MOCK_SECONDS
 
-        self._run(side, speed, distance)
+        self._run(address, speed, distance)
         return 100000
 
 
@@ -90,12 +82,10 @@ class MotorConnector(metaclass=Singleton):
         the given run operation will take.
         """
 
-        side = self._get_motor_side(address)
+        speed = self.dict['speed_' + address]
+        distance = self.dict['distance_' + address]
 
-        speed = self.dict['speed_' + side]
-        distance = self.dict['distance_' + side]
-
-        return self._run(side, speed, distance)
+        return self._run(address, speed, distance)
 
 
     def run_timed(self, address: str) -> float:
@@ -106,19 +96,17 @@ class MotorConnector(metaclass=Singleton):
         the given run operation will take.
         """
 
-        side = self._get_motor_side(address)
-
-        speed = self.dict['speed_' + side]
-        time = self.dict['time_' + side]
+        speed = self.dict['speed_' + address]
+        time = self.dict['time_' + address]
         distance = speed * (time / 1000)
 
-        return self._run(side, speed, distance)
+        return self._run(address, speed, distance)
 
 
-    def _run(self, side: str, speed: float, distance: float) -> float:
+    def _run(self, address: str, speed: float, distance: float) -> float:
         """
         Run the motor at a speed for a distance.
-        :param side: location of the motor, 'left', 'right' or 'center'.
+        :param address: of the motor to run.
         :param speed: in degrees per second.
         :param distance: in degrees.
         :return an floating point value representing the number of seconds
@@ -128,30 +116,9 @@ class MotorConnector(metaclass=Singleton):
         if speed == 0 or distance == 0:
             return 0
 
-        stop_action = self.dict['stop_action_' + side]
-        return self.job_creator.create_jobs(speed, distance, stop_action, side)
+        stop_action = self.dict['stop_action_' + address]
+        return self.job_creator.create_command(speed, distance, stop_action, address)
 
 
     def stop(self, address: str):
         pass
-        # side = self._get_motor_side(address)
-        # stop_action = self.dict['stop_action_' + side]
-        #
-        # self.job_creator.stop_jobs(stop_action, side)
-
-
-    def _get_motor_side(self, address: str) -> str:
-        """
-        Get the location of the motor on the actual robot based on its address.
-        :param address: of the motor
-        :return 'center', 'left' or 'right'
-        """
-
-        if self.address_motor_center == address:
-            return 'center'
-
-        if self.address_motor_left == address:
-            return 'left'
-
-        if self.address_motor_right == address:
-            return 'right'

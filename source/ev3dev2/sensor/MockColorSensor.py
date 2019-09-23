@@ -1,6 +1,6 @@
 import sys
 
-from ev3dev2.util.ColorSensorConnector import ColorSensorConnector
+from ev3dev2.util.SensorConnector import SensorConnector
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
@@ -77,7 +77,7 @@ class MockColorSensor(Sensor):
     )
 
 
-    def __init__(self, address, sensor_handler, **kwargs):
+    def __init__(self, address, **kwargs):
         super(MockColorSensor, self).__init__(address, **kwargs)
 
         # See calibrate_white() for more details
@@ -85,7 +85,7 @@ class MockColorSensor(Sensor):
         self.green_max = 300
         self.blue_max = 300
 
-        self.connector = ColorSensorConnector(sensor_handler)
+        self.connector = SensorConnector()
 
 
     @property
@@ -121,7 +121,7 @@ class MockColorSensor(Sensor):
         """
         self._ensure_mode(self.MODE_COL_COLOR)
         # return self.value(0)
-        return self.connector.get_color(self.address)
+        return self.connector.get_value(self.address)
 
 
     @property

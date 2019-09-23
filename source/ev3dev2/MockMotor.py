@@ -131,7 +131,7 @@ class MockMotor(MockDevice):
     STOP_ACTION_HOLD = 'hold'
 
 
-    def __init__(self, address, job_handler):
+    def __init__(self, address):
         super(MockMotor, self).__init__()
 
         self._address = address
@@ -167,7 +167,7 @@ class MockMotor(MockDevice):
         self.max_dps = self.max_rps * 360
         self.max_dpm = self.max_rpm * 360
 
-        self.connector = MotorConnector(job_handler)
+        self.connector = MotorConnector()
         self.running_until = None
 
 
@@ -649,7 +649,7 @@ class MockMotor(MockDevice):
         Power is being sent to the motor.
         """
 
-        # check if job_handler queue is not empty
+        # check if robot_state queue is not empty
         return time.time() < self.running_until
 
 
@@ -667,7 +667,7 @@ class MockMotor(MockDevice):
         The motor is not turning, but rather attempting to hold a fixed position.
         """
 
-        # check if job_handler queue is empty
+        # check if robot_state queue is empty
         return self.STATE_HOLDING in self.state
 
 

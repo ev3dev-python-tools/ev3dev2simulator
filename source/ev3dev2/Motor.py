@@ -245,8 +245,8 @@ class SpeedDPM(SpeedValue):
 
 class Motor(MockMotor):
 
-    def __init__(self, address, job_handler, **kwargs):
-        super(Motor, self).__init__(address, job_handler)
+    def __init__(self, address, **kwargs):
+        super(Motor, self).__init__(address)
 
 
 class LargeMotor(Motor):
@@ -261,8 +261,8 @@ class LargeMotor(Motor):
     __slots__ = []
 
 
-    def __init__(self, address, job_handler, **kwargs):
-        super(LargeMotor, self).__init__(address, job_handler,
+    def __init__(self, address, **kwargs):
+        super(LargeMotor, self).__init__(address,
                                          driver_name=['lego-ev3-l-motor', 'lego-nxt-motor'], **kwargs)
 
 
@@ -278,14 +278,14 @@ class MediumMotor(Motor):
     __slots__ = []
 
 
-    def __init__(self, address, job_handler, **kwargs):
-        super(MediumMotor, self).__init__(address, job_handler,
+    def __init__(self, address, **kwargs):
+        super(MediumMotor, self).__init__(address,
                                           driver_name=['lego-ev3-m-motor'], **kwargs)
 
 
 class MotorSet(object):
 
-    def __init__(self, motor_specs, job_handler, desc=None):
+    def __init__(self, motor_specs, desc=None):
         """
         motor_specs is a dictionary such as
         {
@@ -296,7 +296,7 @@ class MotorSet(object):
         self.motors = OrderedDict()
         for motor_port in sorted(motor_specs.keys()):
             motor_class = motor_specs[motor_port]
-            self.motors[motor_port] = motor_class(motor_port, job_handler)
+            self.motors[motor_port] = motor_class(motor_port)
             self.motors[motor_port].reset()
 
         self.desc = desc
@@ -484,13 +484,13 @@ class MoveTank(MotorSet):
     """
 
 
-    def __init__(self, left_motor_port, right_motor_port, job_handler, desc=None, motor_class=LargeMotor):
+    def __init__(self, left_motor_port, right_motor_port, desc=None, motor_class=LargeMotor):
         motor_specs = {
             left_motor_port: motor_class,
             right_motor_port: motor_class,
         }
 
-        MotorSet.__init__(self, motor_specs, job_handler, desc)
+        MotorSet.__init__(self, motor_specs, desc)
         self.left_motor = self.motors[left_motor_port]
         self.right_motor = self.motors[right_motor_port]
         self.max_speed = self.left_motor.max_speed

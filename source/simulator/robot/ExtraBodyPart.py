@@ -7,6 +7,7 @@ from source.simulator.util.Util import pythagoras
 class ExtraBodyPart(BodyPart):
 
     def __init__(self,
+                 address: str,
                  src: str,
                  scale: float,
                  body: BodyPart,
@@ -14,6 +15,7 @@ class ExtraBodyPart(BodyPart):
                  delta_y: int):
         super().__init__(src, scale)
 
+        self.address = address
         self.body = body
         self.center_x = body.center_x + delta_x
         self.center_y = body.center_y + delta_y

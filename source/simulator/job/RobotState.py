@@ -1,10 +1,8 @@
 from _queue import Empty
 from queue import Queue
 
-from source.simulator.job.MoveJob import MoveJob
 
-
-class JobHandler:
+class RobotState:
     """
     Class responsible for inner-thread communication. All jobs coming from the robot
     are stored in this class to be retrieved by the simulator for updating/rendering
@@ -16,8 +14,10 @@ class JobHandler:
         self.left_move_queue = Queue()
         self.right_move_queue = Queue()
 
+        self.values = {}
 
-    def next_left_move_job(self) -> MoveJob:
+
+    def next_left_move_job(self) -> float:
         """
         Get the next move job for the left motor from the queue.
         :return: a MoveJob object containing the job.
@@ -29,7 +29,7 @@ class JobHandler:
             return None
 
 
-    def next_right_move_job(self) -> MoveJob:
+    def next_right_move_job(self) -> float:
         """
         Get the next move job for the right motor from the queue.
         :return: a MoveJob object containing the job.
@@ -41,7 +41,7 @@ class JobHandler:
             return None
 
 
-    def put_left_move_job(self, job: MoveJob):
+    def put_left_move_job(self, job: float):
         """
         Add a new move job for the left motor to the queue.
         :param job: to add.
@@ -50,7 +50,7 @@ class JobHandler:
         self.left_move_queue.put_nowait(job)
 
 
-    def put_right_move_job(self, job: MoveJob):
+    def put_right_move_job(self, job: float):
         """
         Add a new move job for the left motor to the queue.
         :param job
@@ -67,8 +67,8 @@ class JobHandler:
         pass
 
 
-job_handler = JobHandler()
+robot_state = RobotState()
 
 
-def get_job_handler():
-    return job_handler
+def get_robot_state():
+    return robot_state

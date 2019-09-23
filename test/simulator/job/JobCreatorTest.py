@@ -1,7 +1,8 @@
 import unittest
 
 from simulator.job.JobCreator import JobCreator
-from simulator.job.JobHandler import get_job_handler
+
+from simulator.job.RobotState import get_job_handler
 
 
 class JobCreatorTest(unittest.TestCase):
@@ -10,7 +11,7 @@ class JobCreatorTest(unittest.TestCase):
         job_handler = get_job_handler()
         job_creator = JobCreator(job_handler)
 
-        job_creator.create_jobs(20, 100, 'hold', 'left')
+        job_creator.create_command(20, 100, 'hold', 'left')
         for i in range(300):
             job = job_handler.next_left_move_job()
             self.assertAlmostEqual(job.distance, 0.106, 3)
@@ -23,7 +24,7 @@ class JobCreatorTest(unittest.TestCase):
         job_handler = get_job_handler()
         job_creator = JobCreator(job_handler)
 
-        job_creator.create_jobs(80, 200, 'hold', 'right')
+        job_creator.create_command(80, 200, 'hold', 'right')
         for i in range(150):
             job = job_handler.next_right_move_job()
             self.assertAlmostEqual(job.distance, 0.426, 3)
@@ -36,7 +37,7 @@ class JobCreatorTest(unittest.TestCase):
         job_handler = get_job_handler()
         job_creator = JobCreator(job_handler)
 
-        job_creator.create_jobs(20, 100, 'coast', 'left')
+        job_creator.create_command(20, 100, 'coast', 'left')
         for i in range(300):
             job = job_handler.next_left_move_job()
             self.assertAlmostEqual(job.distance, 0.106, 3)
