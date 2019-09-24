@@ -1,10 +1,12 @@
 import json
 import socket
 import threading
+import time
 from typing import Any
 
 from ev3dev2.connection.DataRequest import DataRequest
-from ev3dev2.connection.MotorCommand import MotorCommand
+from ev3dev2.connection.DriveCommand import DriveCommand
+from ev3dev2.connection.StopCommand import StopCommand
 from simulator.connection.MessageHandler import MessageHandler
 
 
@@ -13,6 +15,9 @@ class ServerSocket(threading.Thread):
     def __init__(self, robot_state):
         threading.Thread.__init__(self)
         self.message_handler = MessageHandler(robot_state)
+        self.robot_state = robot_state
+
+        self.first_run = True
 
 
     def run(self):
@@ -26,6 +31,11 @@ class ServerSocket(threading.Thread):
             (client, address) = server.accept()
 
             print('Connection accepted')
+            if not self.first_run:
+                self.robot_state.should_reset = True
+
+            self.first_run = False
+            time.sleep(1)
 
             try:
                 while True:
@@ -54,16 +64,26 @@ class ServerSocket(threading.Thread):
         obj_dict = json.loads(jsn)
 
         tpe = obj_dict['type']
-        if tpe == 'MotorCommand':
-            return self._handle_motor_command(obj_dict)
+        if tpe == 'DriveCommand':
+            return self._handle_drive_command(obj_dict)
+
+        if tpe == 'StopCommand':
+            return self._handle_stop_command(obj_dict)
 
         elif tpe == 'DataRequest':
             return self._handle_data_request(obj_dict)
 
 
-    def _handle_motor_command(self, d: dict) -> Any:
-        command = MotorCommand(d['address'], d['ppf'], d['frames'], d['frames_coast'])
-        self.message_handler.handle_motor_command(command)
+    def _handle_drive_command(self, d: dict) -> Any:
+        command = DriveCommand(d['address'], d['ppf'], d['frames'], d['frames_coast'])
+        self.message_handler.handle_drive_command(command)
+
+        return None
+
+
+    def _handle_stop_command(self, d: dict) -> Any:
+        command = StopCommand(d['address'], d['ppf'], d['frames'])
+        self.message_handler.handle_stop_command(command)
 
         return None
 

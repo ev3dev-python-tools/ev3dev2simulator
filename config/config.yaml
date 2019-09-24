@@ -54,5 +54,5 @@ screen_settings:
 wheel_settings:
   circumference: 115
   spacing: 80
-  coasting_subtraction: 0.03
+  coasting_subtraction: 0.1
 

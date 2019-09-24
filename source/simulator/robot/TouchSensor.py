@@ -18,3 +18,12 @@ class TouchSensor(ExtraBodyPart):
                          body,
                          delta_x,
                          delta_y)
+
+
+    def is_touching(self) -> bool:
+
+        for o in self.sensible_obstacles:
+            if o.collided_with(self):
+                return True
+
+        return False

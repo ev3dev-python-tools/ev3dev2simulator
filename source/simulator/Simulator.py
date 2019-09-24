@@ -6,11 +6,11 @@ This class extends from arcade.Window and manages the updates and rendering of t
 import arcade
 
 from simulator.connection.ServerSocket import ServerSocket
-from simulator.job.RobotState import get_robot_state
 from simulator.obstacle.Border import Border
 from simulator.obstacle.Lake import GreenLake, BlueLake, RedLake
 from simulator.obstacle.Rock import Rock
 from simulator.robot.Robot import Robot
+from simulator.state.RobotState import get_robot_state
 from simulator.util.Util import load_config
 
 
@@ -99,20 +99,24 @@ class Simulator(arcade.Window):
         All the logic to move the robot. Collision detection is also performed.
         """
 
-        left_ppf = self.robot_state.next_left_move_job()
-        right_ppf = self.robot_state.next_right_move_job()
+        if self.robot_state.should_reset:
+            self.setup()
+            self.robot_state.reset()
 
-        if left_ppf or right_ppf:
-            self.robot.execute_movement(left_ppf, right_ppf)
+        else:
+            left_ppf = self.robot_state.next_left_move_job()
+            right_ppf = self.robot_state.next_right_move_job()
 
-        address_center_cs = self.robot.center_color_sensor.address
-        self.robot_state.d[address_center_cs] = self.robot.center_color_sensor.get_sensed_color()
+            if left_ppf or right_ppf:
+                self.robot.execute_movement(left_ppf, right_ppf)
 
-        # address_left_ts = self.robot.left_touch_sensor.address
-        # self.robot_state.values[address_left_ts] = self.robot.left_touch_sensor.get_sensed_color()
-        #
-        # address_right_ts = self.robot.right_touch_sensor.address
-        # self.robot_state.values[address_right_ts] = self.robot.right_touch_sensor.get_sensed_color()
+            address_center_cs = self.robot.center_color_sensor.address
+            address_left_ts = self.robot.left_touch_sensor.address
+            address_right_ts = self.robot.right_touch_sensor.address
+
+            self.robot_state.values[address_center_cs] = self.robot.center_color_sensor.get_sensed_color()
+            self.robot_state.values[address_left_ts] = self.robot.left_touch_sensor.is_touching()
+            self.robot_state.values[address_right_ts] = self.robot.right_touch_sensor.is_touching()
 
 
 def main():

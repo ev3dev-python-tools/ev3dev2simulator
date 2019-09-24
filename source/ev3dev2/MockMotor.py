@@ -167,7 +167,7 @@ class MockMotor(MockDevice):
         self.max_dps = self.max_rps * 360
         self.max_dpm = self.max_rpm * 360
 
-        self.connector = MotorConnector()
+        self.connector = MotorConnector(self.address)
         self.running_until = None
 
 
@@ -381,7 +381,7 @@ class MockMotor(MockDevice):
     def position_sp(self, value):
 
         self._position_sp = value
-        self.connector.set_distance(self.address, value)
+        self.connector.set_distance(value)
 
 
     @property
@@ -423,7 +423,7 @@ class MockMotor(MockDevice):
     @speed_sp.setter
     def speed_sp(self, value):
         self._speed_sp = value
-        self.connector.set_speed(self.address, value)
+        self.connector.set_speed(value)
 
 
     @property
@@ -529,7 +529,7 @@ class MockMotor(MockDevice):
     @stop_action.setter
     def stop_action(self, value):
         self._stop_action = value
-        self.connector.set_stop_action(self.address, value)
+        self.connector.set_stop_action(value)
 
 
     @property
@@ -564,7 +564,7 @@ class MockMotor(MockDevice):
     @time_sp.setter
     def time_sp(self, value):
         self._time_sp = value
-        self.connector.set_time(self.address, value)
+        self.connector.set_time(value)
 
 
     def run_forever(self):
@@ -574,7 +574,7 @@ class MockMotor(MockDevice):
 
         self.command = self.COMMAND_RUN_FOREVER
 
-        run_time = self.connector.run_forever(self.address)
+        run_time = self.connector.run_forever()
         self.running_until = time.time() + run_time
 
 
@@ -597,7 +597,7 @@ class MockMotor(MockDevice):
 
         self.command = self.COMMAND_RUN_TO_REL_POS
 
-        run_time = self.connector.run_to_rel_pos(self.address)
+        run_time = self.connector.run_to_rel_pos()
         self.running_until = time.time() + run_time
 
 
@@ -609,7 +609,7 @@ class MockMotor(MockDevice):
 
         self.command = self.COMMAND_RUN_TIMED
 
-        run_time = self.connector.run_timed(self.address)
+        run_time = self.connector.run_timed()
         self.running_until = time.time() + run_time
 
 
@@ -630,7 +630,7 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_STOP
-        self.connector.stop(self.address)
+        self.connector.stop()
 
 
     def reset(self):
@@ -640,7 +640,7 @@ class MockMotor(MockDevice):
         """
 
         self.command = self.COMMAND_RESET
-        self.connector.stop(self.address)
+        self.connector.stop()
 
 
     @property

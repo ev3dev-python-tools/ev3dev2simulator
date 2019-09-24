@@ -1,8 +1,9 @@
 import json
 import socket
+import time
 from typing import Any
 
-from ev3dev2.connection import MotorCommand, DataRequest
+from ev3dev2.connection import DataRequest, MotorCommand
 
 
 class ClientSocket:
@@ -19,6 +20,8 @@ class ClientSocket:
     def setup(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect(('localhost', 6840))
+
+        time.sleep(1)
 
 
     def send_motor_command(self, command: MotorCommand):
@@ -57,6 +60,8 @@ class ClientSocket:
         """
 
         obj_dict = message.serialize()
+
+        print(obj_dict)
         jsn = json.dumps(obj_dict)
         jsn = jsn.ljust(128, '#')
 

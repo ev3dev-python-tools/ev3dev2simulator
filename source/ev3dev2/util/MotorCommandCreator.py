@@ -1,10 +1,10 @@
 from ev3dev2.connection.ClientSocket import get_client_socket
-from ev3dev2.connection.MotorCommand import MotorCommand
-from ev3dev2.util.Singleton import Singleton
+from ev3dev2.connection.DriveCommand import DriveCommand
+from ev3dev2.connection.StopCommand import StopCommand
 from simulator.util.Util import load_config
 
 
-class MotorCommandCreator(metaclass=Singleton):
+class MotorCommandCreator:
     """
     The MotorCommandCreator class is responsible for creating movement jobs for the simulated robot.
     These jobs are processed by the simulator every update. The Python Arcade library used
@@ -23,7 +23,7 @@ class MotorCommandCreator(metaclass=Singleton):
         self.client_socket = get_client_socket()
 
 
-    def create_command(self, speed: float, distance: float, stop_action: str, address: str) -> float:
+    def create_drive_command(self, speed: float, distance: float, stop_action: str, address: str) -> float:
         """
         Create the command required to rotate the motor at the address for a distance at a speed.
         :param speed: in degrees per second.
@@ -36,14 +36,26 @@ class MotorCommandCreator(metaclass=Singleton):
         ppf = self._to_pixels_per_frame(frames, distance)
 
         if stop_action == 'coast':
-            coast_frames = int(round(ppf / self.coasting_sub))
-            self._create_motor_command_coast(frames, coast_frames, ppf, address)
+            coast_frames = self._coast_frames_required(ppf)
+            self._create_drive_command(frames, coast_frames, ppf, address)
 
             return (frames + coast_frames) / self.frames_per_second
         else:
-            self._create_motor_command(frames, ppf, address)
+            self._create_drive_command(frames, 0, ppf, address)
+            return frames / self.frames_per_second
+
+
+    def create_stop_command(self, speed: float, stop_action: str, address: str):
+        ppf = self._to_pixels(speed) / self.frames_per_second
+
+        if stop_action == 'coast':
+            frames = self._coast_frames_required(ppf)
+            self._create_stop_command(frames, ppf, address)
 
             return frames / self.frames_per_second
+        else:
+            self._create_stop_command(0, 0, address)
+            return 0
 
 
     def _frames_required(self, speed: float, distance: float) -> int:
@@ -56,6 +68,17 @@ class MotorCommandCreator(metaclass=Singleton):
 
         seconds = abs(distance) / abs(speed)
         return int(round(seconds * self.frames_per_second))
+
+
+    def _coast_frames_required(self, speed: float) -> int:
+        """
+        Calculate the number of frames required for a motor to coast to a halt based on the given speed.
+        :param speed: in degrees per second.
+        :return: an integer representing the number of frames.
+        """
+
+        pos_speed = abs(speed)
+        return int(round(pos_speed / self.coasting_sub))
 
 
     def _to_pixels_per_frame(self, frames: int, distance: float) -> float:
@@ -81,21 +104,9 @@ class MotorCommandCreator(metaclass=Singleton):
         return self.wheel_circumference * (distance / 360)
 
 
-    def _create_motor_command(self, frames: int, ppf: float, address: str):
+    def _create_drive_command(self, frames: int, coast_frames: int, ppf: float, address: str):
         """
-        Create and send a MotorCommand to move the motor for a distance for a number of frames.
-        :param frames: amount for which this command lasts.
-        :param ppf: distance in pixels per frame.
-        :param address: of the motor to create a command for.
-        """
-
-        command = MotorCommand(address, ppf, frames, 0)
-        self.client_socket.send_motor_command(command)
-
-
-    def _create_motor_command_coast(self, frames: int, coast_frames: int, ppf: float, address: str):
-        """
-        Create and send a MotorCommand to move the motor for a distance for a number of frames.
+        Create and send a DriveCommand to move the motor for a distance for a number of frames.
         Also include a number of frames for coasting speed subtraction. These frames allow
         for the travel distance to decrease bit by bit until the motor does not move anymore.
         :param frames: amount for which this command lasts.
@@ -103,9 +114,26 @@ class MotorCommandCreator(metaclass=Singleton):
         :param address: of the motor to create a command for.
         """
 
-        command = MotorCommand(address, ppf, frames, coast_frames)
+        command = DriveCommand(address, ppf, frames, coast_frames)
         self.client_socket.send_motor_command(command)
 
 
-    def stop_jobs(self, stop_action: str, address: str):
-        pass
+    def _create_stop_command(self, frames: int, ppf: float, address: str):
+        """
+        Create and send a StopCommand to stop the motor.
+        Also include a number of frames for coasting speed subtraction. These frames allow
+        for the travel distance to decrease bit by bit until the motor does not move anymore.
+        :param frames: amount for which this command lasts.
+        :param ppf: current speed of the motor.
+        :param address: of the motor to create a command for.
+        """
+
+        command = StopCommand(address, ppf, frames)
+        self.client_socket.send_motor_command(command)
+
+
+motor_command_creator = MotorCommandCreator()
+
+
+def get_motor_command_creator():
+    return MotorCommandCreator()
