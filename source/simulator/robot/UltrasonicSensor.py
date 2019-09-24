@@ -10,9 +10,9 @@ class UltrasonicSensor(ExtraBodyPart):
                  body: Body,
                  delta_x: int,
                  delta_y: int):
-        super().__init__(address,
-                         img_cfg['ultrasonic_sensor'],
-                         0.13,
-                         body,
-                         delta_x,
-                         delta_y)
+        super(UltrasonicSensor, self).__init__(address,
+                                               img_cfg['ultrasonic_sensor'],
+                                               0.13,
+                                               body,
+                                               delta_x,
+                                               delta_y)

@@ -25,7 +25,7 @@
 
 import sys
 
-from ev3dev2.MockDevice import MockDevice
+from ev3dev2.mock.MockDevice import MockDevice
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
@@ -57,7 +57,7 @@ class Sensor(MockDevice):
     ]
 
 
-    def __init__(self, address=None, **kwargs):
+    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(Sensor, self).__init__()
 
         self._address = address

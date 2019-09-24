@@ -24,7 +24,7 @@ class Simulator(arcade.Window):
         self.screen_height = self.cfg['screen_settings']['screen_height']
         screen_title = self.cfg['screen_settings']['screen_title']
 
-        super().__init__(self.screen_width, self.screen_height, screen_title)
+        super(Simulator, self).__init__(self.screen_width, self.screen_height, screen_title)
 
         arcade.set_background_color(arcade.color.BLACK_OLIVE)
 

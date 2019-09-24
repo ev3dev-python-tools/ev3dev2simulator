@@ -12,12 +12,12 @@ class ColorSensor(ExtraBodyPart):
                  body: Body,
                  delta_x: int,
                  delta_y: int):
-        super().__init__(address,
-                         img_cfg['color_sensor'],
-                         0.18,
-                         body,
-                         delta_x,
-                         delta_y)
+        super(ColorSensor, self).__init__(address,
+                                          img_cfg['color_sensor'],
+                                          0.18,
+                                          body,
+                                          delta_x,
+                                          delta_y)
 
         blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=0.25)
         green_texture = arcade.load_texture(img_cfg['color_sensor_green'], scale=0.25)

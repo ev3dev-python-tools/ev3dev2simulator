@@ -18,7 +18,7 @@ class Rock(Obstacle):
                  height: int,
                  color: arcade.Color,
                  angle: int):
-        super().__init__(1)
+        super(Rock, self).__init__(1)
 
         self.center_x = center_x
         self.center_y = center_y

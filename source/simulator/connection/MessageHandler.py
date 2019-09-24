@@ -53,4 +53,4 @@ class MessageHandler:
 
 
     def handle_data_request(self, request: DataRequest):
-        return self.robot_state.d[request.address]
+        return self.robot_state.values[request.address]

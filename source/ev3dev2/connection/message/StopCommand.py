@@ -7,7 +7,7 @@ class StopCommand(MotorCommand):
                  address: str,
                  ppf: float,
                  frames: int):
-        super().__init__(address, ppf, frames)
+        super(StopCommand, self).__init__(address, ppf, frames)
 
 
     def serialize(self) -> dict:

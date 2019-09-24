@@ -19,7 +19,7 @@ class Lake(Obstacle):
                  radius: float,
                  color: arcade.Color,
                  border_width: int):
-        super().__init__(to_color_code(color))
+        super(Lake, self).__init__(to_color_code(color))
 
         self.center_x = center_x
         self.center_y = center_y
@@ -58,7 +58,7 @@ class BlueLake(Lake):
         x = lake_cfg['lake_blue_x'] + edge_spacing + border_depth
         y = lake_cfg['lake_blue_y'] + edge_spacing + border_depth
 
-        super().__init__(x, y, radius, BLUE, border_width)
+        super(BlueLake, self).__init__(x, y, radius, BLUE, border_width)
 
 
 class GreenLake(Lake):
@@ -76,7 +76,7 @@ class GreenLake(Lake):
         x = lake_cfg['lake_green_x'] + edge_spacing + border_depth
         y = lake_cfg['lake_green_y'] + edge_spacing + border_depth
 
-        super().__init__(x, y, radius, GREEN, border_width)
+        super(GreenLake, self).__init__(x, y, radius, GREEN, border_width)
 
 
 class RedLake(Lake):
@@ -94,4 +94,4 @@ class RedLake(Lake):
         x = lake_cfg['lake_red_x'] + edge_spacing + border_depth
         y = lake_cfg['lake_red_y'] + edge_spacing + border_depth
 
-        super().__init__(x, y, radius, RED, border_width)
+        super(RedLake, self).__init__(x, y, radius, RED, border_width)

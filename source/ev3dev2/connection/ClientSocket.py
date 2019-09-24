@@ -56,10 +56,13 @@ class ClientSocket:
         self.client.send(jsn)
 
         while True:
-            val = self.client.recv(32)
+            data = self.client.recv(32)
 
-            if val:
-                return val
+            if data:
+                val = data.decode()
+                obj_dict = json.loads(val)
+
+                return obj_dict['value']
 
 
     def _serialize(self, message) -> bytes:

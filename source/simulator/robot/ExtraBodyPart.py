@@ -13,7 +13,7 @@ class ExtraBodyPart(BodyPart):
                  body: BodyPart,
                  delta_x: int,
                  delta_y: int):
-        super().__init__(src, scale)
+        super(ExtraBodyPart, self).__init__(src, scale)
 
         self.address = address
         self.body = body

@@ -22,7 +22,7 @@
 import sys
 from collections import OrderedDict
 
-from ev3dev2.MockMotor import MockMotor
+from ev3dev2.mock.MockMotor import MockMotor
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
@@ -245,8 +245,8 @@ class SpeedDPM(SpeedValue):
 
 class Motor(MockMotor):
 
-    def __init__(self, address, **kwargs):
-        super(Motor, self).__init__(address)
+    def __init__(self, address, name_pattern=MockMotor.SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+        super(Motor, self).__init__(address, name_pattern, name_exact)
 
 
 class LargeMotor(Motor):
@@ -261,8 +261,8 @@ class LargeMotor(Motor):
     __slots__ = []
 
 
-    def __init__(self, address, **kwargs):
-        super(LargeMotor, self).__init__(address,
+    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+        super(LargeMotor, self).__init__(address, name_pattern, name_exact,
                                          driver_name=['lego-ev3-l-motor', 'lego-nxt-motor'], **kwargs)
 
 
@@ -278,8 +278,8 @@ class MediumMotor(Motor):
     __slots__ = []
 
 
-    def __init__(self, address, **kwargs):
-        super(MediumMotor, self).__init__(address,
+    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+        super(MediumMotor, self).__init__(address, name_pattern, name_exact,
                                           driver_name=['lego-ev3-m-motor'], **kwargs)
 
 
@@ -470,6 +470,23 @@ class MotorSet(object):
         self.wait_until_not_moving()
 
 
+# line follower functions
+def follow_for_forever(tank):
+    """
+    ``tank``: the MoveTank object that is following a line
+    """
+    return True
+
+
+def follow_for_ms(tank, ms):
+    """
+    ``tank``: the MoveTank object that is following a line
+    ``ms`` : the number of milliseconds to follow the line
+    """
+
+    pass
+
+
 class MoveTank(MotorSet):
     """
     Controls a pair of motors simultaneously, via individual speed setpoints for each motor.
@@ -628,6 +645,76 @@ class MoveTank(MotorSet):
         # Start the motors
         self.left_motor.run_forever()
         self.right_motor.run_forever()
+
+
+    def follow_line(self,
+                    kp, ki, kd,
+                    speed,
+                    target_light_intensity=None,
+                    follow_left_edge=True,
+                    white=60,
+                    off_line_count_max=20,
+                    sleep_time=0.01,
+                    follow_for=follow_for_forever,
+                    **kwargs
+                    ):
+        """
+        PID line follower
+
+        ``kp``, ``ki``, and ``kd`` are the PID constants.
+
+        ``speed`` is the desired speed of the midpoint of the robot
+
+        ``target_light_intensity`` is the reflected light intensity when the color sensor
+            is on the edge of the line.  If this is None we assume that the color sensor
+            is on the edge of the line and will take a reading to set this variable.
+
+        ``follow_left_edge`` determines if we follow the left or right edge of the line
+
+        ``white`` is the reflected_light_intensity that is used to determine if we have
+            lost the line
+
+        ``off_line_count_max`` is how many consecutive times through the loop the
+            reflected_light_intensity must be greater than ``white`` before we
+            declare the line lost and raise an exception
+
+        ``sleep_time`` is how many seconds we sleep on each pass through
+            the loop.  This is to give the robot a chance to react
+            to the new motor settings. This should be something small such
+            as 0.01 (10ms).
+
+        ``follow_for`` is called to determine if we should keep following the
+            line or stop.  This function will be passed ``self`` (the current
+            ``MoveTank`` object). Current supported options are:
+            - ``follow_for_forever``
+            - ``follow_for_ms``
+
+        ``**kwargs`` will be passed to the ``follow_for`` function
+
+        Example:
+
+        .. code:: python
+
+            from ev3dev2.motor import OUTPUT_A, OUTPUT_B, MoveTank, SpeedPercent, follow_for_ms
+            from ev3dev2.sensor.lego import ColorSensor
+
+            tank = MoveTank(OUTPUT_A, OUTPUT_B)
+            tank.cs = ColorSensor()
+
+            try:
+                # Follow the line for 4500ms
+                tank.follow_line(
+                    kp=11.3, ki=0.05, kd=3.2,
+                    speed=SpeedPercent(30),
+                    follow_for=follow_for_ms,
+                    ms=4500
+                )
+            except Exception:
+                tank.stop()
+                raise
+        """
+
+        pass
 
 
 class MoveSteering(MoveTank):

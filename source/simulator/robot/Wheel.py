@@ -10,9 +10,9 @@ class Wheel(ExtraBodyPart):
                  body: Body,
                  delta_x: int,
                  delta_y: int):
-        super().__init__(address,
-                         img_cfg['wheel'],
-                         0.22,
-                         body,
-                         delta_x,
-                         delta_y)
+        super(Wheel, self).__init__(address,
+                                    img_cfg['wheel'],
+                                    0.22,
+                                    body,
+                                    delta_x,
+                                    delta_y)

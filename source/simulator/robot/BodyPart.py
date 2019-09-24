@@ -6,7 +6,7 @@ from simulator.obstacle import Obstacle
 class BodyPart(arcade.Sprite):
 
     def __init__(self, src: str, scale: float):
-        super().__init__(src, scale)
+        super(BodyPart, self).__init__(src, scale)
 
         self.sensible_obstacles = None
 

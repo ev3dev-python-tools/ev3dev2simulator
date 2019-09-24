@@ -1,7 +1,7 @@
 import time
 
 import ev3dev2.Motor
-from ev3dev2.MockDevice import MockDevice
+from ev3dev2.mock.MockDevice import MockDevice
 # The number of milliseconds we wait for the state of a motor to
 # update to 'running' in the "on_for_XYZ" methods of the Motor class
 from ev3dev2.util.MotorConnector import *
@@ -131,7 +131,7 @@ class MockMotor(MockDevice):
     STOP_ACTION_HOLD = 'hold'
 
 
-    def __init__(self, address):
+    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(MockMotor, self).__init__()
 
         self._address = address

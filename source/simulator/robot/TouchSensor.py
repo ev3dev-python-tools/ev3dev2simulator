@@ -12,12 +12,12 @@ class TouchSensor(ExtraBodyPart):
                  delta_y: int,
                  left: bool):
         img = 'touch_sensor_left' if left else 'touch_sensor_right'
-        super().__init__(address,
-                         img_cfg[img],
-                         0.25,
-                         body,
-                         delta_x,
-                         delta_y)
+        super(TouchSensor, self).__init__(address,
+                                          img_cfg[img],
+                                          0.25,
+                                          body,
+                                          delta_x,
+                                          delta_y)
 
 
     def is_touching(self) -> bool:

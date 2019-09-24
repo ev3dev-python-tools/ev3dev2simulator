@@ -8,7 +8,7 @@ class DriveCommand(MotorCommand):
                  ppf: float,
                  frames: int,
                  frames_coast: int):
-        super().__init__(address, ppf, frames)
+        super(DriveCommand, self).__init__(address, ppf, frames)
         self.frames_coast = frames_coast
 
 
