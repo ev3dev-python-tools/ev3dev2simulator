@@ -21,6 +21,7 @@ class RobotState:
 
         self.left_move_queue = Queue()
         self.right_move_queue = Queue()
+        self.sound_queue = Queue()
 
         self.should_reset = False
         self.values = {}
@@ -29,7 +30,7 @@ class RobotState:
     def next_left_move_job(self) -> float:
         """
         Get the next move job for the left motor from the queue.
-        :return: a MoveJob object containing the job.
+        :return: a floating point number representing the job move distance.
         """
 
         try:
@@ -41,7 +42,7 @@ class RobotState:
     def next_right_move_job(self) -> float:
         """
         Get the next move job for the right motor from the queue.
-        :return: a MoveJob object containing the job.
+        :return: a floating point number representing the job move distance.
         """
 
         try:
@@ -80,7 +81,29 @@ class RobotState:
             self.right_move_queue.get_nowait()
 
 
+    def put_sound_job(self, job: str):
+        """
+        Add a new sound job to the queue to be displayed.
+        :param job: to add.
+        """
+
+        self.sound_queue.put_nowait(job)
+
+
+    def next_sound_job(self) -> float:
+        """
+        Get the next sound job from the queue.
+        :return: a str representing the sound as text to be displayed.
+        """
+
+        try:
+            return self.sound_queue.get_nowait()
+        except Empty:
+            return None
+
+
     def reset(self):
+
         self._clear_left_move_jobs()
         self._clear_right_move_jobs()
 

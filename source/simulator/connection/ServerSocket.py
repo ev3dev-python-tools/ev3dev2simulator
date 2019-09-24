@@ -4,9 +4,10 @@ import threading
 import time
 from typing import Any
 
-from ev3dev2.connection.DataRequest import DataRequest
-from ev3dev2.connection.DriveCommand import DriveCommand
-from ev3dev2.connection.StopCommand import StopCommand
+from ev3dev2.connection.message.DataRequest import DataRequest
+from ev3dev2.connection.message.DriveCommand import DriveCommand
+from ev3dev2.connection.message.SoundCommand import SoundCommand
+from ev3dev2.connection.message.StopCommand import StopCommand
 from simulator.connection.MessageHandler import MessageHandler
 
 
@@ -70,6 +71,9 @@ class ServerSocket(threading.Thread):
         if tpe == 'StopCommand':
             return self._handle_stop_command(obj_dict)
 
+        if tpe == 'SoundCommand':
+            return self._handle_sound_command(obj_dict)
+
         elif tpe == 'DataRequest':
             return self._handle_data_request(obj_dict)
 
@@ -84,6 +88,13 @@ class ServerSocket(threading.Thread):
     def _handle_stop_command(self, d: dict) -> Any:
         command = StopCommand(d['address'], d['ppf'], d['frames'])
         self.message_handler.handle_stop_command(command)
+
+        return None
+
+
+    def _handle_sound_command(self, d: dict) -> Any:
+        command = SoundCommand(d['message'])
+        self.message_handler.handle_sound_command(command)
 
         return None
 

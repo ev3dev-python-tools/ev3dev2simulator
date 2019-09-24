@@ -1,6 +1,6 @@
 from ev3dev2.connection.ClientSocket import get_client_socket
-from ev3dev2.connection.DriveCommand import DriveCommand
-from ev3dev2.connection.StopCommand import StopCommand
+from ev3dev2.connection.message.DriveCommand import DriveCommand
+from ev3dev2.connection.message.StopCommand import StopCommand
 from simulator.util.Util import load_config
 
 

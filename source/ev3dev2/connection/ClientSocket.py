@@ -3,7 +3,7 @@ import socket
 import time
 from typing import Any
 
-from ev3dev2.connection import DataRequest, MotorCommand
+from ev3dev2.connection.message import DataRequest, MotorCommand, SoundCommand
 
 
 class ClientSocket:
@@ -27,6 +27,16 @@ class ClientSocket:
     def send_motor_command(self, command: MotorCommand):
         """
         Serialise and send the given MotorCommand to the simulator.
+        :param command: to send.
+        """
+
+        jsn = self._serialize(command)
+        self.client.send(jsn)
+
+
+    def send_sound_command(self, command: SoundCommand):
+        """
+        Serialise and send the given SoundCommand to the simulator.
         :param command: to send.
         """
 

@@ -1,13 +1,13 @@
 from typing import Any
 
 from ev3dev2.connection.ClientSocket import get_client_socket
-from ev3dev2.connection.DataRequest import DataRequest
+from ev3dev2.connection.message.DataRequest import DataRequest
 
 
 class SensorConnector:
     """
-    The SensorConnector class provides a translation layer between the raw sensor classes
-    and the sensors on the actual robot. This includes sensor data.
+    The SensorConnector class provides a translation layer between the ev3dev2 sensor classes
+    and the sensors on the simulated robot. This includes sensor data.
     This class is responsible for creating DataRequests to be send to simulator.
     """
 

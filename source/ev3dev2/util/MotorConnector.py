@@ -5,8 +5,8 @@ FOREVER_MOCK_SECONDS = 3600
 
 class MotorConnector:
     """
-    The MotorConnector class provides a translation layer between the raw motor classes
-    and the motors on the actual robot. This includes motor positioning and speed/distance data.
+    The MotorConnector class provides a translation layer between the ev3dev2 motor classes
+    and the motors on the simulated robot. This includes motor positioning and speed/distance data.
     This class is responsible for calling the MotorCommandCreator to create movement commands for
     the simulator.
     """

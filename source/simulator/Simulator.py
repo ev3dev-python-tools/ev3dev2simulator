@@ -93,6 +93,24 @@ class Simulator(arcade.Window):
         self.robot_elements.draw()
         self.obstacle_elements.draw()
 
+        self._draw_text()
+
+
+    def _draw_text(self):
+        center_cs = f"Center CS:  {self.robot_state.values.get(self.robot.center_color_sensor.address, 0)}"
+        left_ts = f"Right TS:      {self.robot_state.values.get(self.robot.left_touch_sensor.address, False)}"
+        right_ts = f"Left TS:         {self.robot_state.values.get(self.robot.right_touch_sensor.address, False)}"
+
+        message = self.robot_state.next_sound_job()
+        sound = message if message else '-'
+
+        arcade.draw_text(center_cs, self.screen_width - 110, self.screen_height - 40, arcade.color.WHITE, 9)
+        arcade.draw_text(left_ts, self.screen_width - 110, self.screen_height - 55, arcade.color.WHITE, 9)
+        arcade.draw_text(right_ts, self.screen_width - 110, self.screen_height - 70, arcade.color.WHITE, 9)
+        arcade.draw_text('Sound:', self.screen_width - 110, self.screen_height - 85, arcade.color.WHITE, 9)
+        arcade.draw_text(sound, self.screen_width - 110, self.screen_height - 100, arcade.color.WHITE, 9,
+                         anchor_y='top')
+
 
     def update(self, delta_time):
         """

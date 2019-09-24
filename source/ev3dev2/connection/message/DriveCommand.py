@@ -1,4 +1,4 @@
-from ev3dev2.connection.MotorCommand import MotorCommand
+from ev3dev2.connection.message.MotorCommand import MotorCommand
 
 
 class DriveCommand(MotorCommand):
