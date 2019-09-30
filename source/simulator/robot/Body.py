@@ -4,6 +4,10 @@ from source.simulator.robot.BodyPart import BodyPart
 
 
 class Body(BodyPart):
+    """
+    Class representing the body of the simulated robot.
+    """
+
 
     def __init__(self,
                  img_cfg,

@@ -5,6 +5,10 @@ from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
 
 
 class ColorSensor(ExtraBodyPart):
+    """
+    Class representing a ColorSensor of the simulated robot.
+    """
+
 
     def __init__(self,
                  address: str,

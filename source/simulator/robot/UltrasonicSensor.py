@@ -3,6 +3,10 @@ from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
 
 
 class UltrasonicSensor(ExtraBodyPart):
+    """
+    Class representing an UltrasonicSensor of the simulated robot.
+    """
+
 
     def __init__(self,
                  address: str,

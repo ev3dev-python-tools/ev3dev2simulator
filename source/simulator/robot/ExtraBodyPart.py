@@ -5,6 +5,11 @@ from source.simulator.util.Util import pythagoras
 
 
 class ExtraBodyPart(BodyPart):
+    """
+    Class containing the base functionality of a part of the robot which
+    is not the standard body.
+    """
+
 
     def __init__(self,
                  address: str,
@@ -28,6 +33,12 @@ class ExtraBodyPart(BodyPart):
 
 
     def rotate(self, radians: float):
+        """
+        Rotate this part by the given angle in radians. Make sure it
+        stays 'attached' to its body by also adjusting its x and y values.
+        :param radians: to rotate.
+        """
+
         self.angle += math.degrees(radians)
 
         rad = math.radians(self.angle) + self.angle_addition

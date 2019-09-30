@@ -3,6 +3,10 @@ from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
 
 
 class Wheel(ExtraBodyPart):
+    """
+    Class representing a Wheel of the simulated robot.
+    """
+
 
     def __init__(self,
                  address: str,

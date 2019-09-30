@@ -3,6 +3,10 @@ from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
 
 
 class TouchSensor(ExtraBodyPart):
+    """
+    Class representing a TouchSensor of the simulated robot.
+    """
+
 
     def __init__(self,
                  address: str,

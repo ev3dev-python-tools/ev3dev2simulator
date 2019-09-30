@@ -12,6 +12,11 @@ from source.simulator.robot.Wheel import Wheel
 
 
 class Robot:
+    """
+    Class representing the simulated robot. This robot has a number
+    of parts defined by BodyParts and ExtraBodyParts.
+    """
+
 
     def __init__(self, cfg, center_x: int, center_y: int):
 
@@ -53,22 +58,43 @@ class Robot:
                         self.ultrasonic_sensor]
 
 
-    def _move_x(self, x: float):
+    def _move_x(self, distance: float):
+        """
+        Move all parts of this robot by the given distance in the x-direction.
+        :param distance: to move
+        """
+
         for s in self.get_sprites():
-            s.move_x(x)
+            s.move_x(distance)
 
 
-    def _move_y(self, y: float):
+    def _move_y(self, distance: float):
+        """
+        Move all parts of this robot by the given distance in the y-direction.
+        :param distance: to move
+        """
+
         for s in self.get_sprites():
-            s.move_y(y)
+            s.move_y(distance)
 
 
     def _rotate(self, radians: float):
+        """
+        Rotate all parts of this robot by the given angle in radians.
+        :param radians to rotate
+        """
         for s in self.get_sprites():
             s.rotate(radians)
 
 
     def execute_movement(self, left_ppf: float, right_ppf: float):
+        """
+        Move the robot and its parts by providing the speed of the left and right motor
+        using the differential steering principle.
+        :param left_ppf: speed in pixels per second of the left motor.
+        :param right_ppf: speed in pixels per second of the right motor.
+        """
+
         distance_left = left_ppf if left_ppf is not None else 0
         distance_right = right_ppf if right_ppf is not None else 0
 
@@ -85,16 +111,26 @@ class Robot:
         self._move_y(diff_y)
 
 
-    def get_sprites(self) -> [Sprite]:
-        return self.sprites
-
-
     def set_color_obstacles(self, obstacles: [Obstacle]):
+        """
+        Set the obstacles which can be detected by the color sensors of this robot.
+        :param obstacles: to be detected.
+        """
+
         self.center_color_sensor.set_sensible_obstacles(obstacles)
         # self.left_color_sensor.set_sensible_obstacles(obstacles)
         # self.right_color_sensor.set_sensible_obstacles(obstacles)
 
 
     def set_touch_obstacles(self, obstacles: [Obstacle]):
+        """
+        Set the obstacles which can be detected by the touch sensors of this robot.
+        :param obstacles: to be detected.
+        """
+
         self.left_touch_sensor.set_sensible_obstacles(obstacles)
         self.right_touch_sensor.set_sensible_obstacles(obstacles)
+
+
+    def get_sprites(self) -> [Sprite]:
+        return self.sprites
