@@ -52,29 +52,29 @@ def load_config():
     :return: the config data.
     """
 
-    with open('../../config/config.yaml', 'r') as stream:
+    with open('../../../config/config.yaml', 'r') as stream:
         try:
             return yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
 
 
-def calc_differential_steering_angle_x_y(b: int, ul: float, ur: float, o: float) -> Tuple[float, float, float]:
+def calc_differential_steering_angle_x_y(b: int, dl: float, dr: float, o: float) -> Tuple[float, float, float]:
     """
     Calculate the next orientation, x and y values of a two-wheel
     propelled object based on the differential steering principle.
 
     :param b: the distance between the two wheels.
-    :param ul: linear displacement of the left motor in pixels.
-    :param ur: linear displacement of the right motor in pixels.
-    :param o: current orientation of the object in degrees.
+    :param dl: linear displacement of the left motor in pixels.
+    :param dr: linear displacement of the right motor in pixels.
+    :param o: current orientation of the object in radians.
     :return: the new orientation in degrees and the new x and y values in pixels.
     """
 
-    uc = (ur + ul) / 2
-    diff_angle = (ur - ul) / b
+    dc = (dr + dl) / 2
+    diff_angle = (dr - dl) / b
 
-    diff_x = uc * math.cos(diff_angle + o)
-    diff_y = uc * math.sin(diff_angle + o)
+    diff_x = dc * math.cos(diff_angle + o)
+    diff_y = dc * math.sin(diff_angle + o)
 
     return diff_angle, diff_x, diff_y

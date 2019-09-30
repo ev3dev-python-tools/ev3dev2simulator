@@ -1,5 +1,3 @@
-import json
-
 from ev3dev2.connection.message import DriveCommand, DataRequest, StopCommand, SoundCommand
 from simulator.util.Util import load_config
 
@@ -73,7 +71,7 @@ class MessageProcessor:
         """
 
         msg_len = len(command.message)
-        multiplier = msg_len / 5
+        multiplier = msg_len / 2.5
         frames = int(round(self.frames_per_second * multiplier))
 
         message = '\n'.join(command.message[i:i + 10] for i in range(0, msg_len, 10))
@@ -82,25 +80,11 @@ class MessageProcessor:
             self.robot_state.put_sound_job(message)
 
 
-    def process_data_request(self, request: DataRequest) -> bytes:
+    def process_data_request(self, request: DataRequest) -> dict:
         """
         Process the given data request by retrieving the requested value from the RobotState and returning this.
         :param request: to process.
-        :return: a serialized dictionary containing the requested value.
+        :return: a dictionary containing the requested value.
         """
 
-        value = self.robot_state.values[request.address]
-
-        return self._serialize_response(value)
-
-
-    def _serialize_response(self, value) -> bytes:
-        """
-        Serialize the given value into a bytes object containing a dictionary.
-        :param value: to serialize.
-        """
-
-        d = {'value': value}
-
-        jsn = json.dumps(d)
-        return str.encode(jsn)
+        return self.robot_state.values[request.address]

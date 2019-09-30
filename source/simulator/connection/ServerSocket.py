@@ -138,4 +138,18 @@ class ServerSocket(threading.Thread):
         """
 
         request = DataRequest(d['address'])
-        return self.message_processor.process_data_request(request)
+        value = self.message_processor.process_data_request(request)
+
+        return self._serialize_response(value)
+
+
+    def _serialize_response(self, value) -> bytes:
+        """
+        Serialize the given value into a bytes object containing a dictionary.
+        :param value: to serialize.
+        """
+
+        d = {'value': value}
+
+        jsn = json.dumps(d)
+        return str.encode(jsn)

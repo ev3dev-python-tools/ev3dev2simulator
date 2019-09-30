@@ -90,7 +90,7 @@ class RobotState:
         self.sound_queue.put_nowait(job)
 
 
-    def next_sound_job(self) -> float:
+    def next_sound_job(self) -> str:
         """
         Get the next sound job from the queue.
         :return: a str representing the sound as text to be displayed.

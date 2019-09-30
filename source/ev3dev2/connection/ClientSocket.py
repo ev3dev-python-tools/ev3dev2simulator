@@ -74,7 +74,6 @@ class ClientSocket:
 
         obj_dict = message.serialize()
 
-        print(obj_dict)
         jsn = json.dumps(obj_dict)
         jsn = jsn.ljust(128, '#')
 

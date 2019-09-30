@@ -104,11 +104,11 @@ class Simulator(arcade.Window):
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
 
-        arcade.draw_text(center_cs, self.screen_width - 110, self.screen_height - 40, arcade.color.WHITE, 9)
-        arcade.draw_text(left_ts, self.screen_width - 110, self.screen_height - 55, arcade.color.WHITE, 9)
-        arcade.draw_text(right_ts, self.screen_width - 110, self.screen_height - 70, arcade.color.WHITE, 9)
-        arcade.draw_text('Sound:', self.screen_width - 110, self.screen_height - 85, arcade.color.WHITE, 9)
-        arcade.draw_text(sound, self.screen_width - 110, self.screen_height - 100, arcade.color.WHITE, 9,
+        arcade.draw_text(center_cs, self.screen_width - 120, self.screen_height - 45, arcade.color.WHITE, 9)
+        arcade.draw_text(left_ts, self.screen_width - 120, self.screen_height - 60, arcade.color.WHITE, 9)
+        arcade.draw_text(right_ts, self.screen_width - 120, self.screen_height - 75, arcade.color.WHITE, 9)
+        arcade.draw_text('Sound:', self.screen_width - 120, self.screen_height - 90, arcade.color.WHITE, 9)
+        arcade.draw_text(sound, self.screen_width - 120, self.screen_height - 105, arcade.color.WHITE, 9,
                          anchor_y='top')
 
 
@@ -142,7 +142,7 @@ def main():
     Spawns the user thread and creates and starts the simulation.
     """
 
-    config = load_config()
+    cfg = load_config()
 
     robot_state = get_robot_state()
 
@@ -150,7 +150,7 @@ def main():
     server_thread.setDaemon(True)
     server_thread.start()
 
-    sim = Simulator(config, robot_state)
+    sim = Simulator(cfg, robot_state)
     sim.setup()
     arcade.run()
 
