@@ -18,7 +18,7 @@ class TouchSensor(ExtraBodyPart):
         img = 'touch_sensor_left' if left else 'touch_sensor_right'
         super(TouchSensor, self).__init__(address,
                                           img_cfg[img],
-                                          0.25,
+                                          0.21,
                                           body,
                                           delta_x,
                                           delta_y)
