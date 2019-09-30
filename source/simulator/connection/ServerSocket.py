@@ -8,20 +8,29 @@ from ev3dev2.connection.message.DataRequest import DataRequest
 from ev3dev2.connection.message.DriveCommand import DriveCommand
 from ev3dev2.connection.message.SoundCommand import SoundCommand
 from ev3dev2.connection.message.StopCommand import StopCommand
-from simulator.connection.MessageHandler import MessageHandler
+from simulator.connection.MessageProcessor import MessageProcessor
 
 
 class ServerSocket(threading.Thread):
+    """
+    Class responsible for listening to incoming socket connections from ev3dev2 mock processes.
+    """
+
 
     def __init__(self, robot_state):
         threading.Thread.__init__(self)
-        self.message_handler = MessageHandler(robot_state)
+        self.message_processor = MessageProcessor(robot_state)
         self.robot_state = robot_state
 
         self.first_run = True
 
 
     def run(self):
+        """
+        Listen for incoming connections. Start listening for messages when a connection is established.
+        When the connection breaks up listen for a new connection.
+        """
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(('localhost', 6840))
@@ -44,7 +53,7 @@ class ServerSocket(threading.Thread):
                     data = client.recv(128)
                     if data:
 
-                        val = self._handle(data)
+                        val = self._process(data)
                         if val:
                             client.send(val)
 
@@ -58,7 +67,13 @@ class ServerSocket(threading.Thread):
             client.close()
 
 
-    def _handle(self, data: bytes) -> Any:
+    def _process(self, data: bytes) -> bytes:
+        """
+        Process incoming data by decoding it and sending it to the MessageProcessor.
+        :param data: to process.
+        :return: a possible response in bytes when the incoming message requires it.
+        """
+
         jsn = data.decode()
         jsn = jsn.replace('#', '')
 
@@ -66,48 +81,61 @@ class ServerSocket(threading.Thread):
 
         tpe = obj_dict['type']
         if tpe == 'DriveCommand':
-            return self._handle_drive_command(obj_dict)
+            return self._process_drive_command(obj_dict)
 
         if tpe == 'StopCommand':
-            return self._handle_stop_command(obj_dict)
+            return self._process_stop_command(obj_dict)
 
         if tpe == 'SoundCommand':
-            return self._handle_sound_command(obj_dict)
+            return self._process_sound_command(obj_dict)
 
         elif tpe == 'DataRequest':
-            return self._handle_data_request(obj_dict)
+            return self._process_data_request(obj_dict)
 
 
-    def _handle_drive_command(self, d: dict) -> Any:
+    def _process_drive_command(self, d: dict) -> Any:
+        """
+        Deserialize the given dictionary into a DriveCommand and send it to the MessageProcessor.
+        :param d: to process.
+        """
+
         command = DriveCommand(d['address'], d['ppf'], d['frames'], d['frames_coast'])
-        self.message_handler.handle_drive_command(command)
+        self.message_processor.process_drive_command(command)
 
         return None
 
 
-    def _handle_stop_command(self, d: dict) -> Any:
+    def _process_stop_command(self, d: dict) -> Any:
+        """
+        Deserialize the given dictionary into a StopCommand and send it to the MessageProcessor.
+        :param d: to process.
+        """
+
         command = StopCommand(d['address'], d['ppf'], d['frames'])
-        self.message_handler.handle_stop_command(command)
+        self.message_processor.process_stop_command(command)
 
         return None
 
 
-    def _handle_sound_command(self, d: dict) -> Any:
+    def _process_sound_command(self, d: dict) -> Any:
+        """
+        Deserialize the given dictionary into a SoundCommand and send it to the MessageProcessor.
+        :param d: to process.
+        """
+
         command = SoundCommand(d['message'])
-        self.message_handler.handle_sound_command(command)
+        self.message_processor.process_sound_command(command)
 
         return None
 
 
-    def _handle_data_request(self, d: dict) -> Any:
+    def _process_data_request(self, d: dict) -> bytes:
+        """
+        Deserialize the given dictionary into a DataRequest and send it to the MessageProcessor.
+        Return a serialized response with the requested value.
+        :param d: to process.
+        :return: a bytes object representing the serialized response.
+        """
+
         request = DataRequest(d['address'])
-        val = self.message_handler.handle_data_request(request)
-
-        return self._serialize(val)
-
-
-    def _serialize(self, val):
-        d = {'value': val}
-
-        jsn = json.dumps(d)
-        return str.encode(jsn)
+        return self.message_processor.process_data_request(request)
