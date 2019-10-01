@@ -35,8 +35,7 @@ class MockTouchSensor(Sensor):
         pressed.
         """
         self._ensure_mode(self.MODE_TOUCH)
-        gg = self.connector.get_value()
-        return gg
+        return self.connector.get_value()
 
 
     @property

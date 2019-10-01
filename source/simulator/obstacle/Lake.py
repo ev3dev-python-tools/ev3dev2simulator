@@ -1,5 +1,5 @@
 import arcade
-from arcade import Shape
+from arcade import Shape, PointList
 
 from simulator.obstacle.Obstacle import Obstacle
 from simulator.util.Color import RED, GREEN, BLUE, to_color_code
@@ -27,16 +27,26 @@ class Lake(Obstacle):
         self.color = color
         self.border_width = border_width
 
+        self.points = self._create_points()
+        self.shape = self._create_shape()
 
-    def create(self) -> Shape:
+
+    def _create_points(self) -> PointList:
+        """
+        Create a list of points representing this Lake in 2D space.
+        :return: a PointList object.
+        """
+
+        return get_circle_points(self.center_x,
+                                 self.center_y,
+                                 self.radius)
+
+
+    def _create_shape(self) -> Shape:
         """
         Create a shape representing this lake.
         :return: a Arcade shape object.
         """
-
-        self.points = get_circle_points(self.center_x,
-                                        self.center_y,
-                                        self.radius)
 
         return arcade.create_line_strip(self.points,
                                         self.color,

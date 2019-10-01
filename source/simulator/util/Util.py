@@ -1,13 +1,15 @@
 import math
+from pathlib import Path
 from typing import Tuple
 
 import yaml
+from arcade import PointList
 
 
 def get_circle_points(center_x: float,
                       center_y: float,
                       radius: float,
-                      num_segments: int = 32) -> [(int, int)]:
+                      num_segments: int = 32) -> PointList:
     """
     Determine all the coordinate points located on the outline of a circle of given position and radius.
     The number of points, which correlates to the smoothness of the outline,
@@ -17,7 +19,7 @@ def get_circle_points(center_x: float,
     :param center_y: the y coordinate of the created circle center.
     :param radius: the radius of the created circle.
     :param num_segments: the number of segments of the circle outline.
-    :return: a list of tuples containing the coordinates of the circle points.
+    :return: a PointList object containing the coordinates of the circle points.
     """
 
     points = []
@@ -46,13 +48,30 @@ def pythagoras(x: int, y: int) -> float:
     return math.sqrt(x * x + y * y)
 
 
+def distance_between_points(x1: float, y1: float, x2: float, y2: float) -> float:
+    """
+    Calculate the distance between two points in 2D space.
+    :param x1: coordinate of point 1
+    :param y1: coordinate of point 1
+    :param x2: coordinate of point 2
+    :param y2: coordinate of point 2
+    :return: a floating point value representing the distance.
+    """
+
+    v1 = (x2 - x1) ** 2
+    v2 = (y2 - y1) ** 2
+    return math.sqrt(v1 + v2)
+
+
 def load_config():
     """
     Load config data from config.yaml
     :return: the config data.
     """
 
-    with open('../../config/config.yaml', 'r') as stream:
+    path = get_project_root() + '/config/config.yaml'
+
+    with open(path, 'r') as stream:
         try:
             return yaml.safe_load(stream)
         except yaml.YAMLError as exc:
@@ -78,3 +97,31 @@ def calc_differential_steering_angle_x_y(b: int, dl: float, dr: float, o: float)
     diff_y = dc * math.sin(diff_angle + o)
 
     return diff_angle, diff_x, diff_y
+
+
+def get_cm_multiplier() -> float:
+    """
+    Get the multiplier needed for converting pixels to centimeters.
+    :return: a floating point value representing the multiplier.
+    """
+
+    return 0.150
+
+
+def get_inch_multiplier() -> float:
+    """
+    Get the multiplier needed for converting pixels to inches.
+    :return: a floating point value representing the multiplier.
+    """
+
+    return 0.381
+
+
+def get_project_root() -> str:
+    """
+    Get the absolute path to project root folder.
+    :return: a string representing the path.
+    """
+
+    path = Path(__file__).parent.parent.parent.parent
+    return str(path)

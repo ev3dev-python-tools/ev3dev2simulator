@@ -4,6 +4,7 @@ This class extends from arcade.Window and manages the updates and rendering of t
 """
 
 import arcade
+from pymunk import Space
 
 from simulator.connection.ServerSocket import ServerSocket
 from simulator.obstacle.Border import Border
@@ -42,6 +43,8 @@ class Simulator(arcade.Window):
 
         self.border = None
 
+        self.space = None
+
 
     def setup(self):
         """
@@ -64,23 +67,27 @@ class Simulator(arcade.Window):
         self.rock1 = Rock(550, 700, 100, 40, arcade.color.DARK_GRAY, 10)
         self.rock2 = Rock(650, 250, 200, 60, arcade.color.DARK_GRAY, 130)
 
-        self.obstacle_elements.append(self.blue_lake.create())
-        self.obstacle_elements.append(self.green_lake.create())
-        self.obstacle_elements.append(self.red_lake.create())
+        self.obstacle_elements.append(self.blue_lake.shape)
+        self.obstacle_elements.append(self.green_lake.shape)
+        self.obstacle_elements.append(self.red_lake.shape)
 
-        self.obstacle_elements.append(self.rock1.create())
-        self.obstacle_elements.append(self.rock2.create())
+        self.obstacle_elements.append(self.rock1.shape)
+        self.obstacle_elements.append(self.rock2.shape)
 
         self.border = Border(self.cfg, arcade.color.WHITE)
 
-        for b in self.border.create():
-            self.obstacle_elements.append(b)
+        for s in self.border.shapes:
+            self.obstacle_elements.append(s)
 
         color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
         touch_obstacles = [self.rock1, self.rock2]
 
         self.robot.set_color_obstacles(color_obstacles)
         self.robot.set_touch_obstacles(touch_obstacles)
+
+        self.space = Space()
+        self.space.add(self.rock1.poly)
+        self.space.add(self.rock2.poly)
 
 
     def on_draw(self):
@@ -131,10 +138,12 @@ class Simulator(arcade.Window):
             address_center_cs = self.robot.center_color_sensor.address
             address_left_ts = self.robot.left_touch_sensor.address
             address_right_ts = self.robot.right_touch_sensor.address
+            address_us = self.robot.ultrasonic_sensor.address
 
             self.robot_state.values[address_center_cs] = self.robot.center_color_sensor.get_sensed_color()
             self.robot_state.values[address_left_ts] = self.robot.left_touch_sensor.is_touching()
             self.robot_state.values[address_right_ts] = self.robot.right_touch_sensor.is_touching()
+            self.robot_state.values[address_us] = self.robot.ultrasonic_sensor.distance(self.space)
 
 
 def main():

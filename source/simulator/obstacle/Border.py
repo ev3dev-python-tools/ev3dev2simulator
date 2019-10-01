@@ -23,7 +23,9 @@ class Border(Obstacle):
         self.right_points = None
         self.bottom_points = None
         self.left_points = None
+
         self.calc_points()
+        self.shapes = self._create_shapes()
 
 
     def calc_points(self):
@@ -54,7 +56,7 @@ class Border(Obstacle):
                                                        border_long_height)
 
 
-    def create(self) -> [Shape]:
+    def _create_shapes(self) -> [Shape]:
         """
         Create a list of shapes representing the four lines that make up this border.
         :return: a list of Arcade shapes.

@@ -27,6 +27,7 @@ import sys
 
 from ev3dev2.sensor.mock.MockColorSensor import MockColorSensor
 from ev3dev2.sensor.mock.MockTouchSensor import MockTouchSensor
+from ev3dev2.sensor.mock.MockUltrasonicSensor import MockUltrasonicSensor
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
@@ -42,3 +43,9 @@ class TouchSensor(MockTouchSensor):
 
     def __init__(self, address, name_pattern=MockColorSensor.SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(TouchSensor, self).__init__(address, name_pattern, name_exact, **kwargs)
+
+
+class UltrasonicSensor(MockUltrasonicSensor):
+
+    def __init__(self, address, name_pattern=MockColorSensor.SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+        super(UltrasonicSensor, self).__init__(address, name_pattern, name_exact, **kwargs)
