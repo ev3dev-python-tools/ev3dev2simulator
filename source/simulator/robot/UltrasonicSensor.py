@@ -3,14 +3,14 @@ import math
 from arcade import Point
 from pymunk import Space, ShapeFilter
 
+from simulator.robot import Robot
 from simulator.util.Util import distance_between_points
-from source.simulator.robot.Body import Body
-from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
+from source.simulator.robot.BodyPart import BodyPart
 
 SENSOR_HALF_HEIGHT = 15
 
 
-class UltrasonicSensor(ExtraBodyPart):
+class UltrasonicSensor(BodyPart):
     """
     Class representing an UltrasonicSensor of the simulated robot.
     """
@@ -19,13 +19,13 @@ class UltrasonicSensor(ExtraBodyPart):
     def __init__(self,
                  address: str,
                  img_cfg,
-                 body: Body,
+                 robot: Robot,
                  delta_x: int,
                  delta_y: int):
         super(UltrasonicSensor, self).__init__(address,
                                                img_cfg['ultrasonic_sensor'],
                                                0.13,
-                                               body,
+                                               robot,
                                                delta_x,
                                                delta_y)
 

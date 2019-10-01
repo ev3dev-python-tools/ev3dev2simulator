@@ -1,8 +1,8 @@
-from source.simulator.robot.Body import Body
-from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
+from simulator.robot import Robot
+from source.simulator.robot.BodyPart import BodyPart
 
 
-class TouchSensor(ExtraBodyPart):
+class TouchSensor(BodyPart):
     """
     Class representing a TouchSensor of the simulated robot.
     """
@@ -11,7 +11,7 @@ class TouchSensor(ExtraBodyPart):
     def __init__(self,
                  address: str,
                  img_cfg,
-                 body: Body,
+                 robot: Robot,
                  delta_x: int,
                  delta_y: int,
                  left: bool):
@@ -19,7 +19,7 @@ class TouchSensor(ExtraBodyPart):
         super(TouchSensor, self).__init__(address,
                                           img_cfg[img],
                                           0.21,
-                                          body,
+                                          robot,
                                           delta_x,
                                           delta_y)
 

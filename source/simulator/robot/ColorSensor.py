@@ -1,10 +1,10 @@
 import arcade
 
-from source.simulator.robot.Body import Body
-from source.simulator.robot.ExtraBodyPart import ExtraBodyPart
+from simulator.robot import Robot
+from source.simulator.robot.BodyPart import BodyPart
 
 
-class ColorSensor(ExtraBodyPart):
+class ColorSensor(BodyPart):
     """
     Class representing a ColorSensor of the simulated robot.
     """
@@ -13,13 +13,13 @@ class ColorSensor(ExtraBodyPart):
     def __init__(self,
                  address: str,
                  img_cfg,
-                 body: Body,
+                 robot: Robot,
                  delta_x: int,
                  delta_y: int):
         super(ColorSensor, self).__init__(address,
                                           img_cfg['color_sensor'],
                                           0.18,
-                                          body,
+                                          robot,
                                           delta_x,
                                           delta_y)
 

@@ -20,6 +20,9 @@ class Robot:
 
     def __init__(self, cfg, center_x: int, center_y: int):
 
+        self.wheel_center_x = center_x
+        self.wheel_center_y = center_y + 15
+
         img_cfg = cfg['image_paths']
         alloc_cfg = cfg['alloc_settings']
 
@@ -34,18 +37,18 @@ class Robot:
 
         self.wheel_distance = cfg['wheel_settings']['spacing']
 
-        self.body = Body(img_cfg, center_x, center_y)
-        self.left_wheel = Wheel(address_left_motor, img_cfg, self.body, (self.wheel_distance / -2), 1)
-        self.right_wheel = Wheel(address_right_motor, img_cfg, self.body, (self.wheel_distance / 2), 1)
+        self.body = Body(img_cfg, self, 0, -15)
+        self.left_wheel = Wheel(address_left_motor, img_cfg, self, (self.wheel_distance / -2), 0.01)
+        self.right_wheel = Wheel(address_right_motor, img_cfg, self, (self.wheel_distance / 2), 0.01)
 
-        self.center_color_sensor = ColorSensor(address_center_cs, img_cfg, self.body, 0, 69)
-        # self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self.body, -45, 70)
-        # self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self.body, 45, 70)
+        self.center_color_sensor = ColorSensor(address_center_cs, img_cfg, self, 0, 54)
+        # self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self, -45, 55)
+        # self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self, 45, 55)
 
-        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self.body, -50, 83, True)
-        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self.body, 50, 83, False)
+        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, -50, 68, True)
+        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, 50, 68, False)
 
-        self.ultrasonic_sensor = UltrasonicSensor(address_us, img_cfg, self.body, 0, -46)
+        self.ultrasonic_sensor = UltrasonicSensor(address_us, img_cfg, self, 0, -61)
 
         self.sprites = [self.body,
                         self.left_wheel,
@@ -105,6 +108,9 @@ class Robot:
                                                  distance_left,
                                                  distance_right,
                                                  cur_angle)
+
+        self.wheel_center_x += diff_x
+        self.wheel_center_y += diff_y
 
         self._rotate(diff_angle)
         self._move_x(diff_x)
