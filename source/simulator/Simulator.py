@@ -107,6 +107,7 @@ class Simulator(arcade.Window):
         center_cs = f"Center CS:  {self.robot_state.values.get(self.robot.center_color_sensor.address, 0)}"
         left_ts = f"Right TS:      {self.robot_state.values.get(self.robot.left_touch_sensor.address, False)}"
         right_ts = f"Left TS:         {self.robot_state.values.get(self.robot.right_touch_sensor.address, False)}"
+        top_us = f"Top US:        {int(round(self.robot_state.values.get(self.robot.ultrasonic_sensor.address, 0)))}"
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
@@ -114,8 +115,9 @@ class Simulator(arcade.Window):
         arcade.draw_text(center_cs, self.screen_width - 120, self.screen_height - 45, arcade.color.WHITE, 9)
         arcade.draw_text(left_ts, self.screen_width - 120, self.screen_height - 60, arcade.color.WHITE, 9)
         arcade.draw_text(right_ts, self.screen_width - 120, self.screen_height - 75, arcade.color.WHITE, 9)
-        arcade.draw_text('Sound:', self.screen_width - 120, self.screen_height - 90, arcade.color.WHITE, 9)
-        arcade.draw_text(sound, self.screen_width - 120, self.screen_height - 105, arcade.color.WHITE, 9,
+        arcade.draw_text(top_us, self.screen_width - 120, self.screen_height - 90, arcade.color.WHITE, 9)
+        arcade.draw_text('Sound:', self.screen_width - 120, self.screen_height - 105, arcade.color.WHITE, 9)
+        arcade.draw_text(sound, self.screen_width - 120, self.screen_height - 120, arcade.color.WHITE, 9,
                          anchor_y='top')
 
 
