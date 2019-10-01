@@ -1,5 +1,5 @@
+import Main
 from ev3dev2.connection.ClientSocket import get_client_socket
-from ev3dev2.main import Main
 
 
 def main():

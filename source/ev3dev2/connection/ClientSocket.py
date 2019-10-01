@@ -4,6 +4,7 @@ import time
 from typing import Any
 
 from ev3dev2.connection.message import DataRequest, MotorCommand, SoundCommand
+from simulator.util.Util import load_config
 
 
 class ClientSocket:
@@ -18,8 +19,10 @@ class ClientSocket:
 
 
     def setup(self):
+        port = load_config()['exec_settings']['socket_port']
+
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.connect(('localhost', 6840))
+        self.client.connect(('localhost', port))
 
         time.sleep(1)
 

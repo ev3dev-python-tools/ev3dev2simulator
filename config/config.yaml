@@ -19,6 +19,7 @@ alloc_settings:
 
 exec_settings:
   frames_per_second: 60
+  socket_port: 6840
 
 image_paths:
   body: "../../assets/images/body.png"

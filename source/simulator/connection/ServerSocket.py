@@ -9,6 +9,7 @@ from ev3dev2.connection.message.DriveCommand import DriveCommand
 from ev3dev2.connection.message.SoundCommand import SoundCommand
 from ev3dev2.connection.message.StopCommand import StopCommand
 from simulator.connection.MessageProcessor import MessageProcessor
+from simulator.util.Util import load_config
 
 
 class ServerSocket(threading.Thread):
@@ -31,9 +32,11 @@ class ServerSocket(threading.Thread):
         When the connection breaks up listen for a new connection.
         """
 
+        port = load_config()['exec_settings']['socket_port']
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.bind(('localhost', 6840))
+        server.bind(('localhost', port))
         server.listen(5)
 
         while True:
