@@ -25,7 +25,7 @@ class Simulator(arcade.Window):
         self.screen_height = self.cfg['screen_settings']['screen_height']
         screen_title = self.cfg['screen_settings']['screen_title']
 
-        super(Simulator, self).__init__(self.screen_width, self.screen_height, screen_title)
+        super(Simulator, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30)
 
         arcade.set_background_color(arcade.color.BLACK_OLIVE)
 
@@ -45,6 +45,11 @@ class Simulator(arcade.Window):
 
         self.space = None
 
+        self.center_cs_data = 0
+        self.left_ts_data = False
+        self.right_ts_data = False
+        self.top_us_data = -1
+
 
     def setup(self):
         """
@@ -59,6 +64,9 @@ class Simulator(arcade.Window):
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
+
+        for s in self.robot.get_sensors():
+            self.robot_state.load_sensor(s)
 
         self.blue_lake = BlueLake(self.cfg)
         self.green_lake = GreenLake(self.cfg)
@@ -92,7 +100,7 @@ class Simulator(arcade.Window):
 
     def on_draw(self):
         """
-        Render the simulation. This is done in 60 frames per second.
+        Render the simulation. This is done in 30 frames per second.
         """
 
         arcade.start_render()
@@ -104,20 +112,20 @@ class Simulator(arcade.Window):
 
 
     def _draw_text(self):
-        center_cs = f"Center CS:  {self.robot_state.values.get(self.robot.center_color_sensor.address, 0)}"
-        left_ts = f"Right TS:      {self.robot_state.values.get(self.robot.left_touch_sensor.address, False)}"
-        right_ts = f"Left TS:         {self.robot_state.values.get(self.robot.right_touch_sensor.address, False)}"
-        top_us = f"Top US:        {int(round(self.robot_state.values.get(self.robot.ultrasonic_sensor.address, 0)))}"
+        center_cs = f"CS center:  {self.center_cs_data}"
+        left_ts = f"TS right:      {self.right_ts_data}"
+        right_ts = f"TS left:         {self.left_ts_data}"
+        top_us = f"US top:        {int(round(self.top_us_data))}"
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
 
-        arcade.draw_text(center_cs, self.screen_width - 120, self.screen_height - 45, arcade.color.WHITE, 9)
-        arcade.draw_text(left_ts, self.screen_width - 120, self.screen_height - 60, arcade.color.WHITE, 9)
-        arcade.draw_text(right_ts, self.screen_width - 120, self.screen_height - 75, arcade.color.WHITE, 9)
-        arcade.draw_text(top_us, self.screen_width - 120, self.screen_height - 90, arcade.color.WHITE, 9)
-        arcade.draw_text('Sound:', self.screen_width - 120, self.screen_height - 105, arcade.color.WHITE, 9)
-        arcade.draw_text(sound, self.screen_width - 120, self.screen_height - 120, arcade.color.WHITE, 9,
+        arcade.draw_text(center_cs, self.screen_width - 125, self.screen_height - 45, arcade.color.WHITE, 10)
+        arcade.draw_text(left_ts, self.screen_width - 125, self.screen_height - 60, arcade.color.WHITE, 10)
+        arcade.draw_text(right_ts, self.screen_width - 125, self.screen_height - 75, arcade.color.WHITE, 10)
+        arcade.draw_text(top_us, self.screen_width - 125, self.screen_height - 90, arcade.color.WHITE, 10)
+        arcade.draw_text('Sound:', self.screen_width - 125, self.screen_height - 105, arcade.color.WHITE, 10)
+        arcade.draw_text(sound, self.screen_width - 125, self.screen_height - 120, arcade.color.WHITE, 10,
                          anchor_y='top')
 
 
@@ -142,10 +150,17 @@ class Simulator(arcade.Window):
             address_right_ts = self.robot.right_touch_sensor.address
             address_us = self.robot.ultrasonic_sensor.address
 
-            self.robot_state.values[address_center_cs] = self.robot.center_color_sensor.get_sensed_color()
-            self.robot_state.values[address_left_ts] = self.robot.left_touch_sensor.is_touching()
-            self.robot_state.values[address_right_ts] = self.robot.right_touch_sensor.is_touching()
-            self.robot_state.values[address_us] = self.robot.ultrasonic_sensor.distance(self.space)
+            self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
+            self.left_ts_data = self.robot.left_touch_sensor.is_touching()
+            self.right_ts_data = self.robot.right_touch_sensor.is_touching()
+            self.top_us_data = self.robot.ultrasonic_sensor.distance(self.space)
+
+            self.robot_state.values[address_center_cs] = self.center_cs_data
+            self.robot_state.values[address_left_ts] = self.left_ts_data
+            self.robot_state.values[address_right_ts] = self.right_ts_data
+            self.robot_state.values[address_us] = self.top_us_data
+
+        self.robot_state.release_locks()
 
 
 def main():

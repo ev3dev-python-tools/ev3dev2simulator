@@ -1,6 +1,6 @@
 import time
 
-import ev3dev2.Motor
+import ev3dev2.motor
 from ev3dev2.mock.MockDevice import MockDevice
 # The number of milliseconds we wait for the state of a motor to
 # update to 'running' in the "on_for_XYZ" methods of the Motor class
@@ -775,11 +775,11 @@ class MockMotor(MockDevice):
     def _speed_native_units(self, speed, label=None):
 
         # If speed is not a SpeedValue object we treat it as a percentage
-        if not isinstance(speed, ev3dev2.Motor.SpeedValue):
+        if not isinstance(speed, ev3dev2.motor.SpeedValue):
             assert -100 <= speed <= 100, \
                 "{}{} is an invalid speed percentage, must be between -100 and 100 (inclusive)".format(
                     "" if label is None else (label + ": "), speed)
-            speed = ev3dev2.Motor.SpeedPercent(speed)
+            speed = ev3dev2.motor.SpeedPercent(speed)
 
         return speed.to_native_units(self)
 

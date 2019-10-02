@@ -1,6 +1,9 @@
+import threading
 from _queue import Empty
 from queue import Queue
+from typing import Any
 
+from simulator.robot import BodyPart
 from simulator.util.Util import load_config
 
 
@@ -24,7 +27,9 @@ class RobotState:
         self.sound_queue = Queue()
 
         self.should_reset = False
+
         self.values = {}
+        self.locks = {}
 
 
     def next_left_move_job(self) -> float:
@@ -126,6 +131,40 @@ class RobotState:
 
         if self.address_motor_right == address:
             return 'right'
+
+
+    def load_sensor(self, sensor: BodyPart):
+        """
+        Load the given sensor adding its default value to this state.
+        Also create a lock for the given sensor.
+        :param sensor: to load.
+        """
+
+        self.values[sensor.address] = sensor.get_default_value()
+        self.locks[sensor.address] = threading.Lock()
+
+
+    def release_locks(self):
+        """
+        Release all the locked sensor locks. This re-allows for reading
+        the sensor values.
+        """
+
+        for lock in self.locks.values():
+            if lock.locked():
+                lock.release()
+
+
+    def get_value(self, address: str) -> Any:
+        """
+        Get the value of a sensor by its address. Blocks if the lock of
+        the requested sensor is not available.
+        :param address: of the sensor to get the value from.
+        :return: the value of the sensor.
+        """
+
+        self.locks[address].acquire()
+        return self.values[address]
 
 
 robot_state = RobotState()

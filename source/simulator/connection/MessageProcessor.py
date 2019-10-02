@@ -1,3 +1,5 @@
+from typing import Any
+
 from ev3dev2.connection.message import DriveCommand, DataRequest, StopCommand, SoundCommand
 from simulator.util.Util import load_config
 
@@ -80,11 +82,11 @@ class MessageProcessor:
             self.robot_state.put_sound_job(message)
 
 
-    def process_data_request(self, request: DataRequest) -> dict:
+    def process_data_request(self, request: DataRequest) -> Any:
         """
         Process the given data request by retrieving the requested value from the RobotState and returning this.
         :param request: to process.
         :return: a dictionary containing the requested value.
         """
 
-        return self.robot_state.values[request.address]
+        return self.robot_state.get_value(request.address)

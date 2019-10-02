@@ -55,7 +55,9 @@ class MockUltrasonicSensor(Sensor):
         """
 
         self._ensure_mode(self.MODE_US_DIST_CM)
-        return self.connector.get_value() * get_cm_multiplier()
+
+        value = self.connector.get_value()
+        return value if value == -1 else value * get_cm_multiplier()
 
 
     @property
@@ -77,7 +79,9 @@ class MockUltrasonicSensor(Sensor):
         # This mode is special; setting the mode causes the sensor to send out
         # a "ping", but the mode isn't actually changed.
         self.mode = self.MODE_US_SI_CM
-        return self.connector.get_value() * get_cm_multiplier()
+
+        value = self.connector.get_value()
+        return value if value == -1 else value * get_cm_multiplier()
 
 
     @property
@@ -104,7 +108,9 @@ class MockUltrasonicSensor(Sensor):
         """
 
         self._ensure_mode(self.MODE_US_DIST_IN)
-        return self.connector.get_value() * get_inch_multiplier()
+
+        value = self.connector.get_value()
+        return value if value == -1 else value * get_inch_multiplier()
 
 
     @property
@@ -126,7 +132,9 @@ class MockUltrasonicSensor(Sensor):
         # This mode is special; setting the mode causes the sensor to send out
         # a "ping", but the mode isn't actually changed.
         self.mode = self.MODE_US_SI_IN
-        return self.connector.get_value() * get_inch_multiplier()
+
+        value = self.connector.get_value()
+        return value if value == -1 else value * get_inch_multiplier()
 
 
     @property
@@ -148,3 +156,20 @@ class MockUltrasonicSensor(Sensor):
         """
 
         pass
+
+
+    def value(self, n=0):
+        """
+        Returns the value or values measured by the sensor. Check num_values to
+        see how many values there are. Values with N >= num_values will return
+        an error. The values are fixed point numbers, so check decimals to see
+        if you need to divide to get the actual value.
+        """
+
+        if self.mode == self.MODE_US_DIST_CM \
+                or self.mode == self.MODE_US_SI_IN:
+            return self.distance_centimeters_continuous
+
+        elif self.mode == self.MODE_US_DIST_IN \
+                or self.mode == self.MODE_US_SI_IN:
+            return self.distance_inches_continuous

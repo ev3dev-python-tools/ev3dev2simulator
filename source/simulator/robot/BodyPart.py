@@ -76,3 +76,13 @@ class BodyPart(arcade.Sprite):
         """
 
         self.sensible_obstacles = obstacles
+
+
+    def get_default_value(self):
+        """
+        Get the default value which the sensor would return without
+        any interaction with the world.
+        :return: any possible value representing the default value.
+        """
+
+        return -1

@@ -1,24 +1,24 @@
 alloc_settings:
   motor:
-    center: 'OUTPUT_C'
-    left: 'OUTPUT_A'
-    right: 'OUTPUT_B'
+    center: 'ev3-ports:outB'
+    left: 'ev3-ports:outA'
+    right: 'ev3-ports:outD'
 
   color_sensor:
-    center: 'INPUT_3'
-    left: 'INPUT_1'
-    right: 'INPUT_2'
+    center: 'ev3-ports:in2'
+    left: ''
+    right: ''
 
   touch_sensor:
-    left: 'INPUT_4'
-    right: 'INPUT_5'
+    left: 'ev3-ports:in1'
+    right: 'ev3-ports:in4'
 
   ultrasonic_sensor:
-    top: 'INPUT_6'
-    bottom: 'INPUT_7'
+    top: 'ev3-ports:in3'
+    bottom: ''
 
 exec_settings:
-  frames_per_second: 60
+  frames_per_second: 30
   socket_port: 6840
 
 image_paths:
@@ -55,5 +55,5 @@ screen_settings:
 wheel_settings:
   circumference: 115
   spacing: 80
-  coasting_subtraction: 0.1
+  coasting_subtraction: 0.2
 

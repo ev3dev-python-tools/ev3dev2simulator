@@ -3,6 +3,7 @@ import math
 from arcade import Sprite
 
 from simulator.obstacle import Obstacle
+from simulator.robot import BodyPart
 from simulator.robot.UltrasonicSensor import UltrasonicSensor
 from simulator.util.Util import calc_differential_steering_angle_x_y
 from source.simulator.robot.Body import Body
@@ -140,3 +141,10 @@ class Robot:
 
     def get_sprites(self) -> [Sprite]:
         return self.sprites
+
+
+    def get_sensors(self) -> [BodyPart]:
+        return [self.center_color_sensor,
+                self.right_touch_sensor,
+                self.left_touch_sensor,
+                self.ultrasonic_sensor]

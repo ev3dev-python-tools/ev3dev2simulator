@@ -31,3 +31,7 @@ class TouchSensor(BodyPart):
                 return True
 
         return False
+
+
+    def get_default_value(self):
+        return False

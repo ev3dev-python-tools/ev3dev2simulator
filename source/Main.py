@@ -1,25 +1,82 @@
-from ev3dev2.Motor import MoveTank, SpeedPercent
+from ev3dev2._platform.ev3 import INPUT_1, INPUT_4, INPUT_2, INPUT_3
+from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
+from ev3dev2.sensor.lego import ColorSensor
+from ev3dev2.sensor.lego import TouchSensor
 from ev3dev2.sensor.lego import UltrasonicSensor
 from ev3dev2.sound import Sound
 
 
+# !/usr/bin/env python3
+
+class Runner:
+
+    def __init__(self):
+        self.s = Sound()
+        self.cs = ColorSensor(INPUT_2)
+        self.ts1 = TouchSensor(INPUT_1)
+        self.ts4 = TouchSensor(INPUT_4)
+
+        self.us = UltrasonicSensor(INPUT_3)
+        self.us.mode = 'US-DIST-CM'
+
+        self.tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
+
+        self.drive()
+        self.check()
+
+
+    def reverseRotations(self, rotations):
+        self.tank_drive.on_for_rotations(SpeedPercent(-35), SpeedPercent(-35), rotations, brake=False)
+
+
+    def rotateDegrees(self, degrees):
+        degrees = degrees * 2
+        self.tank_drive.on_for_degrees(SpeedPercent(40), SpeedPercent(0), degrees, brake=False)
+
+
+    def drive(self):
+        self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
+
+
+    def checkCollision(self):
+        if self.ts1.is_pressed or self.ts4.is_pressed:
+            self.tank_drive.stop()
+
+            # self.s.speak("blyat.wav")
+            self.reverseRotations(1)
+            self.rotateDegrees(180)
+
+            self.drive()
+
+
+    def checkColor(self):
+        if self.cs.color == 6:
+            self.tank_drive.stop()
+
+            # self.s.speak("blyat.wav")
+            self.reverseRotations(1)
+            self.rotateDegrees(150)
+
+            self.drive()
+
+
+    def checkDistance(self):
+        if -1 > self.us.value() < 180:
+            self.tank_drive.stop()
+
+            # self.s.speak("wow")
+            self.reverseRotations(1)
+            self.rotateDegrees(125)
+
+            self.drive()
+
+
+    def check(self):
+        while True:
+            self.checkCollision()
+            self.checkColor()
+            self.checkDistance()
+
+
 def main():
-    m = MoveTank('OUTPUT_A', 'OUTPUT_B')
-    # m.on_for_degrees(SpeedPercent(60), SpeedPercent(60), 100, brake=True, block=False)
-    # # # m.on_for_degrees(SpeedPercent(20), SpeedPercent(20), 1500, brake=True, block=False)
-    # #
-    # # time.sleep(1)
-    # # m.stop(brake=False)
-    #
-    m.on_for_degrees(SpeedPercent(80), SpeedPercent(-80), 80, brake=True, block=False)
-    # time.sleep(0.5)
-    # m.stop(brake=False)
-
-    m.on_for_degrees(SpeedPercent(5), SpeedPercent(5), 1000, brake=False, block=False)
-    #
-    s = Sound()
-    s.speak('HALLOOOOOOOOOOO!')
-
-    ts = UltrasonicSensor('INPUT_6')
-    while True:
-        print(str(ts.distance_centimeters))
+    Runner()

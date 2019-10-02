@@ -238,3 +238,14 @@ class MockColorSensor(Sensor):
         """
 
         pass
+
+
+    def value(self, n=0):
+        """
+        Returns the value or values measured by the sensor. Check num_values to
+        see how many values there are. Values with N >= num_values will return
+        an error. The values are fixed point numbers, so check decimals to see
+        if you need to divide to get the actual value.
+        """
+
+        return self.color()
