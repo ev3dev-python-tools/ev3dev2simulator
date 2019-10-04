@@ -2,7 +2,7 @@ import math
 
 from arcade import Sprite
 
-from simulator.obstacle import Obstacle
+from simulator.obstacle import ColorObstacle
 from simulator.robot import BodyPart
 from simulator.robot.UltrasonicSensor import UltrasonicSensor
 from simulator.util.Util import calc_differential_steering_angle_x_y
@@ -118,7 +118,7 @@ class Robot:
         self._move_y(diff_y)
 
 
-    def set_color_obstacles(self, obstacles: [Obstacle]):
+    def set_color_obstacles(self, obstacles: [ColorObstacle]):
         """
         Set the obstacles which can be detected by the color sensors of this robot.
         :param obstacles: to be detected.
@@ -129,7 +129,7 @@ class Robot:
         # self.right_color_sensor.set_sensible_obstacles(obstacles)
 
 
-    def set_touch_obstacles(self, obstacles: [Obstacle]):
+    def set_touch_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the touch sensors of this robot.
         :param obstacles: to be detected.

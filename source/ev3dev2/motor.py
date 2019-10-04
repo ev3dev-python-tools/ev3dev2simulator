@@ -28,6 +28,7 @@ if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
 
 from logging import getLogger
+from ev3dev2._platform.ev3 import OUTPUT_A, OUTPUT_B, OUTPUT_C, OUTPUT_D
 
 log = getLogger(__name__)
 

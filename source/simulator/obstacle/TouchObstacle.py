@@ -1,15 +1,13 @@
 import arcade
 
 
-class Obstacle:
+class TouchObstacle:
     """
-    This class provides basic functionality for obstacles. These include color coding
-    and collision detection.
+    This class provides basic functionality for obstacles which can be interacted with using touch.
     """
 
 
-    def __init__(self, color_code: int):
-        self.color_code = color_code
+    def __init__(self):
         self.points = None
 
 

@@ -2,7 +2,6 @@ import math
 
 import arcade
 
-from simulator.obstacle import Obstacle
 from simulator.robot import Robot
 from simulator.util.Util import pythagoras
 
@@ -69,7 +68,7 @@ class BodyPart(arcade.Sprite):
         self.center_y = self.sweep_length * math.cos(-rad) + self.robot.wheel_center_y
 
 
-    def set_sensible_obstacles(self, obstacles: [Obstacle]):
+    def set_sensible_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected via collision detection by this body part.
         :param obstacles: to be detected.

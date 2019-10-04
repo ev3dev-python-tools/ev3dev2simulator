@@ -1,12 +1,12 @@
 import arcade
 from arcade import Shape, PointList
 
-from simulator.obstacle.Obstacle import Obstacle
+from simulator.obstacle.ColorObstacle import ColorObstacle
 from simulator.util.Color import RED, GREEN, BLUE, to_color_code
 from source.simulator.util.Util import get_circle_points
 
 
-class Lake(Obstacle):
+class Lake(ColorObstacle):
     """
     This class represents a 'lake'. Lakes consist of a transparent circle
     with a thick colored border.

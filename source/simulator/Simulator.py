@@ -139,8 +139,7 @@ class Simulator(arcade.Window):
             self.robot_state.reset()
 
         else:
-            left_ppf = self.robot_state.next_left_move_job()
-            right_ppf = self.robot_state.next_right_move_job()
+            left_ppf, right_ppf = self.robot_state.next_move_jobs()
 
             if left_ppf or right_ppf:
                 self.robot.execute_movement(left_ppf, right_ppf)

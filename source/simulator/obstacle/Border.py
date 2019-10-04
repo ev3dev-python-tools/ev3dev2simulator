@@ -1,10 +1,10 @@
 import arcade
 from arcade import Shape
 
-from simulator.obstacle.Obstacle import Obstacle
+from simulator.obstacle.ColorObstacle import ColorObstacle
 
 
-class Border(Obstacle):
+class Border(ColorObstacle):
     """
     The outer line surrounding the playing field.
     """
@@ -74,17 +74,17 @@ class Border(Obstacle):
         return [top, right, bottom, left]
 
 
-    def collided_with(self, sprite: arcade.Sprite) -> bool:
-        if arcade.are_polygons_intersecting(self.top_points, sprite.points):
+    def collided_with(self, x: float, y: float) -> bool:
+        if arcade.is_point_in_polygon(x, y, self.top_points):
             return True
 
-        if arcade.are_polygons_intersecting(self.left_points, sprite.points):
+        if arcade.is_point_in_polygon(x, y, self.left_points):
             return True
 
-        if arcade.are_polygons_intersecting(self.bottom_points, sprite.points):
+        if arcade.is_point_in_polygon(x, y, self.bottom_points):
             return True
 
-        if arcade.are_polygons_intersecting(self.right_points, sprite.points):
+        if arcade.is_point_in_polygon(x, y, self.right_points):
             return True
 
         return False

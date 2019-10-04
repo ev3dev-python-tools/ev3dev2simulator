@@ -2,10 +2,10 @@ import arcade
 from arcade import Shape, PointList
 from pymunk import Body, Poly, Vec2d
 
-from simulator.obstacle.Obstacle import Obstacle
+from simulator.obstacle.TouchObstacle import TouchObstacle
 
 
-class Rock(Obstacle):
+class Rock(TouchObstacle):
     """
     This class represents a 'rock'. Rocks consist of an inner rectangle
     with outer outline rectangle functioning as the border.
@@ -19,7 +19,7 @@ class Rock(Obstacle):
                  height: int,
                  color: arcade.Color,
                  angle: int):
-        super(Rock, self).__init__(1)
+        super(Rock, self).__init__()
 
         self.center_x = center_x
         self.center_y = center_y

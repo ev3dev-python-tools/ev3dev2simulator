@@ -1,7 +1,7 @@
 import threading
 from _queue import Empty
 from queue import Queue
-from typing import Any
+from typing import Any, Tuple
 
 from simulator.robot import BodyPart
 from simulator.util.Util import load_config
@@ -31,29 +31,7 @@ class RobotState:
         self.values = {}
         self.locks = {}
 
-
-    def next_left_move_job(self) -> float:
-        """
-        Get the next move job for the left motor from the queue.
-        :return: a floating point number representing the job move distance.
-        """
-
-        try:
-            return self.left_move_queue.get_nowait()
-        except Empty:
-            return None
-
-
-    def next_right_move_job(self) -> float:
-        """
-        Get the next move job for the right motor from the queue.
-        :return: a floating point number representing the job move distance.
-        """
-
-        try:
-            return self.right_move_queue.get_nowait()
-        except Empty:
-            return None
+        self.motor_lock = threading.Lock()
 
 
     def put_move_job(self, job: float, side: str):
@@ -69,21 +47,37 @@ class RobotState:
             self.right_move_queue.put_nowait(job)
 
 
+    def next_move_jobs(self) -> Tuple[float, float]:
+        """
+        Get the next move jobs for the left and right motor from the queues.
+        :return: a floating point numbers representing the job move distances.
+        """
+
+        self.motor_lock.acquire()
+
+        try:
+            left = self.left_move_queue.get_nowait()
+        except Empty:
+            left = None
+
+        try:
+            right = self.right_move_queue.get_nowait()
+        except Empty:
+            right = None
+
+        self.motor_lock.release()
+        return left, right
+
+
     def clear_move_jobs(self, side: str):
+        self.motor_lock.acquire()
+
         if side == 'left':
-            self._clear_left_move_jobs()
+            self.left_move_queue = Queue()
         else:
-            self._clear_right_move_jobs()
+            self.right_move_queue = Queue()
 
-
-    def _clear_left_move_jobs(self):
-        while not self.left_move_queue.empty():
-            self.left_move_queue.get_nowait()
-
-
-    def _clear_right_move_jobs(self):
-        while not self.right_move_queue.empty():
-            self.right_move_queue.get_nowait()
+        self.motor_lock.release()
 
 
     def put_sound_job(self, job: str):
@@ -108,9 +102,13 @@ class RobotState:
 
 
     def reset(self):
+        """
+        Reset the data of this State
+        :return:
+        """
 
-        self._clear_left_move_jobs()
-        self._clear_right_move_jobs()
+        self.clear_move_jobs('left')
+        self.clear_move_jobs('right')
 
         self.values.clear()
         self.should_reset = False
