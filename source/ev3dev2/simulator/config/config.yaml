@@ -1,0 +1,61 @@
+alloc_settings:
+  motor:
+    center: 'ev3-ports:outB'
+    left: 'ev3-ports:outA'
+    right: 'ev3-ports:outD'
+
+  color_sensor:
+    center: 'ev3-ports:in2'
+    left: ''
+    right: ''
+
+  touch_sensor:
+    left: 'ev3-ports:in1'
+    right: 'ev3-ports:in4'
+
+  ultrasonic_sensor:
+    top: 'ev3-ports:in3'
+    bottom: ''
+
+exec_settings:
+  frames_per_second: 30
+  socket_port: 6840
+
+image_paths:
+  body: "assets/images/body.png"
+  color_sensor: "assets/images/color_sensor.png"
+  color_sensor_blue: "assets/images/color_sensor_blue.png"
+  color_sensor_green: "assets/images/color_sensor_green.png"
+  color_sensor_red: "assets/images/color_sensor_red.png"
+  touch_sensor_left: "assets/images/touch_sensor_left.png"
+  touch_sensor_right: "assets/images/touch_sensor_right.png"
+  ultrasonic_sensor: "assets/images/ultrasonic_sensor.png"
+  wheel: "assets/images/wheel.png"
+
+obstacle_settings:
+  border_settings:
+    border_depth: 15
+
+  lake_settings:
+    border_width: 29
+    inner_radius: 38
+    lake_blue_x: 137
+    lake_blue_y: 922
+    lake_green_x: 1052
+    lake_green_y: 567
+    lake_red_x: 397
+    lake_red_y: 232
+
+
+screen_settings:
+  edge_spacing: 23
+  scaling_multiplier: 0.60
+  screen_height: 1273 # 1250mm + 23 edge spacing
+  screen_width: 1273
+  screen_title: "Lego ev3dev2 simulator"
+
+wheel_settings:
+  circumference: 173
+  spacing: 120
+  coasting_subtraction: 0.3
+

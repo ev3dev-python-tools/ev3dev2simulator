@@ -1,10 +1,10 @@
 import time
 
 import ev3dev2.motor
-from ev3dev2.mock.MockDevice import MockDevice
 # The number of milliseconds we wait for the state of a motor to
 # update to 'running' in the "on_for_XYZ" methods of the Motor class
-from ev3dev2.util.MotorConnector import *
+from ev3dev2.mock.MockDevice import MockDevice
+from ev3dev2.simulator.connector.MotorConnector import MotorConnector
 
 WAIT_RUNNING_TIMEOUT = 100
 

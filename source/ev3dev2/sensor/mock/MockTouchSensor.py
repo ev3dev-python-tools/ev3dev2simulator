@@ -2,7 +2,7 @@ import sys
 import time
 
 from ev3dev2.sensor import Sensor
-from ev3dev2.util.SensorConnector import SensorConnector
+from ev3dev2.simulator.connector.SensorConnector import SensorConnector
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
