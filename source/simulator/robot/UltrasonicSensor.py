@@ -4,10 +4,10 @@ from arcade import Point
 from pymunk import Space, ShapeFilter
 
 from simulator.robot import Robot
-from simulator.util.Util import distance_between_points
+from simulator.util.Util import distance_between_points, apply_scaling
 from source.simulator.robot.BodyPart import BodyPart
 
-SENSOR_HALF_HEIGHT = 15
+SENSOR_HALF_HEIGHT = apply_scaling(22.5)
 
 
 class UltrasonicSensor(BodyPart):
@@ -24,7 +24,7 @@ class UltrasonicSensor(BodyPart):
                  delta_y: int):
         super(UltrasonicSensor, self).__init__(address,
                                                img_cfg['ultrasonic_sensor'],
-                                               0.13,
+                                               apply_scaling(0.20),
                                                robot,
                                                delta_x,
                                                delta_y)

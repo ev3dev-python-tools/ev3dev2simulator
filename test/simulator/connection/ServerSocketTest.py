@@ -1,4 +1,5 @@
 import json
+import threading
 import unittest
 
 from simulator.connection.ServerSocket import ServerSocket
@@ -6,12 +7,13 @@ from simulator.state.RobotState import get_robot_state
 from simulator.util.Util import load_config
 
 
+# based on scaling_multiplier: 0.60
 class ServerSocketTest(unittest.TestCase):
 
     def test_process_drive_command(self):
         d = {
             'type': 'DriveCommand',
-            'address': 'OUTPUT_A',
+            'address': 'ev3-ports:outA',
             'ppf': 10,
             'frames': 100,
             'frames_coast': 0
@@ -22,17 +24,17 @@ class ServerSocketTest(unittest.TestCase):
         server._process_drive_command(d)
 
         for i in range(100):
-            job = robot_state.next_left_move_job()
-            self.assertAlmostEqual(job, 10.0, 3)
+            l, r = robot_state.next_move_jobs()
+            self.assertAlmostEqual(l, 6.0, 3)
+            self.assertIsNone(r)
 
-        self.assertIsNone(robot_state.next_left_move_job())
-        self.assertIsNone(robot_state.next_right_move_job())
+        self.assertEqual((None, None), robot_state.next_move_jobs())
 
 
     def test_process_stop_command(self):
         d = {
             'type': 'StopCommand',
-            'address': 'OUTPUT_B',
+            'address': 'ev3-ports:outB',
             'ppf': 20,
             'frames': 200,
         }
@@ -43,10 +45,10 @@ class ServerSocketTest(unittest.TestCase):
         server._process_stop_command(d)
 
         for i in range(200):
-            self.assertIsNotNone(robot_state.next_right_move_job())
+            l, r = robot_state.next_move_jobs()
+            self.assertIsNotNone(r)
 
-        self.assertIsNone(robot_state.next_left_move_job())
-        self.assertIsNone(robot_state.next_right_move_job())
+        self.assertEqual((None, None), robot_state.next_move_jobs())
 
 
     def test_process_sound_command(self):
@@ -71,11 +73,12 @@ class ServerSocketTest(unittest.TestCase):
     def test_process_data_request(self):
         d = {
             'type': 'DataRequest',
-            'address': 'INPUT_4',
+            'address': 'ev3-ports:in4',
         }
 
         robot_state = get_robot_state()
-        robot_state.values['INPUT_4'] = 10
+        robot_state.values['ev3-ports:in4'] = 10
+        robot_state.locks['ev3-ports:in4'] = threading.Lock()
 
         server = ServerSocket(robot_state)
         data = server._process_data_request(d)

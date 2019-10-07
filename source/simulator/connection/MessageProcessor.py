@@ -1,7 +1,7 @@
 from typing import Any
 
 from ev3dev2.connection.message import DriveCommand, DataRequest, StopCommand, SoundCommand
-from simulator.util.Util import load_config
+from simulator.util.Util import load_config, apply_scaling, remove_scaling
 
 
 class MessageProcessor:
@@ -13,8 +13,9 @@ class MessageProcessor:
 
     def __init__(self, robot_state):
         cfg = load_config()
-        self.coasting_sub = cfg['wheel_settings']['coasting_subtraction']
+        self.coasting_sub = apply_scaling(cfg['wheel_settings']['coasting_subtraction'])
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
+        self.address_us = cfg['alloc_settings']['ultrasonic_sensor']['top']
 
         self.robot_state = robot_state
 
@@ -25,12 +26,13 @@ class MessageProcessor:
         :param command: to process.
         """
 
+        ppf = apply_scaling(command.ppf)
         side = self.robot_state.get_motor_side(command.address)
 
         for i in range(command.frames):
-            self.robot_state.put_move_job(command.ppf, side)
+            self.robot_state.put_move_job(ppf, side)
 
-        self._process_coast(command.frames_coast, command.ppf, side)
+        self._process_coast(command.frames_coast, ppf, side)
 
 
     def process_stop_command(self, command: StopCommand):
@@ -40,11 +42,12 @@ class MessageProcessor:
         :param command: to process.
         """
 
+        ppf = apply_scaling(command.ppf)
         side = self.robot_state.get_motor_side(command.address)
         self.robot_state.clear_move_jobs(side)
 
         if command.frames != 0:
-            self._process_coast(command.frames, command.ppf, side)
+            self._process_coast(command.frames, ppf, side)
 
 
     def _process_coast(self, frames, ppf, side):
@@ -89,4 +92,9 @@ class MessageProcessor:
         :return: a dictionary containing the requested value.
         """
 
-        return self.robot_state.get_value(request.address)
+        value = self.robot_state.get_value(request.address)
+
+        if request.address == self.address_us:
+            return remove_scaling(value)
+        else:
+            return value

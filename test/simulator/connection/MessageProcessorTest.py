@@ -1,3 +1,4 @@
+import threading
 import unittest
 
 from ev3dev2.connection.message.DataRequest import DataRequest
@@ -5,58 +6,60 @@ from ev3dev2.connection.message.DriveCommand import DriveCommand
 from ev3dev2.connection.message.SoundCommand import SoundCommand
 from simulator.connection.MessageProcessor import MessageProcessor
 from simulator.state.RobotState import get_robot_state
-from simulator.util.Util import load_config
+from simulator.util.Util import load_config, apply_scaling
 
 
+# based on scaling_multiplier: 0.60
 class MessageProcessorTest(unittest.TestCase):
 
     def test_create_jobs_left(self):
         robot_state = get_robot_state()
 
         message_processor = MessageProcessor(robot_state)
-        message_processor.process_drive_command(DriveCommand('OUTPUT_A', 0.106, 100, 0))
+        message_processor.process_drive_command(DriveCommand('ev3-ports:outA', 1.2, 100, 0))
 
         for i in range(100):
-            job = robot_state.next_left_move_job()
-            self.assertAlmostEqual(job, 0.106, 3)
+            l, r = robot_state.next_move_jobs()
+            self.assertAlmostEqual(l, 0.72, 3)
+            self.assertIsNone(r)
 
-        self.assertIsNone(robot_state.next_left_move_job())
-        self.assertIsNone(robot_state.next_right_move_job())
+        self.assertEqual((None, None), robot_state.next_move_jobs())
 
 
     def test_create_jobs_right(self):
         robot_state = get_robot_state()
 
         message_processor = MessageProcessor(robot_state)
-        message_processor.process_drive_command(DriveCommand('OUTPUT_B', 0.426, 150, 0))
+        message_processor.process_drive_command(DriveCommand('ev3-ports:outB', 0.8, 150, 0))
 
         for i in range(150):
-            job = robot_state.next_right_move_job()
-            self.assertAlmostEqual(job, 0.426, 3)
+            l, r = robot_state.next_move_jobs()
+            self.assertIsNone(l)
+            self.assertAlmostEqual(r, 0.48, 3)
 
-        self.assertIsNone(robot_state.next_left_move_job())
-        self.assertIsNone(robot_state.next_right_move_job())
+        self.assertEqual((None, None), robot_state.next_move_jobs())
 
 
     def test_create_jobs_coast(self):
-        coasting_sub = load_config()['wheel_settings']['coasting_subtraction']
+        coasting_sub = apply_scaling(load_config()['wheel_settings']['coasting_subtraction'])
         robot_state = get_robot_state()
 
         message_processor = MessageProcessor(robot_state)
-        message_processor.process_drive_command(DriveCommand('OUTPUT_A', 0.106, 100, 1))
+        message_processor.process_drive_command(DriveCommand('ev3-ports:outA', 0.4, 100, 1))
 
         for i in range(100):
-            job = robot_state.next_left_move_job()
-            self.assertAlmostEqual(job, 0.106, 3)
+            l, r = robot_state.next_move_jobs()
+            self.assertAlmostEqual(l, 0.24, 3)
+            self.assertIsNone(r)
 
-        ppf = 0.106 - coasting_sub
+        ppf = 0.24 - coasting_sub
         for i in range(1):
-            job = robot_state.next_left_move_job()
-            self.assertAlmostEqual(job, ppf, 3)
+            l, r = robot_state.next_move_jobs()
+            self.assertAlmostEqual(l, ppf, 3)
+            self.assertIsNone(r)
             ppf -= coasting_sub
 
-        self.assertIsNone(robot_state.next_left_move_job())
-        self.assertIsNone(robot_state.next_right_move_job())
+        self.assertEqual((None, None), robot_state.next_move_jobs())
 
 
     def test_process_sound_command(self):
@@ -78,10 +81,11 @@ class MessageProcessorTest(unittest.TestCase):
 
     def test_process_data_request(self):
         robot_state = get_robot_state()
-        robot_state.values['INPUT_4'] = 10
+        robot_state.values['ev3-ports:in4'] = 10
+        robot_state.locks['ev3-ports:in4'] = threading.Lock()
 
         message_processor = MessageProcessor(robot_state)
-        value = message_processor.process_data_request(DataRequest('INPUT_4'))
+        value = message_processor.process_data_request(DataRequest('ev3-ports:in4'))
 
         self.assertEqual(value, 10)
 

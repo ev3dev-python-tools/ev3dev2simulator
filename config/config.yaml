@@ -34,26 +34,28 @@ image_paths:
 
 obstacle_settings:
   border_settings:
-    border_depth: 10
+    border_depth: 15
 
   lake_settings:
-    border_width: 19
-    inner_radius: 25
-    lake_blue_x: 91
-    lake_blue_y: 614
-    lake_green_x: 701
-    lake_green_y: 377
-    lake_red_x: 264
-    lake_red_y: 154
+    border_width: 29
+    inner_radius: 38
+    lake_blue_x: 137
+    lake_blue_y: 922
+    lake_green_x: 1052
+    lake_green_y: 567
+    lake_red_x: 397
+    lake_red_y: 232
+
 
 screen_settings:
-  edge_spacing: 15
-  screen_height: 863 # 833 == 1250mm * 2/3 + 15 edge spacing
-  screen_width: 863
+  edge_spacing: 23
+  scaling_multiplier: 0.60
+  screen_height: 1273 # 1250mm + 23 edge spacing
+  screen_width: 1273
   screen_title: "Lego ev3dev2 simulator"
 
 wheel_settings:
-  circumference: 115
-  spacing: 80
-  coasting_subtraction: 0.2
+  circumference: 173
+  spacing: 120
+  coasting_subtraction: 0.3
 

@@ -2,6 +2,7 @@ import arcade
 from arcade import Shape
 
 from simulator.obstacle.ColorObstacle import ColorObstacle
+from simulator.util.Util import apply_scaling
 
 
 class Border(ColorObstacle):
@@ -13,10 +14,10 @@ class Border(ColorObstacle):
     def __init__(self, cfg, color: arcade.Color):
         super(Border, self).__init__(6)
 
-        self.screen_width = cfg['screen_settings']['screen_width']
-        self.screen_height = cfg['screen_settings']['screen_height']
-        self.depth = cfg['obstacle_settings']['border_settings']['border_depth']
-        self.edge_spacing = cfg['screen_settings']['edge_spacing']
+        self.screen_width = apply_scaling(cfg['screen_settings']['screen_width'])
+        self.screen_height = apply_scaling(cfg['screen_settings']['screen_height'])
+        self.depth = apply_scaling(cfg['obstacle_settings']['border_settings']['border_depth'])
+        self.edge_spacing = apply_scaling(cfg['screen_settings']['edge_spacing'])
         self.color = color
 
         self.top_points = None

@@ -12,7 +12,7 @@ from simulator.obstacle.Lake import GreenLake, BlueLake, RedLake
 from simulator.obstacle.Rock import Rock
 from simulator.robot.Robot import Robot
 from simulator.state.RobotState import get_robot_state
-from simulator.util.Util import load_config
+from simulator.util.Util import load_config, apply_scaling
 
 
 class Simulator(arcade.Window):
@@ -21,8 +21,8 @@ class Simulator(arcade.Window):
         self.cfg = config
         self.robot_state = robot_state
 
-        self.screen_width = self.cfg['screen_settings']['screen_width']
-        self.screen_height = self.cfg['screen_settings']['screen_height']
+        self.screen_width = apply_scaling(self.cfg['screen_settings']['screen_width'])
+        self.screen_height = apply_scaling(self.cfg['screen_settings']['screen_height'])
         screen_title = self.cfg['screen_settings']['screen_title']
 
         super(Simulator, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30)
@@ -60,7 +60,7 @@ class Simulator(arcade.Window):
         self.robot_elements = arcade.SpriteList()
         self.obstacle_elements = arcade.ShapeElementList()
 
-        self.robot = Robot(self.cfg, 300, 400)
+        self.robot = Robot(self.cfg, apply_scaling(450), apply_scaling(600))
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
@@ -72,8 +72,10 @@ class Simulator(arcade.Window):
         self.green_lake = GreenLake(self.cfg)
         self.red_lake = RedLake(self.cfg)
 
-        self.rock1 = Rock(550, 700, 100, 40, arcade.color.DARK_GRAY, 10)
-        self.rock2 = Rock(650, 250, 200, 60, arcade.color.DARK_GRAY, 130)
+        self.rock1 = Rock(apply_scaling(825), apply_scaling(1050), apply_scaling(150), apply_scaling(60),
+                          arcade.color.DARK_GRAY, 10)
+        self.rock2 = Rock(apply_scaling(975), apply_scaling(375), apply_scaling(300), apply_scaling(90),
+                          arcade.color.DARK_GRAY, 130)
 
         self.obstacle_elements.append(self.blue_lake.shape)
         self.obstacle_elements.append(self.green_lake.shape)
@@ -115,7 +117,7 @@ class Simulator(arcade.Window):
         center_cs = 'CS center:  ' + str(self.center_cs_data)
         left_ts = 'TS right:      ' + str(self.right_ts_data)
         right_ts = 'TS left:         ' + str(self.left_ts_data)
-        top_us = 'US top:        ' + str(int(round(self.top_us_data)))
+        top_us = 'US top:        ' + str(int(round(self.top_us_data))) + 'pix'
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'

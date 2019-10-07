@@ -125,3 +125,14 @@ def get_project_root() -> str:
 
     path = Path(__file__).parent.parent.parent.parent
     return str(path)
+
+
+def apply_scaling(value):
+    return scaling_multiplier * value
+
+
+def remove_scaling(value):
+    return value / scaling_multiplier
+
+
+scaling_multiplier = load_config()['screen_settings']['scaling_multiplier']

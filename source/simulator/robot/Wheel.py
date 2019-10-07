@@ -1,4 +1,5 @@
 from simulator.robot import Robot
+from simulator.util.Util import apply_scaling
 from source.simulator.robot.BodyPart import BodyPart
 
 
@@ -16,7 +17,7 @@ class Wheel(BodyPart):
                  delta_y: int):
         super(Wheel, self).__init__(address,
                                     img_cfg['wheel'],
-                                    0.22,
+                                    apply_scaling(0.33),
                                     robot,
                                     delta_x,
                                     delta_y)

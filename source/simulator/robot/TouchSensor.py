@@ -1,4 +1,5 @@
 from simulator.robot import Robot
+from simulator.util.Util import apply_scaling
 from source.simulator.robot.BodyPart import BodyPart
 
 
@@ -18,7 +19,7 @@ class TouchSensor(BodyPart):
         img = 'touch_sensor_left' if left else 'touch_sensor_right'
         super(TouchSensor, self).__init__(address,
                                           img_cfg[img],
-                                          0.21,
+                                          apply_scaling(0.32),
                                           robot,
                                           delta_x,
                                           delta_y)

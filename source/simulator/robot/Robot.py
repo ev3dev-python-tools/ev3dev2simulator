@@ -5,7 +5,7 @@ from arcade import Sprite
 from simulator.obstacle import ColorObstacle
 from simulator.robot import BodyPart
 from simulator.robot.UltrasonicSensor import UltrasonicSensor
-from simulator.util.Util import calc_differential_steering_angle_x_y
+from simulator.util.Util import calc_differential_steering_angle_x_y, apply_scaling
 from source.simulator.robot.Body import Body
 from source.simulator.robot.ColorSensor import ColorSensor
 from source.simulator.robot.TouchSensor import TouchSensor
@@ -22,7 +22,7 @@ class Robot:
     def __init__(self, cfg, center_x: int, center_y: int):
 
         self.wheel_center_x = center_x
-        self.wheel_center_y = center_y + 15
+        self.wheel_center_y = center_y + apply_scaling(22.5)
 
         img_cfg = cfg['image_paths']
         alloc_cfg = cfg['alloc_settings']
@@ -36,20 +36,22 @@ class Robot:
         address_right_ts = alloc_cfg['touch_sensor']['right']
         address_us = alloc_cfg['ultrasonic_sensor']['top']
 
-        self.wheel_distance = cfg['wheel_settings']['spacing']
+        self.wheel_distance = apply_scaling(cfg['wheel_settings']['spacing'])
 
-        self.body = Body(img_cfg, self, 0, -15)
+        self.body = Body(img_cfg, self, 0, apply_scaling(-22.5))
         self.left_wheel = Wheel(address_left_motor, img_cfg, self, (self.wheel_distance / -2), 0.01)
         self.right_wheel = Wheel(address_right_motor, img_cfg, self, (self.wheel_distance / 2), 0.01)
 
-        self.center_color_sensor = ColorSensor(address_center_cs, img_cfg, self, 0, 54)
-        # self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self, -45, 55)
-        # self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self, 45, 55)
+        self.center_color_sensor = ColorSensor(address_center_cs, img_cfg, self, 0, apply_scaling(81))
+        # self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self, -45, apply_scaling(55))
+        # self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self, 45, apply_scaling(55))
 
-        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, -50, 68, True)
-        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, 50, 68, False)
+        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, apply_scaling(-75), apply_scaling(102),
+                                             True)
+        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, apply_scaling(75), apply_scaling(102),
+                                              False)
 
-        self.ultrasonic_sensor = UltrasonicSensor(address_us, img_cfg, self, 0, -61)
+        self.ultrasonic_sensor = UltrasonicSensor(address_us, img_cfg, self, 0, apply_scaling(-91.5))
 
         self.sprites = [self.body,
                         self.left_wheel,
