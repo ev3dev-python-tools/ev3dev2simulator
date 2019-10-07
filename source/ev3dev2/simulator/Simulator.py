@@ -37,6 +37,7 @@ class Simulator(arcade.Window):
         self.robot = None
         self.robot_start_x = robot_pos[0]
         self.robot_start_y = robot_pos[1]
+        self.robot_start_o = robot_pos[2]
 
         self.red_lake = None
         self.green_lake = None
@@ -64,7 +65,7 @@ class Simulator(arcade.Window):
         self.robot_elements = arcade.SpriteList()
         self.obstacle_elements = arcade.ShapeElementList()
 
-        self.robot = Robot(self.cfg, self.robot_start_x, self.robot_start_y)
+        self.robot = Robot(self.cfg, self.robot_start_x, self.robot_start_y, self.robot_start_o)
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
@@ -180,6 +181,11 @@ def main():
                     help="Starting position y-coordinate of the robot, default is 600",
                     required=False,
                     type=int)
+    ap.add_argument("-o", "--robot_orientation",
+                    default=0,
+                    help="Starting orientation the robot, default is 0",
+                    required=False,
+                    type=int)
     # ap.add_argument("-s", "--window_scaling",
     #                 default=load_config()['screen_settings']['scaling_multiplier'],
     #                 help="Scaling of the screen, default is 0.6",
@@ -191,6 +197,7 @@ def main():
 
     x = args['robot_position_x'] if args['robot_position_x'] else apply_scaling(450)
     y = args['robot_position_y'] if args['robot_position_y'] else apply_scaling(600)
+    o = args['robot_orientation']
 
     robot_state = get_robot_state()
 
@@ -198,7 +205,7 @@ def main():
     server_thread.setDaemon(True)
     server_thread.start()
 
-    sim = Simulator(robot_state, (x, y))
+    sim = Simulator(robot_state, (x, y, o))
     sim.setup()
     arcade.run()
 

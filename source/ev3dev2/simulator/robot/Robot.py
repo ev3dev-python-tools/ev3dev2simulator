@@ -19,7 +19,7 @@ class Robot:
     """
 
 
-    def __init__(self, cfg, center_x: int, center_y: int):
+    def __init__(self, cfg, center_x: int, center_y: int, orientation: int):
 
         self.wheel_center_x = center_x
         self.wheel_center_y = center_y + apply_scaling(22.5)
@@ -60,6 +60,9 @@ class Robot:
                         self.left_touch_sensor,
                         self.right_touch_sensor,
                         self.ultrasonic_sensor]
+
+        if orientation != 0:
+            self._rotate(math.radians(orientation))
 
 
     def _move_x(self, distance: float):
