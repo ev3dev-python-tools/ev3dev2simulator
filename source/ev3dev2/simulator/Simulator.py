@@ -23,8 +23,8 @@ class Simulator(arcade.Window):
         self.cfg = load_config()
         self.robot_state = robot_state
 
-        self.screen_width = apply_scaling(self.cfg['screen_settings']['screen_width'])
-        self.screen_height = apply_scaling(self.cfg['screen_settings']['screen_height'])
+        self.screen_width = int(apply_scaling(self.cfg['screen_settings']['screen_width']))
+        self.screen_height = int(apply_scaling(self.cfg['screen_settings']['screen_height']))
         screen_title = self.cfg['screen_settings']['screen_title']
 
         super(Simulator, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30)
@@ -119,7 +119,7 @@ class Simulator(arcade.Window):
         center_cs = 'CS center:  ' + str(self.center_cs_data)
         left_ts = 'TS right:      ' + str(self.right_ts_data)
         right_ts = 'TS left:         ' + str(self.left_ts_data)
-        top_us = 'US top:        ' + str(int(round(self.top_us_data))) + 'pix'
+        top_us = 'US top:        ' + str(int(round(self.top_us_data))) + 'px'
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'

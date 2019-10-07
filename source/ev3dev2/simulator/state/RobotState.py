@@ -1,6 +1,5 @@
 import threading
-from _queue import Empty
-from queue import Queue
+from queue import Queue, Empty
 from typing import Any, Tuple
 
 from ev3dev2.simulator.config.config import load_config
