@@ -15,10 +15,6 @@ class ClientSocket:
 
 
     def __init__(self):
-        self.client = None
-
-
-    def setup(self):
         port = load_config()['exec_settings']['socket_port']
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

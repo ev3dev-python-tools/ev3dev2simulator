@@ -23,8 +23,6 @@ class ServerSocket(threading.Thread):
         self.message_processor = MessageProcessor(robot_state)
         self.robot_state = robot_state
 
-        self.first_run = True
-
 
     def run(self):
         """
@@ -44,10 +42,6 @@ class ServerSocket(threading.Thread):
             (client, address) = server.accept()
 
             print('Connection accepted')
-            if not self.first_run:
-                self.robot_state.should_reset = True
-
-            self.first_run = False
             time.sleep(1)
 
             try:
@@ -68,6 +62,8 @@ class ServerSocket(threading.Thread):
 
             print('Closing connection...')
             client.close()
+
+            self.robot_state.should_reset = True
 
 
     def _process(self, data: bytes) -> bytes:

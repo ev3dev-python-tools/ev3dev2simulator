@@ -112,10 +112,10 @@ class Simulator(arcade.Window):
 
 
     def _draw_text(self):
-        center_cs = f"CS center:  {self.center_cs_data}"
-        left_ts = f"TS right:      {self.right_ts_data}"
-        right_ts = f"TS left:         {self.left_ts_data}"
-        top_us = f"US top:        {int(round(self.top_us_data))}"
+        center_cs = 'CS center:  ' + str(self.center_cs_data)
+        left_ts = 'TS right:      ' + str(self.right_ts_data)
+        right_ts = 'TS left:         ' + str(self.left_ts_data)
+        top_us = 'US top:        ' + str(int(round(self.top_us_data)))
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
