@@ -1,8 +1,8 @@
 from typing import Any
 
-from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.config.config import load_config, load_scale_config
 from ev3dev2.simulator.connection.message import DriveCommand, StopCommand, SoundCommand, DataRequest
-from ev3dev2.simulator.util.Util import apply_scaling, remove_scaling
+from ev3dev2.simulator.util.Util import remove_scaling
 
 
 class MessageProcessor:
@@ -14,7 +14,9 @@ class MessageProcessor:
 
     def __init__(self, robot_state):
         cfg = load_config()
-        self.coasting_sub = apply_scaling(cfg['wheel_settings']['coasting_subtraction'])
+
+        self.scaling_multiplier = load_scale_config()
+        self.coasting_sub = cfg['wheel_settings']['coasting_subtraction'] * self.scaling_multiplier
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
         self.address_us = cfg['alloc_settings']['ultrasonic_sensor']['top']
 
@@ -27,7 +29,7 @@ class MessageProcessor:
         :param command: to process.
         """
 
-        ppf = apply_scaling(command.ppf)
+        ppf = command.ppf * self.scaling_multiplier
         side = self.robot_state.get_motor_side(command.address)
 
         for i in range(command.frames):
@@ -43,7 +45,7 @@ class MessageProcessor:
         :param command: to process.
         """
 
-        ppf = apply_scaling(command.ppf)
+        ppf = command.ppf * self.scaling_multiplier
         side = self.robot_state.get_motor_side(command.address)
         self.robot_state.clear_move_jobs(side)
 

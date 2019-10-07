@@ -7,7 +7,7 @@ import argparse
 import arcade
 from pymunk import Space
 
-from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.config.config import load_config, write_scale_config
 from ev3dev2.simulator.connection.ServerSocket import ServerSocket
 from ev3dev2.simulator.obstacle.Border import Border
 from ev3dev2.simulator.obstacle.Lake import BlueLake, GreenLake, RedLake
@@ -35,9 +35,7 @@ class Simulator(arcade.Window):
         self.obstacle_elements = None
 
         self.robot = None
-        self.robot_start_x = robot_pos[0]
-        self.robot_start_y = robot_pos[1]
-        self.robot_start_o = robot_pos[2]
+        self.robot_pos = robot_pos
 
         self.red_lake = None
         self.green_lake = None
@@ -65,7 +63,7 @@ class Simulator(arcade.Window):
         self.robot_elements = arcade.SpriteList()
         self.obstacle_elements = arcade.ShapeElementList()
 
-        self.robot = Robot(self.cfg, self.robot_start_x, self.robot_start_y, self.robot_start_o)
+        self.robot = Robot(self.cfg, self.robot_pos[0], self.robot_pos[1], self.robot_pos[2])
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
@@ -171,29 +169,30 @@ def main():
     """
     Spawns the user thread and creates and starts the simulation.
     """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--window_scaling",
+                        default=load_config()['screen_settings']['scaling_multiplier'],
+                        help="Scaling of the screen, default is 0.6",
+                        required=False,
+                        type=check_scale)
+    parser.add_argument("-x", "--robot_position_x",
+                        help="Starting position x-coordinate of the robot, default is 450",
+                        required=False,
+                        type=int)
+    parser.add_argument("-y", "--robot_position_y",
+                        help="Starting position y-coordinate of the robot, default is 600",
+                        required=False,
+                        type=int)
+    parser.add_argument("-o", "--robot_orientation",
+                        default=0,
+                        help="Starting orientation the robot, default is 0",
+                        required=False,
+                        type=int)
 
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-x", "--robot_position_x",
-                    help="Starting position x-coordinate of the robot, default is 450",
-                    required=False,
-                    type=int)
-    ap.add_argument("-y", "--robot_position_y",
-                    help="Starting position y-coordinate of the robot, default is 600",
-                    required=False,
-                    type=int)
-    ap.add_argument("-o", "--robot_orientation",
-                    default=0,
-                    help="Starting orientation the robot, default is 0",
-                    required=False,
-                    type=int)
-    # ap.add_argument("-s", "--window_scaling",
-    #                 default=load_config()['screen_settings']['scaling_multiplier'],
-    #                 help="Scaling of the screen, default is 0.6",
-    #                 required=False,
-    #                 type=check_scale)
+    args = vars(parser.parse_args())
 
-    args = vars(ap.parse_args())
-    # lel(args['window_scaling'])
+    s = args['window_scaling']
+    write_scale_config(s)
 
     x = args['robot_position_x'] if args['robot_position_x'] else apply_scaling(450)
     y = args['robot_position_y'] if args['robot_position_y'] else apply_scaling(600)

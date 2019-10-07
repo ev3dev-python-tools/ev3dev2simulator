@@ -3,7 +3,7 @@ from typing import Tuple
 
 from arcade import PointList
 
-from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.config.config import load_scale_config
 
 
 def get_circle_points(center_x: float,
@@ -90,7 +90,7 @@ def get_cm_multiplier() -> float:
     :return: a floating point value representing the multiplier.
     """
 
-    return 0.150
+    return 0.1
 
 
 def get_inch_multiplier() -> float:
@@ -99,15 +99,12 @@ def get_inch_multiplier() -> float:
     :return: a floating point value representing the multiplier.
     """
 
-    return 0.381
+    return 0.254
 
 
 def apply_scaling(value):
-    return scaling_multiplier * value
+    return load_scale_config() * value
 
 
 def remove_scaling(value):
-    return value / scaling_multiplier
-
-
-scaling_multiplier = load_config()['screen_settings']['scaling_multiplier']
+    return value / load_scale_config()
