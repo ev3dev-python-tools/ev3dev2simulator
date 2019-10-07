@@ -7,8 +7,6 @@ from simulator.robot import Robot
 from simulator.util.Util import distance_between_points, apply_scaling
 from source.simulator.robot.BodyPart import BodyPart
 
-SENSOR_HALF_HEIGHT = apply_scaling(22.5)
-
 
 class UltrasonicSensor(BodyPart):
     """
@@ -29,6 +27,8 @@ class UltrasonicSensor(BodyPart):
                                                delta_x,
                                                delta_y)
 
+        self.sensor_half_height = apply_scaling(22.5)
+
 
     def distance(self, space: Space) -> float:
         """
@@ -42,10 +42,10 @@ class UltrasonicSensor(BodyPart):
 
         query = space.segment_query_first((self.center_x, self.center_y), (x, y), 1, ShapeFilter())
         if query:
-            return -SENSOR_HALF_HEIGHT + distance_between_points(self.center_x,
-                                                                 self.center_y,
-                                                                 query.point.x,
-                                                                 query.point.y)
+            return -self.sensor_half_height + distance_between_points(self.center_x,
+                                                                      self.center_y,
+                                                                      query.point.x,
+                                                                      query.point.y)
         else:
             return -1
 

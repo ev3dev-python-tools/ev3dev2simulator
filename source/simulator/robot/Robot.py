@@ -46,10 +46,8 @@ class Robot:
         # self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self, -45, apply_scaling(55))
         # self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self, 45, apply_scaling(55))
 
-        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, apply_scaling(-75), apply_scaling(102),
-                                             True)
-        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, apply_scaling(75), apply_scaling(102),
-                                              False)
+        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, apply_scaling(-75), apply_scaling(102), True)
+        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, apply_scaling(75), apply_scaling(102), False)
 
         self.ultrasonic_sensor = UltrasonicSensor(address_us, img_cfg, self, 0, apply_scaling(-91.5))
 

@@ -2,6 +2,7 @@
 Main simulator class.
 This class extends from arcade.Window and manages the updates and rendering of the simulator window.
 """
+import argparse
 
 import arcade
 from pymunk import Space
@@ -17,8 +18,8 @@ from simulator.util.Util import load_config, apply_scaling
 
 class Simulator(arcade.Window):
 
-    def __init__(self, config, robot_state):
-        self.cfg = config
+    def __init__(self, robot_state, robot_pos):
+        self.cfg = load_config()
         self.robot_state = robot_state
 
         self.screen_width = apply_scaling(self.cfg['screen_settings']['screen_width'])
@@ -33,6 +34,8 @@ class Simulator(arcade.Window):
         self.obstacle_elements = None
 
         self.robot = None
+        self.robot_start_x = robot_pos[0]
+        self.robot_start_y = robot_pos[1]
 
         self.red_lake = None
         self.green_lake = None
@@ -60,7 +63,7 @@ class Simulator(arcade.Window):
         self.robot_elements = arcade.SpriteList()
         self.obstacle_elements = arcade.ShapeElementList()
 
-        self.robot = Robot(self.cfg, apply_scaling(450), apply_scaling(600))
+        self.robot = Robot(self.cfg, self.robot_start_x, self.robot_start_y)
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
@@ -72,10 +75,8 @@ class Simulator(arcade.Window):
         self.green_lake = GreenLake(self.cfg)
         self.red_lake = RedLake(self.cfg)
 
-        self.rock1 = Rock(apply_scaling(825), apply_scaling(1050), apply_scaling(150), apply_scaling(60),
-                          arcade.color.DARK_GRAY, 10)
-        self.rock2 = Rock(apply_scaling(975), apply_scaling(375), apply_scaling(300), apply_scaling(90),
-                          arcade.color.DARK_GRAY, 130)
+        self.rock1 = Rock(apply_scaling(825), apply_scaling(1050), apply_scaling(150), apply_scaling(60), arcade.color.DARK_GRAY, 10)
+        self.rock2 = Rock(apply_scaling(975), apply_scaling(375), apply_scaling(300), apply_scaling(90), arcade.color.DARK_GRAY, 130)
 
         self.obstacle_elements.append(self.blue_lake.shape)
         self.obstacle_elements.append(self.green_lake.shape)
@@ -107,8 +108,8 @@ class Simulator(arcade.Window):
 
         arcade.start_render()
 
-        self.robot_elements.draw()
         self.obstacle_elements.draw()
+        self.robot_elements.draw()
 
         self._draw_text()
 
@@ -169,7 +170,26 @@ def main():
     Spawns the user thread and creates and starts the simulation.
     """
 
-    cfg = load_config()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-x", "--robot_position_x",
+                    help="Starting position x-coordinate of the robot, default is 450",
+                    required=False,
+                    type=int)
+    ap.add_argument("-y", "--robot_position_y",
+                    help="Starting position y-coordinate of the robot, default is 600",
+                    required=False,
+                    type=int)
+    # ap.add_argument("-s", "--window_scaling",
+    #                 default=load_config()['screen_settings']['scaling_multiplier'],
+    #                 help="Scaling of the screen, default is 0.6",
+    #                 required=False,
+    #                 type=check_scale)
+
+    args = vars(ap.parse_args())
+    # lel(args['window_scaling'])
+
+    x = args['robot_position_x'] if args['robot_position_x'] else apply_scaling(450)
+    y = args['robot_position_y'] if args['robot_position_y'] else apply_scaling(600)
 
     robot_state = get_robot_state()
 
@@ -177,9 +197,21 @@ def main():
     server_thread.setDaemon(True)
     server_thread.start()
 
-    sim = Simulator(cfg, robot_state)
+    sim = Simulator(robot_state, (x, y))
     sim.setup()
     arcade.run()
+
+
+def check_scale(value):
+    try:
+        f = float(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError('Scaling value must be a floating point number')
+
+    if f < 0.0 or f > 1.0:
+        raise argparse.ArgumentTypeError("%s is an invalid scaling value. Should be between 0 and 1" % f)
+
+    return f
 
 
 if __name__ == "__main__":
