@@ -2,7 +2,7 @@ import arcade
 from arcade import Shape, PointList
 
 from ev3dev2.simulator.obstacle.ColorObstacle import ColorObstacle
-from ev3dev2.simulator.util.Color import to_color_code, BLUE, GREEN, RED
+from ev3dev2.simulator.util.Color import to_color_code, BLUE, GREEN, RED, YELLOW
 from ev3dev2.simulator.util.Util import get_circle_points, apply_scaling
 
 
@@ -86,7 +86,7 @@ class GreenLake(Lake):
         x = apply_scaling(lake_cfg['lake_green_x']) + edge_spacing + border_depth
         y = apply_scaling(lake_cfg['lake_green_y']) + edge_spacing + border_depth
 
-        super(GreenLake, self).__init__(x, y, radius, GREEN, border_width)
+        super(GreenLake, self).__init__(x, y, radius, YELLOW, border_width)
 
 
 class RedLake(Lake):

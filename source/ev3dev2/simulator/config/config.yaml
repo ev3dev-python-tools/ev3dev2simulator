@@ -39,12 +39,12 @@ obstacle_settings:
   lake_settings:
     border_width: 29
     inner_radius: 38
-    lake_blue_x: 137
-    lake_blue_y: 922
-    lake_green_x: 1052
-    lake_green_y: 567
-    lake_red_x: 397
-    lake_red_y: 232
+    lake_blue_x: 500
+    lake_blue_y: 170
+    lake_green_x: 250
+    lake_green_y: 600
+    lake_red_x: 850
+    lake_red_y: 500
 
 
 screen_settings:

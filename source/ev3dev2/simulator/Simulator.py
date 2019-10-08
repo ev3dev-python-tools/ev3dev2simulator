@@ -73,18 +73,18 @@ class Simulator(arcade.Window):
         for s in self.robot.get_sensors():
             self.robot_state.load_sensor(s)
 
-        # self.blue_lake = BlueLake(self.cfg)
-        # self.green_lake = GreenLake(self.cfg)
-        # self.red_lake = RedLake(self.cfg)
+        self.blue_lake = BlueLake(self.cfg)
+        self.green_lake = GreenLake(self.cfg)
+        self.red_lake = RedLake(self.cfg)
 
-        self.rock1 = Rock(apply_scaling(175), apply_scaling(700), apply_scaling(150), apply_scaling(60), arcade.color.DARK_GRAY, 0)
-        self.rock2 = Rock(apply_scaling(1000), apply_scaling(375), apply_scaling(300), apply_scaling(90), arcade.color.DARK_GRAY, 90)
+        # self.rock1 = Rock(apply_scaling(175), apply_scaling(700), apply_scaling(150), apply_scaling(60), arcade.color.DARK_GRAY, 0)
+        self.rock2 = Rock(apply_scaling(1000), apply_scaling(300), apply_scaling(300), apply_scaling(90), arcade.color.DARK_GRAY, 90)
 
-        # self.obstacle_elements.append(self.blue_lake.shape)
-        # self.obstacle_elements.append(self.green_lake.shape)
-        # self.obstacle_elements.append(self.red_lake.shape)
+        self.obstacle_elements.append(self.blue_lake.shape)
+        self.obstacle_elements.append(self.green_lake.shape)
+        self.obstacle_elements.append(self.red_lake.shape)
 
-        self.obstacle_elements.append(self.rock1.shape)
+        # self.obstacle_elements.append(self.rock1.shape)
         self.obstacle_elements.append(self.rock2.shape)
 
         self.border = Border(self.cfg, arcade.color.BLACK_OLIVE)
@@ -92,15 +92,15 @@ class Simulator(arcade.Window):
         for s in self.border.shapes:
             self.obstacle_elements.append(s)
 
-        # color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
-        color_obstacles = [self.border]
-        touch_obstacles = [self.rock1, self.rock2]
+        color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
+        touch_obstacles = [self.rock2]
+        # touch_obstacles = [self.rock1, self.rock2]
 
         self.robot.set_color_obstacles(color_obstacles)
         self.robot.set_touch_obstacles(touch_obstacles)
 
         self.space = Space()
-        self.space.add(self.rock1.poly)
+        # self.space.add(self.rock1.poly)
         self.space.add(self.rock2.poly)
 
 
@@ -179,8 +179,8 @@ def main():
                         required=False,
                         type=check_scale)
     parser.add_argument("-x", "--robot_position_x",
-                        default=450,
-                        help="Starting position x-coordinate of the robot, default is 450",
+                        default=200,
+                        help="Starting position x-coordinate of the robot, default is 200",
                         required=False,
                         type=int)
     parser.add_argument("-y", "--robot_position_y",
