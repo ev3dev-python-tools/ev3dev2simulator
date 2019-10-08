@@ -29,4 +29,13 @@ class ColorSensor(BodyPart):
             if o.collided_with(self.center_x, self.center_y):
                 return o.color_code
 
-        return 0
+        return self.get_default_value()
+
+
+    def get_default_value(self):
+        """
+        6 is the color of white for the real robot. Playing field surface is white.
+        :return: integer value representing the color white.
+        """
+
+        return 6

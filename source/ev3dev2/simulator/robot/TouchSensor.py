@@ -31,7 +31,7 @@ class TouchSensor(BodyPart):
             if o.collided_with(self):
                 return True
 
-        return False
+        return self.get_default_value()
 
 
     def get_default_value(self):

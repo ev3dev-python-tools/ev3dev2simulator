@@ -49,9 +49,9 @@ obstacle_settings:
 
 screen_settings:
   edge_spacing: 23
-  scaling_multiplier: 0.60
-  screen_height: 1273 # 1250mm + 23 edge spacing
-  screen_width: 1273
+  scaling_multiplier: 0.70
+  screen_height: 841
+  screen_width: 1189
   screen_title: "Lego ev3dev2 simulator"
 
 wheel_settings:

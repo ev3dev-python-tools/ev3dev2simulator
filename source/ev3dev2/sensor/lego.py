@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # -----------------------------------------------------------------------------
+import time
 
 from ev3dev2.sensor import Sensor
 from ev3dev2.simulator.connector.SensorConnector import SensorConnector
@@ -97,7 +98,7 @@ class ColorSensor(Sensor):
     )
 
 
-    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(ColorSensor, self).__init__(address, name_pattern, name_exact, driver_name='lego-ev3-color', **kwargs)
 
         # See calibrate_white() for more details
@@ -105,7 +106,7 @@ class ColorSensor(Sensor):
         self.green_max = 300
         self.blue_max = 300
 
-        self.connector = SensorConnector(self.address)
+        self.connector = SensorConnector(address)
 
 
     @property
@@ -283,7 +284,7 @@ class TouchSensor(Sensor):
     MODES = (MODE_TOUCH,)
 
 
-    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(TouchSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-touch', 'lego-nxt-touch'], **kwargs)
 
         self.connector = SensorConnector(address)
@@ -391,7 +392,7 @@ class UltrasonicSensor(Sensor):
     )
 
 
-    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(UltrasonicSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-us', 'lego-nxt-us'], **kwargs)
 
         self.connector = SensorConnector(address)

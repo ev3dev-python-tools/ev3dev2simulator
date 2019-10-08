@@ -84,4 +84,4 @@ class BodyPart(arcade.Sprite):
         :return: any possible value representing the default value.
         """
 
-        return -1
+        pass
