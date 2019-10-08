@@ -55,6 +55,8 @@ class Simulator(arcade.Window):
         self.right_ts_data = False
         self.top_us_data = -1
 
+        self.text_x = self.screen_width - apply_scaling(220)
+
 
     def setup(self):
         """
@@ -126,13 +128,12 @@ class Simulator(arcade.Window):
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
 
-        arcade.draw_text(center_cs, self.screen_width - 140, self.screen_height - 45, arcade.color.BLACK_LEATHER_JACKET, 10)
-        arcade.draw_text(left_ts, self.screen_width - 140, self.screen_height - 60, arcade.color.BLACK_LEATHER_JACKET, 10)
-        arcade.draw_text(right_ts, self.screen_width - 140, self.screen_height - 75, arcade.color.BLACK_LEATHER_JACKET, 10)
-        arcade.draw_text(top_us, self.screen_width - 140, self.screen_height - 90, arcade.color.BLACK_LEATHER_JACKET, 10)
-        arcade.draw_text('Sound:', self.screen_width - 140, self.screen_height - 105, arcade.color.BLACK_LEATHER_JACKET, 10)
-        arcade.draw_text(sound, self.screen_width - 140, self.screen_height - 120, arcade.color.BLACK_LEATHER_JACKET, 10,
-                         anchor_y='top')
+        arcade.draw_text(center_cs, self.text_x, self.screen_height - apply_scaling(80), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(left_ts, self.text_x, self.screen_height - apply_scaling(100), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(right_ts, self.text_x, self.screen_height - apply_scaling(120), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(140), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(160), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(180), arcade.color.BLACK_LEATHER_JACKET, 10, anchor_y='top')
 
 
     def update(self, delta_time):
@@ -182,12 +183,12 @@ def main():
                         default=200,
                         help="Starting position x-coordinate of the robot, default is 200",
                         required=False,
-                        type=int)
+                        type=check_xy)
     parser.add_argument("-y", "--robot_position_y",
                         default=300,
                         help="Starting position y-coordinate of the robot, default is 300",
                         required=False,
-                        type=int)
+                        type=check_xy)
     parser.add_argument("-o", "--robot_orientation",
                         default=0,
                         help="Starting orientation the robot, default is 0",
@@ -222,6 +223,18 @@ def check_scale(value):
 
     if f < 0.0 or f > 1.0:
         raise argparse.ArgumentTypeError("%s is an invalid scaling value. Should be between 0 and 1" % f)
+
+    return f
+
+
+def check_xy(value):
+    try:
+        f = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError('Coordinate value must be a integer')
+
+    if f < 0 or f > 1000:
+        raise argparse.ArgumentTypeError("%s is an invalid coordinate. Should be between 0 and 1000" % f)
 
     return f
 

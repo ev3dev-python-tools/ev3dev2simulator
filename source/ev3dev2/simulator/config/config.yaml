@@ -34,7 +34,7 @@ image_paths:
 
 obstacle_settings:
   border_settings:
-    border_depth: 15
+    border_depth: 30
 
   lake_settings:
     border_width: 29
