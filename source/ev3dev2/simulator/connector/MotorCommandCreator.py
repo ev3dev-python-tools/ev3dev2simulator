@@ -1,7 +1,7 @@
+from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.ClientSocket import get_client_socket
 from ev3dev2.simulator.connection.message.DriveCommand import DriveCommand
 from ev3dev2.simulator.connection.message.StopCommand import StopCommand
-from ev3dev2.simulator.config.config import load_config
 
 
 class MotorCommandCreator:
@@ -45,7 +45,14 @@ class MotorCommandCreator:
             return frames / self.frames_per_second
 
 
-    def create_stop_command(self, speed: float, stop_action: str, address: str):
+    def create_stop_command(self, speed: float, stop_action: str, address: str) -> float:
+        """
+        Create the command required to stop the motor at the address.
+        :param speed: in degrees per second the motor is traveling when stopped.
+        :param stop_action: of the motor, this can be 'hold' or 'coast'.
+        :param address: of the motor to create a stop command for.
+        """
+
         ppf = self._to_pixels(speed) / self.frames_per_second
 
         if stop_action == 'coast':

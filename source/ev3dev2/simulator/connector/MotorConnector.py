@@ -20,7 +20,7 @@ class MotorConnector:
         self.time = None
         self.stop_action = None
 
-        self.job_creator = get_motor_command_creator()
+        self.command_creator = get_motor_command_creator()
 
 
     def set_time(self, time: int):
@@ -62,7 +62,7 @@ class MotorConnector:
     def run_forever(self) -> float:
         """
         Run the motor indefinitely. This is translated to 3600 seconds.
-        :return an floating point value representing the number of seconds
+        :return a floating point value representing the number of seconds
         the given run operation will take. Here a large number is returned.
         In the real world this would be infinity.
         """
@@ -76,7 +76,7 @@ class MotorConnector:
     def run_to_rel_pos(self) -> float:
         """
         Run the motor for the distance needed to reach a certain position.
-        :return an floating point value representing the number of seconds
+        :return a floating point value representing the number of seconds
         the given run operation will take.
         """
 
@@ -86,7 +86,7 @@ class MotorConnector:
     def run_timed(self) -> float:
         """
         Run the motor for a number of milliseconds.
-        :return an floating point value representing the number of seconds
+        :return a floating point value representing the number of seconds
         the given run operation will take.
         """
 
@@ -99,28 +99,34 @@ class MotorConnector:
         Run the motor at a speed for a distance.
         :param speed: in degrees per second.
         :param distance: in degrees.
-        :return an floating point value representing the number of seconds
+        :return a floating point value representing the number of seconds
         the given run operation will take.
         """
 
         if speed == 0 or distance == 0:
             return 0
 
-        return self.job_creator.create_drive_command(speed,
-                                                     distance,
-                                                     self.stop_action,
-                                                     self.address)
+        return self.command_creator.create_drive_command(speed,
+                                                         distance,
+                                                         self.stop_action,
+                                                         self.address)
 
 
-    def stop(self):
+    def stop(self) -> float:
+        """
+        Stop the motor using the provided stop action.
+        :return: a floating point value representing the number of seconds the
+        stop operation will take.
+        """
+
         speed = self.speed if self.speed else 0
         stop_action = self.stop_action if self.stop_action else 0
         distance = self.distance if self.distance else 0
 
         if speed == 0:
-            return
+            return 0
 
         if distance < 0:
             speed *= -1
 
-        self.job_creator.create_stop_command(speed, stop_action, self.address)
+        return self.command_creator.create_stop_command(speed, stop_action, self.address)

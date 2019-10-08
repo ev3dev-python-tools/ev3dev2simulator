@@ -33,6 +33,7 @@ if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
 
 from logging import getLogger
+from ev3dev2._platform.ev3 import OUTPUT_A, OUTPUT_B, OUTPUT_C, OUTPUT_D
 
 log = getLogger(__name__)
 
@@ -323,7 +324,7 @@ class Motor(Device):
         self.max_dpm = self.max_rpm * 360
 
         self.connector = MotorConnector(self.address)
-        self.running_until = None
+        self.running_until = time.time()
 
 
     @property
@@ -728,7 +729,7 @@ class Motor(Device):
         self.command = self.COMMAND_RUN_FOREVER
 
         run_time = self.connector.run_forever()
-        self.running_until = time.time() + run_time
+        self._calc_running_until(run_time)
 
 
     def run_to_abs_pos(self, **kwargs):
@@ -739,7 +740,7 @@ class Motor(Device):
         self._command = self.COMMAND_RUN_TO_ABS_POS
 
         run_time = self.connector.run_to_rel_pos()
-        self.running_until = time.time() + run_time
+        self._calc_running_until(run_time)
 
 
     def run_to_rel_pos(self, **kwargs):
@@ -752,7 +753,7 @@ class Motor(Device):
         self.command = self.COMMAND_RUN_TO_REL_POS
 
         run_time = self.connector.run_to_rel_pos()
-        self.running_until = time.time() + run_time
+        self._calc_running_until(run_time)
 
 
     def run_timed(self, **kwargs):
@@ -763,7 +764,7 @@ class Motor(Device):
         self.command = self.COMMAND_RUN_TIMED
 
         run_time = self.connector.run_timed()
-        self.running_until = time.time() + run_time
+        self._calc_running_until(run_time)
 
 
     def run_direct(self, **kwargs):
@@ -781,8 +782,9 @@ class Motor(Device):
         """
 
         self.command = self.COMMAND_STOP
-        self.connector.stop()
 
+        run_time = self.connector.stop()
+        self.running_until = time.time() + run_time
 
     def reset(self, **kwargs):
         """Reset all of the motor parameter attributes to their default value.
@@ -790,7 +792,9 @@ class Motor(Device):
         """
 
         self.command = self.COMMAND_RESET
-        self.connector.stop()
+
+        run_time = self.connector.stop()
+        self.running_until = time.time() + run_time
 
 
     @property
@@ -1098,6 +1102,15 @@ class Motor(Device):
     @property
     def degrees(self):
         return self.rotations * 360
+
+
+    def _calc_running_until(self, run_time):
+        now = time.time()
+
+        if self.running_until > now:
+            self.running_until += run_time
+        else:
+            self.running_until = now + run_time
 
 
 class LargeMotor(Motor):
