@@ -7,7 +7,7 @@ import argparse
 import arcade
 from pymunk import Space
 
-from ev3dev2.simulator.config.config import load_config, write_scale_config
+from ev3dev2.simulator.config.config import load_config, write_scale_config, load_scale_config
 from ev3dev2.simulator.connection.ServerSocket import ServerSocket
 from ev3dev2.simulator.obstacle.Border import Border
 from ev3dev2.simulator.obstacle.Lake import BlueLake, GreenLake, RedLake
@@ -22,6 +22,8 @@ class Simulator(arcade.Window):
     def __init__(self, robot_state, robot_pos):
         self.cfg = load_config()
         self.robot_state = robot_state
+
+        self.scaling_multiplier = load_scale_config()
 
         self.screen_width = int(apply_scaling(self.cfg['screen_settings']['screen_width']))
         self.screen_height = int(apply_scaling(self.cfg['screen_settings']['screen_height']))
@@ -118,17 +120,17 @@ class Simulator(arcade.Window):
         center_cs = 'CS center:  ' + str(self.center_cs_data)
         left_ts = 'TS right:      ' + str(self.right_ts_data)
         right_ts = 'TS left:         ' + str(self.left_ts_data)
-        top_us = 'US top:        ' + str(int(round(self.top_us_data))) + 'px'
+        top_us = 'US top:        ' + str(int(round(self.top_us_data / self.scaling_multiplier))) + 'mm'
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
 
-        arcade.draw_text(center_cs, self.screen_width - 125, self.screen_height - 45, arcade.color.WHITE, 10)
-        arcade.draw_text(left_ts, self.screen_width - 125, self.screen_height - 60, arcade.color.WHITE, 10)
-        arcade.draw_text(right_ts, self.screen_width - 125, self.screen_height - 75, arcade.color.WHITE, 10)
-        arcade.draw_text(top_us, self.screen_width - 125, self.screen_height - 90, arcade.color.WHITE, 10)
-        arcade.draw_text('Sound:', self.screen_width - 125, self.screen_height - 105, arcade.color.WHITE, 10)
-        arcade.draw_text(sound, self.screen_width - 125, self.screen_height - 120, arcade.color.WHITE, 10,
+        arcade.draw_text(center_cs, self.screen_width - 135, self.screen_height - 45, arcade.color.WHITE, 10)
+        arcade.draw_text(left_ts, self.screen_width - 135, self.screen_height - 60, arcade.color.WHITE, 10)
+        arcade.draw_text(right_ts, self.screen_width - 135, self.screen_height - 75, arcade.color.WHITE, 10)
+        arcade.draw_text(top_us, self.screen_width - 135, self.screen_height - 90, arcade.color.WHITE, 10)
+        arcade.draw_text('Sound:', self.screen_width - 135, self.screen_height - 105, arcade.color.WHITE, 10)
+        arcade.draw_text(sound, self.screen_width - 135, self.screen_height - 120, arcade.color.WHITE, 10,
                          anchor_y='top')
 
 

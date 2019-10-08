@@ -168,8 +168,8 @@ class MockUltrasonicSensor(Sensor):
 
         if self.mode == self.MODE_US_DIST_CM \
                 or self.mode == self.MODE_US_SI_IN:
-            return self.distance_centimeters_continuous
+            return self.distance_centimeters_continuous * 10
 
         elif self.mode == self.MODE_US_DIST_IN \
                 or self.mode == self.MODE_US_SI_IN:
-            return self.distance_inches_continuous
+            return self.distance_inches_continuous * 10

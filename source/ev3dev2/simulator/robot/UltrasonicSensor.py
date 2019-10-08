@@ -3,6 +3,7 @@ import math
 from arcade import Point
 from pymunk import Space, ShapeFilter
 
+from ev3dev2.simulator.config.config import load_scale_config
 from ev3dev2.simulator.robot import Robot
 from ev3dev2.simulator.robot.BodyPart import BodyPart
 from ev3dev2.simulator.util.Util import apply_scaling, distance_between_points
@@ -28,6 +29,7 @@ class UltrasonicSensor(BodyPart):
                                                delta_y)
 
         self.sensor_half_height = apply_scaling(22.5)
+        self.scaling_multiplier = load_scale_config()
 
 
     def distance(self, space: Space) -> float:
@@ -47,7 +49,7 @@ class UltrasonicSensor(BodyPart):
                                                                       query.point.x,
                                                                       query.point.y)
         else:
-            return -1
+            return self.get_default_value()
 
 
     def _calc_ray_cast_point(self) -> Point:
@@ -63,3 +65,13 @@ class UltrasonicSensor(BodyPart):
         y = 1000 * math.cos(-rad) + self.center_y
 
         return x, y
+
+
+    def get_default_value(self):
+        """
+        1 pixel == 1mm so measurement values this sensor returns are one to one mappable to milimeters.
+        Max distance real world robot sensor returns is 2550mm.
+        :return: default value in pixels.
+        """
+
+        return 2550 * self.scaling_multiplier
