@@ -1,11 +1,7 @@
-import sys
 import time
 
 from ev3dev2.sensor import Sensor
 from ev3dev2.simulator.connector.SensorConnector import SensorConnector
-
-if sys.version_info < (3, 4):
-    raise SystemError('Must be using Python 3.4 or higher')
 
 
 class MockTouchSensor(Sensor):
@@ -22,8 +18,7 @@ class MockTouchSensor(Sensor):
 
 
     def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
-        super(MockTouchSensor, self).__init__(address, name_pattern, name_exact,
-                                              driver_name=['lego-ev3-touch', 'lego-nxt-touch'], **kwargs)
+        super(MockTouchSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-touch', 'lego-nxt-touch'], **kwargs)
 
         self.connector = SensorConnector(address)
 
@@ -34,6 +29,7 @@ class MockTouchSensor(Sensor):
         A boolean indicating whether the current touch sensor is being
         pressed.
         """
+
         self._ensure_mode(self.MODE_TOUCH)
         return self.connector.get_value()
 
@@ -64,16 +60,10 @@ class MockTouchSensor(Sensor):
 
 
     def wait_for_pressed(self, timeout_ms=None, sleep_ms=10):
-        """
-        Wait for the touch sensor to be pressed down.
-        """
         return self._wait(True, timeout_ms, sleep_ms)
 
 
     def wait_for_released(self, timeout_ms=None, sleep_ms=10):
-        """
-        Wait for the touch sensor to be released.
-        """
         return self._wait(False, timeout_ms, sleep_ms)
 
 

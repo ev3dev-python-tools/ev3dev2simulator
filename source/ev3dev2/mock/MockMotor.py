@@ -1,12 +1,23 @@
 import time
+from logging import getLogger
 
-import ev3dev2.motor
-# The number of milliseconds we wait for the state of a motor to
-# update to 'running' in the "on_for_XYZ" methods of the Motor class
 from ev3dev2.mock.MockDevice import MockDevice
 from ev3dev2.simulator.connector.MotorConnector import MotorConnector
 
+log = getLogger(__name__)
+
+# The number of milliseconds we wait for the state of a motor to
+# update to 'running' in the "on_for_XYZ" methods of the Motor class
 WAIT_RUNNING_TIMEOUT = 100
+
+
+class SpeedInteger(int):
+    """
+    A base class for other unit types. Don't use this directly; instead, see
+    :class:`SpeedPercent`, :class:`SpeedRPS`, :class:`SpeedRPM`,
+    :class:`SpeedDPS`, and :class:`SpeedDPM`.
+    """
+    pass
 
 
 class MockMotor(MockDevice):
@@ -15,6 +26,11 @@ class MockMotor(MockDevice):
     positional and directional feedback such as the EV3 and NXT motors.
     This feedback allows for precise control of the motors. This is the
     most common type of motor, so we just call it `motor`.
+
+    The way to configure a motor is to set the '_sp' attributes when
+    calling a command or before. Only in 'run_direct' mode attribute
+    changes are processed immediately, in the other modes they only
+    take place when a new command is issued.
     """
 
     SYSTEM_CLASS_NAME = 'tacho-motor'
@@ -131,7 +147,10 @@ class MockMotor(MockDevice):
     STOP_ACTION_HOLD = 'hold'
 
 
-    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+
+        if address is not None:
+            kwargs['address'] = address
         super(MockMotor, self).__init__()
 
         self._address = address
@@ -567,29 +586,28 @@ class MockMotor(MockDevice):
         self.connector.set_time(value)
 
 
-    def run_forever(self):
+    def run_forever(self, **kwargs):
+        """Run the motor until another command is sent.
         """
-        Run the motor until another command is sent.
-        """
-
         self.command = self.COMMAND_RUN_FOREVER
 
         run_time = self.connector.run_forever()
         self.running_until = time.time() + run_time
 
 
-    def run_to_abs_pos(self):
-        """
-        Run to an absolute position specified by `position_sp` and then
+    def run_to_abs_pos(self, **kwargs):
+        """Run to an absolute position specified by `position_sp` and then
         stop using the action specified in `stop_action`.
         """
 
         self._command = self.COMMAND_RUN_TO_ABS_POS
 
+        run_time = self.connector.run_to_rel_pos()
+        self.running_until = time.time() + run_time
 
-    def run_to_rel_pos(self):
-        """
-        Run to a position relative to the current `position` value.
+
+    def run_to_rel_pos(self, **kwargs):
+        """Run to a position relative to the current `position` value.
         The new position will be current `position` + `position_sp`.
         When the new position is reached, the motor will stop using
         the action specified by `stop_action`.
@@ -601,9 +619,8 @@ class MockMotor(MockDevice):
         self.running_until = time.time() + run_time
 
 
-    def run_timed(self):
-        """
-        Run the motor for the amount of time specified in `time_sp`
+    def run_timed(self, **kwargs):
+        """Run the motor for the amount of time specified in `time_sp`
         and then stop the motor using the action specified by `stop_action`.
         """
 
@@ -613,9 +630,8 @@ class MockMotor(MockDevice):
         self.running_until = time.time() + run_time
 
 
-    def run_direct(self):
-        """
-        Run the motor at the duty cycle specified by `duty_cycle_sp`.
+    def run_direct(self, **kwargs):
+        """Run the motor at the duty cycle specified by `duty_cycle_sp`.
         Unlike other run commands, changing `duty_cycle_sp` while running *will*
         take effect immediately.
         """
@@ -623,9 +639,8 @@ class MockMotor(MockDevice):
         self.command = self.COMMAND_RUN_DIRECT
 
 
-    def stop(self):
-        """
-        Stop any of the run commands before they are complete using the
+    def stop(self, **kwargs):
+        """Stop any of the run commands before they are complete using the
         action specified by `stop_action`.
         """
 
@@ -633,9 +648,8 @@ class MockMotor(MockDevice):
         self.connector.stop()
 
 
-    def reset(self):
-        """
-        Reset all of the motor parameter attributes to their default value.
+    def reset(self, **kwargs):
+        """Reset all of the motor parameter attributes to their default value.
         This will also have the effect of stopping the motor.
         """
 
@@ -645,8 +659,7 @@ class MockMotor(MockDevice):
 
     @property
     def is_running(self):
-        """
-        Power is being sent to the motor.
+        """Power is being sent to the motor.
         """
 
         # check if robot_state queue is not empty
@@ -655,16 +668,15 @@ class MockMotor(MockDevice):
 
     @property
     def is_ramping(self):
+        """The motor is ramping up or down and has not yet reached a constant output level.
         """
-        The motor is ramping up or down and has not yet reached a constant output level.
-        """
+
         return False
 
 
     @property
     def is_holding(self):
-        """
-        The motor is not turning, but rather attempting to hold a fixed position.
+        """The motor is not turning, but rather attempting to hold a fixed position.
         """
 
         # check if robot_state queue is empty
@@ -673,17 +685,17 @@ class MockMotor(MockDevice):
 
     @property
     def is_overloaded(self):
+        """The motor is turning, but cannot reach its `speed_sp`.
         """
-        The motor is turning, but cannot reach its `speed_sp`.
-        """
+
         return False
 
 
     @property
     def is_stalled(self):
+        """The motor is not turning when it should be.
         """
-        The motor is not turning when it should be.
-        """
+
         return False
 
 
@@ -772,27 +784,40 @@ class MockMotor(MockDevice):
         return self.wait(l, timeout)
 
 
-    def _speed_native_units(self, speed, label=None):
+    def _speed_pct(self, speed_pct, label=None):
 
-        # If speed is not a SpeedValue object we treat it as a percentage
-        if not isinstance(speed, ev3dev2.motor.SpeedValue):
-            assert -100 <= speed <= 100, \
-                "{}{} is an invalid speed percentage, must be between -100 and 100 (inclusive)".format(
-                    "" if label is None else (label + ": "), speed)
-            speed = ev3dev2.motor.SpeedPercent(speed)
+        # If speed_pct is SpeedInteger object we must convert
+        # SpeedRPS, etc to an actual speed percentage
+        if isinstance(speed_pct, SpeedInteger):
+            speed_pct = speed_pct.get_speed_pct(self)
 
-        return speed.to_native_units(self)
+        assert -100 <= speed_pct <= 100, \
+            "{}{} is an invalid speed_pct, must be between -100 and 100 (inclusive)".format(None if label is None else (label + ": "),
+                                                                                            speed_pct)
+
+        return speed_pct
 
 
-    def _set_rel_position_degrees_and_speed_sp(self, degrees, speed):
-        degrees = degrees if speed >= 0 else -degrees
-        speed = abs(speed)
+    def _set_position_rotations(self, speed_pct, rotations):
 
-        position_delta = int(round((degrees * self.count_per_rot) / 360))
-        speed_sp = int(round(speed))
+        # +/- speed is used to control direction, rotations must be positive
+        assert rotations >= 0, "rotations is {}, must be >= 0".format(rotations)
 
-        self.position_sp = position_delta
-        self.speed_sp = speed_sp
+        if speed_pct > 0:
+            self.position_sp = self.position + int(rotations * self.count_per_rot)
+        else:
+            self.position_sp = self.position - int(rotations * self.count_per_rot)
+
+
+    def _set_position_degrees(self, speed_pct, degrees):
+
+        # +/- speed is used to control direction, degrees must be positive
+        assert degrees >= 0, "degrees is %s, must be >= 0" % degrees
+
+        if speed_pct > 0:
+            self.position_sp = self.position + int((degrees * self.count_per_rot) / 360)
+        else:
+            self.position_sp = self.position - int((degrees * self.count_per_rot) / 360)
 
 
     def _set_brake(self, brake):
@@ -802,49 +827,69 @@ class MockMotor(MockDevice):
             self.stop_action = self.STOP_ACTION_COAST
 
 
-    def on_for_rotations(self, speed, rotations, brake=True, block=True):
+    def on_for_rotations(self, speed_pct, rotations, brake=True, block=True):
         """
-        Rotate the motor at ``speed`` for ``rotations``
+        Rotate the motor at ``speed_pct`` for ``rotations``
 
-        ``speed`` can be a percentage or a :class:`ev3dev2.motor.SpeedValue`
+        ``speed_pct`` can be an integer percentage or a :class:`ev3dev2.motor.SpeedInteger`
         object, enabling use of other units.
         """
-        speed_sp = self._speed_native_units(speed)
-        self._set_rel_position_degrees_and_speed_sp(rotations * 360, speed_sp)
+        speed_pct = self._speed_pct(speed_pct)
+
+        if not speed_pct or not rotations:
+            log.warning("({}) Either speed_pct ({}) or rotations ({}) is invalid, motor will not move".format(self, speed_pct, rotations))
+            self._set_brake(brake)
+            return
+
+        self.speed_sp = int((speed_pct * self.max_speed) / 100)
+        self._set_position_rotations(speed_pct, rotations)
         self._set_brake(brake)
-        self.run_to_rel_pos()
+        self.run_to_abs_pos()
 
         if block:
             self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
             self.wait_until_not_moving()
 
 
-    def on_for_degrees(self, speed, degrees, brake=True, block=True):
+    def on_for_degrees(self, speed_pct, degrees, brake=True, block=True):
         """
-        Rotate the motor at ``speed`` for ``degrees``
+        Rotate the motor at ``speed_pct`` for ``degrees``
 
-        ``speed`` can be a percentage or a :class:`ev3dev2.motor.SpeedValue`
+        ``speed_pct`` can be an integer percentage or a :class:`ev3dev2.motor.SpeedInteger`
         object, enabling use of other units.
         """
-        speed_sp = self._speed_native_units(speed)
-        self._set_rel_position_degrees_and_speed_sp(degrees, speed_sp)
+        speed_pct = self._speed_pct(speed_pct)
+
+        if not speed_pct or not degrees:
+            log.warning("({}) Either speed_pct ({}) or degrees ({}) is invalid, motor will not move".format(self, speed_pct, degrees))
+            self._set_brake(brake)
+            return
+
+        self.speed_sp = int((speed_pct * self.max_speed) / 100)
+        self._set_position_degrees(speed_pct, degrees)
         self._set_brake(brake)
-        self.run_to_rel_pos()
+        self.run_to_abs_pos()
 
         if block:
             self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
             self.wait_until_not_moving()
 
 
-    def on_to_position(self, speed, position, brake=True, block=True):
+    def on_to_position(self, speed_pct, position, brake=True, block=True):
         """
-        Rotate the motor at ``speed`` to ``position``
+        Rotate the motor at ``speed_pct`` to ``position``
 
-        ``speed`` can be a percentage or a :class:`ev3dev2.motor.SpeedValue`
+        ``speed_pct`` can be an integer percentage or a :class:`ev3dev2.motor.SpeedInteger`
         object, enabling use of other units.
         """
-        speed = self._speed_native_units(speed)
-        self.speed_sp = int(round(speed))
+        speed_pct = self._speed_pct(speed_pct)
+
+        if not speed_pct:
+            log.warning("({}) speed_pct is invalid ({}), motor will not move".format(self, speed_pct))
+            self._set_brake(brake)
+            return
+
+        self.speed_sp = int((speed_pct * self.max_speed) / 100)
         self.position_sp = position
         self._set_brake(brake)
         self.run_to_abs_pos()
@@ -854,19 +899,21 @@ class MockMotor(MockDevice):
             self.wait_until_not_moving()
 
 
-    def on_for_seconds(self, speed, seconds, brake=True, block=True):
+    def on_for_seconds(self, speed_pct, seconds, brake=True, block=True):
         """
-        Rotate the motor at ``speed`` for ``seconds``
+        Rotate the motor at ``speed_pct`` for ``seconds``
 
-        ``speed`` can be a percentage or a :class:`ev3dev2.motor.SpeedValue`
+        ``speed_pct`` can be an integer percentage or a :class:`ev3dev2.motor.SpeedInteger`
         object, enabling use of other units.
         """
+        speed_pct = self._speed_pct(speed_pct)
 
-        if seconds < 0:
-            raise ValueError("seconds is negative ({})".format(seconds))
+        if not speed_pct or not seconds:
+            log.warning("({}) Either speed_pct ({}) or seconds ({}) is invalid, motor will not move".format(self, speed_pct, seconds))
+            self._set_brake(brake)
+            return
 
-        speed = self._speed_native_units(speed)
-        self.speed_sp = int(round(speed))
+        self.speed_sp = int((speed_pct * self.max_speed) / 100)
         self.time_sp = int(seconds * 1000)
         self._set_brake(brake)
         self.run_timed()
@@ -876,18 +923,24 @@ class MockMotor(MockDevice):
             self.wait_until_not_moving()
 
 
-    def on(self, speed, brake=True, block=False):
+    def on(self, speed_pct, brake=True, block=False):
         """
-        Rotate the motor at ``speed`` for forever
+        Rotate the motor at ``speed_pct`` for forever
 
-        ``speed`` can be a percentage or a :class:`ev3dev2.motor.SpeedValue`
+        ``speed_pct`` can be an integer percentage or a :class:`ev3dev2.motor.SpeedInteger`
         object, enabling use of other units.
 
         Note that `block` is False by default, this is different from the
         other `on_for_XYZ` methods.
         """
-        speed = self._speed_native_units(speed)
-        self.speed_sp = int(round(speed))
+        speed_pct = self._speed_pct(speed_pct)
+
+        if not speed_pct:
+            log.warning("({}) speed_pct is invalid ({}), motor will not move".format(self, speed_pct))
+            self._set_brake(brake)
+            return
+
+        self.speed_sp = int((speed_pct * self.max_speed) / 100)
         self._set_brake(brake)
         self.run_forever()
 
