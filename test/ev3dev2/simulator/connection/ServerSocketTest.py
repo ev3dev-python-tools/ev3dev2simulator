@@ -2,12 +2,12 @@ import json
 import threading
 import unittest
 
-from simulator.connection.ServerSocket import ServerSocket
-from simulator.state.RobotState import get_robot_state
-from simulator.util.Util import load_config
-
-
 # based on scaling_multiplier: 0.60
+from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.connection.ServerSocket import ServerSocket
+from ev3dev2.simulator.state.RobotState import get_robot_state
+
+
 class ServerSocketTest(unittest.TestCase):
 
     def test_process_drive_command(self):

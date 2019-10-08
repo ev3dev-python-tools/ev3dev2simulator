@@ -1,15 +1,16 @@
 import threading
 import unittest
 
-from ev3dev2.connection.message.DataRequest import DataRequest
-from ev3dev2.connection.message.DriveCommand import DriveCommand
-from ev3dev2.connection.message.SoundCommand import SoundCommand
-from simulator.connection.MessageProcessor import MessageProcessor
-from simulator.state.RobotState import get_robot_state
-from simulator.util.Util import load_config, apply_scaling
-
-
 # based on scaling_multiplier: 0.60
+from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.connection.MessageProcessor import MessageProcessor
+from ev3dev2.simulator.connection.message.DataRequest import DataRequest
+from ev3dev2.simulator.connection.message.DriveCommand import DriveCommand
+from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
+from ev3dev2.simulator.state.RobotState import get_robot_state
+from ev3dev2.simulator.util.Util import apply_scaling
+
+
 class MessageProcessorTest(unittest.TestCase):
 
     def test_create_jobs_left(self):

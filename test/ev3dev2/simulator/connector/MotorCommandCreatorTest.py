@@ -1,7 +1,7 @@
 import unittest
 
-from ev3dev2.util.MotorCommandCreator import MotorCommandCreator
-from simulator.util.Util import load_config
+from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.connector.MotorCommandCreator import MotorCommandCreator
 
 
 class MotorCommandCreatorTest(unittest.TestCase):

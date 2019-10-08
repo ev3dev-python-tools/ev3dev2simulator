@@ -2,8 +2,8 @@ import unittest
 
 import arcade
 
-from simulator.obstacle.Border import Border
-from simulator.util.Util import load_config
+from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.obstacle.Border import Border
 
 
 class BorderTest(unittest.TestCase):
