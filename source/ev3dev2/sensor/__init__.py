@@ -22,19 +22,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # -----------------------------------------------------------------------------
+import numbers
 
-import sys
-
-from ev3dev2.mock.MockDevice import MockDevice
-
-if sys.version_info < (3, 4):
-    raise SystemError('Must be using Python 3.4 or higher')
+from ev3dev2 import Device
 
 
-class Sensor(MockDevice):
+class Sensor(Device):
     """
     The sensor class provides a uniform interface for using most of the
-    sensors available for the EV3.
+    sensors available for the EV3. The various underlying device drivers will
+    create a `lego-sensor` device for interacting with the sensors.
+
+    Sensors are primarily controlled by setting the `mode` and monitored by
+    reading the `value<N>` attributes. Values can be converted to floating point
+    if needed by `value<N>` / 10.0 ^ `decimals`.
+
+    Since the name of the `sensor<N>` device node does not correspond to the port
+    that a sensor is plugged in to, you must look at the `address` attribute if
+    you need to know which port a sensor is plugged in to. However, if you don't
+    have more than one sensor of each type, you can just look for a matching
+    `driver_name`. Then it will not matter which port a sensor is plugged in to - your
+    program will still work.
     """
 
     SYSTEM_CLASS_NAME = 'lego-sensor'
@@ -58,9 +66,11 @@ class Sensor(MockDevice):
 
 
     def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
-        super(Sensor, self).__init__()
+        if address is not None:
+            kwargs['address'] = address
+        super(Sensor, self).__init__(self.SYSTEM_CLASS_NAME, name_pattern, name_exact, **kwargs)
 
-        self._address = address
+        self._address = None
         self._command = None
         self._commands = None
         self._decimals = None
@@ -194,7 +204,10 @@ class Sensor(MockDevice):
         an error. The values are fixed point numbers, so check decimals to see
         if you need to divide to get the actual value.
         """
-        n = int(n)
+        if isinstance(n, numbers.Real):
+            n = int(n)
+        elif isinstance(n, str):
+            n = int(n)
 
         return self._value[n]
 
