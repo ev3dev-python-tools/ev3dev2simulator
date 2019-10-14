@@ -1,6 +1,6 @@
 from ev3dev2.simulator.connector.MotorCommandCreator import get_motor_command_creator
 
-FOREVER_MOCK_SECONDS = 3600
+FOREVER_MOCK_SECONDS = 45
 
 
 class MotorConnector:
@@ -61,16 +61,14 @@ class MotorConnector:
 
     def run_forever(self) -> float:
         """
-        Run the motor indefinitely. This is translated to 3600 seconds.
+        Run the motor indefinitely. This is translated to 45 seconds.
         :return a floating point value representing the number of seconds
         the given run operation will take. Here a large number is returned.
         In the real world this would be infinity.
         """
 
         distance = self.speed * FOREVER_MOCK_SECONDS
-        self._run(self.speed, distance)
-
-        return 100000
+        return self._run(self.speed, distance)
 
 
     def run_to_rel_pos(self) -> float:
