@@ -1150,6 +1150,24 @@ class Motor(Device):
             self.running_until = now + run_time
 
 
+def list_motors(name_pattern=Motor.SYSTEM_DEVICE_NAME_CONVENTION, **kwargs):
+    """
+    This is a generator function that enumerates all tacho motors that match
+    the provided arguments.
+
+    Parameters:
+        name_pattern: pattern that device name should match.
+            For example, 'motor*'. Default value: '*'.
+        keyword arguments: used for matching the corresponding device
+            attributes. For example, driver_name='lego-ev3-l-motor', or
+            address=['outB', 'outC']. When argument value
+            is a list, then a match against any entry of the list is
+            enough.
+    """
+
+    pass
+
+
 class LargeMotor(Motor):
     """
     EV3/NXT large servo motor.
@@ -1367,6 +1385,22 @@ class MotorSet(object):
     def _block(self):
         self.wait_until('running', timeout=WAIT_RUNNING_TIMEOUT)
         self.wait_until_not_moving()
+
+
+# line follower classes
+class LineFollowErrorLostLine(Exception):
+    """
+    Raised when a line following robot has lost the line
+    """
+    pass
+
+
+class LineFollowErrorTooFast(Exception):
+    """
+    Raised when a line following robot has been asked to follow
+    a line at an unrealistic speed
+    """
+    pass
 
 
 # line follower functions

@@ -22,7 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # -----------------------------------------------------------------------------
-import numbers
 
 from ev3dev2 import Device
 
@@ -30,19 +29,7 @@ from ev3dev2 import Device
 class Sensor(Device):
     """
     The sensor class provides a uniform interface for using most of the
-    sensors available for the EV3. The various underlying device drivers will
-    create a `lego-sensor` device for interacting with the sensors.
-
-    Sensors are primarily controlled by setting the `mode` and monitored by
-    reading the `value<N>` attributes. Values can be converted to floating point
-    if needed by `value<N>` / 10.0 ^ `decimals`.
-
-    Since the name of the `sensor<N>` device node does not correspond to the port
-    that a sensor is plugged in to, you must look at the `address` attribute if
-    you need to know which port a sensor is plugged in to. However, if you don't
-    have more than one sensor of each type, you can just look for a matching
-    `driver_name`. Then it will not matter which port a sensor is plugged in to - your
-    program will still work.
+    sensors available for the EV3.
     """
 
     SYSTEM_CLASS_NAME = 'lego-sensor'
@@ -65,7 +52,8 @@ class Sensor(Device):
     ]
 
 
-    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+
         if address is not None:
             kwargs['address'] = address
         super(Sensor, self).__init__(self.SYSTEM_CLASS_NAME, name_pattern, name_exact, **kwargs)
@@ -204,11 +192,8 @@ class Sensor(Device):
         an error. The values are fixed point numbers, so check decimals to see
         if you need to divide to get the actual value.
         """
-        if isinstance(n, numbers.Real):
-            n = int(n)
-        elif isinstance(n, str):
-            n = int(n)
 
+        n = int(n)
         return self._value[n]
 
 
@@ -230,6 +215,44 @@ class Sensor(Device):
         return self._bin_data_format
 
 
+    def bin_data(self, fmt=None):
+        """
+        Returns the unscaled raw values in the `value<N>` attributes as raw byte
+        array. Use `bin_data_format`, `num_values` and the individual sensor
+        documentation to determine how to interpret the data.
+
+        Use `fmt` to unpack the raw bytes into a struct.
+
+        Example::
+
+            >>> from ev3dev2.sensor.lego import InfraredSensor
+            >>> ir = InfraredSensor()
+            >>> ir.value()
+            28
+            >>> ir.bin_data('<b')
+            (28,)
+        """
+
+        pass
+
+
     def _ensure_mode(self, mode):
         if self.mode != mode:
             self.mode = mode
+
+
+def list_sensors(name_pattern=Sensor.SYSTEM_DEVICE_NAME_CONVENTION, **kwargs):
+    """
+    This is a generator function that enumerates all sensors that match the
+    provided arguments.
+
+    Parameters:
+        name_pattern: pattern that device name should match.
+            For example, 'sensor*'. Default value: '*'.
+        keyword arguments: used for matching the corresponding device
+            attributes. For example, driver_name='lego-ev3-touch', or
+            address=['in1', 'in3']. When argument value is a list,
+            then a match against any entry of the list is enough.
+    """
+
+    pass
