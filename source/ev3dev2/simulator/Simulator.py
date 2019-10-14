@@ -3,9 +3,17 @@ Main simulator class.
 This class extends from arcade.Window and manages the updates and rendering of the simulator window.
 """
 import argparse
+import os
+import sys
 
 import arcade
 from pymunk import Space
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
+ev3dev_dir = os.path.dirname(os.path.dirname(script_dir))
+sys.path.insert(0, ev3dev_dir)
+
+os.chdir(script_dir)
 
 from ev3dev2.simulator.config.config import load_config, write_scale_config, load_scale_config
 from ev3dev2.simulator.connection.ServerSocket import ServerSocket
