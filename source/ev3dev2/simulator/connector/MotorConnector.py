@@ -15,6 +15,7 @@ class MotorConnector:
     def __init__(self, address: str):
         self.address = address
 
+        self.duty_cycle = None
         self.speed = None
         self.distance = None
         self.time = None
@@ -23,13 +24,14 @@ class MotorConnector:
         self.command_creator = get_motor_command_creator()
 
 
-    def set_time(self, time: int):
+    def set_duty_cycle(self, duty_cycle: int):
         """
-        Set the time to run of the motor belonging to the given address.
-        :param time: in milliseconds.
+        Set the percentage of power of the motor belonging to the given address.
+        -100 being fully backwards and 100 fully forwards.
+        :param duty_cycle: in percentage.
         """
 
-        self.time = time
+        self.duty_cycle = duty_cycle
 
 
     def set_speed(self, speed: float):
@@ -50,6 +52,15 @@ class MotorConnector:
         self.distance = distance
 
 
+    def set_time(self, time: int):
+        """
+        Set the time to run of the motor belonging to the given address.
+        :param time: in milliseconds.
+        """
+
+        self.time = time
+
+
     def set_stop_action(self, action: str):
         """
         Set the speed to run at of the motor belonging to the given address.
@@ -67,8 +78,8 @@ class MotorConnector:
         In the real world this would be infinity.
         """
 
-        distance = self.speed * FOREVER_MOCK_SECONDS
-        return self._run(self.speed, distance)
+        self.distance = self.speed * FOREVER_MOCK_SECONDS
+        return self._run()
 
 
     def run_to_rel_pos(self) -> float:
@@ -78,7 +89,7 @@ class MotorConnector:
         the given run operation will take.
         """
 
-        return self._run(self.speed, self.distance)
+        return self._run()
 
 
     def run_timed(self) -> float:
@@ -88,24 +99,35 @@ class MotorConnector:
         the given run operation will take.
         """
 
-        distance = self.speed * (self.time / 1000)
-        return self._run(self.speed, distance)
+        self.distance = self.speed * (self.time / 1000)
+        return self._run()
 
 
-    def _run(self, speed: float, distance: float) -> float:
+    def run_direct(self) -> float:
         """
-        Run the motor at a speed for a distance.
-        :param speed: in degrees per second.
-        :param distance: in degrees.
+        Run the motor for at the given speed provided by the duty_cycle.
         :return a floating point value representing the number of seconds
         the given run operation will take.
         """
 
-        if speed == 0 or distance == 0:
+        self.speed = self.duty_cycle / 100 * 1050
+        self.distance = self.speed * FOREVER_MOCK_SECONDS
+
+        return self._run()
+
+
+    def _run(self) -> float:
+        """
+        Run the motor at a speed for a distance.
+        :return a floating point value representing the number of seconds
+        the given run operation will take.
+        """
+
+        if self.speed == 0 or self.distance == 0:
             return 0
 
-        return self.command_creator.create_drive_command(speed,
-                                                         distance,
+        return self.command_creator.create_drive_command(self.speed,
+                                                         self.distance,
                                                          self.stop_action,
                                                          self.address)
 

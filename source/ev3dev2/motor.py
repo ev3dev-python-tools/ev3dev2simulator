@@ -515,6 +515,7 @@ class Motor(Device):
     @duty_cycle_sp.setter
     def duty_cycle_sp(self, value):
         self._duty_cycle_sp = value
+        self.connector.set_duty_cycle(value)
 
 
     @property
@@ -618,7 +619,6 @@ class Motor(Device):
 
     @position_sp.setter
     def position_sp(self, value):
-
         self._position_sp = value
         self.connector.set_distance(value)
 
@@ -863,6 +863,12 @@ class Motor(Device):
         """
 
         self.command = self.COMMAND_RUN_DIRECT
+
+        self.connector.set_stop_action(self.STOP_ACTION_BRAKE)
+        self.connector.stop()
+
+        run_time = self.connector.run_direct()
+        self.running_until = time.time() + run_time
 
 
     def stop(self):

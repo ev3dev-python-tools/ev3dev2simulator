@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from ev3dev2._platform.ev3 import INPUT_1, INPUT_4, INPUT_3, INPUT_2
-from ev3dev2.led import Led
 from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
 from ev3dev2.sensor.lego import ColorSensor
 from ev3dev2.sensor.lego import TouchSensor
@@ -71,8 +70,6 @@ us = UltrasonicSensor(INPUT_3)
 us.mode = 'US-DIST-CM'
 
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
-
-led = Led()
 
 drive()
 check()
