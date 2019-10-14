@@ -22,6 +22,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # -----------------------------------------------------------------------------
+import sys
+
+
+def is_micropython():
+    return sys.implementation.name == "micropython"
 
 
 class Device(object):
@@ -37,7 +42,6 @@ class Device(object):
     def __init__(self, class_name, name_pattern='*', name_exact=False, **kwargs):
         """Spin through the Linux sysfs class for the device type and find
         a device that matches the provided name pattern and attributes (if any).
-
         Parameters:
             class_name: class name of the device, a subdirectory of /sys/class.
                 For example, 'tacho-motor'.
@@ -50,12 +54,9 @@ class Device(object):
                 driver_name=['lego-ev3-us', 'lego-nxt-us']. When argument value
                 is a list, then a match against any entry of the list is
                 enough.
-
         Example::
-
             d = ev3dev.Device('tacho-motor', address='outA')
             s = ev3dev.Device('lego-sensor', driver_name=['lego-ev3-us', 'lego-nxt-us'])
-
         If there was no valid connected device, an error is thrown.
         """
 
