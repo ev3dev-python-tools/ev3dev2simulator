@@ -2,8 +2,8 @@ import arcade
 from arcade import Shape, PointList
 
 from ev3dev2.simulator.obstacle.ColorObstacle import ColorObstacle
-from ev3dev2.simulator.util.Color import to_color_code, BLUE, GREEN, RED, YELLOW
-from ev3dev2.simulator.util.Util import get_circle_points, apply_scaling
+from ev3dev2.simulator.util.Color import to_color_code, BLUE, RED, YELLOW
+from ev3dev2.simulator.util.Util import apply_scaling, get_circle_points
 
 
 class Lake(ColorObstacle):
@@ -39,7 +39,7 @@ class Lake(ColorObstacle):
 
         return get_circle_points(self.center_x,
                                  self.center_y,
-                                 self.radius)
+                                 self.radius * 1.2)
 
 
     def _create_shape(self) -> Shape:
@@ -48,9 +48,14 @@ class Lake(ColorObstacle):
         :return: a Arcade shape object.
         """
 
-        return arcade.create_line_strip(self.points,
-                                        self.color,
-                                        self.border_width)
+        # return arcade.create_line_strip(self.points,
+        #                                 self.color,
+        #                                 self.border_width)
+
+        color_list = [self.color] + [self.color] * (32 + 1)
+        return arcade.create_line_generic_with_colors(self.points,
+                                                      color_list,
+                                                      6)
 
 
 class BlueLake(Lake):
