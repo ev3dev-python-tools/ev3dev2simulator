@@ -407,7 +407,7 @@ class Motor(Device):
         self.max_dps = self.max_rps * 360
         self.max_dpm = self.max_rpm * 360
 
-        self.connector = MotorConnector(self.address)
+        self.connector = MotorConnector(self.address, self.max_speed)
         self.running_until = time.time()
 
 
@@ -864,7 +864,7 @@ class Motor(Device):
 
         self.command = self.COMMAND_RUN_DIRECT
 
-        self.connector.set_stop_action(self.STOP_ACTION_BRAKE)
+        self.connector.set_stop_action(self.STOP_ACTION_HOLD)
         self.connector.stop()
 
         run_time = self.connector.run_direct()

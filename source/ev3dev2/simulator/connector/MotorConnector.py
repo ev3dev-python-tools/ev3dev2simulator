@@ -12,8 +12,9 @@ class MotorConnector:
     """
 
 
-    def __init__(self, address: str):
+    def __init__(self, address: str, max_speed: int):
         self.address = address
+        self.max_speed = max_speed
 
         self.duty_cycle = None
         self.speed = None
@@ -110,7 +111,7 @@ class MotorConnector:
         the given run operation will take.
         """
 
-        self.speed = self.duty_cycle / 100 * 1050
+        self.speed = self.duty_cycle / 100 * self.max_speed
         self.distance = self.speed * FOREVER_MOCK_SECONDS
 
         return self._run()
@@ -140,7 +141,7 @@ class MotorConnector:
         """
 
         speed = self.speed if self.speed else 0
-        stop_action = self.stop_action if self.stop_action else 0
+        stop_action = self.stop_action if self.stop_action else 'hold'
         distance = self.distance if self.distance else 0
 
         if speed == 0:

@@ -28,7 +28,7 @@ class MotorCommandCreator:
         Create the command required to rotate the motor at the address for a distance at a speed.
         :param speed: in degrees per second.
         :param distance: in degrees.
-        :param stop_action: of the motor, this can be 'hold' or 'coast'.
+        :param stop_action: of the motor, this can be 'hold', 'break' or 'coast'.
         :param address: of the motor to create a command for.
         """
 
@@ -49,7 +49,7 @@ class MotorCommandCreator:
         """
         Create the command required to stop the motor at the address.
         :param speed: in degrees per second the motor is traveling when stopped.
-        :param stop_action: of the motor, this can be 'hold' or 'coast'.
+        :param stop_action: of the motor, this can be 'hold', 'break' or 'coast'.
         :param address: of the motor to create a stop command for.
         """
 
