@@ -80,7 +80,7 @@ class MotorCommandCreator:
     def _coast_frames_required(self, speed: float) -> int:
         """
         Calculate the number of frames required for a motor to coast to a halt based on the given speed.
-        :param speed: in degrees per second.
+        :param speed: in pixels per second.
         :return: an integer representing the number of frames.
         """
 
