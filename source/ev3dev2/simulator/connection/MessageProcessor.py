@@ -32,6 +32,8 @@ class MessageProcessor:
         ppf = command.ppf * self.scaling_multiplier
         side = self.robot_state.get_motor_side(command.address)
 
+        self.robot_state.clear_move_jobs(side)
+
         for i in range(command.frames):
             self.robot_state.put_move_job(ppf, side)
 
@@ -47,10 +49,9 @@ class MessageProcessor:
 
         ppf = command.ppf * self.scaling_multiplier
         side = self.robot_state.get_motor_side(command.address)
-        self.robot_state.clear_move_jobs(side)
 
-        if command.frames != 0:
-            self._process_coast(command.frames, ppf, side)
+        self.robot_state.clear_move_jobs(side)
+        self._process_coast(command.frames, ppf, side)
 
 
     def _process_coast(self, frames, ppf, side):

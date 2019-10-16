@@ -864,9 +864,6 @@ class Motor(Device):
 
         self.command = self.COMMAND_RUN_DIRECT
 
-        self.connector.set_stop_action(self.STOP_ACTION_HOLD)
-        self.connector.stop()
-
         run_time = self.connector.run_direct()
         self.running_until = time.time() + run_time
 

@@ -125,7 +125,7 @@ class MotorConnector:
         """
 
         if self.speed == 0 or self.distance == 0:
-            return 0
+            return self.command_creator.create_stop_command(0, 'hold', self.address)
 
         return self.command_creator.create_drive_command(self.speed,
                                                          self.distance,
