@@ -54,12 +54,7 @@ class PowerSupply(Device):
             kwargs['address'] = address
         super(PowerSupply, self).__init__(self.SYSTEM_CLASS_NAME, name_pattern, name_exact, **kwargs)
 
-        self._measured_current = None
-        self._measured_voltage = None
-        self._max_voltage = None
-        self._min_voltage = None
-        self._technology = None
-        self._type = None
+        pass
 
 
     @property

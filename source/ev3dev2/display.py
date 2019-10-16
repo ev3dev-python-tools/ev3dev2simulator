@@ -109,8 +109,7 @@ class FbMem(object):
 
 
             def __str__(self):
-                return "%s (offset %s, length %s, msg_right %s)" % \
-                       (self.__class__.__name__, self.offset, self.length, self.msb_right)
+                pass
 
         """The fb_var_screeninfo struct from fb.h."""
 
@@ -133,19 +132,12 @@ class FbMem(object):
 
 
         def __str__(self):
-            return ("%sx%s at (%s,%s), bpp %s, grayscale %s, red %s, green %s, blue %s, transp %s" %
-                    (self.xres, self.yres, self.xoffset, self.yoffset, self.bits_per_pixel, self.grayscale,
-                     self.red, self.green, self.blue, self.transp))
+            pass
 
     def __init__(self, fbdev=None):
         """Create the FbMem framebuffer memory object."""
-        fid = FbMem._open_fbdev(fbdev)
-        fix_info = FbMem._get_fix_info(fid)
-        fbmmap = FbMem._map_fb_memory(fid, fix_info)
-        self.fid = fid
-        self.fix_info = fix_info
-        self.var_info = FbMem._get_var_info(fid)
-        self.mmap = fbmmap
+
+        pass
 
 
     @staticmethod
@@ -196,32 +188,11 @@ class Display(FbMem):
     def __init__(self, desc='Display'):
         FbMem.__init__(self)
 
-        self.platform = get_current_platform()
-
-        if self.var_info.bits_per_pixel == 1:
-            im_type = "1"
-
-        elif self.platform == "ev3" and self.var_info.bits_per_pixel == 32:
-            im_type = "L"
-
-        elif self.var_info.bits_per_pixel == 16 or self.var_info.bits_per_pixel == 32:
-            im_type = "RGB"
-
-        else:
-            raise Exception("Not supported - platform %s with bits_per_pixel %s" %
-                            (self.platform, self.var_info.bits_per_pixel))
-
-        self._img = Image.new(
-            im_type,
-            (self.fix_info.line_length * 8 // self.var_info.bits_per_pixel, self.yres),
-            "white")
-
-        self._draw = ImageDraw.Draw(self._img)
-        self.desc = desc
+        pass
 
 
     def __str__(self):
-        return self.desc
+        pass
 
 
     @property

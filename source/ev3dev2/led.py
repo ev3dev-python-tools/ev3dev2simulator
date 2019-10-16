@@ -57,19 +57,12 @@ class Led(Device):
                  desc=None, **kwargs):
         self.desc = desc
         super(Led, self).__init__(self.SYSTEM_CLASS_NAME, name_pattern, name_exact, **kwargs)
-        self._max_brightness = None
-        self._brightness = None
-        self._triggers = None
-        self._trigger = None
-        self._delay_on = None
-        self._delay_off = None
+
+        pass
 
 
     def __str__(self):
-        if self.desc:
-            return self.desc
-        else:
-            return Device.__str__(self)
+        pass
 
 
     @property
@@ -185,24 +178,11 @@ class Led(Device):
 class Leds(object):
 
     def __init__(self):
-        self.leds = OrderedDict()
-        self.led_groups = OrderedDict()
-        self.led_colors = LED_COLORS
-        self.animate_thread_id = None
-        self.animate_thread_stop = False
-
-        for (key, value) in LEDS.items():
-            self.leds[key] = Led(name_pattern=value, desc=key)
-
-        for (key, value) in LED_GROUPS.items():
-            self.led_groups[key] = []
-
-            for led_name in value:
-                self.led_groups[key].append(self.leds[led_name])
+        pass
 
 
     def __str__(self):
-        return self.__class__.__name__
+        pass
 
 
     def set_color(self, group, color, pct=1):

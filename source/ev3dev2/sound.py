@@ -55,21 +55,7 @@ def get_command_processes(command):
     :return: a list of Popen objects
     """
 
-    # We must split command into sub-commands to support pipes
-    if "|" in command:
-        command_parts = command.split("|")
-    else:
-        command_parts = [command]
-
-    processes = []
-
-    for command_part in command_parts:
-        if processes:
-            processes.append(Popen(shlex.split(command_part), stdin=processes[-1].stdout, stdout=PIPE, stderr=PIPE))
-        else:
-            processes.append(Popen(shlex.split(command_part), stdin=None, stdout=PIPE, stderr=PIPE))
-
-    return processes
+    pass
 
 
 class Sound(object):

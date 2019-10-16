@@ -77,12 +77,7 @@ class LegoPort(Device):
             kwargs['address'] = address
         super(LegoPort, self).__init__(self.SYSTEM_CLASS_NAME, name_pattern, name_exact, **kwargs)
 
-        self._address = None
-        self._driver_name = None
-        self._modes = None
-        self._mode = None
-        self._set_device = None
-        self._status = None
+        pass
 
 
     @property

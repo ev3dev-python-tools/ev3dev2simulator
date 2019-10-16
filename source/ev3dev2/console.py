@@ -36,14 +36,8 @@ class Console():
         - `font` (string): Font name, as found in `/usr/share/consolefonts/`
 
         """
-        self._font = None
-        self._columns = 0
-        self._rows = 0
-        self._echo = False
-        self._cursor = False
-        self.set_font(font, reset_console=False)  # don't reset the screen during construction
-        self.cursor = False
-        self.echo = False
+
+        pass
 
 
     @property
