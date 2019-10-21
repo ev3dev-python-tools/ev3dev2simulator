@@ -3,7 +3,7 @@ import arcade
 
 class ColorObstacle:
     """
-    This class provides basic functionality for obstacles which can be interacted with using color sensing
+    This class provides basic functionality for obstacles which can be interacted with using color sensing.
     """
 
 
@@ -14,7 +14,7 @@ class ColorObstacle:
 
     def collided_with(self, x: float, y: float) -> bool:
         """
-        Check if this obstacle has collided with the given Point. Meaning the point is inside this obstacle
+        Check if this obstacle has collided with the given Point. Meaning the point is inside this obstacle.
         :param x: coordinate of the point.
         :param y: coordinate of the point.
         :return: True if collision detected.

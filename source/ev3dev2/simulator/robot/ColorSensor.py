@@ -24,6 +24,10 @@ class ColorSensor(BodyPart):
 
 
     def get_sensed_color(self) -> int:
+        """
+        Get the color this ColorSensor is currently 'seeing'.
+        :return: integer value representing the color.
+        """
 
         for o in self.sensible_obstacles:
             if o.collided_with(self.center_x, self.center_y):
@@ -34,8 +38,8 @@ class ColorSensor(BodyPart):
 
     def get_default_value(self):
         """
-        6 is the color of white for the real robot. Playing field surface is white.
-        :return: integer value representing the color white.
+        1 is the color of black for the real robot. Playing field surface is black.
+        :return: integer value representing the color black.
         """
 
-        return 6
+        return 1

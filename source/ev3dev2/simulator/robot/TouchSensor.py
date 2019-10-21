@@ -26,6 +26,10 @@ class TouchSensor(BodyPart):
 
 
     def is_touching(self) -> bool:
+        """
+        Check if this TouchSensor is touching a TouchObstacle.
+        :return: boolean value representing the outcome.
+        """
 
         for o in self.sensible_obstacles:
             if o.collided_with(self):

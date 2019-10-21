@@ -142,6 +142,17 @@ class Robot:
         self.right_touch_sensor.set_sensible_obstacles(obstacles)
 
 
+    def set_falling_obstacles(self, obstacles):
+        """
+        Set the obstacles which can be detected by the wheel of this robot. This simulates
+        the entering of a wheel in a 'hole'. Meaning it is stuck or falling.
+        :param obstacles: to be detected.
+        """
+
+        self.left_wheel.set_sensible_obstacles(obstacles)
+        self.right_wheel.set_sensible_obstacles(obstacles)
+
+
     def get_sprites(self) -> [Sprite]:
         return self.sprites
 

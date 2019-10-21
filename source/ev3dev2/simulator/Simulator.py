@@ -18,6 +18,7 @@ os.chdir(script_dir)
 from ev3dev2.simulator.config.config import load_config, write_scale_config, load_scale_config
 from ev3dev2.simulator.connection.ServerSocket import ServerSocket
 from ev3dev2.simulator.obstacle.Border import Border
+from ev3dev2.simulator.obstacle.Edge import Edge
 from ev3dev2.simulator.obstacle.Lake import BlueLake, GreenLake, RedLake
 from ev3dev2.simulator.obstacle.Rock import Rock
 from ev3dev2.simulator.robot.Robot import Robot
@@ -37,6 +38,10 @@ class Simulator(arcade.Window):
         self.screen_height = int(apply_scaling(self.cfg['screen_settings']['screen_height']))
         screen_title = self.cfg['screen_settings']['screen_title']
 
+        self.frames_per_second = self.cfg['exec_settings']['frames_per_second']
+        self.falling_msg = self.cfg['screen_settings']['falling_message']
+        self.restart_msg = self.cfg['screen_settings']['restart_message']
+
         super(Simulator, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30)
 
         arcade.set_background_color(arcade.color.BLACK_OLIVE)
@@ -55,6 +60,7 @@ class Simulator(arcade.Window):
         self.rock2 = None
 
         self.border = None
+        self.edge = None
 
         self.space = None
 
@@ -64,6 +70,8 @@ class Simulator(arcade.Window):
         self.top_us_data = -1
 
         self.text_x = self.screen_width - apply_scaling(220)
+        self.msg_x = self.screen_width / 2
+        self.msg_counter = 0
 
 
     def setup(self):
@@ -98,15 +106,18 @@ class Simulator(arcade.Window):
         self.obstacle_elements.append(self.rock2.shape)
 
         self.border = Border(self.cfg, arcade.color.WHITE)
+        self.edge = Edge(self.cfg)
 
         for s in self.border.shapes:
             self.obstacle_elements.append(s)
 
         color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
         touch_obstacles = [self.rock1, self.rock2]
+        falling_obstacles = [self.blue_lake.hole, self.green_lake.hole, self.red_lake.hole, self.edge]
 
         self.robot.set_color_obstacles(color_obstacles)
         self.robot.set_touch_obstacles(touch_obstacles)
+        self.robot.set_falling_obstacles(falling_obstacles)
 
         self.space = Space()
         self.space.add(self.rock1.poly)
@@ -135,12 +146,20 @@ class Simulator(arcade.Window):
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
 
-        arcade.draw_text(center_cs, self.text_x, self.screen_height - apply_scaling(80), arcade.color.WHITE, 10)
-        arcade.draw_text(left_ts, self.text_x, self.screen_height - apply_scaling(100), arcade.color.WHITE, 10)
-        arcade.draw_text(right_ts, self.text_x, self.screen_height - apply_scaling(120), arcade.color.WHITE, 10)
-        arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(140), arcade.color.WHITE, 10)
-        arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(160), arcade.color.WHITE, 10)
-        arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(180), arcade.color.WHITE, 10, anchor_y='top')
+        arcade.draw_text(center_cs, self.text_x, self.screen_height - apply_scaling(70), arcade.color.WHITE, 10)
+        arcade.draw_text(left_ts, self.text_x, self.screen_height - apply_scaling(90), arcade.color.WHITE, 10)
+        arcade.draw_text(right_ts, self.text_x, self.screen_height - apply_scaling(110), arcade.color.WHITE, 10)
+        arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(130), arcade.color.WHITE, 10)
+        arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(150), arcade.color.WHITE, 10)
+        arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(170), arcade.color.WHITE, 10, anchor_y='top')
+
+        if self.msg_counter != 0:
+            self.msg_counter -= 1
+
+            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - apply_scaling(100), arcade.color.WHITE, 16,
+                             anchor_x="center")
+            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - apply_scaling(140), arcade.color.WHITE, 16,
+                             anchor_x="center")
 
 
     def update(self, delta_time):
@@ -153,27 +172,43 @@ class Simulator(arcade.Window):
             self.robot_state.reset()
 
         else:
-            left_ppf, right_ppf = self.robot_state.next_move_jobs()
-
-            if left_ppf or right_ppf:
-                self.robot.execute_movement(left_ppf, right_ppf)
-
-            address_center_cs = self.robot.center_color_sensor.address
-            address_left_ts = self.robot.left_touch_sensor.address
-            address_right_ts = self.robot.right_touch_sensor.address
-            address_us = self.robot.ultrasonic_sensor.address
-
-            self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
-            self.left_ts_data = self.robot.left_touch_sensor.is_touching()
-            self.right_ts_data = self.robot.right_touch_sensor.is_touching()
-            self.top_us_data = self.robot.ultrasonic_sensor.distance(self.space)
-
-            self.robot_state.values[address_center_cs] = self.center_cs_data
-            self.robot_state.values[address_left_ts] = self.left_ts_data
-            self.robot_state.values[address_right_ts] = self.right_ts_data
-            self.robot_state.values[address_us] = self.top_us_data
+            self._process_movement()
+            self._process_sensors()
+            self._check_fall()
 
         self.robot_state.release_locks()
+
+
+    def _process_movement(self):
+        left_ppf, right_ppf = self.robot_state.next_move_jobs()
+
+        if left_ppf or right_ppf:
+            self.robot.execute_movement(left_ppf, right_ppf)
+
+
+    def _check_fall(self):
+        left_wheel_data = self.robot.left_wheel.is_falling()
+        right_wheel_data = self.robot.right_wheel.is_falling()
+
+        if left_wheel_data or right_wheel_data:
+            self.msg_counter = self.frames_per_second * 3
+
+
+    def _process_sensors(self):
+        address_center_cs = self.robot.center_color_sensor.address
+        address_left_ts = self.robot.left_touch_sensor.address
+        address_right_ts = self.robot.right_touch_sensor.address
+        address_us = self.robot.ultrasonic_sensor.address
+
+        self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
+        self.left_ts_data = self.robot.left_touch_sensor.is_touching()
+        self.right_ts_data = self.robot.right_touch_sensor.is_touching()
+        self.top_us_data = self.robot.ultrasonic_sensor.distance(self.space)
+
+        self.robot_state.values[address_center_cs] = self.center_cs_data
+        self.robot_state.values[address_left_ts] = self.left_ts_data
+        self.robot_state.values[address_right_ts] = self.right_ts_data
+        self.robot_state.values[address_us] = self.top_us_data
 
 
 def main():

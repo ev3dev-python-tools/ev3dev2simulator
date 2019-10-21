@@ -22,15 +22,15 @@ exec_settings:
   socket_port: 6840
 
 image_paths:
-  body: "assets/images/body.png"
-  color_sensor: "assets/images/color_sensor.png"
-  color_sensor_blue: "assets/images/color_sensor_blue.png"
-  color_sensor_green: "assets/images/color_sensor_green.png"
-  color_sensor_red: "assets/images/color_sensor_red.png"
-  touch_sensor_left: "assets/images/touch_sensor_left.png"
-  touch_sensor_right: "assets/images/touch_sensor_right.png"
-  ultrasonic_sensor: "assets/images/ultrasonic_sensor.png"
-  wheel: "assets/images/wheel.png"
+  body: 'assets/images/body.png'
+  color_sensor: 'assets/images/color_sensor.png'
+  color_sensor_blue: 'assets/images/color_sensor_blue.png'
+  color_sensor_green: 'assets/images/color_sensor_green.png'
+  color_sensor_red: 'assets/images/color_sensor_red.png'
+  touch_sensor_left: 'assets/images/touch_sensor_left.png'
+  touch_sensor_right: 'assets/images/touch_sensor_right.png'
+  ultrasonic_sensor: 'assets/images/ultrasonic_sensor.png'
+  wheel: 'assets/images/wheel.png'
 
 obstacle_settings:
   border_settings:
@@ -52,7 +52,9 @@ screen_settings:
   scaling_multiplier: 0.65
   screen_height: 1273
   screen_width: 1273
-  screen_title: "Lego ev3dev2 simulator"
+  screen_title: 'Lego ev3dev2 simulator'
+  falling_message: 'Robot has dipped a wheel in a lake or off the map.'
+  restart_message: 'Please restart the mission.'
 
 wheel_settings:
   circumference: 173

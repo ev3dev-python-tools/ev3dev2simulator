@@ -33,7 +33,7 @@ def checkCollision():
 
 
 def checkColor():
-    if cs.color == 1:
+    if cs.color == 6:
         tank_drive.stop()
 
         s.speak("blyat.wav")

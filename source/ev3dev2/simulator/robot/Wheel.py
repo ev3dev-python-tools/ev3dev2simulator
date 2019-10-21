@@ -21,3 +21,20 @@ class Wheel(BodyPart):
                                     robot,
                                     delta_x,
                                     delta_y)
+
+
+    def is_falling(self) -> bool:
+        """
+        Check if this Wheel is 'falling' of the playing field.
+        :return: boolean value representing the outcome.
+        """
+
+        for o in self.sensible_obstacles:
+            if o.collided_with(self.center_x, self.center_y):
+                return True
+
+        return self.get_default_value()
+
+
+    def get_default_value(self):
+        return False
