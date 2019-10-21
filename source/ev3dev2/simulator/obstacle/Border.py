@@ -12,7 +12,7 @@ class Border(ColorObstacle):
 
 
     def __init__(self, cfg, color: arcade.Color):
-        super(Border, self).__init__(1)
+        super(Border, self).__init__(6)
 
         self.screen_width = apply_scaling(cfg['screen_settings']['screen_width'])
         self.screen_height = apply_scaling(cfg['screen_settings']['screen_height'])

@@ -27,7 +27,7 @@ def load_scale_config() -> float:
     path = get_project_root() + '/scale_config.txt'
 
     with open(path, 'r') as stream:
-        return float(stream.read(3))
+        return float(stream.read(4))
 
 
 def write_scale_config(value: float):
