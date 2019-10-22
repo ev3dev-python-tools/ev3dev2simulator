@@ -1,8 +1,9 @@
 import json
 import threading
 import unittest
-
 # based on scaling_multiplier: 0.60
+from typing import Any
+
 from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.ServerSocket import ServerSocket
 from ev3dev2.simulator.state.RobotState import get_robot_state
@@ -10,45 +11,57 @@ from ev3dev2.simulator.state.RobotState import get_robot_state
 
 class ServerSocketTest(unittest.TestCase):
 
-    def test_process_drive_command(self):
+    def test_process_drive_command_degrees(self):
         d = {
-            'type': 'DriveCommand',
+            'type': 'RotateCommand',
             'address': 'ev3-ports:outA',
-            'ppf': 10,
-            'frames': 100,
-            'frames_coast': 0
+            'speed': 10,
+            'distance': 100,
+            'stop_action': 'hold'
         }
 
         robot_state = get_robot_state()
         server = ServerSocket(robot_state)
-        server._process_drive_command(d)
 
-        for i in range(100):
-            l, r = robot_state.next_move_jobs()
-            self.assertAlmostEqual(l, 6.0, 3)
-            self.assertIsNone(r)
+        data = server._process_drive_command(d)
+        val = self._deserialize(data)
 
-        self.assertEqual((None, None), robot_state.next_move_jobs())
+        self.assertEqual(10, val)
+
+
+    def test_process_drive_command_pixels(self):
+        d = {
+            'type': 'RotateCommand',
+            'address': 'ev3-ports:outB',
+            'speed': 10,
+            'distance': 100,
+            'stop_action': 'hold'
+        }
+
+        robot_state = get_robot_state()
+        server = ServerSocket(robot_state)
+
+        data = server._process_drive_command(d)
+        val = self._deserialize(data)
+
+        self.assertEqual(10, val)
 
 
     def test_process_stop_command(self):
         d = {
             'type': 'StopCommand',
-            'address': 'ev3-ports:outB',
-            'ppf': 20,
-            'frames': 200,
+            'address': 'ev3-ports:outD',
+            'speed': 100,
+            'stop_action': 'coast'
         }
 
         robot_state = get_robot_state()
-
         server = ServerSocket(robot_state)
-        server._process_stop_command(d)
 
-        for i in range(200):
-            l, r = robot_state.next_move_jobs()
-            self.assertIsNotNone(r)
+        data = server._process_stop_command(d)
+        val = self._deserialize(data)
 
-        self.assertEqual((None, None), robot_state.next_move_jobs())
+        self.assertAlmostEqual(0.0667, val, 3)
 
 
     def test_process_sound_command(self):
@@ -82,13 +95,22 @@ class ServerSocketTest(unittest.TestCase):
 
         server = ServerSocket(robot_state)
         data = server._process_data_request(d)
+        val = self._deserialize(data)
 
-        jsn = data.decode()
-        jsn = jsn.replace('#', '')
+        self.assertEqual(val, 10)
 
-        obj_dict = json.loads(jsn)
 
-        self.assertEqual(obj_dict['value'], 10)
+    def _deserialize(self, data: bytes) -> Any:
+        """
+        Deserialize the given data.
+        :param data: to be deserialized.
+        :return: any type representing value inside the data.
+        """
+
+        val = data.decode()
+        obj_dict = json.loads(val)
+
+        return obj_dict['value']
 
 
 if __name__ == '__main__':

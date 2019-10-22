@@ -34,6 +34,7 @@ class Simulator(arcade.Window):
 
         self.scaling_multiplier = load_scale_config()
 
+        self.screen_total_width = int(apply_scaling(self.cfg['screen_settings']['screen_total_width']))
         self.screen_width = int(apply_scaling(self.cfg['screen_settings']['screen_width']))
         self.screen_height = int(apply_scaling(self.cfg['screen_settings']['screen_height']))
         screen_title = self.cfg['screen_settings']['screen_title']
@@ -42,7 +43,7 @@ class Simulator(arcade.Window):
         self.falling_msg = self.cfg['screen_settings']['falling_message']
         self.restart_msg = self.cfg['screen_settings']['restart_message']
 
-        super(Simulator, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30)
+        super(Simulator, self).__init__(self.screen_total_width, self.screen_height, screen_title, update_rate=1 / 30)
 
         arcade.set_background_color(arcade.color.BLACK_OLIVE)
 
@@ -61,6 +62,7 @@ class Simulator(arcade.Window):
 
         self.border = None
         self.edge = None
+        self.ground = None
 
         self.space = None
 
@@ -107,9 +109,13 @@ class Simulator(arcade.Window):
 
         self.border = Border(self.cfg, arcade.color.WHITE)
         self.edge = Edge(self.cfg)
+        self.ground = arcade.create_rectangle(apply_scaling(1460), apply_scaling(950), apply_scaling(300), apply_scaling(10),
+                                              arcade.color.BLACK)
 
         for s in self.border.shapes:
             self.obstacle_elements.append(s)
+
+        self.obstacle_elements.append(self.ground)
 
         color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
         touch_obstacles = [self.rock1, self.rock2]
@@ -138,6 +144,10 @@ class Simulator(arcade.Window):
 
 
     def _draw_text(self):
+        """
+        Draw all the text fields.
+        """
+
         center_cs = 'CS center:  ' + str(self.center_cs_data)
         left_ts = 'TS right:      ' + str(self.right_ts_data)
         right_ts = 'TS left:         ' + str(self.left_ts_data)
@@ -152,6 +162,9 @@ class Simulator(arcade.Window):
         arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(130), arcade.color.WHITE, 10)
         arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(150), arcade.color.WHITE, 10)
         arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(170), arcade.color.WHITE, 10, anchor_y='top')
+
+        arcade.draw_text('Robot Arm', apply_scaling(1450), self.screen_height - apply_scaling(50), arcade.color.WHITE, 14,
+                         anchor_x="center")
 
         if self.msg_counter != 0:
             self.msg_counter -= 1
@@ -180,13 +193,26 @@ class Simulator(arcade.Window):
 
 
     def _process_movement(self):
-        left_ppf, right_ppf = self.robot_state.next_move_jobs()
+        """
+        Request the movement of the robot motors form the robot state and move
+        the robot accordingly.
+        """
+
+        center_dpf, left_ppf, right_ppf = self.robot_state.next_motor_jobs()
 
         if left_ppf or right_ppf:
             self.robot.execute_movement(left_ppf, right_ppf)
 
+        if center_dpf:
+            self.robot.execute_arm_movement(center_dpf)
+
 
     def _check_fall(self):
+        """
+        Check if the robot has fallen of the playing field or is stuck in the
+        middle of a lake. If so display a message on the screen.
+        """
+
         left_wheel_data = self.robot.left_wheel.is_falling()
         right_wheel_data = self.robot.right_wheel.is_falling()
 
@@ -195,6 +221,11 @@ class Simulator(arcade.Window):
 
 
     def _process_sensors(self):
+        """
+        Proccess the data of the robot sensors by retrieving the data and putting it
+        in the robot state.
+        """
+
         address_center_cs = self.robot.center_color_sensor.address
         address_left_ts = self.robot.left_touch_sensor.address
         address_right_ts = self.robot.right_touch_sensor.address
@@ -215,22 +246,23 @@ def main():
     """
     Spawns the user thread and creates and starts the simulation.
     """
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--window_scaling",
                         default=load_config()['screen_settings']['scaling_multiplier'],
                         help="Scaling of the screen, default is 0.65",
                         required=False,
-                        type=check_scale)
+                        type=validate_scale)
     parser.add_argument("-x", "--robot_position_x",
                         default=200,
                         help="Starting position x-coordinate of the robot, default is 200",
                         required=False,
-                        type=check_xy)
+                        type=validate_xy)
     parser.add_argument("-y", "--robot_position_y",
                         default=300,
                         help="Starting position y-coordinate of the robot, default is 300",
                         required=False,
-                        type=check_xy)
+                        type=validate_xy)
     parser.add_argument("-o", "--robot_orientation",
                         default=0,
                         help="Starting orientation the robot, default is 0",
@@ -257,7 +289,13 @@ def main():
     arcade.run()
 
 
-def check_scale(value):
+def validate_scale(value):
+    """
+    Check if the given value is a valid scale value. Throw an Error if this is not the case.
+    :param value: to validate.
+    :return: a boolean value representing if the validation was successful.
+    """
+
     try:
         f = float(value)
     except ValueError:
@@ -269,7 +307,13 @@ def check_scale(value):
     return f
 
 
-def check_xy(value):
+def validate_xy(value):
+    """
+    Check if the given value is a valid xy value. Throw an Error if this is not the case.
+    :param value: to validate.
+    :return: a boolean value representing if the validation was successful.
+    """
+
     try:
         f = int(value)
     except ValueError:

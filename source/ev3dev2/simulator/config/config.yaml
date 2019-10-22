@@ -22,6 +22,7 @@ exec_settings:
   socket_port: 6840
 
 image_paths:
+  arm: 'assets/images/arm.png'
   body: 'assets/images/body.png'
   color_sensor: 'assets/images/color_sensor.png'
   color_sensor_blue: 'assets/images/color_sensor_blue.png'
@@ -46,12 +47,16 @@ obstacle_settings:
     lake_red_x: 397
     lake_red_y: 232
 
+motor_settings:
+  pixel_coasting_subtraction: 0.7
+  degree_coasting_subtraction: 1.5
 
 screen_settings:
   edge_spacing: 23
   scaling_multiplier: 0.65
   screen_height: 1273
   screen_width: 1273
+  screen_total_width: 1673
   screen_title: 'Lego ev3dev2 simulator'
   falling_message: 'Robot has dipped a wheel in a lake or off the map.'
   restart_message: 'Please restart the mission.'
@@ -59,5 +64,5 @@ screen_settings:
 wheel_settings:
   circumference: 173
   spacing: 120
-  coasting_subtraction: 0.7
+
 

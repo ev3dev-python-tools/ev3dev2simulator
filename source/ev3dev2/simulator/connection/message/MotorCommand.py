@@ -6,11 +6,11 @@ class MotorCommand:
 
     def __init__(self,
                  address: str,
-                 ppf: float,
-                 frames: int):
+                 speed: float,
+                 stop_action: str):
         self.address = address
-        self.ppf = ppf
-        self.frames = frames
+        self.speed = speed
+        self.stop_action = stop_action
 
 
     def serialize(self) -> dict:

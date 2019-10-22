@@ -23,7 +23,7 @@ class ClientSocket:
         time.sleep(1)
 
 
-    def send_motor_command(self, command: MotorCommand):
+    def send_motor_command(self, command: MotorCommand) -> float:
         """
         Serialise and send the given MotorCommand to the simulator.
         :param command: to send.
@@ -31,6 +31,8 @@ class ClientSocket:
 
         jsn = self._serialize(command)
         self.client.send(jsn)
+
+        return self._wait_for_response()
 
 
     def send_sound_command(self, command: SoundCommand):
@@ -54,17 +56,24 @@ class ClientSocket:
         jsn = self._serialize(request)
         self.client.send(jsn)
 
+        return self._wait_for_response()
+
+
+    def _wait_for_response(self) -> Any:
+        """
+        Wait until the simulator responds with a message and deserialize the message.
+        This function blocks until a response has been received.
+        :return: the value of the responded message.
+        """
+
         while True:
             data = self.client.recv(32)
 
             if data:
-                val = data.decode()
-                obj_dict = json.loads(val)
-
-                return obj_dict['value']
+                return self._deserialize(data)
 
 
-    def _serialize(self, message) -> bytes:
+    def _serialize(self, message: Any) -> bytes:
         """
         Serialize the given message so it can be send via a stream channel.
         :param message: to be serialized.
@@ -77,6 +86,19 @@ class ClientSocket:
         jsn = jsn.ljust(128, '#')
 
         return str.encode(jsn)
+
+
+    def _deserialize(self, data: bytes) -> Any:
+        """
+        Deserialize the given data.
+        :param data: to be deserialized.
+        :return: any type representing value inside the data.
+        """
+
+        val = data.decode()
+        obj_dict = json.loads(val)
+
+        return obj_dict['value']
 
 
 client_socket = ClientSocket()

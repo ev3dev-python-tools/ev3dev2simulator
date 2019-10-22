@@ -1,8 +1,9 @@
-from typing import Any
+from typing import Any, Tuple
 
-from ev3dev2.simulator.config.config import load_config, load_scale_config
-from ev3dev2.simulator.connection.message import DriveCommand, StopCommand, SoundCommand, DataRequest
-from ev3dev2.simulator.util.Util import remove_scaling
+from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest
+from ev3dev2.simulator.connection.message.MotorCommandProcessor import MotorCommandProcessor
+from ev3dev2.simulator.util.Util import remove_scaling, apply_scaling
 
 
 class MessageProcessor:
@@ -15,43 +16,81 @@ class MessageProcessor:
     def __init__(self, robot_state):
         cfg = load_config()
 
-        self.scaling_multiplier = load_scale_config()
-        self.coasting_sub = cfg['wheel_settings']['coasting_subtraction'] * self.scaling_multiplier
+        self.pixel_coasting_sub = apply_scaling(cfg['motor_settings']['pixel_coasting_subtraction'])
+        self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
+
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
         self.address_us = cfg['alloc_settings']['ultrasonic_sensor']['top']
 
         self.robot_state = robot_state
+        self.command_processor = MotorCommandProcessor()
 
 
-    def process_drive_command(self, command: DriveCommand):
+    def process_rotate_command(self, command: RotateCommand) -> float:
         """
-        Process the given drive command by creating motor move and coast jobs in the RobotState.
+        Process the given RotateCommand by creating the appropriate motor jobs in the RobotState. The type of jobs created
+        depends on the motor called. The command for the center motor is processed for degrees, while the other motors
+        are processed for pixels.
         :param command: to process.
+        :return: a floating point value representing the time in seconds the given command will take to execute.
         """
 
-        ppf = command.ppf * self.scaling_multiplier
         side = self.robot_state.get_motor_side(command.address)
+        spf, frames, coast_frames, run_time = self._process_rotate_command_values(command, side)
 
-        self.robot_state.clear_move_jobs(side)
+        self.robot_state.clear_motor_jobs(side)
 
-        for i in range(command.frames):
-            self.robot_state.put_move_job(ppf, side)
+        for i in range(frames):
+            self.robot_state.put_motor_job(spf, side)
 
-        self._process_coast(command.frames_coast, ppf, side)
+        self._process_coast(coast_frames, spf, side)
+        return run_time
 
 
-    def process_stop_command(self, command: StopCommand):
+    def _process_rotate_command_values(self, command: RotateCommand, side: str) -> Tuple[float, int, int, float]:
         """
-        Process the given stop command by clearing the current move job queue
-         and creating motor coast jobs in the RobotState.
+        Process the given command into the correct movement values.
         :param command: to process.
+        :param side: the motor is located.
+        :return: a Tuple with the processed values
         """
 
-        ppf = command.ppf * self.scaling_multiplier
-        side = self.robot_state.get_motor_side(command.address)
+        if side == 'center':
+            return self.command_processor.process_drive_command_degrees(command)
+        else:
+            return self.command_processor.process_drive_command_pixels(command)
 
-        self.robot_state.clear_move_jobs(side)
-        self._process_coast(command.frames, ppf, side)
+
+    def process_stop_command(self, command: StopCommand) -> float:
+        """
+        Process the given stop command by clearing the current motor job queue
+        and creating motor coast jobs in the RobotState. The type of jobs created
+        depends on the motor called. The command for the center motor is processed for degrees, while the other motors
+        are processed for pixels.
+        :param command: to process.
+        :return: a floating point value representing the time in seconds the given command will take to execute.
+        """
+
+        side = self.robot_state.get_motor_side(command.address)
+        spf, frames, run_time = self._process_stop_command_values(command, side)
+
+        self.robot_state.clear_motor_jobs(side)
+        self._process_coast(frames, spf, side)
+        return run_time
+
+
+    def _process_stop_command_values(self, command: StopCommand, side: str) -> Tuple[float, int, float]:
+        """
+        Process the given command into the correct movement values.
+        :param command: to process.
+        :param side: the motor is located.
+        :return: a Tuple with the processed values
+        """
+
+        if side == 'center':
+            return self.command_processor.process_stop_command_degrees(command)
+        else:
+            return self.command_processor.process_stop_command_pixels(command)
 
 
     def _process_coast(self, frames, ppf, side):
@@ -62,15 +101,16 @@ class MessageProcessor:
         :param side: of the motor in the RobotState.
         """
 
+        coasting_sub = self.degree_coasting_sub if side == 'center' else self.pixel_coasting_sub
         og_ppf = ppf
 
         for i in range(frames):
             if og_ppf > 0:
-                ppf = max(ppf - self.coasting_sub, 0)
+                ppf = max(ppf - coasting_sub, 0)
             else:
-                ppf = min(ppf + self.coasting_sub, 0)
+                ppf = min(ppf + coasting_sub, 0)
 
-            self.robot_state.put_move_job(ppf, side)
+            self.robot_state.put_motor_job(ppf, side)
 
 
     def process_sound_command(self, command: SoundCommand):

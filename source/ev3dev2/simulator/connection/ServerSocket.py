@@ -7,7 +7,7 @@ from typing import Any
 from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.MessageProcessor import MessageProcessor
 from ev3dev2.simulator.connection.message.DataRequest import DataRequest
-from ev3dev2.simulator.connection.message.DriveCommand import DriveCommand
+from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
 from ev3dev2.simulator.connection.message.StopCommand import StopCommand
 
@@ -83,7 +83,7 @@ class ServerSocket(threading.Thread):
         obj_dict = json.loads(jsn)
 
         tpe = obj_dict['type']
-        if tpe == 'DriveCommand':
+        if tpe == 'RotateCommand':
             return self._process_drive_command(obj_dict)
 
         if tpe == 'StopCommand':
@@ -98,14 +98,14 @@ class ServerSocket(threading.Thread):
 
     def _process_drive_command(self, d: dict) -> Any:
         """
-        Deserialize the given dictionary into a DriveCommand and send it to the MessageProcessor.
+        Deserialize the given dictionary into a RotateCommand and send it to the MessageProcessor.
         :param d: to process.
         """
 
-        command = DriveCommand(d['address'], d['ppf'], d['frames'], d['frames_coast'])
-        self.message_processor.process_drive_command(command)
+        command = RotateCommand(d['address'], d['speed'], d['distance'], d['stop_action'])
+        value = self.message_processor.process_rotate_command(command)
 
-        return None
+        return self._serialize_response(value)
 
 
     def _process_stop_command(self, d: dict) -> Any:
@@ -114,10 +114,10 @@ class ServerSocket(threading.Thread):
         :param d: to process.
         """
 
-        command = StopCommand(d['address'], d['ppf'], d['frames'])
-        self.message_processor.process_stop_command(command)
+        command = StopCommand(d['address'], d['speed'], d['stop_action'])
+        value = self.message_processor.process_stop_command(command)
 
-        return None
+        return self._serialize_response(value)
 
 
     def _process_sound_command(self, d: dict) -> Any:

@@ -5,7 +5,7 @@ import unittest
 from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.MessageProcessor import MessageProcessor
 from ev3dev2.simulator.connection.message.DataRequest import DataRequest
-from ev3dev2.simulator.connection.message.DriveCommand import DriveCommand
+from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
 from ev3dev2.simulator.state.RobotState import get_robot_state
 from ev3dev2.simulator.util.Util import apply_scaling
@@ -13,54 +13,97 @@ from ev3dev2.simulator.util.Util import apply_scaling
 
 class MessageProcessorTest(unittest.TestCase):
 
+    def test_create_jobs_center(self):
+        robot_state = get_robot_state()
+
+        message_processor = MessageProcessor(robot_state)
+        message_processor.process_rotate_command(RotateCommand('ev3-ports:outB', 20, 100, 'hold'))
+
+        for i in range(150):
+            c, l, r = robot_state.next_motor_jobs()
+            self.assertAlmostEqual(c, 0.667, 3)
+            self.assertIsNone(l)
+            self.assertIsNone(r)
+
+        self.assertEqual((None, None, None), robot_state.next_motor_jobs())
+
+
     def test_create_jobs_left(self):
         robot_state = get_robot_state()
 
         message_processor = MessageProcessor(robot_state)
-        message_processor.process_drive_command(DriveCommand('ev3-ports:outA', 1.2, 100, 0))
+        message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 1, 100, 'hold'))
 
-        for i in range(100):
-            l, r = robot_state.next_move_jobs()
-            self.assertAlmostEqual(l, 0.72, 3)
+        for i in range(3000):
+            c, l, r = robot_state.next_motor_jobs()
+            self.assertIsNone(c)
+            self.assertAlmostEqual(l, 0.010, 3)
             self.assertIsNone(r)
 
-        self.assertEqual((None, None), robot_state.next_move_jobs())
+        self.assertEqual((None, None, None), robot_state.next_motor_jobs())
 
 
     def test_create_jobs_right(self):
         robot_state = get_robot_state()
 
         message_processor = MessageProcessor(robot_state)
-        message_processor.process_drive_command(DriveCommand('ev3-ports:outB', 0.8, 150, 0))
+        message_processor.process_rotate_command(RotateCommand('ev3-ports:outD', 10, 100, 'hold'))
 
-        for i in range(150):
-            l, r = robot_state.next_move_jobs()
+        for i in range(300):
+            c, l, r = robot_state.next_motor_jobs()
+            self.assertIsNone(c)
             self.assertIsNone(l)
-            self.assertAlmostEqual(r, 0.48, 3)
+            self.assertAlmostEqual(r, 0.104, 3)
 
-        self.assertEqual((None, None), robot_state.next_move_jobs())
+        self.assertEqual((None, None, None), robot_state.next_motor_jobs())
 
 
-    def test_create_jobs_coast(self):
-        coasting_sub = apply_scaling(load_config()['wheel_settings']['coasting_subtraction'])
+    def test_create_jobs_coast_center(self):
+        coasting_sub = load_config()['motor_settings']['degree_coasting_subtraction']
         robot_state = get_robot_state()
 
         message_processor = MessageProcessor(robot_state)
-        message_processor.process_drive_command(DriveCommand('ev3-ports:outA', 0.4, 100, 1))
+        message_processor.process_rotate_command(RotateCommand('ev3-ports:outB', 80, 200, 'coast'))
 
-        for i in range(100):
-            l, r = robot_state.next_move_jobs()
-            self.assertAlmostEqual(l, 0.24, 3)
+        for i in range(75):
+            c, l, r = robot_state.next_motor_jobs()
+            self.assertAlmostEqual(c, 2.667, 3)
+            self.assertIsNone(l)
             self.assertIsNone(r)
 
-        ppf = 0.24 - coasting_sub
-        for i in range(1):
-            l, r = robot_state.next_move_jobs()
+        ppf = 2.667 - coasting_sub
+        for i in range(2):
+            c, l, r = robot_state.next_motor_jobs()
+            self.assertAlmostEqual(c, ppf, 3)
+            self.assertIsNone(l)
+            self.assertIsNone(r)
+            ppf = max(ppf - coasting_sub, 0)
+
+        self.assertEqual((None, None, None), robot_state.next_motor_jobs())
+
+
+    def test_create_jobs_coast_left(self):
+        coasting_sub = apply_scaling(load_config()['motor_settings']['pixel_coasting_subtraction'])
+        robot_state = get_robot_state()
+
+        message_processor = MessageProcessor(robot_state)
+        message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 80, 200, 'coast'))
+
+        for i in range(75):
+            c, l, r = robot_state.next_motor_jobs()
+            self.assertIsNone(c)
+            self.assertAlmostEqual(l, 0.833, 3)
+            self.assertIsNone(r)
+
+        ppf = 0.833 - coasting_sub
+        for i in range(2):
+            c, l, r = robot_state.next_motor_jobs()
+            self.assertIsNone(c)
             self.assertAlmostEqual(l, ppf, 3)
             self.assertIsNone(r)
-            ppf -= coasting_sub
+            ppf = max(ppf - coasting_sub, 0)
 
-        self.assertEqual((None, None), robot_state.next_move_jobs())
+        self.assertEqual((None, None, None), robot_state.next_motor_jobs())
 
 
     def test_process_sound_command(self):

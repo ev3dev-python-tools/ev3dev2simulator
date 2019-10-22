@@ -3,7 +3,6 @@ from queue import Queue, Empty
 from typing import Any, Tuple
 
 from ev3dev2.simulator.config.config import load_config
-from ev3dev2.simulator.robot import BodyPart
 
 
 class RobotState:
@@ -21,8 +20,9 @@ class RobotState:
         self.address_motor_left = cfg['alloc_settings']['motor']['left']
         self.address_motor_right = cfg['alloc_settings']['motor']['right']
 
-        self.left_move_queue = Queue()
-        self.right_move_queue = Queue()
+        self.center_motor_queue = Queue()
+        self.left_motor_queue = Queue()
+        self.right_motor_queue = Queue()
         self.sound_queue = Queue()
 
         self.should_reset = False
@@ -33,20 +33,22 @@ class RobotState:
         self.motor_lock = threading.Lock()
 
 
-    def put_move_job(self, job: float, side: str):
+    def put_motor_job(self, job: float, side: str):
         """
         Add a new move job to the queue for the motor corresponding to the given side.
         :param job: to add.
         :param side: the motor is located.
         """
 
-        if side == 'left':
-            self.left_move_queue.put_nowait(job)
+        if side == 'center':
+            self.center_motor_queue.put_nowait(job)
+        elif side == 'left':
+            self.left_motor_queue.put_nowait(job)
         else:
-            self.right_move_queue.put_nowait(job)
+            self.right_motor_queue.put_nowait(job)
 
 
-    def next_move_jobs(self) -> Tuple[float, float]:
+    def next_motor_jobs(self) -> Tuple[float, float, float]:
         """
         Get the next move jobs for the left and right motor from the queues.
         :return: a floating point numbers representing the job move distances.
@@ -55,26 +57,33 @@ class RobotState:
         self.motor_lock.acquire()
 
         try:
-            left = self.left_move_queue.get_nowait()
+            center = self.center_motor_queue.get_nowait()
+        except Empty:
+            center = None
+
+        try:
+            left = self.left_motor_queue.get_nowait()
         except Empty:
             left = None
 
         try:
-            right = self.right_move_queue.get_nowait()
+            right = self.right_motor_queue.get_nowait()
         except Empty:
             right = None
 
         self.motor_lock.release()
-        return left, right
+        return center, left, right
 
 
-    def clear_move_jobs(self, side: str):
+    def clear_motor_jobs(self, side: str):
         self.motor_lock.acquire()
 
-        if side == 'left':
-            self.left_move_queue = Queue()
+        if side == 'center':
+            self.center_motor_queue = Queue()
+        elif side == 'left':
+            self.left_motor_queue = Queue()
         else:
-            self.right_move_queue = Queue()
+            self.right_motor_queue = Queue()
 
         self.motor_lock.release()
 
@@ -106,8 +115,9 @@ class RobotState:
         :return:
         """
 
-        self.clear_move_jobs('left')
-        self.clear_move_jobs('right')
+        self.clear_motor_jobs('center')
+        self.clear_motor_jobs('left')
+        self.clear_motor_jobs('right')
 
         self.values.clear()
         self.should_reset = False
@@ -130,7 +140,7 @@ class RobotState:
             return 'right'
 
 
-    def load_sensor(self, sensor: BodyPart):
+    def load_sensor(self, sensor):
         """
         Load the given sensor adding its default value to this state.
         Also create a lock for the given sensor.

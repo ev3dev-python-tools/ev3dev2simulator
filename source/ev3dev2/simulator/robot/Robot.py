@@ -4,6 +4,7 @@ from arcade import Sprite
 
 from ev3dev2.simulator.obstacle import ColorObstacle
 from ev3dev2.simulator.robot import BodyPart
+from ev3dev2.simulator.robot.Arm import Arm
 from ev3dev2.simulator.robot.Body import Body
 from ev3dev2.simulator.robot.ColorSensor import ColorSensor
 from ev3dev2.simulator.robot.TouchSensor import TouchSensor
@@ -39,6 +40,8 @@ class Robot:
         self.wheel_distance = apply_scaling(cfg['wheel_settings']['spacing'])
 
         self.body = Body(img_cfg, self, 0, apply_scaling(-22.5))
+        self.arm = Arm(img_cfg, apply_scaling(1450), apply_scaling(1100))
+
         self.left_wheel = Wheel(address_left_motor, img_cfg, self, (self.wheel_distance / -2), 0.01)
         self.right_wheel = Wheel(address_right_motor, img_cfg, self, (self.wheel_distance / 2), 0.01)
 
@@ -51,15 +54,18 @@ class Robot:
 
         self.ultrasonic_sensor = UltrasonicSensor(address_us, img_cfg, self, 0, apply_scaling(-91.5))
 
-        self.sprites = [self.body,
-                        self.left_wheel,
-                        self.right_wheel,
-                        self.center_color_sensor,
-                        # self.left_color_sensor,
-                        # self.right_color_sensor,
-                        self.left_touch_sensor,
-                        self.right_touch_sensor,
-                        self.ultrasonic_sensor]
+        self.movable_sprites = [self.body,
+                                self.left_wheel,
+                                self.right_wheel,
+                                self.center_color_sensor,
+                                # self.left_color_sensor,
+                                # self.right_color_sensor,
+                                self.left_touch_sensor,
+                                self.right_touch_sensor,
+                                self.ultrasonic_sensor]
+
+        self.sprites = self.movable_sprites.copy()
+        self.sprites.append(self.arm)
 
         if orientation != 0:
             self._rotate(math.radians(orientation))
@@ -71,7 +77,7 @@ class Robot:
         :param distance: to move
         """
 
-        for s in self.get_sprites():
+        for s in self.movable_sprites:
             s.move_x(distance)
 
 
@@ -81,7 +87,7 @@ class Robot:
         :param distance: to move
         """
 
-        for s in self.get_sprites():
+        for s in self.movable_sprites:
             s.move_y(distance)
 
 
@@ -90,7 +96,7 @@ class Robot:
         Rotate all parts of this robot by the given angle in radians.
         :param radians to rotate
         """
-        for s in self.get_sprites():
+        for s in self.movable_sprites:
             s.rotate(radians)
 
 
@@ -119,6 +125,17 @@ class Robot:
         self._rotate(diff_angle)
         self._move_x(diff_x)
         self._move_y(diff_y)
+
+
+    def execute_arm_movement(self, dfp: float):
+        """
+        Move the robot and its parts by providing the speed of the left and right motor
+        using the differential steering principle.
+        :param left_ppf: speed in pixels per second of the left motor.
+        :param right_ppf: speed in pixels per second of the right motor.
+        """
+
+        self.arm.rotate(dfp)
 
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):

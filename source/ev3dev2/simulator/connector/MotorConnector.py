@@ -1,4 +1,6 @@
-from ev3dev2.simulator.connector.MotorCommandCreator import get_motor_command_creator
+from ev3dev2.simulator.connection.ClientSocket import get_client_socket
+from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
+from ev3dev2.simulator.connection.message.StopCommand import StopCommand
 
 FOREVER_MOCK_SECONDS = 45
 
@@ -22,7 +24,7 @@ class MotorConnector:
         self.time = None
         self.stop_action = None
 
-        self.command_creator = get_motor_command_creator()
+        self.client_socket = get_client_socket()
 
 
     def set_duty_cycle(self, duty_cycle: int):
@@ -125,12 +127,14 @@ class MotorConnector:
         """
 
         if self.speed == 0 or self.distance == 0:
-            return self.command_creator.create_stop_command(0, 'hold', self.address)
+            command = StopCommand(self.address, 0, 'hold')
+        else:
+            command = RotateCommand(self.address,
+                                    self.speed,
+                                    self.distance,
+                                    self.stop_action)
 
-        return self.command_creator.create_drive_command(self.speed,
-                                                         self.distance,
-                                                         self.stop_action,
-                                                         self.address)
+        return self.client_socket.send_motor_command(command)
 
 
     def stop(self) -> float:
@@ -150,4 +154,5 @@ class MotorConnector:
         if distance < 0:
             speed *= -1
 
-        return self.command_creator.create_stop_command(speed, stop_action, self.address)
+        command = StopCommand(self.address, speed, stop_action)
+        return self.client_socket.send_motor_command(command)
