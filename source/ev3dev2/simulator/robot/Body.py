@@ -14,7 +14,7 @@ class Body(BodyPart):
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(Body, self).__init__(None,
+        super(Body, self).__init__('',
                                    img_cfg['body'],
                                    apply_scaling(0.15),
                                    robot,

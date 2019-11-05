@@ -31,7 +31,7 @@ class Arm(Sprite):
         """
         Rotate this part by the given angle in radians. Make sure it
         stays 'attached' to its body by also adjusting its x and y values.
-        :param radians: to rotate.
+        :param degrees: to rotate.
         """
 
         self.angle += degrees

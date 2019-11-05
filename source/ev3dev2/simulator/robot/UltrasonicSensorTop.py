@@ -22,7 +22,7 @@ class UltrasonicSensor(BodyPart):
                  delta_x: int,
                  delta_y: int):
         super(UltrasonicSensor, self).__init__(address,
-                                               img_cfg['ultrasonic_sensor'],
+                                               img_cfg['ultrasonic_sensor_top'],
                                                apply_scaling(0.20),
                                                robot,
                                                delta_x,
@@ -35,7 +35,7 @@ class UltrasonicSensor(BodyPart):
     def distance(self, space: Space) -> float:
         """
         Get the distance in pixels between this ultrasonic sensor and an object it is pointed to.
-        If this sensor is not pointing towards an object return -1.
+        If this sensor is not pointing towards an object return 2550, which is the max distance of the real robot's ultrasonic sensor.
         :param space: which holds the visible objects.
         :return: a floating point value representing the distance.
         """
@@ -69,8 +69,8 @@ class UltrasonicSensor(BodyPart):
 
     def get_default_value(self):
         """
-        1 pixel == 1mm so measurement values this sensor returns are one to one mappable to milimeters.
-        Max distance real world robot sensor returns is 2550mm.
+        1 pixel == 1mm so measurement values this sensor returns are one to one mappable to millimeters.
+        Max distance real world robot ultrasonic sensor returns is 2550mm.
         :return: default value in pixels.
         """
 

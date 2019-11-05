@@ -67,9 +67,12 @@ class Simulator(arcade.Window):
         self.space = None
 
         self.center_cs_data = 0
+        self.left_cs_data = 0
+        self.right_cs_data = 0
         self.left_ts_data = False
         self.right_ts_data = False
         self.top_us_data = -1
+        self.bottom_us_data = -1
 
         self.text_x = self.screen_width - apply_scaling(220)
         self.msg_x = self.screen_width / 2
@@ -148,20 +151,26 @@ class Simulator(arcade.Window):
         Draw all the text fields.
         """
 
-        center_cs = 'CS center:  ' + str(self.center_cs_data)
-        left_ts = 'TS right:      ' + str(self.right_ts_data)
-        right_ts = 'TS left:         ' + str(self.left_ts_data)
-        top_us = 'US top:        ' + str(int(round(self.top_us_data / self.scaling_multiplier))) + 'mm'
+        center_cs = 'CS  ctr:       ' + str(self.center_cs_data)
+        left_cs = 'CS  left:      ' + str(self.left_cs_data)
+        right_cs = 'CS  right:    ' + str(self.right_cs_data)
+        left_ts = 'TS  right:     ' + str(self.right_ts_data)
+        right_ts = 'TS  left:        ' + str(self.left_ts_data)
+        top_us = 'US  top:       ' + str(int(round(self.top_us_data / self.scaling_multiplier))) + 'mm'
+        bottom_us = 'US  bot:       ' + str(int(round(self.bottom_us_data))) + 'mm'
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
 
         arcade.draw_text(center_cs, self.text_x, self.screen_height - apply_scaling(70), arcade.color.WHITE, 10)
-        arcade.draw_text(left_ts, self.text_x, self.screen_height - apply_scaling(90), arcade.color.WHITE, 10)
-        arcade.draw_text(right_ts, self.text_x, self.screen_height - apply_scaling(110), arcade.color.WHITE, 10)
-        arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(130), arcade.color.WHITE, 10)
-        arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(150), arcade.color.WHITE, 10)
-        arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(170), arcade.color.WHITE, 10, anchor_y='top')
+        arcade.draw_text(left_cs, self.text_x, self.screen_height - apply_scaling(90), arcade.color.WHITE, 10)
+        arcade.draw_text(right_cs, self.text_x, self.screen_height - apply_scaling(110), arcade.color.WHITE, 10)
+        arcade.draw_text(left_ts, self.text_x, self.screen_height - apply_scaling(130), arcade.color.WHITE, 10)
+        arcade.draw_text(right_ts, self.text_x, self.screen_height - apply_scaling(150), arcade.color.WHITE, 10)
+        arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(170), arcade.color.WHITE, 10)
+        arcade.draw_text(bottom_us, self.text_x, self.screen_height - apply_scaling(190), arcade.color.WHITE, 10)
+        arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(210), arcade.color.WHITE, 10)
+        arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(230), arcade.color.WHITE, 10, anchor_y='top')
 
         arcade.draw_text('Robot Arm', apply_scaling(1450), self.screen_height - apply_scaling(50), arcade.color.WHITE, 14,
                          anchor_x="center")
@@ -222,24 +231,25 @@ class Simulator(arcade.Window):
 
     def _process_sensors(self):
         """
-        Proccess the data of the robot sensors by retrieving the data and putting it
+        Process the data of the robot sensors by retrieving the data and putting it
         in the robot state.
         """
 
-        address_center_cs = self.robot.center_color_sensor.address
-        address_left_ts = self.robot.left_touch_sensor.address
-        address_right_ts = self.robot.right_touch_sensor.address
-        address_us = self.robot.ultrasonic_sensor.address
-
         self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
+        self.left_cs_data = self.robot.left_color_sensor.get_sensed_color()
+        self.right_cs_data = self.robot.right_color_sensor.get_sensed_color()
         self.left_ts_data = self.robot.left_touch_sensor.is_touching()
         self.right_ts_data = self.robot.right_touch_sensor.is_touching()
-        self.top_us_data = self.robot.ultrasonic_sensor.distance(self.space)
+        self.top_us_data = self.robot.top_ultrasonic_sensor.distance(self.space)
+        self.bottom_us_data = self.robot.bottom_ultrasonic_sensor.distance()
 
-        self.robot_state.values[address_center_cs] = self.center_cs_data
-        self.robot_state.values[address_left_ts] = self.left_ts_data
-        self.robot_state.values[address_right_ts] = self.right_ts_data
-        self.robot_state.values[address_us] = self.top_us_data
+        self.robot_state.values[self.robot.center_color_sensor.address] = self.center_cs_data
+        self.robot_state.values[self.robot.left_color_sensor.address] = self.left_cs_data
+        self.robot_state.values[self.robot.right_color_sensor.address] = self.right_cs_data
+        self.robot_state.values[self.robot.left_touch_sensor.address] = self.left_ts_data
+        self.robot_state.values[self.robot.right_touch_sensor.address] = self.right_ts_data
+        self.robot_state.values[self.robot.top_ultrasonic_sensor.address] = self.top_us_data
+        self.robot_state.values[self.robot.bottom_ultrasonic_sensor.address] = self.bottom_us_data
 
 
 def main():
