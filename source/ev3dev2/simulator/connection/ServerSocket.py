@@ -7,6 +7,7 @@ from typing import Any
 from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.MessageProcessor import MessageProcessor
 from ev3dev2.simulator.connection.message.DataRequest import DataRequest
+from ev3dev2.simulator.connection.message.LedCommand import LedCommand
 from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
 from ev3dev2.simulator.connection.message.StopCommand import StopCommand
@@ -92,6 +93,9 @@ class ServerSocket(threading.Thread):
         if tpe == 'SoundCommand':
             return self._process_sound_command(obj_dict)
 
+        if tpe == 'LedCommand':
+            return self._process_led_command(obj_dict)
+
         elif tpe == 'DataRequest':
             return self._process_data_request(obj_dict)
 
@@ -118,6 +122,19 @@ class ServerSocket(threading.Thread):
         value = self.message_processor.process_stop_command(command)
 
         return self._serialize_response(value)
+
+
+    def _process_led_command(self, d: dict) -> Any:
+        """
+        Deserialize the given dictionary into a LedCommand and send it to the MessageProcessor.
+        :param d: to process.
+        """
+
+        # print(d['address'] + '  --  ' + str(d['brightness']))
+        command = LedCommand(d['address'], d['brightness'])
+        self.message_processor.process_led_command(command)
+
+        return None
 
 
     def _process_sound_command(self, d: dict) -> Any:

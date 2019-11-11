@@ -3,7 +3,7 @@ import math
 import arcade
 
 from ev3dev2.simulator.robot import Robot
-from ev3dev2.simulator.util.Util import pythagoras
+from ev3dev2.simulator.util.Util import pythagoras, apply_scaling
 
 
 class BodyPart(arcade.Sprite):
@@ -14,12 +14,10 @@ class BodyPart(arcade.Sprite):
 
     def __init__(self,
                  address: str,
-                 src: str,
-                 scale: float,
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(BodyPart, self).__init__(src, scale)
+        super(BodyPart, self).__init__()
 
         self.address = address
         self.robot = robot
@@ -85,3 +83,10 @@ class BodyPart(arcade.Sprite):
         """
 
         pass
+
+
+    def init_texture(self, src, scale):
+        texture = arcade.load_texture(src, scale=apply_scaling(scale))
+
+        self.textures.append(texture)
+        self.set_texture(0)

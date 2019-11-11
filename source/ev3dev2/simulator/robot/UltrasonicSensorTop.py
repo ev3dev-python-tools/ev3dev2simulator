@@ -21,12 +21,8 @@ class UltrasonicSensor(BodyPart):
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(UltrasonicSensor, self).__init__(address,
-                                               img_cfg['ultrasonic_sensor_top'],
-                                               apply_scaling(0.20),
-                                               robot,
-                                               delta_x,
-                                               delta_y)
+        super(UltrasonicSensor, self).__init__(address, robot, delta_x, delta_y)
+        self.init_texture(img_cfg['ultrasonic_sensor_top'], 0.20)
 
         self.sensor_half_height = apply_scaling(22.5)
         self.scaling_multiplier = load_scale_config()

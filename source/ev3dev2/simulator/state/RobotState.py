@@ -25,6 +25,9 @@ class RobotState:
         self.right_motor_queue = Queue()
         self.sound_queue = Queue()
 
+        self.left_led_color = 1
+        self.right_led_color = 1
+
         self.should_reset = False
 
         self.values = {}
@@ -107,6 +110,14 @@ class RobotState:
             return self.sound_queue.get_nowait()
         except Empty:
             return None
+
+
+    def set_left_led_color(self, color):
+        self.left_led_color = color
+
+
+    def set_right_led_color(self, color):
+        self.right_led_color = color
 
 
     def reset(self):

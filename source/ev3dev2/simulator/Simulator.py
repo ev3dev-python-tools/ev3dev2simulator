@@ -195,6 +195,7 @@ class Simulator(arcade.Window):
 
         else:
             self._process_movement()
+            self._process_leds()
             self._process_sensors()
             self._check_fall()
 
@@ -214,6 +215,10 @@ class Simulator(arcade.Window):
 
         if center_dpf:
             self.robot.execute_arm_movement(center_dpf)
+
+
+    def _process_leds(self):
+        self.robot.set_led_colors(self.robot_state.left_led_color, self.robot_state.right_led_color)
 
 
     def _check_fall(self):

@@ -1,7 +1,7 @@
 import unittest
 
 from ev3dev2.simulator.config.config import load_config
-from ev3dev2.simulator.connection.message.MotorCommandProcessor import MotorCommandProcessor
+from ev3dev2.simulator.connection.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.StopCommand import StopCommand
 

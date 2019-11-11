@@ -7,7 +7,7 @@ from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
 class SoundConnector:
     """
     The SoundConnector class provides a translation layer between the ev3dev2 Sound classes
-    and the sensors on the simulated robot.
+    and the simulated robot.
     This class is responsible for creating SoundCommands to be send to simulator.
     """
 

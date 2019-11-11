@@ -1,9 +1,19 @@
+from collections import OrderedDict
 from typing import Any, Tuple
 
+from ev3dev2._platform.ev3 import LEDS
 from ev3dev2.simulator.config.config import load_config
-from ev3dev2.simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest
-from ev3dev2.simulator.connection.message.MotorCommandProcessor import MotorCommandProcessor
+from ev3dev2.simulator.connection.MotorCommandProcessor import MotorCommandProcessor
+from ev3dev2.simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
 from ev3dev2.simulator.util.Util import remove_scaling, apply_scaling
+
+LED_COLORS = OrderedDict()
+LED_COLORS[(1, 1)] = 0  # Amber
+LED_COLORS[(0, 0)] = 1  # Black
+LED_COLORS[(1, 0)] = 2  # Red
+LED_COLORS[(0, 1)] = 3  # Green
+LED_COLORS[(1, 0.5)] = 4  # Orange
+LED_COLORS[(0.1, 1)] = 5  # Yellow
 
 
 class MessageProcessor:
@@ -24,6 +34,7 @@ class MessageProcessor:
 
         self.robot_state = robot_state
         self.command_processor = MotorCommandProcessor()
+        self.led_cache = {k: None for k in LEDS.values()}
 
 
     def process_rotate_command(self, command: RotateCommand) -> float:
@@ -111,6 +122,25 @@ class MessageProcessor:
                 ppf = min(ppf + coasting_sub, 0)
 
             self.robot_state.put_motor_job(ppf, side)
+
+
+    def process_led_command(self, command: LedCommand):
+        """
+        Process the given sound command by creating a sound job with a message which can be put on the simulator screen.
+        :param command: to process.
+        """
+
+        self.led_cache[command.address] = command.brightness
+        led_id = command.get_led_id()
+
+        color_tuple = (self.led_cache[led_id + ':red:brick-status'], self.led_cache[led_id + ':green:brick-status'])
+        color = LED_COLORS.get(color_tuple)
+
+        if color is not None:
+            if led_id == 'led0':
+                self.robot_state.set_left_led_color(color)
+            else:
+                self.robot_state.set_right_led_color(color)
 
 
     def process_sound_command(self, command: SoundCommand):

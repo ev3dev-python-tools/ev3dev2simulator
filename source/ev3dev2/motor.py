@@ -814,7 +814,7 @@ class Motor(Device):
         self.command = self.COMMAND_RUN_FOREVER
 
         run_time = self.connector.run_forever()
-        self._calc_running_until(run_time)
+        self.running_until = time.time() + run_time
 
 
     def run_to_abs_pos(self):
@@ -826,7 +826,7 @@ class Motor(Device):
         self._command = self.COMMAND_RUN_TO_ABS_POS
 
         run_time = self.connector.run_to_rel_pos()
-        self._calc_running_until(run_time)
+        self.running_until = time.time() + run_time
 
 
     def run_to_rel_pos(self):
@@ -840,7 +840,7 @@ class Motor(Device):
         self.command = self.COMMAND_RUN_TO_REL_POS
 
         run_time = self.connector.run_to_rel_pos()
-        self._calc_running_until(run_time)
+        self.running_until = time.time() + run_time
 
 
     def run_timed(self):
@@ -852,7 +852,7 @@ class Motor(Device):
         self.command = self.COMMAND_RUN_TIMED
 
         run_time = self.connector.run_timed()
-        self._calc_running_until(run_time)
+        self.running_until = time.time() + run_time
 
 
     def run_direct(self):
@@ -1142,15 +1142,6 @@ class Motor(Device):
     @property
     def degrees(self):
         return self.rotations * 360
-
-
-    def _calc_running_until(self, run_time):
-        now = time.time()
-
-        if self.running_until > now:
-            self.running_until += run_time
-        else:
-            self.running_until = now + run_time
 
 
 def list_motors(name_pattern=Motor.SYSTEM_DEVICE_NAME_CONVENTION, **kwargs):

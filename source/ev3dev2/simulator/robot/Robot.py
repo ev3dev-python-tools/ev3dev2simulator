@@ -7,6 +7,7 @@ from ev3dev2.simulator.robot import BodyPart
 from ev3dev2.simulator.robot.Arm import Arm
 from ev3dev2.simulator.robot.Body import Body
 from ev3dev2.simulator.robot.ColorSensor import ColorSensor
+from ev3dev2.simulator.robot.Led import Led
 from ev3dev2.simulator.robot.TouchSensor import TouchSensor
 from ev3dev2.simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
 from ev3dev2.simulator.robot.UltrasonicSensorTop import UltrasonicSensor
@@ -58,6 +59,9 @@ class Robot:
         self.top_ultrasonic_sensor = UltrasonicSensor(address_top_us, img_cfg, self, 0, apply_scaling(-91.5))
         self.bottom_ultrasonic_sensor = UltrasonicSensorBottom(address_bottom_us, img_cfg, self, 0, apply_scaling(-98))
 
+        self.left_led = Led(img_cfg, self, apply_scaling(10), apply_scaling(20))
+        self.right_led = Led(img_cfg, self, apply_scaling(-10), apply_scaling(20))
+
         self.movable_sprites = [self.left_wheel,
                                 self.right_wheel,
                                 self.left_body,
@@ -68,7 +72,9 @@ class Robot:
                                 self.left_touch_sensor,
                                 self.right_touch_sensor,
                                 self.bottom_ultrasonic_sensor,
-                                self.top_ultrasonic_sensor]
+                                self.top_ultrasonic_sensor,
+                                self.left_led,
+                                self.right_led]
 
         self.sprites = self.movable_sprites.copy()
         self.sprites.append(self.arm)
@@ -140,6 +146,11 @@ class Robot:
         """
 
         self.arm.rotate(dfp)
+
+
+    def set_led_colors(self, left_color, right_color):
+        self.left_led.set_color(left_color)
+        self.right_led.set_color(right_color)
 
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):

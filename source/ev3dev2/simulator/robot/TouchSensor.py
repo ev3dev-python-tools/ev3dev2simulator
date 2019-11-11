@@ -1,6 +1,5 @@
 from ev3dev2.simulator.robot import Robot
 from ev3dev2.simulator.robot.BodyPart import BodyPart
-from ev3dev2.simulator.util.Util import apply_scaling
 
 
 class TouchSensor(BodyPart):
@@ -17,12 +16,8 @@ class TouchSensor(BodyPart):
                  delta_y: int,
                  left: bool):
         img = 'touch_sensor_left' if left else 'touch_sensor_right'
-        super(TouchSensor, self).__init__(address,
-                                          img_cfg[img],
-                                          apply_scaling(0.32),
-                                          robot,
-                                          delta_x,
-                                          delta_y)
+        super(TouchSensor, self).__init__(address, robot, delta_x, delta_y)
+        self.init_texture(img_cfg[img], 0.32)
 
 
     def is_touching(self) -> bool:

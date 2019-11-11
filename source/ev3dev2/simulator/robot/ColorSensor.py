@@ -1,6 +1,5 @@
 from ev3dev2.simulator.robot import Robot
 from ev3dev2.simulator.robot.BodyPart import BodyPart
-from ev3dev2.simulator.util.Util import apply_scaling
 
 
 class ColorSensor(BodyPart):
@@ -15,12 +14,8 @@ class ColorSensor(BodyPart):
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(ColorSensor, self).__init__(address,
-                                          img_cfg['color_sensor'],
-                                          apply_scaling(0.26),
-                                          robot,
-                                          delta_x,
-                                          delta_y)
+        super(ColorSensor, self).__init__(address, robot, delta_x, delta_y)
+        self.init_texture(img_cfg['color_sensor'], 0.26)
 
 
     def get_sensed_color(self) -> int:
