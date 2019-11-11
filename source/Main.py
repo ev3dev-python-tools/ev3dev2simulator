@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from ev3dev2._platform.ev3 import INPUT_1, INPUT_4, INPUT_3, INPUT_2
+from ev3dev2.led import Leds
 from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
 from ev3dev2.sensor.lego import ColorSensor
 from ev3dev2.sensor.lego import TouchSensor
@@ -23,6 +24,7 @@ def drive():
 
 def checkCollision():
     if ts1.is_pressed or ts4.is_pressed:
+        # leds.set_color("LEFT", "YELLOW")
         tank_drive.stop()
 
         s.speak("blyat.wav")
@@ -30,10 +32,13 @@ def checkCollision():
         rotateDegrees(180)
 
         drive()
+    # else:
+    #     leds.set_color("LEFT", "RED")
 
 
 def checkColor():
     if cs.color == 1:
+        # leds.set_color("RIGHT", "AMBER")
         tank_drive.stop()
 
         s.speak("blyat.wav")
@@ -41,6 +46,8 @@ def checkColor():
         rotateDegrees(150)
 
         drive()
+    # else:
+    #     leds.set_color("RIGHT", "GREEN")
 
 
 def checkDistance():
@@ -61,6 +68,8 @@ def check():
         checkDistance()
 
 
+leds = Leds()
+leds.animate_rainbow()
 s = Sound()
 cs = ColorSensor(INPUT_2)
 ts1 = TouchSensor(INPUT_1)

@@ -1,8 +1,18 @@
+from collections import OrderedDict
 from typing import Any
 
+from ev3dev2._platform.ev3 import LEDS
 from ev3dev2.simulator.config.config import load_config, load_scale_config
-from ev3dev2.simulator.connection.message import DriveCommand, StopCommand, SoundCommand, DataRequest
+from ev3dev2.simulator.connection.message import DriveCommand, StopCommand, SoundCommand, DataRequest, LedCommand
 from ev3dev2.simulator.util.Util import remove_scaling
+
+LED_COLORS = OrderedDict()
+LED_COLORS[(1, 1)] = 0  # Amber
+LED_COLORS[(0, 0)] = 1  # Black
+LED_COLORS[(1, 0)] = 2  # Red
+LED_COLORS[(0, 1)] = 3  # Green
+LED_COLORS[(1, 0.5)] = 4  # Orange
+LED_COLORS[(0.1, 1)] = 5  # Yellow
 
 
 class MessageProcessor:
@@ -21,6 +31,7 @@ class MessageProcessor:
         self.address_us = cfg['alloc_settings']['ultrasonic_sensor']['top']
 
         self.robot_state = robot_state
+        self.led_cache = {k: None for k in LEDS.values()}
 
 
     def process_drive_command(self, command: DriveCommand):
@@ -71,6 +82,25 @@ class MessageProcessor:
                 ppf = min(ppf + self.coasting_sub, 0)
 
             self.robot_state.put_move_job(ppf, side)
+
+
+    def process_led_command(self, command: LedCommand):
+        """
+        Process the given sound command by creating a sound job with a message which can be put on the simulator screen.
+        :param command: to process.
+        """
+
+        self.led_cache[command.address] = command.brightness
+        led_id = command.get_led_id()
+
+        color_tuple = (self.led_cache[led_id + ':red:brick-status'], self.led_cache[led_id + ':green:brick-status'])
+        color = LED_COLORS.get(color_tuple)
+
+        if color is not None:
+            if led_id == 'led0':
+                self.robot_state.set_left_led_color(color)
+            else:
+                self.robot_state.set_right_led_color(color)
 
 
     def process_sound_command(self, command: SoundCommand):

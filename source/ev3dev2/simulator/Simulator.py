@@ -159,6 +159,8 @@ class Simulator(arcade.Window):
             if left_ppf or right_ppf:
                 self.robot.execute_movement(left_ppf, right_ppf)
 
+            self.robot.set_led_colors(self.robot_state.left_led_color, self.robot_state.right_led_color)
+
             address_center_cs = self.robot.center_color_sensor.address
             address_left_ts = self.robot.left_touch_sensor.address
             address_right_ts = self.robot.right_touch_sensor.address
