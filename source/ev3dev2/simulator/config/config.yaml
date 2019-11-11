@@ -24,10 +24,12 @@ exec_settings:
 image_paths:
   arm: 'assets/images/arm.png'
   body: 'assets/images/body.png'
-  color_sensor: 'assets/images/color_sensor.png'
+  color_sensor_black: 'assets/images/color_sensor_black.png'
   color_sensor_blue: 'assets/images/color_sensor_blue.png'
   color_sensor_green: 'assets/images/color_sensor_green.png'
   color_sensor_red: 'assets/images/color_sensor_red.png'
+  color_sensor_white: 'assets/images/color_sensor_white.png'
+  color_sensor_yellow: 'assets/images/color_sensor_yellow.png'
   led_amber: "assets/images/led_amber.png"
   led_black: "assets/images/led_black.png"
   led_green: "assets/images/led_green.png"

@@ -1,5 +1,16 @@
+import arcade
+
 from ev3dev2.simulator.robot import Robot
 from ev3dev2.simulator.robot.BodyPart import BodyPart
+from ev3dev2.simulator.util.Util import apply_scaling
+
+COLORS = dict()
+COLORS[1] = 0
+COLORS[2] = 1
+COLORS[3] = 2
+COLORS[4] = 5
+COLORS[5] = 3
+COLORS[6] = 4
 
 
 class ColorSensor(BodyPart):
@@ -15,7 +26,23 @@ class ColorSensor(BodyPart):
                  delta_x: int,
                  delta_y: int):
         super(ColorSensor, self).__init__(address, robot, delta_x, delta_y)
-        self.init_texture(img_cfg['color_sensor'], 0.26)
+
+        black_texture = arcade.load_texture(img_cfg['color_sensor_black'], scale=apply_scaling(0.26))
+        blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=apply_scaling(0.26))
+        green_texture = arcade.load_texture(img_cfg['color_sensor_green'], scale=apply_scaling(0.26))
+        red_texture = arcade.load_texture(img_cfg['color_sensor_red'], scale=apply_scaling(0.26))
+        white_texture = arcade.load_texture(img_cfg['color_sensor_white'], scale=apply_scaling(0.26))
+        yellow_texture = arcade.load_texture(img_cfg['color_sensor_yellow'], scale=apply_scaling(0.26))
+
+        self.textures.append(black_texture)
+        self.textures.append(blue_texture)
+        self.textures.append(green_texture)
+        self.textures.append(red_texture)
+        self.textures.append(white_texture)
+        self.textures.append(yellow_texture)
+
+        self.old_texture_index = 0
+        self.set_texture(0)
 
 
     def get_sensed_color(self) -> int:
@@ -38,3 +65,11 @@ class ColorSensor(BodyPart):
         """
 
         return 1
+
+
+    def set_color_texture(self, color):
+        converted = COLORS[color]
+
+        if self.old_texture_index != converted:
+            self.old_texture_index = converted
+            self.set_texture(converted)

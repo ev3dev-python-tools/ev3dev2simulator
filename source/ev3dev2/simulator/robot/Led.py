@@ -16,7 +16,7 @@ class Led(BodyPart):
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(Led, self).__init__(None, robot, delta_x, delta_y)
+        super(Led, self).__init__('', robot, delta_x, delta_y)
 
         amber_texture = arcade.load_texture(img_cfg['led_amber'], scale=apply_scaling(0.33))
         black_texture = arcade.load_texture(img_cfg['led_black'], scale=apply_scaling(0.33))
@@ -32,11 +32,11 @@ class Led(BodyPart):
         self.textures.append(orange_texture)
         self.textures.append(yellow_texture)
 
-        self.old_texture_index = 2
-        self.set_texture(2)
+        self.old_texture_index = 1
+        self.set_texture(1)
 
 
-    def set_color(self, color_index):
-        if self.old_texture_index != color_index:
-            self.old_texture_index = color_index
-            self.set_texture(color_index)
+    def set_color_texture(self, color):
+        if self.old_texture_index != color:
+            self.old_texture_index = color
+            self.set_texture(color)

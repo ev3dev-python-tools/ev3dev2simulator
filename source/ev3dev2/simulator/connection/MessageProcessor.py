@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from typing import Any, Tuple
 
 from ev3dev2._platform.ev3 import LEDS
@@ -7,7 +6,7 @@ from ev3dev2.simulator.connection.MotorCommandProcessor import MotorCommandProce
 from ev3dev2.simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
 from ev3dev2.simulator.util.Util import remove_scaling, apply_scaling
 
-LED_COLORS = OrderedDict()
+LED_COLORS = dict()
 LED_COLORS[(1, 1)] = 0  # Amber
 LED_COLORS[(0, 0)] = 1  # Black
 LED_COLORS[(1, 0)] = 2  # Red

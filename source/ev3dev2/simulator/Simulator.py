@@ -256,6 +256,10 @@ class Simulator(arcade.Window):
         self.robot_state.values[self.robot.top_ultrasonic_sensor.address] = self.top_us_data
         self.robot_state.values[self.robot.bottom_ultrasonic_sensor.address] = self.bottom_us_data
 
+        self.robot.center_color_sensor.set_color_texture(self.center_cs_data)
+        self.robot.left_color_sensor.set_color_texture(self.left_cs_data)
+        self.robot.right_color_sensor.set_color_texture(self.right_cs_data)
+
 
 def main():
     """

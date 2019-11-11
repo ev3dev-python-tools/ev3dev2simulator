@@ -149,8 +149,8 @@ class Robot:
 
 
     def set_led_colors(self, left_color, right_color):
-        self.left_led.set_color(left_color)
-        self.right_led.set_color(right_color)
+        self.left_led.set_color_texture(left_color)
+        self.right_led.set_color_texture(right_color)
 
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
