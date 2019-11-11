@@ -23,6 +23,7 @@ exec_settings:
 
 image_paths:
   arm: 'assets/images/arm.png'
+  arm_large: 'assets/images/arm_large.png'
   body: 'assets/images/body.png'
   color_sensor_black: 'assets/images/color_sensor_black.png'
   color_sensor_blue: 'assets/images/color_sensor_blue.png'

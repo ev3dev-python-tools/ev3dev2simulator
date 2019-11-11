@@ -5,6 +5,7 @@ from arcade import Sprite
 from ev3dev2.simulator.obstacle import ColorObstacle
 from ev3dev2.simulator.robot import BodyPart
 from ev3dev2.simulator.robot.Arm import Arm
+from ev3dev2.simulator.robot.ArmLarge import ArmLarge
 from ev3dev2.simulator.robot.Body import Body
 from ev3dev2.simulator.robot.ColorSensor import ColorSensor
 from ev3dev2.simulator.robot.Led import Led
@@ -44,7 +45,9 @@ class Robot:
 
         self.left_body = Body(img_cfg, self, apply_scaling(36), apply_scaling(-22.5))
         self.right_body = Body(img_cfg, self, apply_scaling(-36), apply_scaling(-22.5))
-        self.arm = Arm(img_cfg, apply_scaling(1450), apply_scaling(1100))
+
+        self.arm = Arm(img_cfg, self, 0, apply_scaling(75))
+        self.arm_large = ArmLarge(img_cfg, apply_scaling(1450), apply_scaling(1100))
 
         self.left_wheel = Wheel(address_left_motor, img_cfg, self, (self.wheel_distance / -2), 0.01)
         self.right_wheel = Wheel(address_right_motor, img_cfg, self, (self.wheel_distance / 2), 0.01)
@@ -74,10 +77,11 @@ class Robot:
                                 self.bottom_ultrasonic_sensor,
                                 self.top_ultrasonic_sensor,
                                 self.left_led,
-                                self.right_led]
+                                self.right_led,
+                                self.arm]
 
         self.sprites = self.movable_sprites.copy()
-        self.sprites.append(self.arm)
+        self.sprites.append(self.arm_large)
 
         if orientation != 0:
             self._rotate(math.radians(orientation))
@@ -145,7 +149,7 @@ class Robot:
         :param dfp: speed in degrees per second of the center motor.
         """
 
-        self.arm.rotate(dfp)
+        self.arm_large.rotate(dfp)
 
 
     def set_led_colors(self, left_color, right_color):
