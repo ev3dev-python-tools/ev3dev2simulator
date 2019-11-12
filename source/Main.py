@@ -27,7 +27,6 @@ def checkCollision():
         # leds.set_color("LEFT", "YELLOW")
         tank_drive.stop()
 
-        s.speak("blyat.wav")
         reverseRotations(1)
         rotateDegrees(180)
 
@@ -41,7 +40,6 @@ def checkColor():
         # leds.set_color("RIGHT", "AMBER")
         tank_drive.stop()
 
-        s.speak("blyat.wav")
         reverseRotations(1)
         rotateDegrees(150)
 
@@ -54,7 +52,6 @@ def checkDistance():
     if -1 > us.value() < 180:
         tank_drive.stop()
 
-        s.speak("wow")
         reverseRotations(1)
         rotateDegrees(125)
 
@@ -70,7 +67,6 @@ def check():
 
 leds = Leds()
 leds.animate_rainbow()
-s = Sound()
 cs = ColorSensor(INPUT_2)
 ts1 = TouchSensor(INPUT_1)
 ts4 = TouchSensor(INPUT_4)

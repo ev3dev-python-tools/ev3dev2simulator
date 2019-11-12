@@ -178,9 +178,9 @@ class Simulator(arcade.Window):
         if self.msg_counter != 0:
             self.msg_counter -= 1
 
-            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - apply_scaling(100), arcade.color.WHITE, 16,
+            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - apply_scaling(100), arcade.color.WHITE, 14,
                              anchor_x="center")
-            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - apply_scaling(140), arcade.color.WHITE, 16,
+            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - apply_scaling(130), arcade.color.WHITE, 14,
                              anchor_x="center")
 
 

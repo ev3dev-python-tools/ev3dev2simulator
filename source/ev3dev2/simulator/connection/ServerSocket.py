@@ -1,16 +1,9 @@
-import json
 import socket
 import threading
 import time
-from typing import Any
 
 from ev3dev2.simulator.config.config import load_config
-from ev3dev2.simulator.connection.MessageProcessor import MessageProcessor
-from ev3dev2.simulator.connection.message.DataRequest import DataRequest
-from ev3dev2.simulator.connection.message.LedCommand import LedCommand
-from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
-from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
-from ev3dev2.simulator.connection.message.StopCommand import StopCommand
+from ev3dev2.simulator.connection.ClientSocketHandler import ClientSocketHandler
 
 
 class ServerSocket(threading.Thread):
@@ -21,16 +14,16 @@ class ServerSocket(threading.Thread):
 
     def __init__(self, robot_state):
         threading.Thread.__init__(self)
-        self.message_processor = MessageProcessor(robot_state)
         self.robot_state = robot_state
-
         self.first_run = True
 
 
     def run(self):
         """
-        Listen for incoming connections. Start listening for messages when a connection is established.
-        When the connection breaks up listen for a new connection.
+        Listen for incoming connections. When a connection is established spawn a ClientSocketHandler
+        to manage it. Two connections can be established at the same time.
+        When one connection is closed close the other one as well and start listening
+        for two new connections.
         """
 
         port = load_config()['exec_settings']['socket_port']
@@ -42,134 +35,46 @@ class ServerSocket(threading.Thread):
 
         while True:
             print('Listening for connections...')
-            (client, address) = server.accept()
 
-            print('Connection accepted')
+            (client1, address1) = server.accept()
+            handler1 = self.create_handler(client1, '1')
+
+            (client2, address2) = server.accept()
+            handler2 = self.create_handler(client2, '2')
+
             if not self.first_run:
                 self.robot_state.should_reset = True
 
             self.first_run = False
             time.sleep(1)
 
-            try:
-                while True:
+            while True:
 
-                    data = client.recv(128)
-                    if data:
+                if not handler1.is_running:
+                    handler2.is_running = False
+                    break
 
-                        val = self._process(data)
-                        if val:
-                            client.send(val)
+                elif not handler2.is_running:
+                    handler1.is_running = False
+                    break
 
-                    else:
-                        break
+                else:
+                    time.sleep(1)
 
-            except socket.error:
-                pass
-
-            print('Closing connection...')
-            client.close()
+            time.sleep(1)
+            print('All connections closed')
 
 
-    def _process(self, data: bytes) -> bytes:
+    def create_handler(self, client, connection_id):
         """
-        Process incoming data by decoding it and sending it to the MessageProcessor.
-        :param data: to process.
-        :return: a possible response in bytes when the incoming message requires it.
+        Start a ClientSocketHandler tread to manage the given connection.
+        :param client: of the connection to manage.
+        :param connection_id: of the connection.
+        :return: a newly created ClientSocketHandler object.
         """
 
-        jsn = data.decode()
-        jsn = jsn.replace('#', '')
+        handler = ClientSocketHandler(self.robot_state, client, connection_id)
+        handler.setDaemon(True)
+        handler.start()
 
-        obj_dict = json.loads(jsn)
-
-        tpe = obj_dict['type']
-        if tpe == 'RotateCommand':
-            return self._process_drive_command(obj_dict)
-
-        if tpe == 'StopCommand':
-            return self._process_stop_command(obj_dict)
-
-        if tpe == 'SoundCommand':
-            return self._process_sound_command(obj_dict)
-
-        if tpe == 'LedCommand':
-            return self._process_led_command(obj_dict)
-
-        elif tpe == 'DataRequest':
-            return self._process_data_request(obj_dict)
-
-
-    def _process_drive_command(self, d: dict) -> Any:
-        """
-        Deserialize the given dictionary into a RotateCommand and send it to the MessageProcessor.
-        :param d: to process.
-        """
-
-        command = RotateCommand(d['address'], d['speed'], d['distance'], d['stop_action'])
-        value = self.message_processor.process_rotate_command(command)
-
-        return self._serialize_response(value)
-
-
-    def _process_stop_command(self, d: dict) -> Any:
-        """
-        Deserialize the given dictionary into a StopCommand and send it to the MessageProcessor.
-        :param d: to process.
-        """
-
-        command = StopCommand(d['address'], d['speed'], d['stop_action'])
-        value = self.message_processor.process_stop_command(command)
-
-        return self._serialize_response(value)
-
-
-    def _process_led_command(self, d: dict) -> Any:
-        """
-        Deserialize the given dictionary into a LedCommand and send it to the MessageProcessor.
-        :param d: to process.
-        """
-
-        # print(d['address'] + '  --  ' + str(d['brightness']))
-        command = LedCommand(d['address'], d['brightness'])
-        self.message_processor.process_led_command(command)
-
-        return None
-
-
-    def _process_sound_command(self, d: dict) -> Any:
-        """
-        Deserialize the given dictionary into a SoundCommand and send it to the MessageProcessor.
-        :param d: to process.
-        """
-
-        command = SoundCommand(d['message'])
-        self.message_processor.process_sound_command(command)
-
-        return None
-
-
-    def _process_data_request(self, d: dict) -> bytes:
-        """
-        Deserialize the given dictionary into a DataRequest and send it to the MessageProcessor.
-        Return a serialized response with the requested value.
-        :param d: to process.
-        :return: a bytes object representing the serialized response.
-        """
-
-        request = DataRequest(d['address'])
-        value = self.message_processor.process_data_request(request)
-
-        return self._serialize_response(value)
-
-
-    def _serialize_response(self, value) -> bytes:
-        """
-        Serialize the given value into a bytes object containing a dictionary.
-        :param value: to serialize.
-        """
-
-        d = {'value': value}
-
-        jsn = json.dumps(d)
-        return str.encode(jsn)
+        return handler
