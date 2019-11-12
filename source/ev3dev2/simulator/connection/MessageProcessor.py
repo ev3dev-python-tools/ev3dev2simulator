@@ -51,7 +51,7 @@ class MessageProcessor:
         self.robot_state.clear_motor_jobs(side)
 
         for i in range(frames):
-            self.robot_state.put_motor_job(spf, side)
+            self.put_motor_job(spf, side)
 
         self._process_coast(coast_frames, spf, side)
         return run_time
@@ -120,7 +120,7 @@ class MessageProcessor:
             else:
                 ppf = min(ppf + coasting_sub, 0)
 
-            self.robot_state.put_motor_job(ppf, side)
+            self.put_motor_job(ppf, side)
 
 
     def process_led_command(self, command: LedCommand):
@@ -171,3 +171,18 @@ class MessageProcessor:
             return remove_scaling(value)
         else:
             return value
+
+
+    def put_motor_job(self, job: float, side: str):
+        """
+        Add a new move job to the queue for the motor corresponding to the given side.
+        :param job: to add.
+        :param side: the motor is located.
+        """
+
+        if side == 'center':
+            self.robot_state.put_center_motor_job(job)
+        elif side == 'left':
+            self.robot_state.put_left_motor_job(job)
+        else:
+            self.robot_state.put_right_motor_job(job)

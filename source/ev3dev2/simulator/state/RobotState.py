@@ -36,19 +36,31 @@ class RobotState:
         self.motor_lock = threading.Lock()
 
 
-    def put_motor_job(self, job: float, side: str):
+    def put_center_motor_job(self, job: float):
         """
-        Add a new move job to the queue for the motor corresponding to the given side.
+        Add a new move job to the queue for the center motor.
         :param job: to add.
-        :param side: the motor is located.
         """
 
-        if side == 'center':
-            self.center_motor_queue.put_nowait(job)
-        elif side == 'left':
-            self.left_motor_queue.put_nowait(job)
-        else:
-            self.right_motor_queue.put_nowait(job)
+        self.center_motor_queue.put_nowait(job)
+
+
+    def put_left_motor_job(self, job: float):
+        """
+        Add a new move job to the queue for the left motor.
+        :param job: to add.
+        """
+
+        self.left_motor_queue.put_nowait(job)
+
+
+    def put_right_motor_job(self, job: float):
+        """
+        Add a new move job to the queue for the right motor.
+        :param job: to add.
+        """
+
+        self.right_motor_queue.put_nowait(job)
 
 
     def next_motor_jobs(self) -> Tuple[float, float, float]:

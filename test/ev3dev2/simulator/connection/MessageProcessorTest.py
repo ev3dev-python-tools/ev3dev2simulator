@@ -5,6 +5,7 @@ import unittest
 from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.MessageProcessor import MessageProcessor
 from ev3dev2.simulator.connection.message.DataRequest import DataRequest
+from ev3dev2.simulator.connection.message.LedCommand import LedCommand
 from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
 from ev3dev2.simulator.state.RobotState import get_robot_state
@@ -121,6 +122,29 @@ class MessageProcessorTest(unittest.TestCase):
         message = robot_state.next_sound_job()
         self.assertEqual(message, 'A test is \nrunning at\n the momen\nt!')
         self.assertIsNone(robot_state.next_sound_job())
+
+
+    def test_process_led_command(self):
+        robot_state = get_robot_state()
+        message_processor = MessageProcessor(robot_state)
+
+        command1 = LedCommand('led0:red:brick-status', 1)
+        command2 = LedCommand('led0:green:brick-status', 1)
+
+        message_processor.process_led_command(command1)
+        message_processor.process_led_command(command2)
+
+        self.assertEqual(robot_state.left_led_color, 0)
+        self.assertEqual(robot_state.right_led_color, 1)
+
+        command3 = LedCommand('led1:red:brick-status', 1)
+        command4 = LedCommand('led1:green:brick-status', 0.5)
+
+        message_processor.process_led_command(command3)
+        message_processor.process_led_command(command4)
+
+        self.assertEqual(robot_state.left_led_color, 0)
+        self.assertEqual(robot_state.right_led_color, 4)
 
 
     def test_process_data_request(self):

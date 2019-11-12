@@ -114,7 +114,6 @@ class ClientSocketHandler(threading.Thread):
         :param d: to process.
         """
 
-        # print(d['address'] + '  --  ' + str(d['brightness']))
         command = LedCommand(d['address'], d['brightness'])
         self.message_processor.process_led_command(command)
 
