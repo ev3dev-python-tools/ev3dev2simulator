@@ -4,6 +4,7 @@ import time
 
 from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.ClientSocketHandler import ClientSocketHandler
+from ev3dev2.simulator.state import RobotState
 
 
 class ServerSocket(threading.Thread):
@@ -12,7 +13,7 @@ class ServerSocket(threading.Thread):
     """
 
 
-    def __init__(self, robot_state):
+    def __init__(self, robot_state: RobotState):
         threading.Thread.__init__(self)
         self.robot_state = robot_state
         self.first_run = True
@@ -65,7 +66,7 @@ class ServerSocket(threading.Thread):
             print('All connections closed')
 
 
-    def create_handler(self, client, connection_id):
+    def create_handler(self, client, connection_id: str) -> ClientSocketHandler:
         """
         Start a ClientSocketHandler tread to manage the given connection.
         :param client: of the connection to manage.

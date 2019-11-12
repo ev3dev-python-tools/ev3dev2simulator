@@ -9,6 +9,7 @@ from ev3dev2.simulator.connection.message.LedCommand import LedCommand
 from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
 from ev3dev2.simulator.connection.message.StopCommand import StopCommand
+from ev3dev2.simulator.state import RobotState
 
 
 class ClientSocketHandler(threading.Thread):
@@ -17,7 +18,7 @@ class ClientSocketHandler(threading.Thread):
     """
 
 
-    def __init__(self, robot_state, client, connection_id):
+    def __init__(self, robot_state: RobotState, client, connection_id: str):
         threading.Thread.__init__(self)
 
         self.message_processor = MessageProcessor(robot_state)

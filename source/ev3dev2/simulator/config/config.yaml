@@ -18,6 +18,7 @@ alloc_settings:
     bottom: ''
 
 exec_settings:
+  bluetooth_port: 6841
   frames_per_second: 30
   socket_port: 6840
 

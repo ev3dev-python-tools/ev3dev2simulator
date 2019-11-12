@@ -4,6 +4,7 @@ from ev3dev2._platform.ev3 import LEDS
 from ev3dev2.simulator.config.config import load_config
 from ev3dev2.simulator.connection.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2.simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
+from ev3dev2.simulator.state import RobotState
 from ev3dev2.simulator.util.Util import remove_scaling, apply_scaling
 
 LED_COLORS = dict()
@@ -22,7 +23,7 @@ class MessageProcessor:
     """
 
 
-    def __init__(self, robot_state):
+    def __init__(self, robot_state: RobotState):
         cfg = load_config()
 
         self.pixel_coasting_sub = apply_scaling(cfg['motor_settings']['pixel_coasting_subtraction'])

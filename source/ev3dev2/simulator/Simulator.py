@@ -5,6 +5,7 @@ This class extends from arcade.Window and manages the updates and rendering of t
 import argparse
 import os
 import sys
+from typing import Tuple
 
 import arcade
 from pymunk import Space
@@ -22,13 +23,13 @@ from ev3dev2.simulator.obstacle.Edge import Edge
 from ev3dev2.simulator.obstacle.Lake import BlueLake, GreenLake, RedLake
 from ev3dev2.simulator.obstacle.Rock import Rock
 from ev3dev2.simulator.robot.Robot import Robot
-from ev3dev2.simulator.state.RobotState import get_robot_state
+from ev3dev2.simulator.state.RobotState import get_robot_state, RobotState
 from ev3dev2.simulator.util.Util import apply_scaling
 
 
 class Simulator(arcade.Window):
 
-    def __init__(self, robot_state, robot_pos):
+    def __init__(self, robot_state: RobotState, robot_pos: Tuple[int, int, int]):
         self.cfg = load_config()
         self.robot_state = robot_state
 
