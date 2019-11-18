@@ -20,7 +20,8 @@ class ArmLarge(Sprite):
         self.center_x = center_x
         self.center_y = center_y
 
-        self.sweep_length = 314 * apply_scaling(0.48) / 2  # Use 0.48 to rotate on own bottom border instead of just below
+        self.sweep_length = apply_scaling(229) / 4
+
         self.rotate_x = center_x
         self.rotate_y = center_y - self.sweep_length
 

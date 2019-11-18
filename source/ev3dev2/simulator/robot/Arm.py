@@ -14,4 +14,4 @@ class Arm(BodyPart):
                  center_x: int,
                  center_y: int):
         super(Arm, self).__init__('', robot, center_x, center_y)
-        self.init_texture(img_cfg['arm'], 0.45)
+        self.init_texture(img_cfg['arm'], 0.41)

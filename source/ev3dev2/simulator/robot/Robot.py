@@ -43,27 +43,27 @@ class Robot:
 
         self.wheel_distance = apply_scaling(cfg['wheel_settings']['spacing'])
 
-        self.left_body = Body(img_cfg, self, apply_scaling(36), apply_scaling(-22.5))
-        self.right_body = Body(img_cfg, self, apply_scaling(-36), apply_scaling(-22.5))
+        self.left_body = Body(img_cfg, self, apply_scaling(39), apply_scaling(-22.5))
+        self.right_body = Body(img_cfg, self, apply_scaling(-39), apply_scaling(-22.5))
 
-        self.arm = Arm(img_cfg, self, 0, apply_scaling(75))
+        self.arm = Arm(img_cfg, self, apply_scaling(15), apply_scaling(102))
         self.arm_large = ArmLarge(img_cfg, apply_scaling(1450), apply_scaling(1100))
 
         self.left_wheel = Wheel(address_left_motor, img_cfg, self, (self.wheel_distance / -2), 0.01)
         self.right_wheel = Wheel(address_right_motor, img_cfg, self, (self.wheel_distance / 2), 0.01)
 
-        self.center_color_sensor = ColorSensor(address_center_cs, img_cfg, self, 0, apply_scaling(81))
-        self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self, -45, apply_scaling(55))
-        self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self, 45, apply_scaling(55))
+        self.center_color_sensor = ColorSensor(address_center_cs, img_cfg, self, 0, apply_scaling(84))
+        self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self, apply_scaling(-69), apply_scaling(95))
+        self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self, apply_scaling(69), apply_scaling(95))
 
-        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, apply_scaling(-75), apply_scaling(102), True)
-        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, apply_scaling(75), apply_scaling(102), False)
+        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, apply_scaling(-65), apply_scaling(102), True)
+        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, apply_scaling(65), apply_scaling(102), False)
 
-        self.top_ultrasonic_sensor = UltrasonicSensor(address_top_us, img_cfg, self, 0, apply_scaling(-91.5))
-        self.bottom_ultrasonic_sensor = UltrasonicSensorBottom(address_bottom_us, img_cfg, self, 0, apply_scaling(-98))
+        self.top_ultrasonic_sensor = UltrasonicSensor(address_top_us, img_cfg, self, apply_scaling(-22), apply_scaling(56))
+        self.bottom_ultrasonic_sensor = UltrasonicSensorBottom(address_bottom_us, img_cfg, self, 0, apply_scaling(-145))
 
-        self.left_led = Led(img_cfg, self, apply_scaling(10), apply_scaling(20))
-        self.right_led = Led(img_cfg, self, apply_scaling(-10), apply_scaling(20))
+        self.left_led = Led(img_cfg, self, apply_scaling(20), apply_scaling(-55))
+        self.right_led = Led(img_cfg, self, apply_scaling(60), apply_scaling(-55))
 
         self.movable_sprites = [self.left_wheel,
                                 self.right_wheel,
