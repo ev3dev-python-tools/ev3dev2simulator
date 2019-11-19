@@ -2,7 +2,7 @@ import threading
 from queue import Queue, Empty
 from typing import Any, Tuple
 
-from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.config.config import get_config
 
 
 class RobotState:
@@ -14,9 +14,14 @@ class RobotState:
 
 
     def __init__(self):
-        cfg = load_config()
+        cfg = get_config().get_data()
+        sim_type = get_config().get_sim_type()
 
-        self.address_motor_center = cfg['alloc_settings']['motor']['center']
+        if sim_type == 'large':
+            self.address_motor_center = cfg['alloc_settings']['motor']['center']
+        else:
+            self.address_motor_center = ''
+
         self.address_motor_left = cfg['alloc_settings']['motor']['left']
         self.address_motor_right = cfg['alloc_settings']['motor']['right']
 
@@ -204,10 +209,3 @@ class RobotState:
 
         self.locks[address].acquire()
         return self.values[address]
-
-
-robot_state = RobotState()
-
-
-def get_robot_state():
-    return robot_state

@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from ev3dev2.simulator.config.config import load_config, load_scale_config
+from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.StopCommand import StopCommand
 
@@ -13,9 +13,9 @@ class MotorCommandProcessor:
 
 
     def __init__(self):
-        cfg = load_config()
+        cfg = get_config().get_data()
 
-        self.scaling_multiplier = load_scale_config()
+        self.scaling_multiplier = get_config().get_scale()
         self.pixel_coasting_sub = cfg['motor_settings']['pixel_coasting_subtraction'] * self.scaling_multiplier
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
 

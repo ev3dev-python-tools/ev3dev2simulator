@@ -16,24 +16,26 @@ sys.path.insert(0, ev3dev_dir)
 
 os.chdir(script_dir)
 
-from ev3dev2.simulator.config.config import load_config, write_scale_config, load_scale_config
+from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.connection.ServerSocket import ServerSocket
 from ev3dev2.simulator.obstacle.Border import Border
 from ev3dev2.simulator.obstacle.Edge import Edge
 from ev3dev2.simulator.obstacle.Lake import BlueLake, GreenLake, RedLake
 from ev3dev2.simulator.obstacle.Rock import Rock
-from ev3dev2.simulator.robot.Robot import Robot
-from ev3dev2.simulator.state.RobotState import get_robot_state, RobotState
+from ev3dev2.simulator.robot.RobotLarge import RobotLarge
+from ev3dev2.simulator.robot.RobotSmall import RobotSmall
+from ev3dev2.simulator.state.RobotState import RobotState
 from ev3dev2.simulator.util.Util import apply_scaling
 
 
 class Simulator(arcade.Window):
 
     def __init__(self, robot_state: RobotState, robot_pos: Tuple[int, int, int]):
-        self.cfg = load_config()
         self.robot_state = robot_state
 
-        self.scaling_multiplier = load_scale_config()
+        self.scaling_multiplier = get_config().get_scale()
+        self.large_sim_type = get_config().get_sim_type() == 'large'
+        self.cfg = get_config().get_data()
 
         self.screen_total_width = int(apply_scaling(self.cfg['screen_settings']['screen_total_width']))
         self.screen_width = int(apply_scaling(self.cfg['screen_settings']['screen_width']))
@@ -46,7 +48,8 @@ class Simulator(arcade.Window):
 
         super(Simulator, self).__init__(self.screen_total_width, self.screen_height, screen_title, update_rate=1 / 30)
 
-        arcade.set_background_color(arcade.color.BLACK_OLIVE)
+        background_color = eval(self.cfg['screen_settings']['background_color'])
+        arcade.set_background_color(background_color)
 
         self.robot_elements = None
         self.obstacle_elements = None
@@ -72,8 +75,8 @@ class Simulator(arcade.Window):
         self.right_cs_data = 0
         self.left_ts_data = False
         self.right_ts_data = False
-        self.top_us_data = -1
-        self.bottom_us_data = -1
+        self.front_us_data = -1
+        self.rear_us_data = -1
 
         self.text_x = self.screen_width - apply_scaling(220)
         self.msg_x = self.screen_width / 2
@@ -89,7 +92,10 @@ class Simulator(arcade.Window):
         self.robot_elements = arcade.SpriteList()
         self.obstacle_elements = arcade.ShapeElementList()
 
-        self.robot = Robot(self.cfg, self.robot_pos[0], self.robot_pos[1], self.robot_pos[2])
+        if self.large_sim_type:
+            self.robot = RobotLarge(self.cfg, self.robot_pos[0], self.robot_pos[1], self.robot_pos[2])
+        else:
+            self.robot = RobotSmall(self.cfg, self.robot_pos[0], self.robot_pos[1], self.robot_pos[2])
 
         for s in self.robot.get_sprites():
             self.robot_elements.append(s)
@@ -144,10 +150,45 @@ class Simulator(arcade.Window):
         self.obstacle_elements.draw()
         self.robot_elements.draw()
 
-        self._draw_text()
+        if self.large_sim_type:
+            self._draw_text_large_sim()
+        else:
+            self._draw_text_small_sim()
 
 
-    def _draw_text(self):
+    def _draw_text_small_sim(self):
+        """
+        Draw all the text fields.
+        """
+
+        center_cs = 'CS:              ' + str(self.center_cs_data)
+        left_ts = 'TS  right:    ' + str(self.right_ts_data)
+        right_ts = 'TS  left:       ' + str(self.left_ts_data)
+        top_us = 'US:              ' + str(int(round(self.front_us_data / self.scaling_multiplier))) + 'mm'
+
+        message = self.robot_state.next_sound_job()
+        sound = message if message else '-'
+
+        arcade.draw_text(center_cs, self.text_x, self.screen_height - apply_scaling(80), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(left_ts, self.text_x, self.screen_height - apply_scaling(100), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(right_ts, self.text_x, self.screen_height - apply_scaling(120), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(140), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(160), arcade.color.BLACK_LEATHER_JACKET, 10)
+        arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(180), arcade.color.BLACK_LEATHER_JACKET, 10, anchor_y='top')
+
+        arcade.draw_text('Robot Arm', apply_scaling(1450), self.screen_height - apply_scaling(50), arcade.color.BLACK_LEATHER_JACKET, 14,
+                         anchor_x="center")
+
+        if self.msg_counter != 0:
+            self.msg_counter -= 1
+
+            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - apply_scaling(100), arcade.color.BLACK_LEATHER_JACKET, 14,
+                             anchor_x="center")
+            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - apply_scaling(130), arcade.color.BLACK_LEATHER_JACKET, 14,
+                             anchor_x="center")
+
+
+    def _draw_text_large_sim(self):
         """
         Draw all the text fields.
         """
@@ -157,8 +198,8 @@ class Simulator(arcade.Window):
         right_cs = 'CS  right:    ' + str(self.right_cs_data)
         left_ts = 'TS  right:     ' + str(self.right_ts_data)
         right_ts = 'TS  left:        ' + str(self.left_ts_data)
-        top_us = 'US  top:       ' + str(int(round(self.top_us_data / self.scaling_multiplier))) + 'mm'
-        bottom_us = 'US  bot:       ' + str(int(round(self.bottom_us_data))) + 'mm'
+        top_us = 'US  top:       ' + str(int(round(self.front_us_data / self.scaling_multiplier))) + 'mm'
+        bottom_us = 'US  bot:       ' + str(int(round(self.rear_us_data))) + 'mm'
 
         message = self.robot_state.next_sound_job()
         sound = message if message else '-'
@@ -219,11 +260,15 @@ class Simulator(arcade.Window):
 
 
     def _process_leds(self):
-        self.robot.set_left_brick_led_colors(self.robot_state.left_brick_left_led_color,
-                                             self.robot_state.left_brick_right_led_color)
+        if self.large_sim_type:
+            self.robot.set_left_brick_led_colors(self.robot_state.left_brick_left_led_color,
+                                                 self.robot_state.left_brick_right_led_color)
 
-        self.robot.set_right_brick_led_colors(self.robot_state.right_brick_left_led_color,
-                                              self.robot_state.right_brick_right_led_color)
+            self.robot.set_right_brick_led_colors(self.robot_state.right_brick_left_led_color,
+                                                  self.robot_state.right_brick_right_led_color)
+        else:
+            self.robot.set_led_colors(self.robot_state.left_brick_left_led_color,
+                                      self.robot_state.left_brick_right_led_color)
 
 
     def _check_fall(self):
@@ -246,24 +291,28 @@ class Simulator(arcade.Window):
         """
 
         self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
-        self.left_cs_data = self.robot.left_color_sensor.get_sensed_color()
-        self.right_cs_data = self.robot.right_color_sensor.get_sensed_color()
         self.left_ts_data = self.robot.left_touch_sensor.is_touching()
         self.right_ts_data = self.robot.right_touch_sensor.is_touching()
-        self.top_us_data = self.robot.front_ultrasonic_sensor.distance(self.space)
-        self.bottom_us_data = self.robot.rear_ultrasonic_sensor.distance()
+        self.front_us_data = self.robot.front_ultrasonic_sensor.distance(self.space)
 
         self.robot_state.values[self.robot.center_color_sensor.address] = self.center_cs_data
-        self.robot_state.values[self.robot.left_color_sensor.address] = self.left_cs_data
-        self.robot_state.values[self.robot.right_color_sensor.address] = self.right_cs_data
         self.robot_state.values[self.robot.left_touch_sensor.address] = self.left_ts_data
         self.robot_state.values[self.robot.right_touch_sensor.address] = self.right_ts_data
-        self.robot_state.values[self.robot.front_ultrasonic_sensor.address] = self.top_us_data
-        self.robot_state.values[self.robot.rear_ultrasonic_sensor.address] = self.bottom_us_data
+        self.robot_state.values[self.robot.front_ultrasonic_sensor.address] = self.front_us_data
 
         self.robot.center_color_sensor.set_color_texture(self.center_cs_data)
-        self.robot.left_color_sensor.set_color_texture(self.left_cs_data)
-        self.robot.right_color_sensor.set_color_texture(self.right_cs_data)
+
+        if self.large_sim_type:
+            self.left_cs_data = self.robot.left_color_sensor.get_sensed_color()
+            self.right_cs_data = self.robot.right_color_sensor.get_sensed_color()
+            self.rear_us_data = self.robot.rear_ultrasonic_sensor.distance()
+
+            self.robot_state.values[self.robot.left_color_sensor.address] = self.left_cs_data
+            self.robot_state.values[self.robot.right_color_sensor.address] = self.right_cs_data
+            self.robot_state.values[self.robot.rear_ultrasonic_sensor.address] = self.rear_us_data
+
+            self.robot.left_color_sensor.set_color_texture(self.left_cs_data)
+            self.robot.right_color_sensor.set_color_texture(self.right_cs_data)
 
 
 def main():
@@ -273,7 +322,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--window_scaling",
-                        default=load_config()['screen_settings']['scaling_multiplier'],
+                        default=0.65,
                         help="Scaling of the screen, default is 0.65",
                         required=False,
                         type=validate_scale)
@@ -292,17 +341,27 @@ def main():
                         help="Starting orientation the robot, default is 0",
                         required=False,
                         type=int)
+    parser.add_argument("-t", "--simulation_type",
+                        choices=['small', 'large'],
+                        default='large',
+                        help="Type of the simulation (small or large). Default is small",
+                        required=False,
+                        type=str)
 
     args = vars(parser.parse_args())
+    config = get_config()
 
     s = args['window_scaling']
-    write_scale_config(s)
+    config.write_scale(s)
+
+    t = args['simulation_type']
+    config.write_sim_type(t)
 
     x = apply_scaling(args['robot_position_x'])
     y = apply_scaling(args['robot_position_y'])
     o = args['robot_orientation']
 
-    robot_state = get_robot_state()
+    robot_state = RobotState()
 
     server_thread = ServerSocket(robot_state)
     server_thread.setDaemon(True)

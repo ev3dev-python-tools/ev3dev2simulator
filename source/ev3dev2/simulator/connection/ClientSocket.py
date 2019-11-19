@@ -3,7 +3,7 @@ import socket
 import time
 from typing import Any
 
-from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.connection.message import MotorCommand, SoundCommand, DataRequest, LedCommand
 
 
@@ -15,7 +15,7 @@ class ClientSocket:
 
 
     def __init__(self):
-        port = load_config()['exec_settings']['socket_port']
+        port = get_config().get_data()['exec_settings']['socket_port']
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect(('localhost', port))

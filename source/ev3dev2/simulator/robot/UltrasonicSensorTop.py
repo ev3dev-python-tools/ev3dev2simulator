@@ -3,7 +3,7 @@ import math
 from arcade import Point
 from pymunk import Space, ShapeFilter
 
-from ev3dev2.simulator.config.config import load_scale_config
+from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.robot import Robot
 from ev3dev2.simulator.robot.BodyPart import BodyPart
 from ev3dev2.simulator.util.Util import apply_scaling, distance_between_points
@@ -25,7 +25,7 @@ class UltrasonicSensor(BodyPart):
         self.init_texture(img_cfg['ultrasonic_sensor_top'], 0.20)
 
         self.sensor_half_height = apply_scaling(22.5)
-        self.scaling_multiplier = load_scale_config()
+        self.scaling_multiplier = get_config().get_scale()
 
 
     def distance(self, space: Space) -> float:
