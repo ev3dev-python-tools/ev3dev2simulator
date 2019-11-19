@@ -31,15 +31,15 @@ class Robot:
         img_cfg = cfg['image_paths']
         alloc_cfg = cfg['alloc_settings']
 
-        address_left_motor = alloc_cfg['motor']['left']
-        address_right_motor = alloc_cfg['motor']['right']
-        address_center_cs = alloc_cfg['color_sensor']['center']
-        address_left_cs = alloc_cfg['color_sensor']['left']
-        address_right_cs = alloc_cfg['color_sensor']['right']
-        address_left_ts = alloc_cfg['touch_sensor']['left']
-        address_right_ts = alloc_cfg['touch_sensor']['right']
-        address_top_us = alloc_cfg['ultrasonic_sensor']['top']
-        address_bottom_us = alloc_cfg['ultrasonic_sensor']['bottom']
+        address_motor_left = alloc_cfg['motor']['left']
+        address_motor_right = alloc_cfg['motor']['right']
+        address_cs_center = alloc_cfg['color_sensor']['center']
+        address_cs_left = alloc_cfg['color_sensor']['left']
+        address_cs_right = alloc_cfg['color_sensor']['right']
+        address_ts_left = alloc_cfg['touch_sensor']['left']
+        address_ts_right = alloc_cfg['touch_sensor']['right']
+        address_us_front = alloc_cfg['ultrasonic_sensor']['front']
+        address_us_rear = alloc_cfg['ultrasonic_sensor']['rear']
 
         self.wheel_distance = apply_scaling(cfg['wheel_settings']['spacing'])
 
@@ -49,21 +49,24 @@ class Robot:
         self.arm = Arm(img_cfg, self, apply_scaling(15), apply_scaling(102))
         self.arm_large = ArmLarge(img_cfg, apply_scaling(1450), apply_scaling(1100))
 
-        self.left_wheel = Wheel(address_left_motor, img_cfg, self, (self.wheel_distance / -2), 0.01)
-        self.right_wheel = Wheel(address_right_motor, img_cfg, self, (self.wheel_distance / 2), 0.01)
+        self.left_wheel = Wheel(address_motor_left, img_cfg, self, (self.wheel_distance / -2), 0.01)
+        self.right_wheel = Wheel(address_motor_right, img_cfg, self, (self.wheel_distance / 2), 0.01)
 
-        self.center_color_sensor = ColorSensor(address_center_cs, img_cfg, self, 0, apply_scaling(84))
-        self.left_color_sensor = ColorSensor(address_left_cs, img_cfg, self, apply_scaling(-69), apply_scaling(95))
-        self.right_color_sensor = ColorSensor(address_right_cs, img_cfg, self, apply_scaling(69), apply_scaling(95))
+        self.center_color_sensor = ColorSensor(address_cs_center, img_cfg, self, 0, apply_scaling(84))
+        self.left_color_sensor = ColorSensor(address_cs_left, img_cfg, self, apply_scaling(-69), apply_scaling(95))
+        self.right_color_sensor = ColorSensor(address_cs_right, img_cfg, self, apply_scaling(69), apply_scaling(95))
 
-        self.left_touch_sensor = TouchSensor(address_left_ts, img_cfg, self, apply_scaling(-65), apply_scaling(102), True)
-        self.right_touch_sensor = TouchSensor(address_right_ts, img_cfg, self, apply_scaling(65), apply_scaling(102), False)
+        self.left_touch_sensor = TouchSensor(address_ts_left, img_cfg, self, apply_scaling(-65), apply_scaling(102), True)
+        self.right_touch_sensor = TouchSensor(address_ts_right, img_cfg, self, apply_scaling(65), apply_scaling(102), False)
 
-        self.top_ultrasonic_sensor = UltrasonicSensor(address_top_us, img_cfg, self, apply_scaling(-22), apply_scaling(56))
-        self.bottom_ultrasonic_sensor = UltrasonicSensorBottom(address_bottom_us, img_cfg, self, 0, apply_scaling(-145))
+        self.front_ultrasonic_sensor = UltrasonicSensor(address_us_front, img_cfg, self, apply_scaling(-22), apply_scaling(56))
+        self.rear_ultrasonic_sensor = UltrasonicSensorBottom(address_us_rear, img_cfg, self, 0, apply_scaling(-145))
 
-        self.left_led = Led(img_cfg, self, apply_scaling(20), apply_scaling(-55))
-        self.right_led = Led(img_cfg, self, apply_scaling(60), apply_scaling(-55))
+        self.left_brick_left_led = Led(img_cfg, self, apply_scaling(-20), apply_scaling(-55))
+        self.left_brick_right_led = Led(img_cfg, self, apply_scaling(-60), apply_scaling(-55))
+
+        self.right_brick_left_led = Led(img_cfg, self, apply_scaling(20), apply_scaling(-55))
+        self.right_brick_right_led = Led(img_cfg, self, apply_scaling(60), apply_scaling(-55))
 
         self.movable_sprites = [self.left_wheel,
                                 self.right_wheel,
@@ -74,10 +77,12 @@ class Robot:
                                 self.right_color_sensor,
                                 self.left_touch_sensor,
                                 self.right_touch_sensor,
-                                self.bottom_ultrasonic_sensor,
-                                self.top_ultrasonic_sensor,
-                                self.left_led,
-                                self.right_led,
+                                self.rear_ultrasonic_sensor,
+                                self.front_ultrasonic_sensor,
+                                self.left_brick_left_led,
+                                self.left_brick_right_led,
+                                self.right_brick_left_led,
+                                self.right_brick_right_led,
                                 self.arm]
 
         self.sprites = self.movable_sprites.copy()
@@ -152,9 +157,14 @@ class Robot:
         self.arm_large.rotate(dfp)
 
 
-    def set_led_colors(self, left_color, right_color):
-        self.left_led.set_color_texture(left_color)
-        self.right_led.set_color_texture(right_color)
+    def set_left_brick_led_colors(self, left_color, right_color):
+        self.left_brick_left_led.set_color_texture(left_color)
+        self.left_brick_right_led.set_color_texture(right_color)
+
+
+    def set_right_brick_led_colors(self, left_color, right_color):
+        self.right_brick_left_led.set_color_texture(left_color)
+        self.right_brick_right_led.set_color_texture(right_color)
 
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
@@ -187,7 +197,7 @@ class Robot:
 
         self.left_wheel.set_sensible_obstacles(obstacles)
         self.right_wheel.set_sensible_obstacles(obstacles)
-        self.bottom_ultrasonic_sensor.set_sensible_obstacles(obstacles)
+        self.rear_ultrasonic_sensor.set_sensible_obstacles(obstacles)
 
 
     def get_sprites(self) -> [Sprite]:
@@ -196,7 +206,9 @@ class Robot:
 
     def get_sensors(self) -> [BodyPart]:
         return [self.center_color_sensor,
+                self.left_color_sensor,
+                self.right_color_sensor,
                 self.right_touch_sensor,
                 self.left_touch_sensor,
-                self.top_ultrasonic_sensor,
-                self.bottom_ultrasonic_sensor]
+                self.front_ultrasonic_sensor,
+                self.rear_ultrasonic_sensor]

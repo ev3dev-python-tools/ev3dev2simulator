@@ -25,8 +25,11 @@ class RobotState:
         self.right_motor_queue = Queue()
         self.sound_queue = Queue()
 
-        self.left_led_color = 1
-        self.right_led_color = 1
+        self.left_brick_left_led_color = 1
+        self.left_brick_right_led_color = 1
+
+        self.right_brick_left_led_color = 1
+        self.right_brick_right_led_color = 1
 
         self.should_reset = False
 
@@ -124,12 +127,18 @@ class RobotState:
             return None
 
 
-    def set_left_led_color(self, color):
-        self.left_led_color = color
+    def set_led_color(self, brick_name, led_id, color):
+        if brick_name == 'brick1':
+            if led_id == 'led0':
+                self.left_brick_left_led_color = color
+            else:
+                self.left_brick_right_led_color = color
 
-
-    def set_right_led_color(self, color):
-        self.right_led_color = color
+        else:
+            if led_id == 'led0':
+                self.right_brick_left_led_color = color
+            else:
+                self.right_brick_right_led_color = color
 
 
     def reset(self):

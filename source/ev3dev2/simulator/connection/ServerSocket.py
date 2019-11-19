@@ -38,10 +38,10 @@ class ServerSocket(threading.Thread):
             print('Listening for connections...')
 
             (client1, address1) = server.accept()
-            handler1 = self.create_handler(client1, '1')
+            handler1 = self.create_handler(client1, 'brick1')
 
             (client2, address2) = server.accept()
-            handler2 = self.create_handler(client2, '2')
+            handler2 = self.create_handler(client2, 'brick2')
 
             if not self.first_run:
                 self.robot_state.should_reset = True

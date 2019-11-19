@@ -21,7 +21,7 @@ class ClientSocketHandler(threading.Thread):
     def __init__(self, robot_state: RobotState, client, connection_id: str):
         threading.Thread.__init__(self)
 
-        self.message_processor = MessageProcessor(robot_state)
+        self.message_processor = MessageProcessor(connection_id, robot_state)
         self.robot_state = robot_state
         self.client = client
         self.connection_id = connection_id

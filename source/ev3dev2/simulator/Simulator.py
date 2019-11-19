@@ -219,7 +219,11 @@ class Simulator(arcade.Window):
 
 
     def _process_leds(self):
-        self.robot.set_led_colors(self.robot_state.left_led_color, self.robot_state.right_led_color)
+        self.robot.set_left_brick_led_colors(self.robot_state.left_brick_left_led_color,
+                                             self.robot_state.left_brick_right_led_color)
+
+        self.robot.set_right_brick_led_colors(self.robot_state.right_brick_left_led_color,
+                                              self.robot_state.right_brick_right_led_color)
 
 
     def _check_fall(self):
@@ -246,16 +250,16 @@ class Simulator(arcade.Window):
         self.right_cs_data = self.robot.right_color_sensor.get_sensed_color()
         self.left_ts_data = self.robot.left_touch_sensor.is_touching()
         self.right_ts_data = self.robot.right_touch_sensor.is_touching()
-        self.top_us_data = self.robot.top_ultrasonic_sensor.distance(self.space)
-        self.bottom_us_data = self.robot.bottom_ultrasonic_sensor.distance()
+        self.top_us_data = self.robot.front_ultrasonic_sensor.distance(self.space)
+        self.bottom_us_data = self.robot.rear_ultrasonic_sensor.distance()
 
         self.robot_state.values[self.robot.center_color_sensor.address] = self.center_cs_data
         self.robot_state.values[self.robot.left_color_sensor.address] = self.left_cs_data
         self.robot_state.values[self.robot.right_color_sensor.address] = self.right_cs_data
         self.robot_state.values[self.robot.left_touch_sensor.address] = self.left_ts_data
         self.robot_state.values[self.robot.right_touch_sensor.address] = self.right_ts_data
-        self.robot_state.values[self.robot.top_ultrasonic_sensor.address] = self.top_us_data
-        self.robot_state.values[self.robot.bottom_ultrasonic_sensor.address] = self.bottom_us_data
+        self.robot_state.values[self.robot.front_ultrasonic_sensor.address] = self.top_us_data
+        self.robot_state.values[self.robot.rear_ultrasonic_sensor.address] = self.bottom_us_data
 
         self.robot.center_color_sensor.set_color_texture(self.center_cs_data)
         self.robot.left_color_sensor.set_color_texture(self.left_cs_data)

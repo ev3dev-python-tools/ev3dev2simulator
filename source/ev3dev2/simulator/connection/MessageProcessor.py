@@ -23,14 +23,17 @@ class MessageProcessor:
     """
 
 
-    def __init__(self, robot_state: RobotState):
+    def __init__(self, brick_name: str, robot_state: RobotState):
         cfg = load_config()
+
+        self.brick_name = brick_name
 
         self.pixel_coasting_sub = apply_scaling(cfg['motor_settings']['pixel_coasting_subtraction'])
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
 
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
-        self.address_us = cfg['alloc_settings']['ultrasonic_sensor']['top']
+        self.address_us_front = cfg['alloc_settings']['ultrasonic_sensor']['front']
+        self.address_us_rear = cfg['alloc_settings']['ultrasonic_sensor']['rear']
 
         self.robot_state = robot_state
         self.command_processor = MotorCommandProcessor()
@@ -46,16 +49,21 @@ class MessageProcessor:
         :return: a floating point value representing the time in seconds the given command will take to execute.
         """
 
-        side = self.robot_state.get_motor_side(command.address)
-        spf, frames, coast_frames, run_time = self._process_rotate_command_values(command, side)
+        full_address = self._to_full_address(command.address)
+        side = self.robot_state.get_motor_side(full_address)
 
-        self.robot_state.clear_motor_jobs(side)
+        if side is None:
+            return 0
+        else:
+            spf, frames, coast_frames, run_time = self._process_rotate_command_values(command, side)
 
-        for i in range(frames):
-            self.put_motor_job(spf, side)
+            self.robot_state.clear_motor_jobs(side)
 
-        self._process_coast(coast_frames, spf, side)
-        return run_time
+            for i in range(frames):
+                self._put_motor_job(spf, side)
+
+            self._process_coast(coast_frames, spf, side)
+            return run_time
 
 
     def _process_rotate_command_values(self, command: RotateCommand, side: str) -> Tuple[float, int, int, float]:
@@ -82,12 +90,17 @@ class MessageProcessor:
         :return: a floating point value representing the time in seconds the given command will take to execute.
         """
 
-        side = self.robot_state.get_motor_side(command.address)
-        spf, frames, run_time = self._process_stop_command_values(command, side)
+        full_address = self._to_full_address(command.address)
+        side = self.robot_state.get_motor_side(full_address)
 
-        self.robot_state.clear_motor_jobs(side)
-        self._process_coast(frames, spf, side)
-        return run_time
+        if side is None:
+            return 0
+        else:
+            spf, frames, run_time = self._process_stop_command_values(command, side)
+
+            self.robot_state.clear_motor_jobs(side)
+            self._process_coast(frames, spf, side)
+            return run_time
 
 
     def _process_stop_command_values(self, command: StopCommand, side: str) -> Tuple[float, int, float]:
@@ -121,7 +134,7 @@ class MessageProcessor:
             else:
                 ppf = min(ppf + coasting_sub, 0)
 
-            self.put_motor_job(ppf, side)
+            self._put_motor_job(ppf, side)
 
 
     def process_led_command(self, command: LedCommand):
@@ -137,10 +150,7 @@ class MessageProcessor:
         color = LED_COLORS.get(color_tuple)
 
         if color is not None:
-            if led_id == 'led0':
-                self.robot_state.set_left_led_color(color)
-            else:
-                self.robot_state.set_right_led_color(color)
+            self.robot_state.set_led_color(self.brick_name, led_id, color)
 
 
     def process_sound_command(self, command: SoundCommand):
@@ -166,15 +176,16 @@ class MessageProcessor:
         :return: a dictionary containing the requested value.
         """
 
-        value = self.robot_state.get_value(request.address)
+        full_address = self._to_full_address(request.address)
+        value = self.robot_state.get_value(full_address)
 
-        if request.address == self.address_us:
+        if request.address == self.address_us_front or request.address == self.address_us_rear:
             return remove_scaling(value)
         else:
             return value
 
 
-    def put_motor_job(self, job: float, side: str):
+    def _put_motor_job(self, job: float, side: str):
         """
         Add a new move job to the queue for the motor corresponding to the given side.
         :param job: to add.
@@ -187,3 +198,7 @@ class MessageProcessor:
             self.robot_state.put_left_motor_job(job)
         else:
             self.robot_state.put_right_motor_job(job)
+
+
+    def _to_full_address(self, address: str):
+        return self.brick_name + ':' + address
