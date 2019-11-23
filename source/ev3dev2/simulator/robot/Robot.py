@@ -38,6 +38,7 @@ class Robot:
         address_cs_right = alloc_cfg['color_sensor']['right']
         address_ts_left = alloc_cfg['touch_sensor']['left']
         address_ts_right = alloc_cfg['touch_sensor']['right']
+        address_ts_rear = alloc_cfg['touch_sensor']['rear']
         address_us_front = alloc_cfg['ultrasonic_sensor']['front']
         address_us_rear = alloc_cfg['ultrasonic_sensor']['rear']
 
@@ -56,8 +57,9 @@ class Robot:
         self.left_color_sensor = ColorSensor(address_cs_left, img_cfg, self, apply_scaling(-69), apply_scaling(95))
         self.right_color_sensor = ColorSensor(address_cs_right, img_cfg, self, apply_scaling(69), apply_scaling(95))
 
-        self.left_touch_sensor = TouchSensor(address_ts_left, img_cfg, self, apply_scaling(-65), apply_scaling(102), True)
-        self.right_touch_sensor = TouchSensor(address_ts_right, img_cfg, self, apply_scaling(65), apply_scaling(102), False)
+        self.left_touch_sensor = TouchSensor(address_ts_left, img_cfg, self, apply_scaling(-65), apply_scaling(102), 'left')
+        self.right_touch_sensor = TouchSensor(address_ts_right, img_cfg, self, apply_scaling(65), apply_scaling(102), 'right')
+        self.rear_touch_sensor = TouchSensor(address_ts_rear, img_cfg, self, 0, apply_scaling(-165), 'rear')
 
         self.front_ultrasonic_sensor = UltrasonicSensor(address_us_front, img_cfg, self, apply_scaling(-22), apply_scaling(56))
         self.rear_ultrasonic_sensor = UltrasonicSensorBottom(address_us_rear, img_cfg, self, 0, apply_scaling(-145))
@@ -77,6 +79,7 @@ class Robot:
                                 self.right_color_sensor,
                                 self.left_touch_sensor,
                                 self.right_touch_sensor,
+                                self.rear_touch_sensor,
                                 self.rear_ultrasonic_sensor,
                                 self.front_ultrasonic_sensor,
                                 self.left_brick_left_led,
@@ -186,6 +189,7 @@ class Robot:
 
         self.left_touch_sensor.set_sensible_obstacles(obstacles)
         self.right_touch_sensor.set_sensible_obstacles(obstacles)
+        self.rear_touch_sensor.set_sensible_obstacles(obstacles)
 
 
     def set_falling_obstacles(self, obstacles):
@@ -208,7 +212,8 @@ class Robot:
         return [self.center_color_sensor,
                 self.left_color_sensor,
                 self.right_color_sensor,
-                self.right_touch_sensor,
                 self.left_touch_sensor,
+                self.right_touch_sensor,
+                self.rear_touch_sensor,
                 self.front_ultrasonic_sensor,
                 self.rear_ultrasonic_sensor]

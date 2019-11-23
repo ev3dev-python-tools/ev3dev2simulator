@@ -40,6 +40,7 @@ image_paths:
   led_red: "assets/images/led_red.png"
   led_yellow: "assets/images/led_yellow.png"
   touch_sensor_left: 'assets/images/touch_sensor_left.png'
+  touch_sensor_rear: 'assets/images/touch_sensor_rear.png'
   touch_sensor_right: 'assets/images/touch_sensor_right.png'
   ultrasonic_sensor_top: 'assets/images/ultrasonic_sensor_top.png'
   ultrasonic_sensor_bottom: 'assets/images/ultrasonic_sensor_bottom.png'
