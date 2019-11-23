@@ -1,22 +1,22 @@
 alloc_settings:
   motor:
-    center: 'brick2:ev3-ports:outB'
-    left: 'brick1:ev3-ports:outA'
-    right: 'brick1:ev3-ports:outD'
+    center: 'right_brick:ev3-ports:outB'
+    left: 'left_brick:ev3-ports:outA'
+    right: 'left_brick:ev3-ports:outD'
 
   color_sensor:
-    center: 'brick1:ev3-ports:in2'
-    left: 'brick2:ev3-ports:in1'
-    right: 'brick2:ev3-ports:in2'
+    center: 'left_brick:ev3-ports:in2'
+    left: 'right_brick:ev3-ports:in1'
+    right: 'right_brick:ev3-ports:in2'
 
   touch_sensor:
-    left: 'brick1:ev3-ports:in1'
-    right: 'brick1:ev3-ports:in4'
-    rear: 'brick2:ev3-ports:in4'
+    left: 'left_brick:ev3-ports:in1'
+    right: 'left_brick:ev3-ports:in4'
+    rear: 'right_brick:ev3-ports:in4'
 
   ultrasonic_sensor:
-    front: 'brick2:ev3-ports:in3'
-    rear: 'brick1:ev3-ports:in3'
+    front: 'right_brick:ev3-ports:in3'
+    rear: 'left_brick:ev3-ports:in3'
 
 exec_settings:
   bluetooth_port: 6841

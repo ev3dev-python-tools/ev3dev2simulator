@@ -294,6 +294,12 @@ def main():
                         help="Starting orientation the robot, default is 0",
                         required=False,
                         type=int)
+    parser.add_argument("-c", "--connection_order_first",
+                        choices=['left', 'right'],
+                        default='left',
+                        help="Side of the first brick to connect to the simulator, default is 'left'",
+                        required=False,
+                        type=str)
 
     args = vars(parser.parse_args())
 
@@ -304,9 +310,11 @@ def main():
     y = apply_scaling(args['robot_position_y'])
     o = args['robot_orientation']
 
+    c = args['connection_order_first']
+
     robot_state = get_robot_state()
 
-    server_thread = ServerSocket(robot_state)
+    server_thread = ServerSocket(robot_state, c)
     server_thread.setDaemon(True)
     server_thread.start()
 

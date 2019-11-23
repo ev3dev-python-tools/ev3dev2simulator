@@ -13,10 +13,13 @@ class ServerSocket(threading.Thread):
     """
 
 
-    def __init__(self, robot_state: RobotState):
+    def __init__(self, robot_state: RobotState, first_side: str):
         threading.Thread.__init__(self)
         self.robot_state = robot_state
         self.first_run = True
+
+        self.client1_name = 'left_brick' if first_side == 'left' else 'right_brick'
+        self.client2_name = 'right_brick' if first_side == 'left' else 'left_brick'
 
 
     def run(self):
@@ -38,10 +41,10 @@ class ServerSocket(threading.Thread):
             print('Listening for connections...')
 
             (client1, address1) = server.accept()
-            handler1 = self.create_handler(client1, 'brick1')
+            handler1 = self.create_handler(client1, self.client1_name)
 
             (client2, address2) = server.accept()
-            handler2 = self.create_handler(client2, 'brick2')
+            handler2 = self.create_handler(client2, self.client2_name)
 
             if not self.first_run:
                 self.robot_state.should_reset = True
