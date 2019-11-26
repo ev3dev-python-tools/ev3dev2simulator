@@ -1,22 +1,22 @@
 alloc_settings:
   motor:
-    center: 'right_brick:ev3-ports:outB'
+    center: 'left_brick:ev3-ports:outB'
     left: 'left_brick:ev3-ports:outA'
     right: 'left_brick:ev3-ports:outD'
 
   color_sensor:
-    center: 'left_brick:ev3-ports:in2'
-    left: 'right_brick:ev3-ports:in1'
-    right: 'right_brick:ev3-ports:in2'
-
-  touch_sensor:
+    center: 'left_brick:ev3-ports:in3'
     left: 'left_brick:ev3-ports:in1'
     right: 'left_brick:ev3-ports:in4'
-    rear: 'right_brick:ev3-ports:in4'
+
+  touch_sensor:
+    left: 'right_brick:ev3-ports:in1'
+    right: 'right_brick:ev3-ports:in4'
+    rear: 'right_brick:ev3-ports:in3'
 
   ultrasonic_sensor:
-    front: 'right_brick:ev3-ports:in3'
-    rear: 'left_brick:ev3-ports:in3'
+    front: 'right_brick:ev3-ports:in2'
+    rear: 'left_brick:ev3-ports:in2'
 
 exec_settings:
   bluetooth_port: 6841
@@ -77,5 +77,3 @@ screen_settings:
 wheel_settings:
   circumference: 173
   spacing: 120
-
-

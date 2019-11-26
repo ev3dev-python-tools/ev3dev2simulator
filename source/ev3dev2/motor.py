@@ -750,7 +750,10 @@ class Motor(Device):
         `running`, `ramping`, `holding`, `overloaded` and `stalled`.
         """
 
-        return self._state
+        if time.time() < self.running_until:
+            return Motor.STATE_RUNNING
+        else:
+            return Motor.STATE_HOLDING
 
 
     @property
@@ -898,7 +901,6 @@ class Motor(Device):
         Power is being sent to the motor.
         """
 
-        # check if robot_state queue is not empty
         return time.time() < self.running_until
 
 
@@ -916,8 +918,7 @@ class Motor(Device):
         The motor is not turning, but rather attempting to hold a fixed position.
         """
 
-        # check if robot_state queue is empty
-        return self.STATE_HOLDING in self.state
+        return time.time() > self.running_until
 
 
     @property

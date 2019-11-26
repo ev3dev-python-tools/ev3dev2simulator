@@ -4,7 +4,7 @@ from arcade import Shape, PointList
 from ev3dev2.simulator.obstacle.ColorObstacle import ColorObstacle
 from ev3dev2.simulator.obstacle.Hole import Hole
 from ev3dev2.simulator.util.Color import to_color_code, BLUE, RED, GREEN
-from ev3dev2.simulator.util.Util import apply_scaling, get_circle_points
+from ev3dev2.simulator.util.Util import apply_scaling, get_circle_points, distance_between_points
 
 
 class Lake(ColorObstacle):
@@ -25,10 +25,12 @@ class Lake(ColorObstacle):
 
         self.center_x = center_x
         self.center_y = center_y
-        self.radius = radius
-        self.inner_radius = inner_radius
         self.color = color
         self.border_width = border_width
+
+        self.radius = radius
+        self.inner_radius = inner_radius
+        self.outer_radius = self.radius + (self.border_width / 2)
 
         self.points = self._create_points()
         self.shape = self._create_shape()
@@ -60,6 +62,15 @@ class Lake(ColorObstacle):
 
     def _create_hole(self):
         return Hole(self.center_x, self.center_y, self.inner_radius)
+
+
+    def collided_with(self, x: float, y: float) -> bool:
+        distance = distance_between_points(self.center_x,
+                                           self.center_y,
+                                           x,
+                                           y)
+
+        return self.inner_radius < distance < self.outer_radius
 
 
 class BlueLake(Lake):
