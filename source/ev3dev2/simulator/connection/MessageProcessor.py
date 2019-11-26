@@ -113,7 +113,8 @@ class MessageProcessor:
         """
 
         if side == 'center':
-            return self.command_processor.process_stop_command_degrees(command)
+            dpf, frames, run_time = self.command_processor.process_stop_command_degrees(command)
+            return -dpf, frames, run_time
         else:
             return self.command_processor.process_stop_command_pixels(command)
 
