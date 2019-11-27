@@ -5,18 +5,18 @@ alloc_settings:
     right: 'left_brick:ev3-ports:outD'
 
   color_sensor:
-    center: 'left_brick:ev3-ports:in3'
+    center: 'left_brick:ev3-ports:in2'
     left: 'left_brick:ev3-ports:in1'
-    right: 'left_brick:ev3-ports:in4'
+    right: 'left_brick:ev3-ports:in3'
 
   touch_sensor:
-    left: 'right_brick:ev3-ports:in1'
-    right: 'right_brick:ev3-ports:in4'
-    rear: 'right_brick:ev3-ports:in3'
+    left: 'right_brick:ev3-ports:in2'
+    right: 'right_brick:ev3-ports:in3'
+    rear: 'right_brick:ev3-ports:in1'
 
   ultrasonic_sensor:
-    front: 'right_brick:ev3-ports:in2'
-    rear: 'left_brick:ev3-ports:in2'
+    front: 'right_brick:ev3-ports:in4'
+    rear: 'left_brick:ev3-ports:in4'
 
 exec_settings:
   bluetooth_port: 6841
