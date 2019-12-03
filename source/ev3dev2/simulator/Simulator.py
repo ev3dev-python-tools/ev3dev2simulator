@@ -10,6 +10,8 @@ from typing import Tuple
 import arcade
 from pymunk import Space
 
+from ev3dev2.simulator.connection.ServerSocketSingle import ServerSocketSingle
+
 script_dir = os.path.dirname(os.path.realpath(__file__))
 ev3dev_dir = os.path.dirname(os.path.dirname(script_dir))
 sys.path.insert(0, ev3dev_dir)
@@ -17,7 +19,7 @@ sys.path.insert(0, ev3dev_dir)
 os.chdir(script_dir)
 
 from ev3dev2.simulator.config.config import get_config
-from ev3dev2.simulator.connection.ServerSocket import ServerSocket
+from ev3dev2.simulator.connection.ServerSocketDouble import ServerSocketDouble
 from ev3dev2.simulator.obstacle.Border import Border
 from ev3dev2.simulator.obstacle.Edge import Edge
 from ev3dev2.simulator.obstacle.Lake import BlueLake, GreenLake, RedLake
@@ -34,7 +36,7 @@ class Simulator(arcade.Window):
         self.robot_state = robot_state
 
         self.scaling_multiplier = get_config().get_scale()
-        self.large_sim_type = get_config().get_sim_type() == 'large'
+        self.large_sim_type = get_config().is_large_sim_type()
         self.cfg = get_config().get_data()
 
         self.screen_total_width = int(apply_scaling(self.cfg['screen_settings']['screen_total_width']))
@@ -48,8 +50,7 @@ class Simulator(arcade.Window):
 
         super(Simulator, self).__init__(self.screen_total_width, self.screen_height, screen_title, update_rate=1 / 30)
 
-        background_color = eval(self.cfg['screen_settings']['background_color'])
-        arcade.set_background_color(background_color)
+        arcade.set_background_color(eval(self.cfg['screen_settings']['background_color']))
 
         self.robot_elements = None
         self.obstacle_elements = None
@@ -107,37 +108,49 @@ class Simulator(arcade.Window):
         self.green_lake = GreenLake(self.cfg)
         self.red_lake = RedLake(self.cfg)
 
-        self.rock1 = Rock(apply_scaling(825), apply_scaling(1050), apply_scaling(150), apply_scaling(60), arcade.color.DARK_GRAY, 10)
-        self.rock2 = Rock(apply_scaling(975), apply_scaling(375), apply_scaling(300), apply_scaling(90), arcade.color.DARK_GRAY, 130)
-
         self.obstacle_elements.append(self.blue_lake.shape)
         self.obstacle_elements.append(self.green_lake.shape)
         self.obstacle_elements.append(self.red_lake.shape)
 
-        self.obstacle_elements.append(self.rock1.shape)
-        self.obstacle_elements.append(self.rock2.shape)
-
-        self.border = Border(self.cfg, arcade.color.WHITE)
+        self.border = Border(self.cfg, eval(self.cfg['obstacle_settings']['border_settings']['border_color']))
         self.edge = Edge(self.cfg)
-        self.ground = arcade.create_rectangle(apply_scaling(1460), apply_scaling(950), apply_scaling(300), apply_scaling(10),
-                                              arcade.color.BLACK)
 
         for s in self.border.shapes:
             self.obstacle_elements.append(s)
 
-        self.obstacle_elements.append(self.ground)
+        self.space = Space()
+
+        if self.large_sim_type:
+            self.rock1 = Rock(apply_scaling(825), apply_scaling(1050), apply_scaling(150), apply_scaling(60), arcade.color.DARK_GRAY, 10)
+            self.rock2 = Rock(apply_scaling(975), apply_scaling(375), apply_scaling(300), apply_scaling(90), arcade.color.DARK_GRAY, 130)
+
+            self.ground = arcade.create_rectangle(apply_scaling(1460), apply_scaling(950), apply_scaling(300), apply_scaling(10),
+                                                  arcade.color.BLACK)
+
+            self.obstacle_elements.append(self.rock1.shape)
+            self.obstacle_elements.append(self.rock2.shape)
+            self.obstacle_elements.append(self.ground)
+
+            touch_obstacles = [self.rock1, self.rock2]
+            falling_obstacles = [self.blue_lake.hole, self.green_lake.hole, self.red_lake.hole, self.edge]
+
+            self.space.add(self.rock1.poly)
+            self.space.add(self.rock2.poly)
+
+        else:
+            self.rock1 = Rock(apply_scaling(1000), apply_scaling(300), apply_scaling(300), apply_scaling(90), arcade.color.DARK_GRAY, 90)
+            self.obstacle_elements.append(self.rock1.shape)
+
+            touch_obstacles = [self.rock1]
+            falling_obstacles = [self.edge]
+
+            self.space.add(self.rock1.poly)
 
         color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
-        touch_obstacles = [self.rock1, self.rock2]
-        falling_obstacles = [self.blue_lake.hole, self.green_lake.hole, self.red_lake.hole, self.edge]
 
         self.robot.set_color_obstacles(color_obstacles)
         self.robot.set_touch_obstacles(touch_obstacles)
         self.robot.set_falling_obstacles(falling_obstacles)
-
-        self.space = Space()
-        self.space.add(self.rock1.poly)
-        self.space.add(self.rock2.poly)
 
 
     def on_draw(self):
@@ -267,8 +280,8 @@ class Simulator(arcade.Window):
             self.robot.set_right_brick_led_colors(self.robot_state.right_brick_left_led_color,
                                                   self.robot_state.right_brick_right_led_color)
         else:
-            self.robot.set_led_colors(self.robot_state.left_brick_left_led_color,
-                                      self.robot_state.left_brick_right_led_color)
+            self.robot.set_led_colors(self.robot_state.right_brick_left_led_color,
+                                      self.robot_state.right_brick_right_led_color)
 
 
     def _check_fall(self):
@@ -305,12 +318,15 @@ class Simulator(arcade.Window):
         if self.large_sim_type:
             self.left_cs_data = self.robot.left_color_sensor.get_sensed_color()
             self.right_cs_data = self.robot.right_color_sensor.get_sensed_color()
+            self.rear_ts_data = self.robot.rear_touch_sensor.is_touching()
             self.rear_us_data = self.robot.rear_ultrasonic_sensor.distance()
 
             self.robot_state.values[self.robot.left_color_sensor.address] = self.left_cs_data
             self.robot_state.values[self.robot.right_color_sensor.address] = self.right_cs_data
+            self.robot_state.values[self.robot.rear_touch_sensor.address] = self.rear_ts_data
             self.robot_state.values[self.robot.rear_ultrasonic_sensor.address] = self.rear_us_data
 
+            # print(str(self.right_cs_data))
             self.robot.left_color_sensor.set_color_texture(self.left_cs_data)
             self.robot.right_color_sensor.set_color_texture(self.right_cs_data)
 
@@ -326,6 +342,12 @@ def main():
                         help="Scaling of the screen, default is 0.65",
                         required=False,
                         type=validate_scale)
+    parser.add_argument("-t", "--simulation_type",
+                        choices=['small', 'large'],
+                        default='large',
+                        help="Type of the simulation (small or large). Default is small",
+                        required=False,
+                        type=str)
     parser.add_argument("-x", "--robot_position_x",
                         default=200,
                         help="Starting position x-coordinate of the robot, default is 200",
@@ -341,10 +363,10 @@ def main():
                         help="Starting orientation the robot, default is 0",
                         required=False,
                         type=int)
-    parser.add_argument("-t", "--simulation_type",
-                        choices=['small', 'large'],
-                        default='large',
-                        help="Type of the simulation (small or large). Default is small",
+    parser.add_argument("-c", "--connection_order_first",
+                        choices=['left', 'right'],
+                        default='left',
+                        help="Side of the first brick to connect to the simulator, default is 'left'",
                         required=False,
                         type=str)
 
@@ -361,9 +383,11 @@ def main():
     y = apply_scaling(args['robot_position_y'])
     o = args['robot_orientation']
 
+    c = args['connection_order_first']
+
     robot_state = RobotState()
 
-    server_thread = ServerSocket(robot_state)
+    server_thread = ServerSocketDouble(robot_state, c) if t == 'large' else ServerSocketSingle(robot_state)
     server_thread.setDaemon(True)
     server_thread.start()
 

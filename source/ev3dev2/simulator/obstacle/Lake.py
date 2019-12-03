@@ -1,10 +1,10 @@
 import arcade
 from arcade import Shape, PointList
 
+from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.obstacle.ColorObstacle import ColorObstacle
 from ev3dev2.simulator.obstacle.Hole import Hole
-from ev3dev2.simulator.util.Color import to_color_code, BLUE, RED, GREEN
-from ev3dev2.simulator.util.Util import apply_scaling, get_circle_points
+from ev3dev2.simulator.util.Util import apply_scaling, get_circle_points, distance_between_points, to_color_code
 
 
 class Lake(ColorObstacle):
@@ -23,12 +23,16 @@ class Lake(ColorObstacle):
                  border_width: int):
         super(Lake, self).__init__(to_color_code(color))
 
+        self.large_sim_type = get_config().is_large_sim_type()
+
         self.center_x = center_x
         self.center_y = center_y
-        self.radius = radius
-        self.inner_radius = inner_radius
         self.color = color
         self.border_width = border_width
+
+        self.radius = radius if self.large_sim_type else radius * 1.2
+        self.inner_radius = inner_radius
+        self.outer_radius = self.radius + (self.border_width / 2)
 
         self.points = self._create_points()
         self.shape = self._create_shape()
@@ -53,13 +57,29 @@ class Lake(ColorObstacle):
         :return: a Arcade shape object.
         """
 
-        return arcade.create_line_strip(self.points,
-                                        self.color,
-                                        self.border_width)
+        if self.large_sim_type:
+            return arcade.create_line_strip(self.points,
+                                            self.color,
+                                            self.border_width)
+        else:
+            color_list = [self.color] + [self.color] * (32 + 1)
+            return arcade.create_line_generic_with_colors(self.points, color_list, 6)
 
 
     def _create_hole(self):
         return Hole(self.center_x, self.center_y, self.inner_radius)
+
+
+    def collided_with(self, x: float, y: float) -> bool:
+        distance = distance_between_points(self.center_x,
+                                           self.center_y,
+                                           x,
+                                           y)
+
+        if self.large_sim_type:
+            return self.inner_radius < distance < self.outer_radius
+        else:
+            return distance < self.outer_radius
 
 
 class BlueLake(Lake):
@@ -77,7 +97,9 @@ class BlueLake(Lake):
         x = apply_scaling(lake_cfg['lake_blue_x']) + edge_spacing + border_depth
         y = apply_scaling(lake_cfg['lake_blue_y']) + edge_spacing + border_depth
 
-        super(BlueLake, self).__init__(x, y, radius, inner_radius, BLUE, border_width)
+        color = eval(lake_cfg['lake_blue_color'])
+
+        super(BlueLake, self).__init__(x, y, radius, inner_radius, color, border_width)
 
 
 class GreenLake(Lake):
@@ -95,7 +117,9 @@ class GreenLake(Lake):
         x = apply_scaling(lake_cfg['lake_green_x']) + edge_spacing + border_depth
         y = apply_scaling(lake_cfg['lake_green_y']) + edge_spacing + border_depth
 
-        super(GreenLake, self).__init__(x, y, radius, inner_radius, GREEN, border_width)
+        color = eval(lake_cfg['lake_green_color'])
+
+        super(GreenLake, self).__init__(x, y, radius, inner_radius, color, border_width)
 
 
 class RedLake(Lake):
@@ -113,4 +137,6 @@ class RedLake(Lake):
         x = apply_scaling(lake_cfg['lake_red_x']) + edge_spacing + border_depth
         y = apply_scaling(lake_cfg['lake_red_y']) + edge_spacing + border_depth
 
-        super(RedLake, self).__init__(x, y, radius, inner_radius, RED, border_width)
+        color = eval(lake_cfg['lake_red_color'])
+
+        super(RedLake, self).__init__(x, y, radius, inner_radius, color, border_width)

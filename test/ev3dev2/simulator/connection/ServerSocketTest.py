@@ -5,7 +5,7 @@ import unittest
 from typing import Any
 
 from ev3dev2.simulator.config.config import load_config
-from ev3dev2.simulator.connection.ServerSocket import ServerSocket
+from ev3dev2.simulator.connection.ServerSocketDouble import ServerSocket
 from ev3dev2.simulator.state.RobotState import get_robot_state
 
 

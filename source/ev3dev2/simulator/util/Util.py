@@ -1,6 +1,7 @@
 import math
 from typing import Tuple
 
+import arcade
 from arcade import PointList
 
 from ev3dev2.simulator.config.config import get_config
@@ -108,3 +109,17 @@ def apply_scaling(value):
 
 def remove_scaling(value):
     return value / get_config().get_scale()
+
+
+def to_color_code(color: arcade.Color) -> int:
+    switcher = {
+        (59, 60, 54): 1,  # Black
+        (58, 166, 221): 2,  # Blue
+        (122, 182, 72): 3,  # Green
+        (252, 227, 3): 4,  # Yellow
+        (201, 45, 57): 5,  # Red
+        (235, 235, 235): 6,  # White
+        (255, 255, 255): 6  # White
+    }
+
+    return switcher.get(color, 0)

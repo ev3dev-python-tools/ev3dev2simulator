@@ -1,5 +1,6 @@
 import arcade
 
+from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.robot import Robot
 from ev3dev2.simulator.robot.BodyPart import BodyPart
 from ev3dev2.simulator.util.Util import apply_scaling
@@ -26,6 +27,7 @@ class ColorSensor(BodyPart):
                  delta_x: int,
                  delta_y: int):
         super(ColorSensor, self).__init__(address, robot, delta_x, delta_y)
+        self.large_sim_type = get_config().is_large_sim_type()
 
         black_texture = arcade.load_texture(img_cfg['color_sensor_black'], scale=apply_scaling(0.26))
         blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=apply_scaling(0.26))
@@ -64,7 +66,7 @@ class ColorSensor(BodyPart):
         :return: integer value representing the color black.
         """
 
-        return 1
+        return 1 if self.large_sim_type else 6
 
 
     def set_color_texture(self, color):

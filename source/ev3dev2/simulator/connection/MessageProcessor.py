@@ -25,15 +25,16 @@ class MessageProcessor:
 
     def __init__(self, brick_name: str, robot_state: RobotState):
         cfg = get_config().get_data()
+        large_sim_type = get_config().is_large_sim_type()
 
-        self.brick_name = brick_name
+        self.brick_name = brick_name + ':' if brick_name else ''
 
         self.pixel_coasting_sub = apply_scaling(cfg['motor_settings']['pixel_coasting_subtraction'])
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
 
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
         self.address_us_front = cfg['alloc_settings']['ultrasonic_sensor']['front']
-        self.address_us_rear = cfg['alloc_settings']['ultrasonic_sensor']['rear']
+        self.address_us_rear = cfg['alloc_settings']['ultrasonic_sensor']['rear'] if large_sim_type else ''
 
         self.robot_state = robot_state
         self.command_processor = MotorCommandProcessor()
@@ -75,7 +76,8 @@ class MessageProcessor:
         """
 
         if side == 'center':
-            return self.command_processor.process_drive_command_degrees(command)
+            dpf, frames, coast_frames, run_time = self.command_processor.process_drive_command_degrees(command)
+            return -dpf, frames, coast_frames, run_time
         else:
             return self.command_processor.process_drive_command_pixels(command)
 
@@ -112,7 +114,8 @@ class MessageProcessor:
         """
 
         if side == 'center':
-            return self.command_processor.process_stop_command_degrees(command)
+            dpf, frames, run_time = self.command_processor.process_stop_command_degrees(command)
+            return -dpf, frames, run_time
         else:
             return self.command_processor.process_stop_command_pixels(command)
 
@@ -201,4 +204,4 @@ class MessageProcessor:
 
 
     def _to_full_address(self, address: str):
-        return self.brick_name + ':' + address
+        return self.brick_name + address

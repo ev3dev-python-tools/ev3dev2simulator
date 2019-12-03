@@ -39,14 +39,18 @@ image_paths:
 obstacle_settings:
   border_settings:
     border_depth: 30
+    border_color: (59, 60, 54)
 
   lake_settings:
     border_width: 29
     inner_radius: 38
+    lake_blue_color: (58, 166, 221)
     lake_blue_x: 500
     lake_blue_y: 170
+    lake_green_color: (252, 227, 3)
     lake_green_x: 250
     lake_green_y: 600
+    lake_red_color: (201, 45, 57)
     lake_red_x: 850
     lake_red_y: 500
 
@@ -62,7 +66,7 @@ screen_settings:
   screen_width: 1189
   screen_total_width: 1189
   screen_title: 'Lego ev3dev2 simulator'
-  falling_message: 'Robot has dipped a wheel in a lake or off the map.'
+  falling_message: 'Robot has dipped a wheel off the map.'
   restart_message: 'Please restart the mission.'
 
 wheel_settings:

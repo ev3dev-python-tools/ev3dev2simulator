@@ -1,7 +1,7 @@
 import arcade
 
 from ev3dev2.simulator.obstacle.BorderObstacle import BorderObstacle
-from ev3dev2.simulator.util.Util import apply_scaling
+from ev3dev2.simulator.util.Util import apply_scaling, to_color_code
 
 
 class Border(BorderObstacle):
@@ -14,7 +14,7 @@ class Border(BorderObstacle):
         depth = apply_scaling(cfg['obstacle_settings']['border_settings']['border_depth'])
         edge_spacing = apply_scaling(cfg['screen_settings']['edge_spacing'])
 
-        super(Border, self).__init__(cfg, 6, depth, edge_spacing)
+        super(Border, self).__init__(cfg, to_color_code(color), depth, edge_spacing)
 
         self.color = color
         self.shapes = self._create_shapes()

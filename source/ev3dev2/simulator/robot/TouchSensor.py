@@ -14,8 +14,15 @@ class TouchSensor(BodyPart):
                  robot: Robot,
                  delta_x: int,
                  delta_y: int,
-                 left: bool):
-        img = 'touch_sensor_left' if left else 'touch_sensor_right'
+                 side: str):
+
+        if side == 'left':
+            img = 'touch_sensor_left'
+        elif side == 'right':
+            img = 'touch_sensor_right'
+        else:
+            img = 'touch_sensor_rear'
+
         super(TouchSensor, self).__init__(address, robot, delta_x, delta_y)
         self.init_texture(img_cfg[img], 0.32)
 

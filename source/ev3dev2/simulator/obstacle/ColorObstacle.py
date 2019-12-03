@@ -1,6 +1,3 @@
-import arcade
-
-
 class ColorObstacle:
     """
     This class provides basic functionality for obstacles which can be interacted with using color sensing.
@@ -9,7 +6,6 @@ class ColorObstacle:
 
     def __init__(self, color_code: int):
         self.color_code = color_code
-        self.points = None
 
 
     def collided_with(self, x: float, y: float) -> bool:
@@ -20,4 +16,4 @@ class ColorObstacle:
         :return: True if collision detected.
         """
 
-        return arcade.is_point_in_polygon(x, y, self.points)
+        pass

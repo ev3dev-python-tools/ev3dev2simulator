@@ -17,7 +17,7 @@ class MessageProcessorTest(unittest.TestCase):
     def test_create_jobs_center(self):
         robot_state = get_robot_state()
 
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('right_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outB', 20, 100, 'hold'))
 
         for i in range(150):
@@ -32,7 +32,7 @@ class MessageProcessorTest(unittest.TestCase):
     def test_create_jobs_left(self):
         robot_state = get_robot_state()
 
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 1, 100, 'hold'))
 
         for i in range(3000):
@@ -47,7 +47,7 @@ class MessageProcessorTest(unittest.TestCase):
     def test_create_jobs_right(self):
         robot_state = get_robot_state()
 
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outD', 10, 100, 'hold'))
 
         for i in range(300):
@@ -63,7 +63,7 @@ class MessageProcessorTest(unittest.TestCase):
         coasting_sub = load_config()['motor_settings']['degree_coasting_subtraction']
         robot_state = get_robot_state()
 
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('right_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outB', 80, 200, 'coast'))
 
         for i in range(75):
@@ -87,7 +87,7 @@ class MessageProcessorTest(unittest.TestCase):
         coasting_sub = apply_scaling(load_config()['motor_settings']['pixel_coasting_subtraction'])
         robot_state = get_robot_state()
 
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 80, 200, 'coast'))
 
         for i in range(75):
@@ -113,7 +113,7 @@ class MessageProcessorTest(unittest.TestCase):
         frames_per_second = load_config()['exec_settings']['frames_per_second']
         frames = int(round((32 / 2.5) * frames_per_second))
 
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_sound_command(SoundCommand('A test is running at the moment!'))
 
         for i in range(frames - 1):
@@ -124,9 +124,9 @@ class MessageProcessorTest(unittest.TestCase):
         self.assertIsNone(robot_state.next_sound_job())
 
 
-    def test_process_led_command(self):
+    def test_process_left_led_command(self):
         robot_state = get_robot_state()
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('left_brick', robot_state)
 
         command1 = LedCommand('led0:red:brick-status', 1)
         command2 = LedCommand('led0:green:brick-status', 1)
@@ -134,8 +134,8 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor.process_led_command(command1)
         message_processor.process_led_command(command2)
 
-        self.assertEqual(robot_state.left_led_color, 0)
-        self.assertEqual(robot_state.right_led_color, 1)
+        self.assertEqual(robot_state.left_brick_left_led_color, 0)
+        self.assertEqual(robot_state.left_brick_right_led_color, 1)
 
         command3 = LedCommand('led1:red:brick-status', 1)
         command4 = LedCommand('led1:green:brick-status', 0.5)
@@ -143,16 +143,39 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor.process_led_command(command3)
         message_processor.process_led_command(command4)
 
-        self.assertEqual(robot_state.left_led_color, 0)
-        self.assertEqual(robot_state.right_led_color, 4)
+        self.assertEqual(robot_state.left_brick_left_led_color, 0)
+        self.assertEqual(robot_state.left_brick_right_led_color, 4)
+
+
+    def test_process_right_led_command(self):
+        robot_state = get_robot_state()
+        message_processor = MessageProcessor('right_brick', robot_state)
+
+        command1 = LedCommand('led0:red:brick-status', 1)
+        command2 = LedCommand('led0:green:brick-status', 1)
+
+        message_processor.process_led_command(command1)
+        message_processor.process_led_command(command2)
+
+        self.assertEqual(robot_state.right_brick_left_led_color, 0)
+        self.assertEqual(robot_state.right_brick_right_led_color, 1)
+
+        command3 = LedCommand('led1:red:brick-status', 1)
+        command4 = LedCommand('led1:green:brick-status', 0.5)
+
+        message_processor.process_led_command(command3)
+        message_processor.process_led_command(command4)
+
+        self.assertEqual(robot_state.right_brick_left_led_color, 0)
+        self.assertEqual(robot_state.right_brick_right_led_color, 4)
 
 
     def test_process_data_request(self):
         robot_state = get_robot_state()
-        robot_state.values['ev3-ports:in4'] = 10
-        robot_state.locks['ev3-ports:in4'] = threading.Lock()
+        robot_state.values['right_brick:ev3-ports:in4'] = 10
+        robot_state.locks['right_brick:ev3-ports:in4'] = threading.Lock()
 
-        message_processor = MessageProcessor(robot_state)
+        message_processor = MessageProcessor('right_brick', robot_state)
         value = message_processor.process_data_request(DataRequest('ev3-ports:in4'))
 
         self.assertEqual(value, 10)

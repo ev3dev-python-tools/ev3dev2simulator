@@ -15,13 +15,9 @@ class RobotState:
 
     def __init__(self):
         cfg = get_config().get_data()
-        sim_type = get_config().get_sim_type()
+        large_sim_type = get_config().is_large_sim_type()
 
-        if sim_type == 'large':
-            self.address_motor_center = cfg['alloc_settings']['motor']['center']
-        else:
-            self.address_motor_center = ''
-
+        self.address_motor_center = cfg['alloc_settings']['motor']['center'] if large_sim_type else ''
         self.address_motor_left = cfg['alloc_settings']['motor']['left']
         self.address_motor_right = cfg['alloc_settings']['motor']['right']
 
@@ -133,7 +129,7 @@ class RobotState:
 
 
     def set_led_color(self, brick_name, led_id, color):
-        if brick_name == 'brick1':
+        if brick_name == 'left_brick':
             if led_id == 'led0':
                 self.left_brick_left_led_color = color
             else:

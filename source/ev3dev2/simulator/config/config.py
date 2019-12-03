@@ -51,13 +51,17 @@ class Config:
         return self.sim_type
 
 
+    def is_large_sim_type(self):
+        return self.get_sim_type() == 'large'
+
+
     def _load_data(self):
         """
         Load config data from the correct config yaml file. The file to load from depends on the simulation type.
         :return: the config data.
         """
 
-        file = 'config_small' if self.get_sim_type() == 'small' else 'config_large'
+        file = 'config_large' if self.is_large_sim_type() else 'config_small'
         path = self.get_project_root() + '/' + file + '.yaml'
 
         with open(path, 'r') as stream:
