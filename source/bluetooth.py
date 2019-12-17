@@ -97,6 +97,15 @@ class BluetoothSocket:
         return self.server.send(data)
 
 
+    def sendall(self, data, flags=None):
+        """
+        Send the given data. Data needs to be in byte form.
+        :param data: to send.
+        """
+
+        return self.server.sendall(data)
+
+
     def setblocking(self, flag):
         self.server.setblocking(flag)
 
@@ -164,6 +173,15 @@ class ClientWrapper:
 
         data = str.encode(value)
         return self.client.send(data)
+
+
+    def sendall(self, data, flags=None):
+        """
+        Send the given data. Data needs to be in byte form.
+        :param data: to send.
+        """
+
+        return self.client.sendall(data)
 
 
     def setblocking(self, flag):
