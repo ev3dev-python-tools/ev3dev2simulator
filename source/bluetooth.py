@@ -67,8 +67,9 @@ class BluetoothSocket:
         self.server.listen(backlog)
 
 
-    def makefile(self, mode="r", buffering=None, *, encoding=None, errors=None, newline=None):
-        return self.server.makefile(mode, buffering, encoding, errors, newline)
+    def makefile(self, mode="r", buffering=None, encoding=None, errors=None, newline=None):
+        print(type(self.server))
+        return self.server.makefile(mode=mode, buffering=buffering, encoding=encoding, errors=errors, newline=newline)
 
 
     def recv(self, size):
@@ -135,8 +136,9 @@ class ClientWrapper:
         return self.client.getsockname()
 
 
-    def makefile(self, mode="r", buffering=None, *, encoding=None, errors=None, newline=None):
-        return self.client.makefile(mode, buffering, encoding, errors, newline)
+    def makefile(self, mode="r", buffering=None, encoding=None, errors=None, newline=None):
+        print(type(self.client))
+        return self.client.makefile(mode=mode, buffering=buffering, encoding=encoding, errors=errors, newline=newline)
 
 
     def recv(self, size):
