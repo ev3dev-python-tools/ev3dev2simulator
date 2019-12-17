@@ -10,8 +10,6 @@ from typing import Tuple
 import arcade
 from pymunk import Space
 
-from ev3dev2.simulator.connection.ServerSocketSingle import ServerSocketSingle
-
 script_dir = os.path.dirname(os.path.realpath(__file__))
 ev3dev_dir = os.path.dirname(os.path.dirname(script_dir))
 sys.path.insert(0, ev3dev_dir)
@@ -20,7 +18,9 @@ os.chdir(script_dir)
 
 from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.connection.ServerSocketDouble import ServerSocketDouble
+from ev3dev2.simulator.connection.ServerSocketSingle import ServerSocketSingle
 from ev3dev2.simulator.obstacle.Border import Border
+from ev3dev2.simulator.obstacle.Bottle import Bottle
 from ev3dev2.simulator.obstacle.Edge import Edge
 from ev3dev2.simulator.obstacle.Lake import BlueLake, GreenLake, RedLake
 from ev3dev2.simulator.obstacle.Rock import Rock
@@ -64,6 +64,7 @@ class Simulator(arcade.Window):
 
         self.rock1 = None
         self.rock2 = None
+        self.bottle1 = None
 
         self.border = None
         self.edge = None
@@ -138,13 +139,13 @@ class Simulator(arcade.Window):
             self.space.add(self.rock2.poly)
 
         else:
-            self.rock1 = Rock(apply_scaling(1000), apply_scaling(300), apply_scaling(300), apply_scaling(90), arcade.color.DARK_GRAY, 90)
-            self.obstacle_elements.append(self.rock1.shape)
+            self.bottle1 = Bottle(apply_scaling(1000), apply_scaling(300), apply_scaling(40), arcade.color.DARK_OLIVE_GREEN)
+            self.obstacle_elements.append(self.bottle1.shape)
 
-            touch_obstacles = [self.rock1]
+            touch_obstacles = [self.bottle1]
             falling_obstacles = [self.edge]
 
-            self.space.add(self.rock1.poly)
+            self.space.add(self.bottle1.poly)
 
         color_obstacles = [self.blue_lake, self.green_lake, self.red_lake, self.border]
 

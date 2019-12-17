@@ -7,8 +7,7 @@ from ev3dev2.simulator.obstacle.TouchObstacle import TouchObstacle
 
 class Rock(TouchObstacle):
     """
-    This class represents a 'rock'. Rocks consist of an inner rectangle
-    with outer outline rectangle functioning as the border.
+    This class represents a 'rock'. Rocks are rectangles.
     """
 
 
@@ -35,7 +34,7 @@ class Rock(TouchObstacle):
 
     def _create_points(self) -> PointList:
         """
-        Create a list of points representing this Rock in 2D space.
+        Create a list of points representing this rock in 2D space.
         :return: a PointList object.
         """
 
