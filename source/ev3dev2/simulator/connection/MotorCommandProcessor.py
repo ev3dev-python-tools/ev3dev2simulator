@@ -114,13 +114,16 @@ class MotorCommandProcessor:
     def _frames_required(self, speed: float, distance: float) -> int:
         """
         Calculate the number of frames required to rotate a motor for a distance at a speed.
+        A minimum of one frame is returned otherwise actions taking less than a frame would not be processed further.
         :param speed: in degrees per second.
         :param distance: in degrees.
         :return: an integer representing the number of frames.
         """
 
         seconds = abs(distance) / abs(speed)
-        return int(round(seconds * self.frames_per_second))
+        frames = int(round(seconds * self.frames_per_second))
+
+        return max(frames, 1)
 
 
     def _coast_frames_required(self, speed: float, coasting_sub: float) -> int:
