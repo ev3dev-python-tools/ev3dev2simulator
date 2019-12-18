@@ -327,7 +327,6 @@ class Simulator(arcade.Window):
             self.robot_state.values[self.robot.rear_touch_sensor.address] = self.rear_ts_data
             self.robot_state.values[self.robot.rear_ultrasonic_sensor.address] = self.rear_us_data
 
-            # print(str(self.right_cs_data))
             self.robot.left_color_sensor.set_color_texture(self.left_cs_data)
             self.robot.right_color_sensor.set_color_texture(self.right_cs_data)
 
