@@ -405,6 +405,7 @@ class UltrasonicSensor(Sensor):
         super(UltrasonicSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-us', 'lego-nxt-us'], **kwargs)
 
         self.connector = SensorConnector(address)
+        self.mode = self.MODE_US_DIST_CM
 
 
     @property

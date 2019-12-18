@@ -68,7 +68,6 @@ class BluetoothSocket:
 
 
     def makefile(self, mode="r", buffering=None, encoding=None, errors=None, newline=None):
-        print(type(self.server))
         return self.server.makefile(mode=mode, buffering=buffering, encoding=encoding, errors=errors, newline=newline)
 
 
@@ -146,7 +145,6 @@ class ClientWrapper:
 
 
     def makefile(self, mode="r", buffering=None, encoding=None, errors=None, newline=None):
-        print(type(self.client))
         return self.client.makefile(mode=mode, buffering=buffering, encoding=encoding, errors=errors, newline=newline)
 
 
