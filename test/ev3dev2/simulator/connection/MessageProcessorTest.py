@@ -2,27 +2,27 @@ import threading
 import unittest
 
 # based on scaling_multiplier: 0.60
-from ev3dev2.simulator.config.config import load_config
+from ev3dev2.simulator.config.config import get_config
 from ev3dev2.simulator.connection.MessageProcessor import MessageProcessor
 from ev3dev2.simulator.connection.message.DataRequest import DataRequest
 from ev3dev2.simulator.connection.message.LedCommand import LedCommand
 from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2.simulator.connection.message.SoundCommand import SoundCommand
-from ev3dev2.simulator.state.RobotState import get_robot_state
+from ev3dev2.simulator.state.RobotState import RobotState
 from ev3dev2.simulator.util.Util import apply_scaling
 
 
 class MessageProcessorTest(unittest.TestCase):
 
     def test_create_jobs_center(self):
-        robot_state = get_robot_state()
+        robot_state = RobotState()
 
-        message_processor = MessageProcessor('right_brick', robot_state)
+        message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outB', 20, 100, 'hold'))
 
         for i in range(150):
             c, l, r = robot_state.next_motor_jobs()
-            self.assertAlmostEqual(c, 0.667, 3)
+            self.assertAlmostEqual(c, -0.667, 3)
             self.assertIsNone(l)
             self.assertIsNone(r)
 
@@ -30,7 +30,7 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_create_jobs_left(self):
-        robot_state = get_robot_state()
+        robot_state = RobotState()
 
         message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 1, 100, 'hold'))
@@ -45,7 +45,7 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_create_jobs_right(self):
-        robot_state = get_robot_state()
+        robot_state = RobotState()
 
         message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outD', 10, 100, 'hold'))
@@ -60,22 +60,22 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_create_jobs_coast_center(self):
-        coasting_sub = load_config()['motor_settings']['degree_coasting_subtraction']
-        robot_state = get_robot_state()
+        coasting_sub = get_config().get_data()['motor_settings']['degree_coasting_subtraction']
+        robot_state = RobotState()
 
-        message_processor = MessageProcessor('right_brick', robot_state)
+        message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outB', 80, 200, 'coast'))
 
         for i in range(75):
             c, l, r = robot_state.next_motor_jobs()
-            self.assertAlmostEqual(c, 2.667, 3)
+            self.assertAlmostEqual(c, -2.667, 3)
             self.assertIsNone(l)
             self.assertIsNone(r)
 
         ppf = 2.667 - coasting_sub
         for i in range(2):
             c, l, r = robot_state.next_motor_jobs()
-            self.assertAlmostEqual(c, ppf, 3)
+            self.assertAlmostEqual(c, -ppf, 3)
             self.assertIsNone(l)
             self.assertIsNone(r)
             ppf = max(ppf - coasting_sub, 0)
@@ -84,8 +84,8 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_create_jobs_coast_left(self):
-        coasting_sub = apply_scaling(load_config()['motor_settings']['pixel_coasting_subtraction'])
-        robot_state = get_robot_state()
+        coasting_sub = apply_scaling(get_config().get_data()['motor_settings']['pixel_coasting_subtraction'])
+        robot_state = RobotState()
 
         message_processor = MessageProcessor('left_brick', robot_state)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 80, 200, 'coast'))
@@ -108,9 +108,9 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_process_sound_command(self):
-        robot_state = get_robot_state()
+        robot_state = RobotState()
 
-        frames_per_second = load_config()['exec_settings']['frames_per_second']
+        frames_per_second = get_config().get_data()['exec_settings']['frames_per_second']
         frames = int(round((32 / 2.5) * frames_per_second))
 
         message_processor = MessageProcessor('left_brick', robot_state)
@@ -125,7 +125,7 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_process_left_led_command(self):
-        robot_state = get_robot_state()
+        robot_state = RobotState()
         message_processor = MessageProcessor('left_brick', robot_state)
 
         command1 = LedCommand('led0:red:brick-status', 1)
@@ -148,7 +148,7 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_process_right_led_command(self):
-        robot_state = get_robot_state()
+        robot_state = RobotState()
         message_processor = MessageProcessor('right_brick', robot_state)
 
         command1 = LedCommand('led0:red:brick-status', 1)
@@ -171,7 +171,7 @@ class MessageProcessorTest(unittest.TestCase):
 
 
     def test_process_data_request(self):
-        robot_state = get_robot_state()
+        robot_state = RobotState()
         robot_state.values['right_brick:ev3-ports:in4'] = 10
         robot_state.locks['right_brick:ev3-ports:in4'] = threading.Lock()
 

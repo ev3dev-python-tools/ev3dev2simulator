@@ -4,9 +4,9 @@ import unittest
 # based on scaling_multiplier: 0.60
 from typing import Any
 
-from ev3dev2.simulator.config.config import load_config
-from ev3dev2.simulator.connection.ServerSocketDouble import ServerSocket
-from ev3dev2.simulator.state.RobotState import get_robot_state
+from ev3dev2.simulator.config.config import get_config
+from ev3dev2.simulator.connection.ClientSocketHandler import ClientSocketHandler
+from ev3dev2.simulator.state.RobotState import RobotState
 
 
 class ServerSocketTest(unittest.TestCase):
@@ -20,8 +20,8 @@ class ServerSocketTest(unittest.TestCase):
             'stop_action': 'hold'
         }
 
-        robot_state = get_robot_state()
-        server = ServerSocket(robot_state)
+        robot_state = RobotState()
+        server = ClientSocketHandler(robot_state, None, 'left_brick')
 
         data = server._process_drive_command(d)
         val = self._deserialize(data)
@@ -38,8 +38,8 @@ class ServerSocketTest(unittest.TestCase):
             'stop_action': 'hold'
         }
 
-        robot_state = get_robot_state()
-        server = ServerSocket(robot_state)
+        robot_state = RobotState()
+        server = ClientSocketHandler(robot_state, None, 'left_brick')
 
         data = server._process_drive_command(d)
         val = self._deserialize(data)
@@ -55,8 +55,8 @@ class ServerSocketTest(unittest.TestCase):
             'stop_action': 'coast'
         }
 
-        robot_state = get_robot_state()
-        server = ServerSocket(robot_state)
+        robot_state = RobotState()
+        server = ClientSocketHandler(robot_state, None, 'left_brick')
 
         data = server._process_stop_command(d)
         val = self._deserialize(data)
@@ -70,11 +70,11 @@ class ServerSocketTest(unittest.TestCase):
             'message': 'A test is running at the moment!',
         }
 
-        frames_per_second = load_config()['exec_settings']['frames_per_second']
+        frames_per_second = get_config().get_data()['exec_settings']['frames_per_second']
         frames = int(round((32 / 2.5) * frames_per_second))
-        robot_state = get_robot_state()
+        robot_state = RobotState()
 
-        server = ServerSocket(robot_state)
+        server = ClientSocketHandler(robot_state, None, 'left_brick')
         server._process_sound_command(d)
 
         for i in range(frames):
@@ -89,11 +89,11 @@ class ServerSocketTest(unittest.TestCase):
             'address': 'ev3-ports:in4',
         }
 
-        robot_state = get_robot_state()
-        robot_state.values['ev3-ports:in4'] = 10
-        robot_state.locks['ev3-ports:in4'] = threading.Lock()
+        robot_state = RobotState()
+        robot_state.values['left_brick:ev3-ports:in4'] = 10
+        robot_state.locks['left_brick:ev3-ports:in4'] = threading.Lock()
 
-        server = ServerSocket(robot_state)
+        server = ClientSocketHandler(robot_state, None, 'left_brick')
         data = server._process_data_request(d)
         val = self._deserialize(data)
 
