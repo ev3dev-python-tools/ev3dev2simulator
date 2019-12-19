@@ -345,7 +345,7 @@ def main():
     parser.add_argument("-t", "--simulation_type",
                         choices=['small', 'large'],
                         default='large',
-                        help="Type of the simulation (small or large). Default is small",
+                        help="Type of the simulation (small or large). Default is large",
                         required=False,
                         type=str)
     parser.add_argument("-x", "--robot_position_x",

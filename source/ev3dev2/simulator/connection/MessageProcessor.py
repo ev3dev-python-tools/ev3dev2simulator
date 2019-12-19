@@ -27,7 +27,7 @@ class MessageProcessor:
         cfg = get_config().get_data()
         large_sim_type = get_config().is_large_sim_type()
 
-        self.brick_name = brick_name
+        self.brick_name = brick_name + ':' if brick_name else ''
 
         self.pixel_coasting_sub = apply_scaling(cfg['motor_settings']['pixel_coasting_subtraction'])
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
@@ -204,4 +204,4 @@ class MessageProcessor:
 
 
     def _to_full_address(self, address: str):
-        return self.brick_name + ':' + address
+        return self.brick_name + address

@@ -126,7 +126,7 @@ class MessageProcessorTest(unittest.TestCase):
 
     def test_process_left_led_command(self):
         robot_state = RobotState()
-        message_processor = MessageProcessor('left_brick', robot_state)
+        message_processor = MessageProcessor('right_brick', robot_state)
 
         command1 = LedCommand('led0:red:brick-status', 1)
         command2 = LedCommand('led0:green:brick-status', 1)
@@ -134,8 +134,8 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor.process_led_command(command1)
         message_processor.process_led_command(command2)
 
-        self.assertEqual(robot_state.left_brick_left_led_color, 0)
-        self.assertEqual(robot_state.left_brick_right_led_color, 1)
+        self.assertEqual(robot_state.right_brick_left_led_color, 0)
+        self.assertEqual(robot_state.right_brick_right_led_color, 1)
 
         command3 = LedCommand('led1:red:brick-status', 1)
         command4 = LedCommand('led1:green:brick-status', 0.5)
@@ -143,8 +143,8 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor.process_led_command(command3)
         message_processor.process_led_command(command4)
 
-        self.assertEqual(robot_state.left_brick_left_led_color, 0)
-        self.assertEqual(robot_state.left_brick_right_led_color, 4)
+        self.assertEqual(robot_state.right_brick_left_led_color, 0)
+        self.assertEqual(robot_state.right_brick_right_led_color, 4)
 
 
     def test_process_right_led_command(self):

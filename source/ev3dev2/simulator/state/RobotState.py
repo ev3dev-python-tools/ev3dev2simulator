@@ -129,7 +129,7 @@ class RobotState:
 
 
     def set_led_color(self, brick_name, led_id, color):
-        if brick_name == 'left_brick':
+        if brick_name == 'left_brick:':
             if led_id == 'led0':
                 self.left_brick_left_led_color = color
             else:
