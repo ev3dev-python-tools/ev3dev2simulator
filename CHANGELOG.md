@@ -67,3 +67,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First version ready for use
 
+
+[unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.1.1...v1.2.0
+[1.1.1]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v1.0.0
+
+
