@@ -4,9 +4,9 @@ import unittest
 # based on scaling_multiplier: 0.60
 from typing import Any
 
-from ev3dev2.simulator.config.config import get_config
-from ev3dev2.simulator.connection.ClientSocketHandler import ClientSocketHandler
-from ev3dev2.simulator.state.RobotState import RobotState
+from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
+from ev3dev2simulator.state.RobotState import RobotState
 
 
 class ServerSocketTest(unittest.TestCase):

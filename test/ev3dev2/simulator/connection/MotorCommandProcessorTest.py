@@ -1,9 +1,9 @@
 import unittest
 
-from ev3dev2.simulator.config.config import get_config
-from ev3dev2.simulator.connection.MotorCommandProcessor import MotorCommandProcessor
-from ev3dev2.simulator.connection.message.RotateCommand import RotateCommand
-from ev3dev2.simulator.connection.message.StopCommand import StopCommand
+from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.connection.MotorCommandProcessor import MotorCommandProcessor
+from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
+from ev3dev2simulator.connection.message.StopCommand import StopCommand
 
 
 class MotorCommandProcessorTest(unittest.TestCase):
