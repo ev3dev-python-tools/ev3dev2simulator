@@ -5,7 +5,13 @@ using the [Thonny Python IDE for beginners](http://thonny.org/).
 
 ![Thonny-ev3dev plugin](https://raw.githubusercontent.com/wiki/ev3dev-python-tools/thonny-ev3dev/images/thonny-ev3dev.png "Thonny-ev3dev plugin")
 
-The thonny-ev3dev plugin comes with an ev3dev simulator.
+Thonny-ev3dev allows you to run your EV3 program easily 
+    
+* on the EV3 or 
+* on the PC in a simulator (default on PC)
+* on the PC remotely steering the EV3
+
+The thonny-ev3dev plugin comes with an ev3dev simulator:
 
 ![ev3dev2simulator](https://raw.githubusercontent.com/wiki/ev3dev-python-tools/thonny-ev3dev/images/ev3dev2simulator.png "ev3dev2simulator")
 
