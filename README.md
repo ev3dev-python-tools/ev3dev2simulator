@@ -15,3 +15,12 @@ The thonny-ev3dev plugin for the Thonny IDE comes with the ev3dev2simulator.
 For more info about the thonny-ev3dev plugin see: https://github.com/ev3dev-python-tools/thonny-ev3dev/wiki <br>
 For more info about Thonny: http://thonny.org
 
+## Installation
+
+   Install with pip
+   
+      pip install ev3dev2simulator
+     
+   Then you can just run the simulator from the commandline with the command:
+   
+      ev3dev2simulator
