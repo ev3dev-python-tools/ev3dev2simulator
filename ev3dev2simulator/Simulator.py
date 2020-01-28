@@ -127,7 +127,6 @@ class Simulator(arcade.Window):
 
         if show_maximized == True:
             self.maximize()
-        self.after()
 
 
     def setup(self):
