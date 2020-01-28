@@ -1,4 +1,4 @@
-# ev3dev2simulator: simulator for the EV3 simulating the ev3dev2 API
+# ev3dev2simulator: simulator for the EV3 <br> simulating the ev3dev2 API
 
 The behaviour of the EV3 robot is simulated in the simulator. This is convenient to quickly test programs when you momentarily don’t have access to an EV3.
 
