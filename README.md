@@ -16,6 +16,14 @@ The thonny-ev3dev plugin for the Thonny IDE comes with the ev3dev2simulator.
 For more info about the thonny-ev3dev plugin see: https://github.com/ev3dev-python-tools/thonny-ev3dev/wiki <br>
 For more info about Thonny: http://thonny.org
 
+## Single instance
+
+The ev3dev2simulator enforces that only one instance of the simulator can be run.
+
+When a simulator is running, and you  then startup a new simulator window:
+ * the new simulator sees that another simulator is already running and exits
+ * the already simulator's window is raised so that it becomes visible again.
+
 ## Key bindings
 
 When you press the key:
