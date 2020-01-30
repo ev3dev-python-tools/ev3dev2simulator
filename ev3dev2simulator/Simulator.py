@@ -28,6 +28,9 @@ from ev3dev2simulator.robot.RobotSmall import RobotSmall
 from ev3dev2simulator.state.RobotState import RobotState
 from ev3dev2simulator.util.Util import apply_scaling
 
+
+
+
 import tempfile,time
 
 class Simulator(arcade.Window):
@@ -47,7 +50,9 @@ class Simulator(arcade.Window):
         self.screen_total_width = int(apply_scaling(self.cfg['screen_settings']['screen_total_width']))
         self.screen_width = int(apply_scaling(self.cfg['screen_settings']['screen_width']))
         self.screen_height = int(apply_scaling(self.cfg['screen_settings']['screen_height']))
-        screen_title = self.cfg['screen_settings']['screen_title']
+        from ev3dev2.version import __version__ as apiversion
+        from ev3dev2simulator.version import __version__ as simversion
+        screen_title = self.cfg['screen_settings']['screen_title'] + "          version: " + simversion + "      ev3dev2 api: " + apiversion
 
         self.frames_per_second = self.cfg['exec_settings']['frames_per_second']
         self.falling_msg = self.cfg['screen_settings']['falling_message']
@@ -145,7 +150,7 @@ class Simulator(arcade.Window):
 
         tmpdir=tempfile.gettempdir()
         self.pidfile = os.path.join(tmpdir,"ev3dev2simulator.pid")
-        #print("pidfile:  " + self.pidfile)
+        #print("pidfile:  " + self.pidfile,file=sys.stderr)
 
         self.pid = str(os.getpid())
         f=open(self.pidfile, 'w')
@@ -159,7 +164,7 @@ class Simulator(arcade.Window):
         line=file.readline()
         file.close()
         read_pid=line.rstrip()
-        #print("in check; pid:  " + self.pid + " ,read_pid:  " + read_pid)
+        #print("in check; pid:  " + self.pid + " ,read_pid:  " + read_pid,file=sys.stderr)
         if read_pid != self.pid:
             # other process already running
             sys.exit()
@@ -172,18 +177,30 @@ class Simulator(arcade.Window):
             line=file.readline()
             file.close()
             read_pid=line.rstrip()
-            #print("in callback; pid:  " + self.pid + " ,read_pid:  " + read_pid)
+            #print("in callback; pid:  " + self.pid + " ,read_pid:  " + read_pid,file=sys.stderr)
             if read_pid != self.pid:
-                # bring simulatorwindow to foreground
-                self.activate()
+
                 # other simulator tries to start running
                 # write pid to pidfile to notify this simulator is already running
                 f=open(self.pidfile, 'w')
                 f.write(self.pid)
                 f.close()
 
+                platform= sys.platform.lower()
+                if platform.startswith('win'):
+                    self.windowsActivate()
+                else:
+                    self.activate()
+
+
+
         clock.schedule_interval(callback, 1)
 
+    def windowsActivate(self):
+        from pyglet.libs.win32 import _user32
+        from pyglet.libs.win32.constants import SW_SHOWMINIMIZED,SW_SHOWNORMAL
+        _user32.ShowWindow(self._hwnd,SW_SHOWMINIMIZED)
+        _user32.ShowWindow(self._hwnd,SW_SHOWNORMAL)
 
     def setup(self):
         """
@@ -253,12 +270,16 @@ class Simulator(arcade.Window):
         self.robot.set_touch_obstacles(touch_obstacles)
         self.robot.set_falling_obstacles(falling_obstacles)
 
+
+    def on_close(self):
+        sys.exit(0)
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
         # Quit the simulator
         if key == arcade.key.Q:
-            sys.exit(0)
+            self.on_close()
 
         # Toggle fullscreen
         if key == arcade.key.T:

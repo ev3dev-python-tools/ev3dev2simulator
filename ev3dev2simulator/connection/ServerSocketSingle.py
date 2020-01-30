@@ -46,10 +46,8 @@ class ServerSocketSingle(MessageHandler):
 
             try:
                 while True:
-
                     data = client.recv(128)
                     if data:
-
                         val = self._process(data)
                         if val:
                             client.send(val)
