@@ -526,6 +526,9 @@ def main():
     """
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("-V", "--version",
+                        action='store_true',
+                        help="Show version info")
     parser.add_argument("-s", "--window_scaling",
                         default=0.65,
                         help="Scaling of the screen, default is 0.65",
@@ -570,6 +573,14 @@ def main():
                         help="Show simulator maximized")
 
     args = vars(parser.parse_args())
+
+    if args['version'] == True:
+        from ev3dev2 import version as apiversion
+        from ev3dev2simulator import version as simversion
+        print("version ev3dev2           : " + apiversion.__version__)
+        print("version ev3dev2simulator  : " + simversion.__version__)
+        sys.exit(0)
+
     config = get_config()
 
     s = args['window_scaling']
