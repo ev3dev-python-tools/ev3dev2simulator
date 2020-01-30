@@ -3,35 +3,8 @@ import os
 import signal
 import tempfile
 
-
-def kill_previous_simulator():
-
-
-    tmpdir=tempfile.gettempdir()
-    pidfile = os.path.join(tmpdir,"ev3dev2simulator.pid")
-    print("pidfile '{0}'".format(pidfile),file=sys.stderr)
-
-    if os.path.isfile(pidfile):
-        try:
-            file=open(pidfile, 'r')
-            line=file.readline()
-            string=line.rstrip()
-            old_pid=int(string)
-            print("Close old simulator windows with pid '{0}'".format(old_pid),file=sys.stderr)
-            #os.kill(old_pid, signal.SIGKILL)
-            os.kill(old_pid, signal.SIGTERM)
-        except:
-            pass
-    # store pid for next run
-    pid = str(os.getpid())
-    open(pidfile, 'w').write(pid)
-
-
-
 def main(args=None):
     """The main routine."""
-
-    kill_previous_simulator()
 
     try:
         from ev3dev2simulator.Simulator import simmain
@@ -47,8 +20,6 @@ def main(args=None):
         sys.path.insert(0,ev3devsimulator_dir)
         # import main from ev3devsimulator package
         from ev3dev2simulator.Simulator import main as simmain
-
-
 
     sys.exit(simmain())
 

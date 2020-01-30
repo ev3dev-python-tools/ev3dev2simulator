@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Added 
-- added functionality that ensures only one simulator is open: the new one terminates the previous one
+- added functionality that ensures only one simulator is open: the new one terminates terminates itself if another is already open. The already open windows is brought to foreground.
 - added icon for simulator window
 - support for resizing the window
 - support for maximizing the window when pressing 'm' key and fullscreen when pressing 'f'
