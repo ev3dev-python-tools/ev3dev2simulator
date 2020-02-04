@@ -6,13 +6,13 @@ import sys
 setup(
       name="ev3dev2simulator",
       version="1.3.0",
-      description="ev3 simulator for ev3dev2 library",
+      description="EV3 simulator for the ev3dev2 library",
       long_description="""
-ev3 simulator for ev3dev2 library
+Simulator for an EV3 robot; a program using the ev3dev2 API can run both on the rover and on the simulator without any modifications to the code.
 
-For more info: https://github.com/harcokuppens/thonny-ev3dev/wiki/ev3dev2simulator
+For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
 """,
-      url="https://github.com/harcokuppens/thonny-ev3dev/wiki/ev3dev2simulator",
+      url="https://github.com/ev3dev-python-tools/ev3dev2simulator",
       author="Harco Kuppens",
       author_email="h.kuppens@cs.ru.nl",
       license="MIT",

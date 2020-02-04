@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.3.0] - 2020-01-31
 
 ### Added 
 - added functionality that ensures only one simulator is open: the new one terminates terminates itself if another is already open. The already open windows is brought to foreground.
@@ -19,11 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added entry script so that simulator can be started from command line
 - added auto import ability to the simulated 'ev3dev2' library so that we can easily import everything 
   with the import line: `from ev3dev2 import auto as ev3`. 
+- added shortcut keys 'q','m','f','t' for quit, maximize, fullscreen, toggle screem for fullscreen 
+- added version option, and version info on title bar of simulator
 
 ### Changed 
 - moved project from Sam Jansen's github account at https://github.com/Samskip16/ev3dev2-Simulator 
   to new project website https://github.com/ev3dev-python-tools/ev3dev2simulator
 - reorganized code so that it can be installed as a package on pypi  
+- improved exit   
 
 
 ## [1.2.1] - 2019-12-17
