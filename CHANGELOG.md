@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
-## [1.3.0] - 2020-01-31
+## [1.3.0] - 2020-02-06
 
 ### Added 
 - added functionality that ensures only one simulator is open: the new one terminates terminates itself if another is already open. The already open windows is brought to foreground.
