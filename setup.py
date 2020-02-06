@@ -45,11 +45,9 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
       python_requires=">=3.6",
       install_requires=['ev3devlogging','arcade==2.1.3','pyobjc;sys.platform=="darwin"','pyyaml','pymunk'],
       packages=find_packages(),
-      #packages=['ev3dev2','ev3dev2simulator'],
-      #include_package_data=True,
       package_data={"ev3dev2simulator": ["config/*","assets/images/*"] },
       entry_points={
-        'gui_scripts': [
+        'console_scripts': [
             'ev3dev2simulator = ev3dev2simulator.__main__:main'
         ]
       },
