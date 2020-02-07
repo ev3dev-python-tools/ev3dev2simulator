@@ -76,3 +76,84 @@ When you press the key:
                             default is first monitor
       -f, --fullscreen      Show simulator fullscreen
       -m, --maximized       Show simulator maximized
+
+
+## Features not yet supported
+
+The simulator does not yet support the full ev3dev2 API. Classes/methods/functions in the following source files
+from the ev3dev2 API are not yet supported:
+
+
+    button.py
+    console.py
+
+    control/init.py
+    control/GyroBalance.py
+    control/rc_tank.py
+    control//webserver.py
+
+    display.py
+    led.py
+
+    motor.py
+
+        class ActuonixL1250Motor
+        class ActuonixL12100Motor
+        class DcMotor
+        class ServoMotor
+        class MoveJoystick
+        class LineFollowErrorLostLine
+        class LineFollowErrorTooFast
+        class MoveJoystick
+        class MoveTank
+            def follow_line()
+
+    port.py
+    power.py
+
+    sensor/init.py
+
+        def list_sensors
+        class Sensor
+            def bin_data()
+        class I2cSensor
+
+    sensor/lego.py
+    class ColorSensor
+
+        def reflected_light_intensity()
+        def ambient_light_intensity()
+        def raw()
+        def calibrate_white()
+        def rgb()
+        def fab()
+        def hsv()
+        def hls()
+        def red()
+        def green()
+        def blue()
+
+    class UltrasonicSensor
+
+        def other_sensor_present()
+
+    class GyroSensor
+    class InfraredSensor
+    class SoundSensor
+    class LightSensor
+
+    sound.py
+
+        def get_command_processes()
+        Class Sound
+            def beep()
+            def tone()
+            def play_tone()
+            def play_note()
+            def play()
+            def play_file()
+            def get_volume()
+            def set_volume()
+            def play_song()
+            def beep_args()
+            def get_channel()
