@@ -87,7 +87,7 @@ We list what is NO supported, so the rest is supported. Meaning:
 * if within a python file a specific class/function is listed, then that class/function is not supported but all other class/functions in that file ARE supported.
 * if specific for a class a set of methods are listed, those methods are not supported, but the class itself and the other methods in the class ARE supported.
 
-The current not supported listing is:
+### The current not supported listing is:
 
 button.py <br />
  console.py <br />
@@ -110,15 +110,22 @@ button.py <br />
 * class LineFollowErrorTooFast
 * class MoveJoystick
 * class MoveTank
-  * def follow\_line()  port.py <br />
- power.py <br />
+
+  * def follow\_line()  
+  
+port.py <br />
+power.py <br />
 <br />
  sensor/init.py
+
 * def list\_sensors
 * class Sensor
+
   * def bin\_data()
+  
 * class I2cSensor  sensor/lego.py
 * class ColorSensor
+
   * def reflected\_light\_intensity()
   * def ambient\_light\_intensity()
   * def raw()
@@ -130,12 +137,16 @@ button.py <br />
   * def red()
   * def green()
   * def blue()
+  
 * class UltrasonicSensor
+
   * def other\_sensor\_present()
+  
 * class GyroSensor
 * class InfraredSensor
 * class SoundSensor
 * class LightSensor <br />
+
   * def get\_command\_processes()
   * Class Sound
     * def beep()
