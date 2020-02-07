@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2020-02-07
 
+ ### Added
+ - added building of wheels and uploading them to the pypi server
+
+ ### Removed
+ - don't build and upload sdist package anymore, because a wheel is also a source package
+   and is better because it contains the requirements in metadata of the package,
+   which one can fetch from the pypi server before downloading a package. 
+   
 ## [1.3.0] - 2020-02-06
 
 ### Added 

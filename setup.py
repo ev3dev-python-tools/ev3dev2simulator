@@ -5,7 +5,7 @@ import sys
 
 setup(
       name="ev3dev2simulator",
-      version="1.3.0",
+      version="1.3.1",
       description="EV3 simulator for the ev3dev2 library",
       long_description="""
 Simulator for an EV3 robot; a program using the ev3dev2 API can run both on the rover and on the simulator without any modifications to the code.
