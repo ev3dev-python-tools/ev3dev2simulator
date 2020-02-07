@@ -89,18 +89,19 @@ We list what is NO supported, so the rest is supported. Meaning:
 
 ### The current not supported listing is:
 
-button.py <br />
- console.py <br />
-<br />
- control/init.py<br />
- control/GyroBalance.py <br />
- control/rc\_tank.py<br />
- control//webserver.py <br />
-<br />
- display.py <br />
- led.py <br />
-<br />
- motor.py
+button.py <br/>
+console.py 
+
+control/init.py<br/>
+control/GyroBalance.py <br/>
+control/rc\_tank.py<br/>
+control//webserver.py
+
+display.py <br/>
+led.py 
+ 
+motor.py
+
 * class ActuonixL1250Motor
 * class ActuonixL12100Motor
 * class DcMotor
@@ -113,17 +114,20 @@ button.py <br />
 
   * def follow\_line()  
   
-port.py <br />
-power.py <br />
-<br />
- sensor/init.py
+port.py <br/>
+power.py 
+
+sensor/init.py
 
 * def list\_sensors
 * class Sensor
 
   * def bin\_data()
   
-* class I2cSensor  sensor/lego.py
+* class I2cSensor  
+
+sensor/lego.py
+
 * class ColorSensor
 
   * def reflected\_light\_intensity()
@@ -145,10 +149,13 @@ power.py <br />
 * class GyroSensor
 * class InfraredSensor
 * class SoundSensor
-* class LightSensor <br />
+* class LightSensor 
+
+sound.py 
 
   * def get\_command\_processes()
   * Class Sound
+  
     * def beep()
     * def tone()
     * def play\_tone()
