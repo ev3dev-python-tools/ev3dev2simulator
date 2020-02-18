@@ -3,7 +3,7 @@
 from ev3dev2._platform.ev3 import INPUT_4
 from ev3dev2.sensor.lego import UltrasonicSensor
 from ev3dev2.sound import Sound
-from testprograms.BluethoothHelper import BluetoothHelper
+from testprograms.BluetoothHelper import BluetoothHelper
 
 
 def checkDistance():

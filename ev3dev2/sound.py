@@ -55,7 +55,7 @@ def get_command_processes(command):
     :return: a list of Popen objects
     """
 
-    pass
+    pass  # CHANGE: removed entire function
 
 
 class Sound(object):
@@ -92,15 +92,12 @@ class Sound(object):
         PLAY_LOOP
     )
 
-
     def __init__(self):
         self.connector = SoundConnector()
-
 
     def _validate_play_type(self, play_type):
         assert play_type in self.PLAY_TYPES, \
             "Invalid play_type %s, must be one of %s" % (play_type, ','.join(str(t) for t in self.PLAY_TYPES))
-
 
     def _audio_command(self, command, play_type):
         if is_micropython():
@@ -142,7 +139,6 @@ class Sound(object):
                 else:
                     raise Exception("invalid play_type " % play_type)
 
-
     def beep(self, args='', play_type=PLAY_WAIT_FOR_COMPLETE):
         """
         Call beep command with the provided arguments (if any).
@@ -156,7 +152,6 @@ class Sound(object):
         """
 
         pass
-
 
     def tone(self, *args, play_type=PLAY_WAIT_FOR_COMPLETE):
         """
@@ -198,9 +193,8 @@ class Sound(object):
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
-
+        self.connector.play_tone_sequence(args)
         pass
-
 
     def play_tone(self, frequency, duration, delay=0.0, volume=100,
                   play_type=PLAY_WAIT_FOR_COMPLETE):
@@ -217,7 +211,6 @@ class Sound(object):
 
         pass
 
-
     def play_note(self, note, duration, volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Plays a note, given by its name as defined in ``_NOTE_FREQUENCIES``.
         :param string note: The note symbol with its octave number
@@ -231,7 +224,6 @@ class Sound(object):
 
         pass
 
-
     def play_file(self, wav_file, volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Play a sound file (wav format) at a given volume.
         :param string wav_file: The sound file path
@@ -240,9 +232,7 @@ class Sound(object):
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
-
-        pass
-
+        self.connector.play_file(wav_file)
 
     def speak(self, text, espeak_opts='-a 200 -s 130', volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Speak the given text aloud.
@@ -257,7 +247,6 @@ class Sound(object):
 
         self.connector.speak(text)
         return
-
 
     def _get_channel(self):
         """
@@ -280,7 +269,6 @@ class Sound(object):
 
         return self.channel
 
-
     def set_volume(self, pct, channel=None):
         """
         Sets the sound volume to the given percentage [0-100] by calling
@@ -292,7 +280,6 @@ class Sound(object):
 
         pass
 
-
     def get_volume(self, channel=None):
         """
         Gets the current sound volume by parsing the output of
@@ -303,7 +290,6 @@ class Sound(object):
         """
 
         pass
-
 
     def play_song(self, song, tempo=120, delay=0.05):
         """ Plays a song provided as a list of tuples containing the note name and its
@@ -357,7 +343,6 @@ class Sound(object):
         """
 
         pass
-
 
     #: Note frequencies.
     #:
