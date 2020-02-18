@@ -193,7 +193,7 @@ class Sound(object):
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
-        self.connector.play_tone_sequence(args)
+        self.connector.play_tone_sequence(args)  # CHANGE: removed and functionality moved to connector
         pass
 
     def play_tone(self, frequency, duration, delay=0.0, volume=100,
@@ -208,8 +208,21 @@ class Sound(object):
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the PID of the underlying beep command; ``None`` otherwise
         :raises ValueError: if invalid parameter
         """
+        self._validate_play_type(play_type)
 
-        pass
+        if duration <= 0:
+            raise ValueError('invalid duration (%s)' % duration)
+        if delay < 0:
+            raise ValueError('invalid delay (%s)' % delay)
+        if not 0 < volume <= 100:
+            raise ValueError('invalid volume (%s)' % volume)
+
+        self.set_volume(volume)
+
+        duration_ms = int(duration * 1000)
+        delay_ms = int(delay * 1000)
+
+        self.tone([(frequency, duration_ms, delay_ms)], play_type=play_type)
 
     def play_note(self, note, duration, volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Plays a note, given by its name as defined in ``_NOTE_FREQUENCIES``.
@@ -221,8 +234,18 @@ class Sound(object):
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the PID of the underlying beep command; ``None`` otherwise
         :raises ValueError: is invalid parameter (note, duration,...)
         """
+        self._validate_play_type(play_type)
+        try:
+            freq = self._NOTE_FREQUENCIES.get(note.upper(), self._NOTE_FREQUENCIES[note])
+        except KeyError:
+            raise ValueError('invalid note (%s)' % note)
 
-        pass
+        if duration <= 0:
+            raise ValueError('invalid duration (%s)' % duration)
+        if not 0 < volume <= 100:
+            raise ValueError('invalid volume (%s)' % volume)
+
+        return self.play_tone(freq, duration=duration, volume=volume, play_type=play_type)
 
     def play_file(self, wav_file, volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Play a sound file (wav format) at a given volume.
