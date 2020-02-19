@@ -301,7 +301,7 @@ class Sound(object):
         ``Playback`` channel, as that is the only channel on the EV3.
         """
 
-        pass
+        pass  # CHANGE: Not yet supported
 
     def get_volume(self, channel=None):
         """
@@ -312,7 +312,7 @@ class Sound(object):
         ``Playback`` channel, as that is the only channel on the EV3.
         """
 
-        pass
+        pass # CHANGE: Not yet supported
 
     def play_song(self, song, tempo=120, delay=0.05):
         """ Plays a song provided as a list of tuples containing the note name and its

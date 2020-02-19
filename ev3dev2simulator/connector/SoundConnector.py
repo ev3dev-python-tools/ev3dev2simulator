@@ -7,6 +7,7 @@ from typing import Any
 import simpleaudio as sa
 import numpy as np
 
+
 class SoundConnector:
     """
     The SoundConnector class provides a translation layer between the ev3dev2 Sound classes
@@ -24,8 +25,6 @@ class SoundConnector:
         play_obj = wave_obj.play()
         if blocking:
             play_obj.wait_done()  # Wait until sound has finished playing
-
-
 
     def play_tone_sequence(self, *args) -> Any:
         argList = list(args[0])[0]
@@ -60,4 +59,4 @@ class SoundConnector:
             # Wait for playback to finish before exiting
 
             play_obj.wait_done()
-            sleep(delay/1000.0)
+            sleep(delay / 1000.0)
