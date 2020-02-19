@@ -5,6 +5,7 @@ from typing import Any
 # from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
 
 import simpleaudio as sa
+import pyttsx3 as tts
 import numpy as np
 
 
@@ -25,6 +26,8 @@ class SoundConnector:
         play_obj = wave_obj.play()
         if blocking:
             play_obj.wait_done()  # Wait until sound has finished playing
+        # command = SoundCommand(message)
+        # return self.client_socket.send_sound_command(command)
 
     def play_tone_sequence(self, *args) -> Any:
         argList = list(args[0])[0]
@@ -36,15 +39,9 @@ class SoundConnector:
             """
             Create and send a SoundCommand to be send to the simulator with the given text to speak.
             """
-            # command = SoundCommand(message)
-            # return self.client_socket.send_sound_command(command)
 
             fs = 44100  # 44100 samples per second
-
-            # Generate array with seconds*sample_rate steps, ranging between 0 and seconds
             t = np.linspace(0, duration, duration * fs, False)
-
-            # Generate a 440 Hz sine wave
             note = np.sin(frequency * t * 2 * np.pi)
 
             print(note)
@@ -59,4 +56,23 @@ class SoundConnector:
             # Wait for playback to finish before exiting
 
             play_obj.wait_done()
+
+            # command = SoundCommand(message)
+            # return self.client_socket.send_sound_command(command)
             sleep(delay / 1000.0)
+
+
+
+    def speak(self, text, espeak_opts, desired_volume, play_type):
+        try:
+            engine = tts.init()
+        except OSError:
+            print("Please make sure you have installed the required text to speech library such as espeak for Linux")
+
+        engine.setProperty('volume', desired_volume / 100.0)
+
+        engine.say(text)
+        engine.runAndWait()
+
+        # command = SoundCommand(message)
+        # return self.client_socket.send_sound_command(command)
