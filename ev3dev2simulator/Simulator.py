@@ -150,7 +150,6 @@ class Simulator(arcade.Window):
 
         tmpdir=tempfile.gettempdir()
         self.pidfile = os.path.join(tmpdir,"ev3dev2simulator.pid")
-        #print("pidfile:  " + self.pidfile,file=sys.stderr)
 
         self.pid = str(os.getpid())
         f=open(self.pidfile, 'w')
@@ -164,7 +163,6 @@ class Simulator(arcade.Window):
         line=file.readline()
         file.close()
         read_pid=line.rstrip()
-        #print("in check; pid:  " + self.pid + " ,read_pid:  " + read_pid,file=sys.stderr)
         if read_pid != self.pid:
             # other process already running
             sys.exit()
@@ -177,7 +175,6 @@ class Simulator(arcade.Window):
             line=file.readline()
             file.close()
             read_pid=line.rstrip()
-            #print("in callback; pid:  " + self.pid + " ,read_pid:  " + read_pid,file=sys.stderr)
             if read_pid != self.pid:
 
                 # other simulator tries to start running
@@ -186,8 +183,8 @@ class Simulator(arcade.Window):
                 f.write(self.pid)
                 f.close()
 
-                platform= sys.platform.lower()
-                if platform.startswith('win'):
+                import platform
+                if platform.system().lower().startswith('win'):
                     self.windowsActivate()
                 else:
                     self.activate()
@@ -281,22 +278,30 @@ class Simulator(arcade.Window):
         if key == arcade.key.Q:
             self.on_close()
 
-        # Toggle fullscreen
+        # Toggle fullscreen between screens
         if key == arcade.key.T:
             # # User hits T. Switch screen used for fullscreen.
+
+            # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
+            if self.fullscreen:
+               self.set_fullscreen(False)
+
             # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
             self.toggleScreenUsedForFullscreen()
+
+            self.setFullScreen()
 
         # Maximize window
         # note: is toggle on macos, but not on windows
         if key == arcade.key.M:
              self.maximize()
 
-        # Fullscreen
+        # Toggle between Fullscreen and window
         #   keeps viewport coordinates the same   STRETCHED (FULLSCREEN)
         #   Instead of a one-to-one mapping to screen size, we use stretch/squash window to match the constants.
         #   src: http://arcade.academy/examples/full_screen_example.html
         if key == arcade.key.F:
+            self.updateCurrentScreen()
             self.toggleFullScreen()
 
 
@@ -314,9 +319,47 @@ class Simulator(arcade.Window):
         # override hidden screen parameter in window
         self._screen=screens[self.current_screen_index]
 
+    def updateCurrentScreen(self):
+        """ using the windows position and size we determine on which screen it is currently displayed and make that
+            current screen for displaying in fullscreen!!
+        """
+
+        display = pyglet.canvas.get_display()
+        screens= display.get_screens()
+        num_screens=len(screens)
+        if num_screens== 1:
+            return
+
+        location=self.get_location()
+        topleft_x=location[0]
+        topleft_y=location[1]
+        size=self.get_size()
+        win_width=size[0]
+        win_height=size[1]
+
+        done=False
+        locations=[location,(topleft_x+win_width,topleft_y),(topleft_x,topleft_y+win_height),(topleft_x+win_width,topleft_y+win_height)]
+        for location in locations:
+            if done:
+                break
+            loc_x=location[0]
+            loc_y=location[1]
+            num = 0
+            for screen in screens:
+                within_screen_width=  (loc_x >= screen.x) and (loc_x < (screen.x+screen.width))
+                within_screen_height=  (loc_y >= screen.y) and (loc_y < (screen.y+screen.height))
+                if within_screen_width and within_screen_height:
+                    self.current_screen_index=num
+                    done=True
+                    break
+                num=num+1
+
+        # override hidden screen parameter in window
+        self._screen=screens[self.current_screen_index]
+
+
     def toggleFullScreen(self):
         # User hits 'f' Flip between full and not full screen.
-        #self.set_fullscreen(not self.fullscreen,self.screen_width*2, self.screen_height*2)
         self.set_fullscreen(not self.fullscreen)
 
         # Instead of a one-to-one mapping, stretch/squash window to match the
@@ -327,7 +370,22 @@ class Simulator(arcade.Window):
         # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
         #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
-        if platform.system() == "darwin":
+        if platform.system().lower() == "darwin":
+            self.maximize()
+
+    def setFullScreen(self):
+        #self.fullscreen=True
+        self.set_fullscreen(True)
+
+        # Instead of a one-to-one mapping, stretch/squash window to match the
+        # constants. This does NOT respect aspect ratio. You'd need to
+        # do a bit of math for that.
+        self.set_viewport(0, self.screen_width, 0, self.screen_height)
+
+        # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
+        #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
+        import platform
+        if platform.system().lower() == "darwin":
             self.maximize()
 
 
