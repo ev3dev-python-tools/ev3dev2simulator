@@ -76,3 +76,94 @@ When you press the key:
                             default is first monitor
       -f, --fullscreen      Show simulator fullscreen
       -m, --maximized       Show simulator maximized
+
+
+## Features not yet supported
+
+The simulator does not yet support the full ev3dev2 API. When looking at the ev3dev2  API's source files,  the below listed functions, classes, or specific class methods  are not yet supported. 
+
+We list what is NO supported, so the rest is supported. Meaning:
+* if only a specific python file is listed, then that whole file is not supported. Python files not listed ARE fully supported.
+* if within a python file a specific class/function is listed, then that class/function is not supported but all other class/functions in that file ARE supported.
+* if specific for a class a set of methods are listed, those methods are not supported, but the class itself and the other methods in the class ARE supported.
+
+### The current not supported listing is:
+
+button.py <br/>
+console.py 
+
+control/init.py<br/>
+control/GyroBalance.py <br/>
+control/rc\_tank.py<br/>
+control//webserver.py
+
+display.py <br/>
+led.py 
+ 
+motor.py
+
+* class ActuonixL1250Motor
+* class ActuonixL12100Motor
+* class DcMotor
+* class ServoMotor
+* class MoveJoystick
+* class LineFollowErrorLostLine
+* class LineFollowErrorTooFast
+* class MoveJoystick
+* class MoveTank
+
+  * def follow\_line()  
+  
+port.py <br/>
+power.py 
+
+sensor/init.py
+
+* def list\_sensors
+* class Sensor
+
+  * def bin\_data()
+  
+* class I2cSensor  
+
+sensor/lego.py
+
+* class ColorSensor
+
+  * def reflected\_light\_intensity()
+  * def ambient\_light\_intensity()
+  * def raw()
+  * def calibrate\_white()
+  * def rgb()
+  * def fab()
+  * def hsv()
+  * def hls()
+  * def red()
+  * def green()
+  * def blue()
+  
+* class UltrasonicSensor
+
+  * def other\_sensor\_present()
+  
+* class GyroSensor
+* class InfraredSensor
+* class SoundSensor
+* class LightSensor 
+
+sound.py 
+
+  * def get\_command\_processes()
+  * Class Sound
+  
+    * def beep()
+    * def tone()
+    * def play\_tone()
+    * def play\_note()
+    * def play()
+    * def play\_file()
+    * def get\_volume()
+    * def set\_volume()
+    * def play\_song()
+    * def beep\_args()
+    * def get\_channel()
