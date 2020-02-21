@@ -280,7 +280,7 @@ class Simulator(arcade.Window):
 
         # Toggle fullscreen between screens
         if key == arcade.key.T:
-            # # User hits T. Switch screen used for fullscreen.
+            # User hits T. Switch screen used for fullscreen.
 
             # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
             if self.fullscreen:
