@@ -11,6 +11,9 @@ from typing import Tuple
 import arcade
 from pymunk import Space
 
+# HACK: https://gamedev.stackexchange.com/questions/16024/secondary-monitor-freezes-game-window
+#from pyglet.gl import *
+
 # HACK: need to change dir to Simulator script's directory because resources are loaded relative from this directory
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
@@ -41,7 +44,7 @@ class Simulator(arcade.Window):
         self.check_for_unique_instance()
 
         self.robot_state = robot_state
-        self.init_screen(use_second_screen_to_show_simulator)
+        self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
         self.scaling_multiplier = get_config().get_scale()
         self.large_sim_type = get_config().is_large_sim_type()
@@ -99,20 +102,30 @@ class Simulator(arcade.Window):
         self.setup()
 
         if show_fullscreen == True:
-            self.toggleFullScreen()
+            self.toggleFullScreenOnCurrentScreen()
 
         if show_maximized == True:
             self.maximize()
 
         self.check_for_activation()
 
-    def init_screen(self,use_second_screen_to_show_simulator):
+    def set_screen_to_display_simulator_at_startup(self,use_second_screen_to_show_simulator):
+        """ Set screen to use to display the simulator at startup. For windows this works only in fullscreen mode.
+
+           By default set current screen to show simulator, but if use_second_screen_to_show_simulator==True
+           then change screen to other screen.
+
+           On MacOS this works for both fullscreen and none-fullscreen mode.
+           On Windows this only works for fullscreen mode. For none-fullscreen always the first screen is used.
+        """
+
         # get current_screen_index
         current_screen_index=0
         if use_second_screen_to_show_simulator == True:
             current_screen_index=1
         display = pyglet.canvas.get_display()
         screens= display.get_screens()
+        for screen in screens: print(screen)
         num_screens=len(screens)
         if  num_screens== 1:
             current_screen_index=0
@@ -147,6 +160,9 @@ class Simulator(arcade.Window):
 
 
     def check_for_unique_instance(self):
+        """ Detect whether an other instance is already running. If so then trigger the
+            activation for the other instance and terminate this instance.
+        """
 
         tmpdir=tempfile.gettempdir()
         self.pidfile = os.path.join(tmpdir,"ev3dev2simulator.pid")
@@ -168,6 +184,12 @@ class Simulator(arcade.Window):
             sys.exit()
 
     def check_for_activation(self):
+        """ checks each interval whether the simulator windows must be activated (bring to front)
+
+            note: activation can happen when one tries to start another instance of the simulator,
+                  and that instance detects an instance is already running. It then triggers the
+                  activation for the other instance and terminates itself.
+        """
         from pyglet import clock
 
         def callback(dt):
@@ -278,18 +300,15 @@ class Simulator(arcade.Window):
         if key == arcade.key.Q:
             self.on_close()
 
-        # Toggle fullscreen between screens
+        # Toggle fullscreen between screens (only works at fullscreen mode)
         if key == arcade.key.T:
-            # User hits T. Switch screen used for fullscreen.
-
-            # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
+            # User hits T. When at fullscreen, then switch screen used for fullscreen.
             if self.fullscreen:
-               self.set_fullscreen(False)
-
-            # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
-            self.toggleScreenUsedForFullscreen()
-
-            self.setFullScreen()
+                # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
+                self.set_fullscreen(False)
+                # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
+                self.toggleScreenUsedForFullscreen()
+                self.setFullScreen()
 
         # Maximize window
         # note: is toggle on macos, but not on windows
@@ -302,11 +321,11 @@ class Simulator(arcade.Window):
         #   src: http://arcade.academy/examples/full_screen_example.html
         if key == arcade.key.F:
             self.updateCurrentScreen()
-            self.toggleFullScreen()
+            self.toggleFullScreenOnCurrentScreen()
 
 
     #toggle screen for fullscreen
-    # BUG: doesn't work on macos => see explaination in init_screen() method
+    # BUG: doesn't work on macos => see explaination in set_screen_to_display_simulator_at_startup() method
     def toggleScreenUsedForFullscreen(self):
         display = pyglet.canvas.get_display()
         screens= display.get_screens()
@@ -358,7 +377,7 @@ class Simulator(arcade.Window):
         self._screen=screens[self.current_screen_index]
 
 
-    def toggleFullScreen(self):
+    def toggleFullScreenOnCurrentScreen(self):
         # User hits 'f' Flip between full and not full screen.
         self.set_fullscreen(not self.fullscreen)
 
@@ -370,7 +389,7 @@ class Simulator(arcade.Window):
         # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
         #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
-        if platform.system().lower() == "darwin":
+        if self.fullscreen and platform.system().lower() == "darwin":
             self.maximize()
 
     def setFullScreen(self):
@@ -410,6 +429,12 @@ class Simulator(arcade.Window):
         """
 
         arcade.start_render()
+
+        # HACK: https://gamedev.stackexchange.com/questions/16024/secondary-monitor-freezes-game-window
+        # glEnable(GL_BLEND)
+        # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        # glEnable(GL_LINE_SMOOTH)
+        # glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
 
         self.obstacle_elements.draw()
         self.robot_elements.draw()

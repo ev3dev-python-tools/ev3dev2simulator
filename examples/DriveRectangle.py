@@ -39,8 +39,6 @@ tankDrive.on_for_seconds(SPEED_FORWARD, SPEED_FORWARD, 2)
 log("turn right")
 tankDrive.on_for_seconds(SPEED_FORWARD, SPEED_BACKWARD, TURN_TIME)
 
-x=1/0
-
 log("drive forward")
 tankDrive.on_for_seconds(SPEED_FORWARD, SPEED_FORWARD, 3)
 
