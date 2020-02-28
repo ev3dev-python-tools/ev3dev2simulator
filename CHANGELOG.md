@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2020-02-28
+
+### Added 
+  - added simulated bluetooth.py to ev3dev2simulator package. 
+  - Warning: to use the simulated bluetooth in the simulator make sure you have PyBluez uninstalled!!
+  
+### Fixed
+  - fullscreen switch when dragged: drag window to screen where you want it fullscreen, and then press F
+  - key T toggles fullscreen view between the two screens (if not at fullscreen, nothing happens)
+
+
 ## [1.3.1] - 2020-02-07
 
  ### Added

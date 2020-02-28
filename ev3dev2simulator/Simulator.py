@@ -11,9 +11,6 @@ from typing import Tuple
 import arcade
 from pymunk import Space
 
-# HACK: https://gamedev.stackexchange.com/questions/16024/secondary-monitor-freezes-game-window
-#from pyglet.gl import *
-
 # HACK: need to change dir to Simulator script's directory because resources are loaded relative from this directory
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
@@ -109,6 +106,12 @@ class Simulator(arcade.Window):
 
         self.check_for_activation()
 
+
+    def get_screens(self):
+        display = pyglet.canvas.get_display()
+        screens= display.get_screens()
+        return screens
+
     def set_screen_to_display_simulator_at_startup(self,use_second_screen_to_show_simulator):
         """ Set screen to use to display the simulator at startup. For windows this works only in fullscreen mode.
 
@@ -123,8 +126,7 @@ class Simulator(arcade.Window):
         current_screen_index=0
         if use_second_screen_to_show_simulator == True:
             current_screen_index=1
-        display = pyglet.canvas.get_display()
-        screens= display.get_screens()
+        screens= self.get_screens()
         for screen in screens: print(screen)
         num_screens=len(screens)
         if  num_screens== 1:
@@ -138,6 +140,8 @@ class Simulator(arcade.Window):
         def get_default_screen():
             """Get the default screen as specified by the user's operating system preferences."""
             return screens[self.current_screen_index]
+
+        display = pyglet.canvas.get_display()
         display.get_default_screen=get_default_screen
 
         # note:
@@ -303,7 +307,7 @@ class Simulator(arcade.Window):
         # Toggle fullscreen between screens (only works at fullscreen mode)
         if key == arcade.key.T:
             # User hits T. When at fullscreen, then switch screen used for fullscreen.
-            if self.fullscreen:
+            if self.fullscreen and len(self.get_screens()) > 1:
                 # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
                 self.set_fullscreen(False)
                 # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
@@ -327,15 +331,12 @@ class Simulator(arcade.Window):
     #toggle screen for fullscreen
     # BUG: doesn't work on macos => see explaination in set_screen_to_display_simulator_at_startup() method
     def toggleScreenUsedForFullscreen(self):
-        display = pyglet.canvas.get_display()
-        screens= display.get_screens()
-        num_screens=len(screens)
-        if num_screens== 1:
-            return
+
         # toggle only between screen 0 and 1 (other screens are ignored)
         self.current_screen_index=(self.current_screen_index+1)%2
 
         # override hidden screen parameter in window
+        screens= self.get_screens()
         self._screen=screens[self.current_screen_index]
 
     def updateCurrentScreen(self):
@@ -343,10 +344,8 @@ class Simulator(arcade.Window):
             current screen for displaying in fullscreen!!
         """
 
-        display = pyglet.canvas.get_display()
-        screens= display.get_screens()
-        num_screens=len(screens)
-        if num_screens== 1:
+        screens= self.get_screens()
+        if len(screens)== 1:
             return
 
         location=self.get_location()
@@ -429,12 +428,6 @@ class Simulator(arcade.Window):
         """
 
         arcade.start_render()
-
-        # HACK: https://gamedev.stackexchange.com/questions/16024/secondary-monitor-freezes-game-window
-        # glEnable(GL_BLEND)
-        # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        # glEnable(GL_LINE_SMOOTH)
-        # glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
 
         self.obstacle_elements.draw()
         self.robot_elements.draw()
