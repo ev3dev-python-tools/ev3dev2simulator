@@ -1,4 +1,13 @@
+import sys
 import unittest
+from unittest.mock import patch, MagicMock
+
+clientSocketModuleMock = MagicMock()
+sys.modules['ev3dev2simulator.connection.ClientSocket'] = clientSocketModuleMock
+# you cannot import ClientSocket, since that sets up a connection
+
+clientSocketMock = MagicMock()
+clientSocketModuleMock.get_client_socket = lambda: clientSocketMock
 
 from ev3dev2.sound import Sound
 
@@ -16,6 +25,8 @@ class SoundTest(unittest.TestCase):
         spkr.play_note("E4", 0.5)
         spkr.play_note("F4", 0.5)
         spkr.play_note("G4", 0.5)
+        print(clientSocketMock.method_calls)
+
 
     def test_play_song(self):
         spkr = Sound()
