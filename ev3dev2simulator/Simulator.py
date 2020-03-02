@@ -41,7 +41,7 @@ class Simulator(arcade.Window):
         self.check_for_unique_instance()
 
         self.robot_state = robot_state
-        self.init_screen(use_second_screen_to_show_simulator)
+        self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
         self.scaling_multiplier = get_config().get_scale()
         self.large_sim_type = get_config().is_large_sim_type()
@@ -99,20 +99,35 @@ class Simulator(arcade.Window):
         self.setup()
 
         if show_fullscreen == True:
-            self.toggleFullScreen()
+            self.toggleFullScreenOnCurrentScreen()
 
         if show_maximized == True:
             self.maximize()
 
         self.check_for_activation()
 
-    def init_screen(self,use_second_screen_to_show_simulator):
+
+    def get_screens(self):
+        display = pyglet.canvas.get_display()
+        screens= display.get_screens()
+        return screens
+
+    def set_screen_to_display_simulator_at_startup(self,use_second_screen_to_show_simulator):
+        """ Set screen to use to display the simulator at startup. For windows this works only in fullscreen mode.
+
+           By default set current screen to show simulator, but if use_second_screen_to_show_simulator==True
+           then change screen to other screen.
+
+           On MacOS this works for both fullscreen and none-fullscreen mode.
+           On Windows this only works for fullscreen mode. For none-fullscreen always the first screen is used.
+        """
+
         # get current_screen_index
         current_screen_index=0
         if use_second_screen_to_show_simulator == True:
             current_screen_index=1
-        display = pyglet.canvas.get_display()
-        screens= display.get_screens()
+        screens= self.get_screens()
+        for screen in screens: print(screen)
         num_screens=len(screens)
         if  num_screens== 1:
             current_screen_index=0
@@ -125,6 +140,8 @@ class Simulator(arcade.Window):
         def get_default_screen():
             """Get the default screen as specified by the user's operating system preferences."""
             return screens[self.current_screen_index]
+
+        display = pyglet.canvas.get_display()
         display.get_default_screen=get_default_screen
 
         # note:
@@ -147,10 +164,12 @@ class Simulator(arcade.Window):
 
 
     def check_for_unique_instance(self):
+        """ Detect whether an other instance is already running. If so then trigger the
+            activation for the other instance and terminate this instance.
+        """
 
         tmpdir=tempfile.gettempdir()
         self.pidfile = os.path.join(tmpdir,"ev3dev2simulator.pid")
-        #print("pidfile:  " + self.pidfile,file=sys.stderr)
 
         self.pid = str(os.getpid())
         f=open(self.pidfile, 'w')
@@ -164,12 +183,17 @@ class Simulator(arcade.Window):
         line=file.readline()
         file.close()
         read_pid=line.rstrip()
-        #print("in check; pid:  " + self.pid + " ,read_pid:  " + read_pid,file=sys.stderr)
         if read_pid != self.pid:
             # other process already running
             sys.exit()
 
     def check_for_activation(self):
+        """ checks each interval whether the simulator windows must be activated (bring to front)
+
+            note: activation can happen when one tries to start another instance of the simulator,
+                  and that instance detects an instance is already running. It then triggers the
+                  activation for the other instance and terminates itself.
+        """
         from pyglet import clock
 
         def callback(dt):
@@ -177,7 +201,6 @@ class Simulator(arcade.Window):
             line=file.readline()
             file.close()
             read_pid=line.rstrip()
-            #print("in callback; pid:  " + self.pid + " ,read_pid:  " + read_pid,file=sys.stderr)
             if read_pid != self.pid:
 
                 # other simulator tries to start running
@@ -186,8 +209,8 @@ class Simulator(arcade.Window):
                 f.write(self.pid)
                 f.close()
 
-                platform= sys.platform.lower()
-                if platform.startswith('win'):
+                import platform
+                if platform.system().lower().startswith('win'):
                     self.windowsActivate()
                 else:
                     self.activate()
@@ -281,42 +304,80 @@ class Simulator(arcade.Window):
         if key == arcade.key.Q:
             self.on_close()
 
-        # Toggle fullscreen
+        # Toggle fullscreen between screens (only works at fullscreen mode)
         if key == arcade.key.T:
-            # # User hits T. Switch screen used for fullscreen.
-            # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
-            self.toggleScreenUsedForFullscreen()
+            # User hits T. When at fullscreen, then switch screen used for fullscreen.
+            if self.fullscreen and len(self.get_screens()) > 1:
+                # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
+                self.set_fullscreen(False)
+                # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
+                self.toggleScreenUsedForFullscreen()
+                self.setFullScreen()
 
         # Maximize window
         # note: is toggle on macos, but not on windows
         if key == arcade.key.M:
              self.maximize()
 
-        # Fullscreen
+        # Toggle between Fullscreen and window
         #   keeps viewport coordinates the same   STRETCHED (FULLSCREEN)
         #   Instead of a one-to-one mapping to screen size, we use stretch/squash window to match the constants.
         #   src: http://arcade.academy/examples/full_screen_example.html
         if key == arcade.key.F:
-            self.toggleFullScreen()
+            self.updateCurrentScreen()
+            self.toggleFullScreenOnCurrentScreen()
 
 
     #toggle screen for fullscreen
-    # BUG: doesn't work on macos => see explaination in init_screen() method
+    # BUG: doesn't work on macos => see explaination in set_screen_to_display_simulator_at_startup() method
     def toggleScreenUsedForFullscreen(self):
-        display = pyglet.canvas.get_display()
-        screens= display.get_screens()
-        num_screens=len(screens)
-        if num_screens== 1:
-            return
+
         # toggle only between screen 0 and 1 (other screens are ignored)
         self.current_screen_index=(self.current_screen_index+1)%2
 
         # override hidden screen parameter in window
+        screens= self.get_screens()
         self._screen=screens[self.current_screen_index]
 
-    def toggleFullScreen(self):
+    def updateCurrentScreen(self):
+        """ using the windows position and size we determine on which screen it is currently displayed and make that
+            current screen for displaying in fullscreen!!
+        """
+
+        screens= self.get_screens()
+        if len(screens)== 1:
+            return
+
+        location=self.get_location()
+        topleft_x=location[0]
+        topleft_y=location[1]
+        size=self.get_size()
+        win_width=size[0]
+        win_height=size[1]
+
+        done=False
+        locations=[location,(topleft_x+win_width,topleft_y),(topleft_x,topleft_y+win_height),(topleft_x+win_width,topleft_y+win_height)]
+        for location in locations:
+            if done:
+                break
+            loc_x=location[0]
+            loc_y=location[1]
+            num = 0
+            for screen in screens:
+                within_screen_width=  (loc_x >= screen.x) and (loc_x < (screen.x+screen.width))
+                within_screen_height=  (loc_y >= screen.y) and (loc_y < (screen.y+screen.height))
+                if within_screen_width and within_screen_height:
+                    self.current_screen_index=num
+                    done=True
+                    break
+                num=num+1
+
+        # override hidden screen parameter in window
+        self._screen=screens[self.current_screen_index]
+
+
+    def toggleFullScreenOnCurrentScreen(self):
         # User hits 'f' Flip between full and not full screen.
-        #self.set_fullscreen(not self.fullscreen,self.screen_width*2, self.screen_height*2)
         self.set_fullscreen(not self.fullscreen)
 
         # Instead of a one-to-one mapping, stretch/squash window to match the
@@ -327,7 +388,22 @@ class Simulator(arcade.Window):
         # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
         #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
-        if platform.system() == "darwin":
+        if self.fullscreen and platform.system().lower() == "darwin":
+            self.maximize()
+
+    def setFullScreen(self):
+        #self.fullscreen=True
+        self.set_fullscreen(True)
+
+        # Instead of a one-to-one mapping, stretch/squash window to match the
+        # constants. This does NOT respect aspect ratio. You'd need to
+        # do a bit of math for that.
+        self.set_viewport(0, self.screen_width, 0, self.screen_height)
+
+        # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
+        #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
+        import platform
+        if platform.system().lower() == "darwin":
             self.maximize()
 
 

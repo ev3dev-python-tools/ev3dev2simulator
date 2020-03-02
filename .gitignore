@@ -1,7 +1,9 @@
 .idea/
+build/
 venv/
 *.iml
-**/__pycache__
+__pycache__/
+.DS_Store
 *.sw?
-/dist
+/dist/
 *.egg-info/

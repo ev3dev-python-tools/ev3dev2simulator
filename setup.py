@@ -3,9 +3,11 @@ import os.path
 import sys
 
 
+from ev3dev2simulator.version import __version__ as simversion
+
 setup(
       name="ev3dev2simulator",
-      version="1.3.1",
+      version=simversion,
       description="EV3 simulator for the ev3dev2 library",
       long_description="""
 Simulator for an EV3 robot; a program using the ev3dev2 API can run both on the rover and on the simulator without any modifications to the code.
@@ -45,7 +47,8 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
       python_requires=">=3.6",
       install_requires=['ev3devlogging','arcade==2.1.3','pyobjc;sys.platform=="darwin"','pyyaml','pymunk',
                         'simpleaudio', 'pyttsx3', 'numpy'],
-      packages=find_packages(),
+      py_modules=["bluetooth"],
+      packages=find_packages(exclude=['test','test.*','*.test.*',]),
       package_data={"ev3dev2simulator": ["config/*","assets/images/*"] },
       entry_points={
         'console_scripts': [
