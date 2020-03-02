@@ -63,15 +63,15 @@ class SoundConnector:
 
 
     def speak(self, text, espeak_opts, desired_volume, play_type):
+        duration = len(text.split()) / 200 * 60  # based on 200 words per minute as described in the tts docs
         try:
             engine = tts.init()
+            engine.setProperty('volume', desired_volume / 100.0)
+
+            engine.say(text)
+            engine.runAndWait()
         except OSError:
             print("Please make sure you have installed the required text to speech library such as espeak for Linux")
-        duration = len(text.split()) / 200 * 60  # based on 200 words per minute as described in the tts docs
-        engine.setProperty('volume', desired_volume / 100.0)
-
-        engine.say(text)
-        engine.runAndWait()
 
         command = SoundCommand("saying: " + text, duration, 'speak')
         return self.client_socket.send_sound_command(command)
