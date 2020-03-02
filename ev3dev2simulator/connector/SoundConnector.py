@@ -35,7 +35,7 @@ class SoundConnector:
             play_obj = wave_obj.play()
             if blocking:
                 play_obj.wait_done()  # Wait until sound has finished playing
-        except sa.SimpleaudioError:
+        except:
             print("An error occurred when trying to play a file. Ignoring to keep simulation running")
 
 
@@ -57,13 +57,15 @@ class SoundConnector:
             audio = note * (2 ** 15 - 1) / np.max(np.abs(note))
             audio = audio.astype(np.int16)
 
-            # Start playback
-            play_obj = sa.play_buffer(audio, 1, 2, fs)
-
             command = SoundCommand("playing note with frequency: " + str(fs), duration, "note")
             self.client_socket.send_sound_command(command)
-            # Wait for playback to finish before exiting
-            play_obj.wait_done()
+
+            try:
+                # Start playback
+                play_obj = sa.play_buffer(audio, 1, 2, fs)
+                play_obj.wait_done()
+            except:
+                print("An error occurred when trying to play a file. Ignoring to keep simulation running")
 
             sleep(delay / 1000.0)
 
