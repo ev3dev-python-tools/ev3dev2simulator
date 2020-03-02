@@ -7,7 +7,7 @@ from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
 import simpleaudio as sa
 import pyttsx3 as tts
 import numpy as np
-
+import wave
 
 class SoundConnector:
     """
@@ -21,33 +21,40 @@ class SoundConnector:
         pass
 
     def play_file(self, file_url: str, blocking: bool = True):
-        print("load")
-        wave_obj = sa.WaveObject.from_wave_file(file_url)
-        type(wave_obj)
-        command = SoundCommand("playing file: " + file_url, 1, "file")
+        """
+        Play a wav file and send a SoundCommand to the simulator with the given file url.
+        """
+        wave_read = wave.open(file_url, 'rb')
+        duration = wave_read.getnframes() / wave_read.getframerate()
+        wave_obj = sa.WaveObject.from_wave_read(wave_read)
+        wave_read.close()
+
+        command = SoundCommand("playing file: " + file_url, duration, "file")
         self.client_socket.send_sound_command(command)
-        play_obj = wave_obj.play()
-        if blocking:
-            play_obj.wait_done()  # Wait until sound has finished playing
+        try:
+            play_obj = wave_obj.play()
+            if blocking:
+                play_obj.wait_done()  # Wait until sound has finished playing
+        except sa.SimpleaudioError:
+            print("An error occurred when trying to play a file. Ignoring to keep simulation running")
+
+
 
     def play_tone_sequence(self, *args) -> Any:
+        """
+        Play a tone sequence and send a SoundCommand to the simulator for each tone.
+        """
         argList = list(args[0])[0]
         for lst in argList:
-            print(lst)
             frequency = lst[0]
-            duration = float(lst[1] / 1000.0)
+            duration = lst[1] / 1000.0
             delay = lst[2]
-            """
-            Create and send a SoundCommand to be send to the simulator with the given text to speak.
-            """
 
-            fs = 44100  # 44100 samples per second
-            t = np.linspace(0, duration, duration * fs, False)
+            fs = 44100
+            t = np.linspace(0, duration, int(duration * fs), False)
             note = np.sin(frequency * t * 2 * np.pi)
 
-            # Ensure that highest value is in 16-bit range
             audio = note * (2 ** 15 - 1) / np.max(np.abs(note))
-            # Convert to 16-bit data
             audio = audio.astype(np.int16)
 
             # Start playback
@@ -63,6 +70,14 @@ class SoundConnector:
 
 
     def speak(self, text, espeak_opts, desired_volume, play_type):
+        """
+        Play a text-to-speech file and send a SoundCommand to the simulator with the said text.
+
+        Makes use of the pyttsx3 library.
+        - Windows users need to install pypiwin32, installed by: pip install pypiwin32
+        - Linux users need to install espeak, installed by: sudo apt-get install espeak
+        - Mac users do not need to install any additional software.
+        """
         duration = len(text.split()) / 200 * 60  # based on 200 words per minute as described in the tts docs
         try:
             engine = tts.init()
