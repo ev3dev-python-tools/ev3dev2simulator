@@ -1,8 +1,11 @@
 from time import sleep
 from typing import Any
+import threading
 
 from ev3dev2simulator.connection.ClientSocket import get_client_socket
 from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
+
+from simpleaudio._simpleaudio import SimpleaudioError
 
 import simpleaudio as sa
 import pyttsx3 as tts
@@ -31,33 +34,7 @@ class SoundConnector:
         self.client_socket = get_client_socket()
         pass
 
-    def play_file(self, wav_file: str, volume: int, play_type: int):
-        """
-        Play a wav file and send a SoundCommand to the simulator with the given file url.
-        :param string wav_file: The sound file path
-        :param int volume: The play volume, in percent of maximum volume
-        :param play_type: The behavior of ``play_file`` once playback has been initiated
-        :type play_type: ``SoundConnector.PLAY_WAIT_FOR_COMPLETE``, ``SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE`` or ``SoundConnector.PLAY_LOOP``
-        :return: returns ``None``
-        """
-        wave_read = wave.open(wav_file, 'rb')
-        duration = wave_read.getnframes() / wave_read.getframerate()
-        wave_obj = sa.WaveObject.from_wave_read(wave_read)
-        wave_read.close()
-
-        command = SoundCommand("playing file: " + wav_file, duration, "file")
-        self.client_socket.send_sound_command(command)
-        try:
-            play_obj = wave_obj.play()
-            if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
-                play_obj.wait_done()  # Wait until sound has finished playing
-        except:
-            print("An error occurred when trying to play a file. Ignoring to keep simulation running")
-        return None
-    def play_tone_sequence(self, *args, play_type: int) -> Any:
-        """
-        Play a tone sequence and send a SoundCommand to the simulator for each tone.
-        """
+    def linux_beep(self, *args) -> Any:
         argList = list(args[0])[0]
         for lst in argList:
             frequency = lst[0]
@@ -78,12 +55,64 @@ class SoundConnector:
                 # Start playback
                 play_obj = sa.play_buffer(audio, 1, 2, fs)
                 play_obj.wait_done()
-            except:
+                sleep(delay / 1000.0)
+            except SimpleaudioError:
                 print("An error occurred when trying to play a file. Ignoring to keep simulation running")
 
-            sleep(delay / 1000.0)
+    def play_file(self, wav_file: str, volume: int, play_type: int) -> None:
+        """
+        Play a wav file and send a SoundCommand to the simulator with the given file url.
+        :param string wav_file: The sound file path
+        :param int volume: The play volume, in percent of maximum volume
+        :param play_type: The behavior of ``play_file`` once playback has been initiated
+        :type play_type: ``SoundConnector.PLAY_WAIT_FOR_COMPLETE``, ``SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE`` or ``SoundConnector.PLAY_LOOP``
+        :return: returns ``None``
+        """
+        wave_read = wave.open(wav_file, 'rb')
+        duration = wave_read.getnframes() / wave_read.getframerate()
+        wave_obj = sa.WaveObject.from_wave_read(wave_read)
+        wave_read.close()
 
-    def speak(self, text, espeak_opts, desired_volume: int, play_type: int):
+        command = SoundCommand("playing file: " + wav_file, duration, "file")
+        self.client_socket.send_sound_command(command)
+        try:
+            play_obj = wave_obj.play()
+            if play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
+                return
+
+            play_obj.wait_done()  # Wait until sound has finished playing
+            if play_type == SoundConnector.PLAY_LOOP:
+                self.play_file(wav_file, volume, play_type)
+
+        except SimpleaudioError:
+            print("An error occurred when trying to play a file. Ignoring to keep simulation running")
+
+    def beep(self, *args, play_type: int) -> None:
+        """
+        Play a tone sequence and send a SoundCommand to the simulator for each tone.
+        """
+        x = threading.Thread(target=self.linux_beep, args=args)
+        x.start()
+
+        if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
+            x.join()
+            return None
+        else:
+            return x
+
+    def speak(self, text, espeak_opts, desired_volume: int, play_type: int) -> None:
+        if play_type == SoundConnector.PLAY_LOOP:
+            while True:
+                self.tts(text, espeak_opts, desired_volume)
+        elif play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
+            x = threading.Thread(target=self.tts, args=(text, espeak_opts, desired_volume,))
+            x.start()
+            print("after 1")
+        else:
+            self.tts(text, espeak_opts, desired_volume)
+            print("after 2")
+
+    def tts(self, text, espeak_opts, desired_volume: int) -> None:
         """
         Play a text-to-speech file and send a SoundCommand to the simulator with the said text.
 
@@ -93,14 +122,17 @@ class SoundConnector:
         - Mac users do not need to install any additional software.
         """
         duration = len(text.split()) / 200 * 60  # based on 200 words per minute as described in the tts docs
+
+        command = SoundCommand("saying: " + text, duration, 'speak')
+        self.client_socket.send_sound_command(command)
+
         try:
             engine = tts.init()
             engine.setProperty('volume', desired_volume / 100.0)
-
             engine.say(text)
             engine.runAndWait()
         except OSError:
-            print("Please make sure you have installed the required text to speech library such as espeak for Linux")
-
-        command = SoundCommand("saying: " + text, duration, 'speak')
-        return self.client_socket.send_sound_command(command)
+            print("Warning: please make sure you have installed the required text to speech library such as espeak "
+                  "for Linux")
+        except RuntimeError:
+            print("Warning: 'speak' called before last text-to-speech was handled")

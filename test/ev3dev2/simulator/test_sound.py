@@ -1,5 +1,6 @@
 import sys
 import unittest
+
 from unittest.mock import patch, MagicMock
 
 clientSocketModuleMock = MagicMock()
@@ -11,7 +12,17 @@ clientSocketModuleMock.get_client_socket = lambda: clientSocketMock
 
 from ev3dev2.sound import Sound
 
+
 class SoundTest(unittest.TestCase):
+    def test_beep(self):
+        spkr = Sound()
+        spkr.beep(play_type=1)
+
+    def test_play_tone(self):
+        spkr = Sound()
+        spkr.play_tone(500, duration=0.3, volume=50, play_type=2)
+        spkr.play_tone(1500, duration=0.3, volume=50, play_type=0)
+
     def test_play_note(self):
         spkr = Sound()
         spkr.play_note("C4", 0.5)
@@ -54,11 +65,14 @@ class SoundTest(unittest.TestCase):
 
     def test_play_file(self):
         spkr = Sound()
-        spkr.play_file('inputFiles/bark.wav')
+        spkr.play_file('inputFiles/bark.wav', play_type=0)
 
     def test_speak(self):
         spkr = Sound()
-        spkr.speak("test", volume=100)
+        spkr.speak("test test test test test", volume=100, play_type=1)
+        spkr.play_note("C4", 5)
+        spkr.speak("kekeroni", volume=100, play_type=0)
+
 
 if __name__ == '__main__':
     unittest.main()

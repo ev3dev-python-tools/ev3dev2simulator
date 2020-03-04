@@ -150,8 +150,8 @@ class Sound(object):
         .. _`beep man page`: https://linux.die.net/man/1/beep
         .. _`linux beep music`: https://www.google.com/search?q=linux+beep+music
         """
-
-        pass
+        args = ([(440.0, 200, 100)],)  # args from beep are not supported
+        self.connector.beep(args, play_type=play_type)  # CHANGE: removed and functionality moved to connector
 
     def tone(self, *args, play_type=PLAY_WAIT_FOR_COMPLETE):
         """
@@ -193,8 +193,7 @@ class Sound(object):
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
-        self.connector.play_tone_sequence(args,
-                                          play_type=play_type)  # CHANGE: removed and functionality moved to connector
+        self.connector.beep(args, play_type=play_type)  # CHANGE: removed and functionality moved to connector
 
     def play_tone(self, frequency, duration, delay=0.0, volume=100,
                   play_type=PLAY_WAIT_FOR_COMPLETE):
