@@ -4,6 +4,8 @@ import sys
 
 from ev3dev2simulator.version import __version__ as simversion
 
+from ev3dev2simulator.version import __version__ as simversion
+
 setup(
     name="ev3dev2simulator",
     version=simversion,
@@ -50,6 +52,7 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
     packages=find_packages(exclude=['test', 'test.*', '*.test.*', ]),
     package_data={"ev3dev2simulator": ["config/*", "assets/images/*"]},
     entry_points={
+
         'console_scripts': [
             'ev3dev2simulator = ev3dev2simulator.__main__:main'
         ]
