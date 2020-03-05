@@ -34,12 +34,11 @@ class SoundConnector:
         self.client_socket = get_client_socket()
         pass
 
-    def linux_beep(self, *args) -> Any:
-        argList = list(args[0])[0]
-        for lst in argList:
-            frequency = lst[0]
-            duration = lst[1] / 1000.0
-            delay = lst[2]
+    def linux_beep(self, tone_sequence) -> Any:
+        for tone in tone_sequence:
+            frequency = tone.get('frequency', 440.0)  # defaults to 440 hz which is the default of beep
+            duration = tone.get('duration', 200) / 1000.0  # defaults to 200 ms which is the default of beep
+            delay = tone.get('delay', 100)  # defaults to 100 ms which is the default of beep
 
             fs = 44100
             t = np.linspace(0, duration, int(duration * fs), False)
@@ -87,11 +86,11 @@ class SoundConnector:
         except SimpleaudioError:
             print("An error occurred when trying to play a file. Ignoring to keep simulation running")
 
-    def beep(self, *args, play_type: int) -> None:
+    def beep(self, args, play_type: int) -> None:
         """
         Play a tone sequence and send a SoundCommand to the simulator for each tone.
         """
-        x = threading.Thread(target=self.linux_beep, args=args)
+        x = threading.Thread(target=self.linux_beep, args=(args,))
         x.start()
 
         if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:

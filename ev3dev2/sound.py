@@ -92,7 +92,7 @@ class Sound(object):
         PLAY_LOOP
     )
 
-    def __init__(self):
+    def __init__(self):  # CHANGE: added setup of connector
         self.connector = SoundConnector()
 
     def _validate_play_type(self, play_type):
@@ -139,7 +139,7 @@ class Sound(object):
                 else:
                     raise Exception("invalid play_type " % play_type)
 
-    def beep(self, args='', play_type=PLAY_WAIT_FOR_COMPLETE):
+    def beep(self, args=[{}], play_type=PLAY_WAIT_FOR_COMPLETE):
         """
         Call beep command with the provided arguments (if any).
         See `beep man page`_ and google `linux beep music`_ for inspiration.
@@ -150,7 +150,7 @@ class Sound(object):
         .. _`beep man page`: https://linux.die.net/man/1/beep
         .. _`linux beep music`: https://www.google.com/search?q=linux+beep+music
         """
-        args = ([(440.0, 200, 100)],)  # args from beep are not supported
+
         self.connector.beep(args, play_type=play_type)  # CHANGE: removed and functionality moved to connector
 
     def tone(self, *args, play_type=PLAY_WAIT_FOR_COMPLETE):
@@ -193,7 +193,27 @@ class Sound(object):
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
-        self.connector.beep(args, play_type=play_type)  # CHANGE: removed and functionality moved to connector
+
+        def play_tone_sequence(tone_sequence):  # CHANGE: returns object list instead of string
+            def beep_args(frequency=None, duration=None, delay=None):
+                args = {}
+                if frequency is not None:
+                    args['frequency'] = frequency
+                if duration is not None:
+                    args['duration'] = duration
+                if delay is not None:
+                    args['delay'] = delay
+
+                return args
+
+            return self.beep(([beep_args(*t) for t in tone_sequence]), play_type=play_type)
+
+        if len(args) == 1:
+            return play_tone_sequence(args[0])
+        elif len(args) == 2:
+            return play_tone_sequence([(args[0], args[1])])
+        else:
+            raise Exception("Unsupported number of parameters in Sound.tone(): expected 1 or 2, got " + str(len(args)))
 
     def play_tone(self, frequency, duration, delay=0.0, volume=100,
                   play_type=PLAY_WAIT_FOR_COMPLETE):
@@ -254,7 +274,18 @@ class Sound(object):
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
-        self.connector.play_file(wav_file, volume, play_type)
+        if not 0 < volume <= 100:
+            raise ValueError('invalid volume (%s)' % volume)
+
+        if not wav_file.endswith(".wav"):
+            raise ValueError('invalid sound file (%s), only .wav files are supported' % wav_file)
+
+        if not os.path.exists(wav_file):
+            raise ValueError("%s does not exist" % wav_file)
+
+        self._validate_play_type(play_type)
+        self.set_volume(volume)
+        self.connector.play_file(wav_file, volume, play_type)  # CHANGE: replaced direct call to /bin/aplay
 
     def speak(self, text, espeak_opts='-a 200 -s 130', volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Speak the given text aloud.
