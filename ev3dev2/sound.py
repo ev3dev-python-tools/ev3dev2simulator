@@ -154,6 +154,7 @@ class Sound(object):
         self.connector.beep(args, play_type=play_type)  # CHANGE: removed and functionality moved to connector
 
     def tone(self, *args, play_type=PLAY_WAIT_FOR_COMPLETE):
+        print(args)
         """
         .. rubric:: tone(tone_sequence)
         Play tone sequence.
@@ -432,7 +433,7 @@ class Sound(object):
             return freq, duration_ms, delay_ms  # CHANGE does create string, but directly returns values
 
         try:
-            return self.tone([beep_args(note, value) for (note, value) in song], Sound.PLAY_WAIT_FOR_COMPLETE)  #
+            return self.tone([beep_args(note, value) for (note, value) in song], play_type=Sound.PLAY_WAIT_FOR_COMPLETE)
             # CHANGE does not call beep, but the tone function
         except KeyError as e:
             raise ValueError('invalid note (%s)' % e)
