@@ -153,8 +153,8 @@ class Sound(object):
 
         self.connector.beep(args, play_type=play_type)  # CHANGE: removed and functionality moved to connector
 
-    def tone(self, *args, play_type=PLAY_WAIT_FOR_COMPLETE):
-        print(args)
+    def \
+            tone(self, *args, play_type=PLAY_WAIT_FOR_COMPLETE):
         """
         .. rubric:: tone(tone_sequence)
         Play tone sequence.

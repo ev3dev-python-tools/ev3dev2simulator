@@ -90,14 +90,20 @@ class SoundConnector:
         """
         Play a tone sequence and send a SoundCommand to the simulator for each tone.
         """
-        x = threading.Thread(target=self.linux_beep, args=(args,))
-        x.start()
-
-        if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
-            x.join()
-            return None
+        if play_type == SoundConnector.PLAY_LOOP:
+            while True:
+                x = threading.Thread(target=self.linux_beep, args=(args,))
+                x.start()
+                x.join()
         else:
-            return x
+            x = threading.Thread(target=self.linux_beep, args=(args,))
+            x.start()
+
+            if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
+                x.join()
+                return None
+            else:
+                return x
 
     def speak(self, text, espeak_opts, desired_volume: int, play_type: int) -> None:
         if play_type == SoundConnector.PLAY_LOOP:
@@ -106,10 +112,8 @@ class SoundConnector:
         elif play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
             x = threading.Thread(target=self.tts, args=(text, espeak_opts, desired_volume,))
             x.start()
-            print("after 1")
         else:
             self.tts(text, espeak_opts, desired_volume)
-            print("after 2")
 
     def tts(self, text, espeak_opts, desired_volume: int) -> None:
         """
