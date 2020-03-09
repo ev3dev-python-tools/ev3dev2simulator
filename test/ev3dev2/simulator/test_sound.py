@@ -21,16 +21,20 @@ class SoundTest(unittest.TestCase):
 
     def test_beep(self):
         spkr = Sound()
+        spkr.connector.play_actual_sound = False
         spkr.beep(play_type=1)
         spkr.beep(play_type=0)
 
         self.assertEqual(len(clientSocketMock.mock_calls), 2)
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
         self.assertEqual(fn_name, 'send_sound_command')
-        self.assertDictEqual(args[0].serialize(), {'type': 'SoundCommand', 'duration': 0.2, 'message': 'playing note with frequency: 440.0', 'soundType': 'note'})
+        self.assertDictEqual(args[0].serialize(),
+                             {'type': 'SoundCommand', 'duration': 0.2, 'message': 'Playing note with frequency: 440.0',
+                              'soundType': 'note'})
 
     def test_play_tone(self):
         spkr = Sound()
+        spkr.connector.play_actual_sound = False
         spkr.play_tone(500, duration=0.3, volume=50, play_type=1)
         sleep(0.3)  # prevents call order switches
         spkr.play_tone(1500, duration=0.4, volume=50, play_type=0)
@@ -39,17 +43,18 @@ class SoundTest(unittest.TestCase):
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
         self.assertEqual(fn_name, 'send_sound_command')
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.3, 'message': 'playing note with frequency: 500',
+                             {'type': 'SoundCommand', 'duration': 0.3, 'message': 'Playing note with frequency: 500',
                               'soundType': 'note'})
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[1]
         self.assertEqual(fn_name, 'send_sound_command')
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.4, 'message': 'playing note with frequency: 1500',
+                             {'type': 'SoundCommand', 'duration': 0.4, 'message': 'Playing note with frequency: 1500',
                               'soundType': 'note'})
 
     def test_tone(self):
         spkr = Sound()
+        spkr.connector.play_actual_sound = False
         spkr.tone([
             (392, 350, 100), (492, 350), (292,), ()
         ])
@@ -59,26 +64,27 @@ class SoundTest(unittest.TestCase):
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
         self.assertEqual(fn_name, 'send_sound_command')
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.350, 'message': 'playing note with frequency: 392',
+                             {'type': 'SoundCommand', 'duration': 0.350, 'message': 'Playing note with frequency: 392',
                               'soundType': 'note'})
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[1]
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.350, 'message': 'playing note with frequency: 492',
+                             {'type': 'SoundCommand', 'duration': 0.350, 'message': 'Playing note with frequency: 492',
                               'soundType': 'note'})
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[2]
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.2, 'message': 'playing note with frequency: 292',
+                             {'type': 'SoundCommand', 'duration': 0.2, 'message': 'Playing note with frequency: 292',
                               'soundType': 'note'})
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[3]
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.2, 'message': 'playing note with frequency: 440.0',
+                             {'type': 'SoundCommand', 'duration': 0.2, 'message': 'Playing note with frequency: 440.0',
                               'soundType': 'note'})
 
     def test_play_note(self):
         spkr = Sound()
+        spkr.connector.play_actual_sound = False
         spkr.play_note("C4", 0.5)
         spkr.play_note("D4", 0.3)
         spkr.play_note("E4", 0.01)
@@ -88,12 +94,12 @@ class SoundTest(unittest.TestCase):
         fn_name, args, kwargs = clientSocketMock.mock_calls[2]
         self.assertEqual(fn_name, 'send_sound_command')
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.01, 'message': 'playing note with frequency: 330',
+                             {'type': 'SoundCommand', 'duration': 0.01, 'message': 'Playing note with frequency: 330',
                               'soundType': 'note'})
-    #
-    #
+
     def test_play_song(self):
         spkr = Sound()
+        spkr.connector.play_actual_sound = False
         spkr.play_song((
             ('G4', 'h'),  # meas 1
             ('D5', 'h'),
@@ -109,37 +115,62 @@ class SoundTest(unittest.TestCase):
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
         self.assertEqual(fn_name, 'send_sound_command')
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.8, 'message': 'playing note with frequency: 392',
+                             {'type': 'SoundCommand', 'duration': 0.8, 'message': 'Playing note with frequency: 392',
+                              'soundType': 'note'})
+
+        fn_name, args, kwargs = clientSocketMock.mock_calls[1]
+        self.assertDictEqual(args[0].serialize(),
+                             {'type': 'SoundCommand', 'duration': 0.8, 'message': 'Playing note with frequency: 587',
                               'soundType': 'note'})
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[2]
+        self.assertDictEqual(args[0].serialize(),
+                             {'type': 'SoundCommand', 'duration': (0.8/4) * 2/3,  # a triplet
+                              'message': 'Playing note with frequency: 523',
+                              'soundType': 'note'})
+
+    def test_play_file(self):
+        spkr = Sound()
+        spkr.connector.play_actual_sound = False
+        spkr.play_file('inputFiles/bark.wav', play_type=0)
+
+        self.assertEqual(len(clientSocketMock.mock_calls), 1)
+
+        fn_name, args, kwargs = clientSocketMock.mock_calls[0]
+
         self.assertEqual(fn_name, 'send_sound_command')
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': 0.13333333333333333, 'message': 'playing note with frequency: 165',
-                              'soundType': 'note'})
-    #
-    # def test_play_file(self):
-    #     spkr = Sound()
-    #     spkr.play_file('inputFiles/bark.wav', play_type=0)
-    #
-    #     # Test for invalid path files
-    #     with self.assertRaises(ValueError) as cm:
-    #         spkr.play_file('file/that/does/not/exist.wav', play_type=0)
-    #
-    #     self.assertEqual(cm.exception.args[0], 'file/that/does/not/exist.wav does not exist')
-    #
-    #     # Test for wrong extensions
-    #     with self.assertRaises(ValueError) as cm:
-    #         spkr.play_file('inputFiles/bark', play_type=0)
-    #
-    #     self.assertEqual(cm.exception.args[0], 'invalid sound file (inputFiles/bark), only .wav files are supported')
-    #
-    # def test_speak(self):
-    #     spkr = Sound()
-    #     spkr.speak("test test test test test", volume=100, play_type=1)
-    #     spkr.play_note("C4", 2)
-    #     spkr.speak("kekeroni", volume=100, play_type=0)
+                             {'type': 'SoundCommand', 'duration': 3.0,
+                              'message': 'Playing file: ``inputFiles/bark.wav``',
+                              'soundType': 'file'})
 
+        # Test for invalid path files
+        with self.assertRaises(ValueError) as cm:
+            spkr.play_file('file/that/does/not/exist.wav', play_type=0)
+
+        self.assertEqual(cm.exception.args[0], 'file/that/does/not/exist.wav does not exist')
+
+        # Test for wrong extensions
+        with self.assertRaises(ValueError) as cm:
+            spkr.play_file('inputFiles/bark', play_type=0)
+
+        self.assertEqual(cm.exception.args[0], 'invalid sound file (inputFiles/bark), only .wav files are supported')
+
+
+    def test_speak(self):
+        spkr = Sound()
+        spkr.connector.play_actual_sound = False
+        spkr.speak("test test test test test", volume=100, play_type=1)
+        spkr.speak("kekeroni", volume=100, play_type=0)
+
+        self.assertEqual(len(clientSocketMock.mock_calls), 2)
+
+        fn_name, args, kwargs = clientSocketMock.mock_calls[0]
+        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertDictEqual(args[0].serialize(),
+                             {'type': 'SoundCommand', 'duration': 1.5,  # 200 words per minute, (5 / 200) * 60 = 1.5
+                              'message': 'Saying: ``test test test test test``',
+                              'soundType': 'speak'})
 
 if __name__ == '__main__':
     unittest.main()

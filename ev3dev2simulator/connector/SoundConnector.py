@@ -17,7 +17,7 @@ class SoundConnector:
     """
     The SoundConnector class provides a translation layer between the ev3dev2 Sound classes
     and the simulated robot.
-    This class is responsible for creating SoundCommands to be send to simulator.
+    This class is responsible for creating SoundCommands to be send to simulator and playing the sounds locally.
     """
 
     PLAY_WAIT_FOR_COMPLETE = 0  #: Play the sound and block until it is complete
@@ -30,11 +30,11 @@ class SoundConnector:
         PLAY_LOOP
     )
 
-    def __init__(self):
+    def __init__(self, play_actual_sound=True):
         self.client_socket = get_client_socket()
-        pass
+        self.play_actual_sound = play_actual_sound
 
-    def linux_beep(self, tone_sequence) -> Any:
+    def _linux_beep(self, tone_sequence) -> Any:
         for tone in tone_sequence:
             frequency = tone.get('frequency', 440.0)  # defaults to 440 hz which is the default of beep
             duration = tone.get('duration', 200) / 1000.0  # defaults to 200 ms which is the default of beep
@@ -47,16 +47,44 @@ class SoundConnector:
             audio = note * (2 ** 15 - 1) / np.max(np.abs(note))
             audio = audio.astype(np.int16)
 
-            command = SoundCommand("playing note with frequency: " + str(frequency), duration, "note")
+            command = SoundCommand("Playing note with frequency: " + str(frequency), duration, "note")
             self.client_socket.send_sound_command(command)
 
-            try:
-                # Start playback
-                play_obj = sa.play_buffer(audio, 1, 2, fs)
-                play_obj.wait_done()
-                sleep(delay / 1000.0)
-            except SimpleaudioError:
-                print("An error occurred when trying to play a file. Ignoring to keep simulation running")
+            if self.play_actual_sound:
+                try:
+                    # Start playback
+                    play_obj = sa.play_buffer(audio, 1, 2, fs)
+                    play_obj.wait_done()
+                except SimpleaudioError:
+                    print("An error occurred when trying to play a file. Ignoring to keep simulation running")
+            sleep(delay / 1000.0)
+
+    def beep(self, args, play_type: int) -> None:
+        """
+        Play a tone sequence and send a SoundCommand to the simulator for each tone.
+        Based on the Linux Beep command, but with an object as input instead of string arguments
+
+        :param object args: Any additional arguments as list of objects.
+            Example: ``[{frequency: 440.0, duration: 200, delay: 100}]``
+        :param play_type: The behavior of ``beep`` once playback has been initiated
+        :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or  ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
+        :return: ``None``
+        """
+
+        if play_type == SoundConnector.PLAY_LOOP:
+            while True:
+                x = threading.Thread(target=self._linux_beep, args=(args,))
+                x.start()
+                x.join()
+        else:
+            x = threading.Thread(target=self._linux_beep, args=(args,))
+            x.start()
+
+            if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
+                x.join()
+                return None
+            else:
+                return x
 
     def play_file(self, wav_file: str, volume: int, play_type: int) -> None:
         """
@@ -72,50 +100,23 @@ class SoundConnector:
         wave_obj = sa.WaveObject.from_wave_read(wave_read)
         wave_read.close()
 
-        command = SoundCommand("playing file: " + wav_file, duration, "file")
+        command = SoundCommand(f'Playing file: ``{wav_file}``', duration, "file")
         self.client_socket.send_sound_command(command)
-        try:
-            play_obj = wave_obj.play()
-            if play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
-                return
 
-            play_obj.wait_done()  # Wait until sound has finished playing
-            if play_type == SoundConnector.PLAY_LOOP:
-                self.play_file(wav_file, volume, play_type)
+        if self.play_actual_sound:
+            try:
+                play_obj = wave_obj.play()
+                if play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
+                    return
 
-        except SimpleaudioError:
-            print("An error occurred when trying to play a file. Ignoring to keep simulation running")
+                play_obj.wait_done()  # Wait until sound has finished playing
+                if play_type == SoundConnector.PLAY_LOOP:
+                    self.play_file(wav_file, volume, play_type)
 
-    def beep(self, args, play_type: int) -> None:
-        """
-        Play a tone sequence and send a SoundCommand to the simulator for each tone.
-        """
-        if play_type == SoundConnector.PLAY_LOOP:
-            while True:
-                x = threading.Thread(target=self.linux_beep, args=(args,))
-                x.start()
-                x.join()
-        else:
-            x = threading.Thread(target=self.linux_beep, args=(args,))
-            x.start()
-
-            if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
-                x.join()
-                return None
-            else:
-                return x
+            except SimpleaudioError:
+                print("An error occurred when trying to play a file. Ignoring to keep simulation running")
 
     def speak(self, text, espeak_opts, desired_volume: int, play_type: int) -> None:
-        if play_type == SoundConnector.PLAY_LOOP:
-            while True:
-                self.tts(text, espeak_opts, desired_volume)
-        elif play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
-            x = threading.Thread(target=self.tts, args=(text, espeak_opts, desired_volume,))
-            x.start()
-        else:
-            self.tts(text, espeak_opts, desired_volume)
-
-    def tts(self, text, espeak_opts, desired_volume: int) -> None:
         """
         Play a text-to-speech file and send a SoundCommand to the simulator with the said text.
 
@@ -123,19 +124,38 @@ class SoundConnector:
         - Windows users need to install pypiwin32, installed by: pip install pypiwin32
         - Linux users need to install espeak, installed by: sudo apt-get install espeak
         - Mac users do not need to install any additional software.
-        """
-        duration = len(text.split()) / 200 * 60  # based on 200 words per minute as described in the tts docs
 
-        command = SoundCommand("saying: " + text, duration, 'speak')
+        :param string text: The text to speak
+        :param string espeak_opts: ``espeak`` command options (advanced usage), NOT IN USE
+        :param int desired_volume: The play volume, in percent of maximum volume
+        :param play_type: The behavior of ``speak`` once playback has been initiated
+        :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
+        :return: ``None``
+        """
+
+        if play_type == SoundConnector.PLAY_LOOP:
+            while True:
+                self._tts(text, espeak_opts, desired_volume)
+        elif play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
+            x = threading.Thread(target=self._tts, args=(text, espeak_opts, desired_volume,))
+            x.start()
+        else:
+            self._tts(text, espeak_opts, desired_volume)
+
+    def _tts(self, text, espeak_opts, desired_volume: int) -> None:
+        duration = (len(text.split()) / 200) * 60  # based on 200 words per minute as described in the tts docs
+
+        command = SoundCommand(f'Saying: ``{text}``', duration, 'speak')
         self.client_socket.send_sound_command(command)
 
-        try:
-            engine = tts.init()
-            engine.setProperty('volume', desired_volume / 100.0)
-            engine.say(text)
-            engine.runAndWait()
-        except OSError:
-            print("Warning: please make sure you have installed the required text to speech library such as espeak "
-                  "for Linux")
-        except RuntimeError:
-            print("Warning: 'speak' called before last text-to-speech was handled")
+        if self.play_actual_sound:
+            try:
+                engine = tts.init()
+                engine.setProperty('volume', desired_volume / 100.0)
+                engine.say(text)
+                engine.runAndWait()
+            except OSError:
+                print("Warning: please make sure you have installed the required text to speech library such as espeak "
+                      "for Linux")
+            except RuntimeError:
+                print("Warning: 'speak' called before last text-to-speech was handled")
