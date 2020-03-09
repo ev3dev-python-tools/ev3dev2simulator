@@ -55,7 +55,7 @@ def get_command_processes(command):
     :return: a list of Popen objects
     """
 
-    pass
+    pass  # CHANGE: removed entire function
 
 
 class Sound(object):
@@ -92,15 +92,12 @@ class Sound(object):
         PLAY_LOOP
     )
 
-
-    def __init__(self):
+    def __init__(self):  # CHANGE: added setup of connector
         self.connector = SoundConnector()
-
 
     def _validate_play_type(self, play_type):
         assert play_type in self.PLAY_TYPES, \
             "Invalid play_type %s, must be one of %s" % (play_type, ','.join(str(t) for t in self.PLAY_TYPES))
-
 
     def _audio_command(self, command, play_type):
         if is_micropython():
@@ -142,8 +139,7 @@ class Sound(object):
                 else:
                     raise Exception("invalid play_type " % play_type)
 
-
-    def beep(self, args='', play_type=PLAY_WAIT_FOR_COMPLETE):
+    def beep(self, args=[{}], play_type=PLAY_WAIT_FOR_COMPLETE):
         """
         Call beep command with the provided arguments (if any).
         See `beep man page`_ and google `linux beep music`_ for inspiration.
@@ -155,8 +151,7 @@ class Sound(object):
         .. _`linux beep music`: https://www.google.com/search?q=linux+beep+music
         """
 
-        pass
-
+        self.connector.beep(args, play_type=play_type)  # CHANGE: removed and functionality moved to connector
 
     def tone(self, *args, play_type=PLAY_WAIT_FOR_COMPLETE):
         """
@@ -199,8 +194,26 @@ class Sound(object):
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
 
-        pass
+        def play_tone_sequence(tone_sequence):  # CHANGE: returns object list instead of string
+            def beep_args(frequency=None, duration=None, delay=None):
+                args = {}
+                if frequency is not None:
+                    args['frequency'] = frequency
+                if duration is not None:
+                    args['duration'] = duration
+                if delay is not None:
+                    args['delay'] = delay
 
+                return args
+
+            return self.beep(([beep_args(*t) for t in tone_sequence]), play_type=play_type)
+
+        if len(args) == 1:
+            return play_tone_sequence(args[0])
+        elif len(args) == 2:
+            return play_tone_sequence([(args[0], args[1])])
+        else:
+            raise Exception("Unsupported number of parameters in Sound.tone(): expected 1 or 2, got " + str(len(args)))
 
     def play_tone(self, frequency, duration, delay=0.0, volume=100,
                   play_type=PLAY_WAIT_FOR_COMPLETE):
@@ -214,9 +227,21 @@ class Sound(object):
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the PID of the underlying beep command; ``None`` otherwise
         :raises ValueError: if invalid parameter
         """
+        self._validate_play_type(play_type)
 
-        pass
+        if duration <= 0:
+            raise ValueError('invalid duration (%s)' % duration)
+        if delay < 0:
+            raise ValueError('invalid delay (%s)' % delay)
+        if not 0 < volume <= 100:
+            raise ValueError('invalid volume (%s)' % volume)
 
+        self.set_volume(volume)
+
+        duration_ms = int(duration * 1000)
+        delay_ms = int(delay * 1000)
+
+        self.tone([(frequency, duration_ms, delay_ms)], play_type=play_type)
 
     def play_note(self, note, duration, volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Plays a note, given by its name as defined in ``_NOTE_FREQUENCIES``.
@@ -228,9 +253,18 @@ class Sound(object):
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the PID of the underlying beep command; ``None`` otherwise
         :raises ValueError: is invalid parameter (note, duration,...)
         """
+        self._validate_play_type(play_type)
+        try:
+            freq = self._NOTE_FREQUENCIES.get(note.upper(), self._NOTE_FREQUENCIES[note])
+        except KeyError:
+            raise ValueError('invalid note (%s)' % note)
 
-        pass
+        if duration <= 0:
+            raise ValueError('invalid duration (%s)' % duration)
+        if not 0 < volume <= 100:
+            raise ValueError('invalid volume (%s)' % volume)
 
+        return self.play_tone(freq, duration=duration, volume=volume, play_type=play_type)
 
     def play_file(self, wav_file, volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Play a sound file (wav format) at a given volume.
@@ -240,9 +274,18 @@ class Sound(object):
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
+        if not 0 < volume <= 100:
+            raise ValueError('invalid volume (%s)' % volume)
 
-        pass
+        if not wav_file.endswith(".wav"):
+            raise ValueError('invalid sound file (%s), only .wav files are supported' % wav_file)
 
+        if not os.path.exists(wav_file):
+            raise ValueError("%s does not exist" % wav_file)
+
+        self._validate_play_type(play_type)
+        self.set_volume(volume)
+        self.connector.play_file(wav_file, volume, play_type)  # CHANGE: replaced direct call to /bin/aplay
 
     def speak(self, text, espeak_opts='-a 200 -s 130', volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Speak the given text aloud.
@@ -255,9 +298,8 @@ class Sound(object):
         :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
 
-        self.connector.speak(text)
+        self.connector.speak(text, espeak_opts, volume, play_type)
         return
-
 
     def _get_channel(self):
         """
@@ -280,7 +322,6 @@ class Sound(object):
 
         return self.channel
 
-
     def set_volume(self, pct, channel=None):
         """
         Sets the sound volume to the given percentage [0-100] by calling
@@ -290,8 +331,7 @@ class Sound(object):
         ``Playback`` channel, as that is the only channel on the EV3.
         """
 
-        pass
-
+        pass  # CHANGE: Not yet supported
 
     def get_volume(self, channel=None):
         """
@@ -302,8 +342,7 @@ class Sound(object):
         ``Playback`` channel, as that is the only channel on the EV3.
         """
 
-        pass
-
+        pass  # CHANGE: Not yet supported
 
     def play_song(self, song, tempo=120, delay=0.05):
         """ Plays a song provided as a list of tuples containing the note name and its
@@ -356,8 +395,47 @@ class Sound(object):
         :raises ValueError: if invalid note in song or invalid play parameters
         """
 
-        pass
+        if tempo <= 0:
+            raise ValueError('invalid tempo (%s)' % tempo)
+        if delay < 0:
+            raise ValueError('invalid delay (%s)' % delay)
 
+        delay_ms = int(delay * 1000)
+        meas_duration_ms = 60000 / tempo * 4  # we only support 4/4 bars, hence "* 4"
+
+        def beep_args(note, value):
+            """ Builds the arguments string for producing a beep matching
+            the requested note and value.
+            Args:
+                note (str): the note note and octave
+                value (str): the note value expression
+            Returns:
+                str: the arguments to be passed to the beep command
+            """
+            freq = self._NOTE_FREQUENCIES.get(note.upper(), self._NOTE_FREQUENCIES[note])
+
+            if '/' in value:
+                base, factor = value.split('/')
+                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] / float(factor)
+            elif '*' in value:
+                base, factor = value.split('*')
+                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] * float(factor)
+            elif value.endswith('.'):
+                base = value[:-1]
+                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] * 1.5
+            elif value.endswith('3'):
+                base = value[:-1]
+                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] * 2 / 3
+            else:
+                duration_ms = meas_duration_ms * self._NOTE_VALUES[value]
+
+            return freq, duration_ms, delay_ms  # CHANGE does create string, but directly returns values
+
+        try:
+            return self.tone([beep_args(note, value) for (note, value) in song], play_type=Sound.PLAY_WAIT_FOR_COMPLETE)
+            # CHANGE does not call beep, but the tone function
+        except KeyError as e:
+            raise ValueError('invalid note (%s)' % e)
 
     #: Note frequencies.
     #:

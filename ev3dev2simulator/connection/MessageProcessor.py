@@ -22,7 +22,6 @@ class MessageProcessor:
     them to the RobotState.
     """
 
-
     def __init__(self, brick_name: str, robot_state: RobotState):
         cfg = get_config().get_data()
         large_sim_type = get_config().is_large_sim_type()
@@ -39,7 +38,6 @@ class MessageProcessor:
         self.robot_state = robot_state
         self.command_processor = MotorCommandProcessor()
         self.led_cache = {k: None for k in LEDS.values()}
-
 
     def process_rotate_command(self, command: RotateCommand) -> float:
         """
@@ -66,7 +64,6 @@ class MessageProcessor:
             self._process_coast(coast_frames, spf, side)
             return run_time
 
-
     def _process_rotate_command_values(self, command: RotateCommand, side: str) -> Tuple[float, int, int, float]:
         """
         Process the given command into the correct movement values.
@@ -80,7 +77,6 @@ class MessageProcessor:
             return -dpf, frames, coast_frames, run_time
         else:
             return self.command_processor.process_drive_command_pixels(command)
-
 
     def process_stop_command(self, command: StopCommand) -> float:
         """
@@ -104,7 +100,6 @@ class MessageProcessor:
             self._process_coast(frames, spf, side)
             return run_time
 
-
     def _process_stop_command_values(self, command: StopCommand, side: str) -> Tuple[float, int, float]:
         """
         Process the given command into the correct movement values.
@@ -118,7 +113,6 @@ class MessageProcessor:
             return -dpf, frames, run_time
         else:
             return self.command_processor.process_stop_command_pixels(command)
-
 
     def _process_coast(self, frames, ppf, side):
         """
@@ -139,7 +133,6 @@ class MessageProcessor:
 
             self._put_motor_job(ppf, side)
 
-
     def process_led_command(self, command: LedCommand):
         """
         Process the given sound command by creating a sound job with a message which can be put on the simulator screen.
@@ -155,22 +148,17 @@ class MessageProcessor:
         if color is not None:
             self.robot_state.set_led_color(self.brick_name, led_id, color)
 
-
     def process_sound_command(self, command: SoundCommand):
         """
         Process the given sound command by creating a sound job with a message which can be put on the simulator screen.
         :param command: to process.
         """
 
+        frames = int(round(self.frames_per_second * command.duration))
         msg_len = len(command.message)
-        multiplier = msg_len / 2.5
-        frames = int(round(self.frames_per_second * multiplier))
-
         message = '\n'.join(command.message[i:i + 10] for i in range(0, msg_len, 10))
-
         for i in range(frames):
             self.robot_state.put_sound_job(message)
-
 
     def process_data_request(self, request: DataRequest) -> Any:
         """
@@ -187,7 +175,6 @@ class MessageProcessor:
         else:
             return value
 
-
     def _put_motor_job(self, job: float, side: str):
         """
         Add a new move job to the queue for the motor corresponding to the given side.
@@ -201,7 +188,6 @@ class MessageProcessor:
             self.robot_state.put_left_motor_job(job)
         else:
             self.robot_state.put_right_motor_job(job)
-
 
     def _to_full_address(self, address: str):
         return self.brick_name + address

@@ -5,8 +5,7 @@ from ev3dev2.led import Leds
 from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
 from ev3dev2.sensor.lego import ColorSensor
 from ev3dev2.sensor.lego import TouchSensor
-from testprograms.BluethoothHelper import BluetoothHelper
-
+from testprograms.BluetoothHelper import BluetoothHelper
 
 def reverseRotations(rotations):
     tank_drive.on_for_rotations(SpeedPercent(-35), SpeedPercent(-35), rotations)

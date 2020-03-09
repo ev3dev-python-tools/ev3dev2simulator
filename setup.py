@@ -1,24 +1,25 @@
-from setuptools import setup,find_packages
+from setuptools import setup, find_packages
 import os.path
 import sys
 
+from ev3dev2simulator.version import __version__ as simversion
 
 from ev3dev2simulator.version import __version__ as simversion
 
 setup(
-      name="ev3dev2simulator",
-      version=simversion,
-      description="EV3 simulator for the ev3dev2 library",
-      long_description="""
+    name="ev3dev2simulator",
+    version=simversion,
+    description="EV3 simulator for the ev3dev2 library",
+    long_description="""
 Simulator for an EV3 robot; a program using the ev3dev2 API can run both on the rover and on the simulator without any modifications to the code.
 
 For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
 """,
-      url="https://github.com/ev3dev-python-tools/ev3dev2simulator",
-      author="Harco Kuppens",
-      author_email="h.kuppens@cs.ru.nl",
-      license="MIT",
-      classifiers=[
+    url="https://github.com/ev3dev-python-tools/ev3dev2simulator",
+    author="Harco Kuppens",
+    author_email="h.kuppens@cs.ru.nl",
+    license="MIT",
+    classifiers=[
         "Environment :: MacOS X",
         "Environment :: Win32 (MS Windows)",
         "Environment :: X11 Applications",
@@ -41,17 +42,19 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
         "Programming Language :: Python :: 3.7",
         "Topic :: Education",
         "Topic :: Software Development",
-      ],
-      keywords="IDE education programming EV3 mindstorms lego",
-      platforms=["Windows", "macOS", "Linux"],
-      python_requires=">=3.6",
-      install_requires=['ev3devlogging','arcade==2.1.3','pyobjc;sys.platform=="darwin"','pyyaml','pymunk'],
-      py_modules=["bluetooth"],
-      packages=find_packages(exclude=['test','test.*','*.test.*',]),
-      package_data={"ev3dev2simulator": ["config/*","assets/images/*"] },
-      entry_points={
+    ],
+    keywords="IDE education programming EV3 mindstorms lego",
+    platforms=["Windows", "macOS", "Linux"],
+    python_requires=">=3.6",
+    install_requires=['ev3devlogging', 'arcade==2.1.3', 'pyobjc;sys.platform=="darwin"', 'pyyaml', 'pymunk',
+                      'simpleaudio', 'pyttsx3', 'numpy'],
+    py_modules=["bluetooth"],
+    packages=find_packages(exclude=['test', 'test.*', '*.test.*', ]),
+    package_data={"ev3dev2simulator": ["config/*", "assets/images/*"]},
+    entry_points={
+
         'console_scripts': [
             'ev3dev2simulator = ev3dev2simulator.__main__:main'
         ]
-      },
+    },
 )

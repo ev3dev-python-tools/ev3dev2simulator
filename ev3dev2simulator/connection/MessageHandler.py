@@ -89,7 +89,7 @@ class MessageHandler(threading.Thread):
         :param d: to process.
         """
 
-        command = SoundCommand(d['message'])
+        command = SoundCommand(d['message'], d['duration'], d['soundType'])
         self.message_processor.process_sound_command(command)
 
         return None
