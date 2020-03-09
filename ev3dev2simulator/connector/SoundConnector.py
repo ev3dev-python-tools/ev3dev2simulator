@@ -47,7 +47,7 @@ class SoundConnector:
             audio = note * (2 ** 15 - 1) / np.max(np.abs(note))
             audio = audio.astype(np.int16)
 
-            command = SoundCommand("playing note with frequency: " + str(fs), duration, "note")
+            command = SoundCommand("playing note with frequency: " + str(frequency), duration, "note")
             self.client_socket.send_sound_command(command)
 
             try:
