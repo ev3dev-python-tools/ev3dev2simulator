@@ -7,7 +7,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include: 
+        - os: macos-latest
+          OS_DEPENDENCY: ''
+        - os: ubuntu-latest
+          OS_DEPENDENCY: sudo apt-get install libasound2-dev espeak
+        - os: windows-latest
+          OS_DEPENDENCY: ''
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.7
@@ -16,6 +23,7 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         run: |
+          ${{matrix.OS_DEPENDENCY}}
           python -m pip install --upgrade pip
           pip install .
       - name: Lint with flake8
