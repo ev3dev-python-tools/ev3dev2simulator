@@ -11,5 +11,4 @@ class Edge(BorderObstacle):
     def __init__(self, cfg):
         depth = apply_scaling(cfg['screen_settings']['edge_spacing'])
         edge_spacing = 0
-
         super(Edge, self).__init__(cfg, 1, depth, edge_spacing)

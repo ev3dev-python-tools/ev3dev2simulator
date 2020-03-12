@@ -12,6 +12,15 @@ class RobotSimulator:
     of the simulated robot.
     """
 
+    # self.space = Space()
+    # self.space.add(self.rock1.poly)
+    # self.space.add(self.rock2.poly)
+    # self.space.add(self.bottle1.poly)
+
+    # self.robot.set_color_obstacles(color_obstacles)
+    # self.robot.set_touch_obstacles(touch_obstacles)
+    # self.robot.set_falling_obstacles(falling_obstacles)
+
     def __init__(self):
         cfg = get_config().get_data()
         large_sim_type = get_config().is_large_sim_type()

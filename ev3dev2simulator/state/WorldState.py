@@ -38,17 +38,17 @@ class WorldState:
         #
         # for s in self.robot.get_sensors():
         #     self.robot_state.load_sensor(s)
+
         vis_config = get_config().get_visualisation_config()
 
-        # edge = Edge(vis_config)
-        # self.obstacles.append(edge)
-        # self.falling_obstacles.append(edge)
+        edge = Edge(vis_config)
+        self.falling_obstacles.append(edge)
 
         for key, value in config['obstacles'].items():
             if value['type'] == 'lake':
                 lake = Lake.from_config(value)
                 self.obstacles.append(lake)
-                self.falling_obstacles.append(lake)
+                self.falling_obstacles.append(lake.hole)
                 self.color_obstacles.append(lake)
             elif value['type'] == 'rock':
                 rock = Rock.from_config(value)
@@ -62,7 +62,6 @@ class WorldState:
                 bottle = Bottle.from_config(value)
                 self.obstacles.append(bottle)
                 self.touch_obstacles.append(bottle)
-
             else:
                 print("unknown obstacle type")
 
@@ -70,11 +69,3 @@ class WorldState:
         # ground = Ground(1460, 950, 300, 10, color.BLACK)
         # self.obstacles.append(ground)
 
-        # self.space = Space()
-        # self.space.add(self.rock1.poly)
-        # self.space.add(self.rock2.poly)
-        # self.space.add(self.bottle1.poly)
-
-        # self.robot.set_color_obstacles(color_obstacles)
-        # self.robot.set_touch_obstacles(touch_obstacles)
-        # self.robot.set_falling_obstacles(falling_obstacles)
