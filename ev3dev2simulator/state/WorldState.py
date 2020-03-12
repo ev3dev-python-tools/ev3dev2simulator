@@ -1,8 +1,11 @@
 import os
 
+
+
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
 
+from ev3dev2simulator.obstacle.Ground import Ground
 from ev3dev2simulator.obstacle.Border import Border
 from ev3dev2simulator.obstacle.Bottle import Bottle
 from ev3dev2simulator.obstacle.Edge import Edge
@@ -16,6 +19,9 @@ from ev3dev2simulator.util.Util import apply_scaling
 class WorldState:
     def __init__(self, config):
         self.obstacles = []
+        self.touch_obstacles = []
+        self.falling_obstacles = []
+        self.color_obstacles = []
         self.robots = []
 
         # for key, value in config['robots'].items():
@@ -23,10 +29,17 @@ class WorldState:
 
         for key, value in config['obstacles'].items():
             if value['type'] == 'lake':
-                Lake.from_config(value)
+                lake = Lake.from_config(value)
+                self.obstacles.append(lake)
+                self.falling_obstacles.append(lake)
+                self.color_obstacles.append(lake)
+            elif value['type'] == 'rock':
+                self.obstacles.append(Rock.from_config(value))
             else:
                 print("unknown obstacle type")
             print(key, value)
+
+        ground = Ground()
 
         # if self.large_sim_type:
         #     self.robot = RobotLarge(self.cfg, self.robot_pos[0], self.robot_pos[1], self.robot_pos[2])
@@ -38,15 +51,7 @@ class WorldState:
         #
         # for s in self.robot.get_sensors():
         #     self.robot_state.load_sensor(s)
-        #
-        # self.blue_lake = BlueLake(self.cfg)
-        # self.green_lake = GreenLake(self.cfg)
-        # self.red_lake = RedLake(self.cfg)
-        #
-        # self.obstacle_elements.append(self.blue_lake.shape)
-        # self.obstacle_elements.append(self.green_lake.shape)
-        # self.obstacle_elements.append(self.red_lake.shape)
-        #
+
         # self.border = Border(self.cfg, eval(self.cfg['obstacle_settings']['border_settings']['border_color']))
         # self.edge = Edge(self.cfg)
         #

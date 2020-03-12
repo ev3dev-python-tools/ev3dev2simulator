@@ -26,16 +26,26 @@ class Lake(ColorObstacle):
 
         self.center_x = center_x
         self.center_y = center_y
-        self.color = color
         self.border_width = border_width
 
         self.radius = radius if self.large_sim_type else radius * 1.2
         self.inner_radius = inner_radius
         self.outer_radius = self.radius + (self.border_width / 2)
 
+        # visualisation
+        self.color = color
+        self.points = None
+        self.shape = None
+        self.hole = None
+
+    def get_shape(self):
+        if self.shape is None:
+            self.create_shape()
+        return self.shape
+
+    def create_shape(self):
         self.points = self._create_points()
         self.shape = self._create_shape()
-
         self.hole = self._create_hole()
 
     @classmethod
@@ -48,7 +58,7 @@ class Lake(ColorObstacle):
         radius = inner_radius + (border_width / 2)
 
         edge_spacing = apply_scaling(vis_conf['screen_settings']['edge_spacing'])
-        border_depth = apply_scaling(sim_conf['obstacles']['border']['depth'])
+        border_depth = apply_scaling(vis_conf['screen_settings']['border_width'])
 
         x = apply_scaling(config['x']) + edge_spacing + border_depth
         y = apply_scaling(config['y']) + edge_spacing + border_depth

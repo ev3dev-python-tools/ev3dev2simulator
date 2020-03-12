@@ -6,10 +6,8 @@ class TouchObstacle:
     This class provides basic functionality for obstacles which can be interacted with using touch.
     """
 
-
     def __init__(self):
         self.points = None
-
 
     def collided_with(self, sprite: arcade.Sprite) -> bool:
         """

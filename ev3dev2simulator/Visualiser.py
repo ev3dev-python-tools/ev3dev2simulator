@@ -58,11 +58,6 @@ class Visualiser(arcade.Window):
 
         self.update_callback = update_world_cb
 
-        self.robot_elements = None
-        self.obstacle_elements = None
-
-        self.robot = None
-
         self.border = None
         self.edge = None
         self.ground = None
@@ -348,9 +343,10 @@ class Visualiser(arcade.Window):
         """
 
         arcade.start_render()
+        for obstacle in self.world_state.obstacles:
+            obstacle.get_shape().draw()
 
-        self.obstacle_elements.draw()
-        self.robot_elements.draw()
+        # self.robot_elements.draw()
 
         self._draw_text()
 

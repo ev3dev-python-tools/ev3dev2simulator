@@ -4,6 +4,8 @@ from pymunk import Body, Poly, Vec2d
 
 from ev3dev2simulator.obstacle.TouchObstacle import TouchObstacle
 
+from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.util.Util import apply_scaling
 
 class Rock(TouchObstacle):
     """
@@ -23,12 +25,34 @@ class Rock(TouchObstacle):
         self.center_y = center_y
         self.width = width
         self.height = height
-        self.color = color
         self.angle = angle
 
+        # visualisation
+        self.color = color
+        self.points = None
+        self.shape = None
+        self.hole = None
+
+    def get_shape(self):
+        if self.shape is None:
+            self.create_shape()
+        return self.shape
+
+    def create_shape(self):
         self.points = self._create_points()
         self.shape = self._create_shape()
-        self.poly = self._create_poly()
+        self.hole = self._create_hole()
+
+    @classmethod
+    def from_config(cls, config):
+        x = apply_scaling(config['x'])
+        y = apply_scaling(config['y'])
+        width = apply_scaling(config['width'])
+        height = apply_scaling(config['height'])
+        color = eval(config['color'])
+        angle = config['angle']
+
+        return cls(x, y, width, height, color, angle)
 
     def _create_points(self) -> PointList:
         """
