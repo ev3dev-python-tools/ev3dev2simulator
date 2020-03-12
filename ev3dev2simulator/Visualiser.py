@@ -19,6 +19,10 @@ import tempfile
 import time
 
 
+def start():
+    arcade.run()
+
+
 class Visualiser(arcade.Window):
     """
     Main simulator class.
@@ -58,20 +62,6 @@ class Visualiser(arcade.Window):
 
         self.update_callback = update_world_cb
 
-        self.border = None
-        self.edge = None
-        self.ground = None
-
-        self.space = None
-
-        self.center_cs_data = 0
-        self.left_cs_data = 0
-        self.right_cs_data = 0
-        self.left_ts_data = False
-        self.right_ts_data = False
-        self.front_us_data = -1
-        self.rear_us_data = -1
-
         self.text_x = self.screen_width - apply_scaling(220)
         self.msg_x = self.screen_width / 2
         self.msg_counter = 0
@@ -85,9 +75,6 @@ class Visualiser(arcade.Window):
             self.maximize()
 
         self.check_for_activation()
-
-    def start(self):
-        arcade.run()
 
     def get_screens(self):
         display = pyglet.canvas.get_display()
@@ -341,10 +328,10 @@ class Visualiser(arcade.Window):
         """
         Render the simulation. This is done in 30 frames per second.
         """
-
         arcade.start_render()
-        for obstacle in self.world_state.obstacles:
-            obstacle.get_shape().draw()
+        for obstacleList in self.world_state.obstacles:
+            for shape in obstacleList.get_shapes():
+                shape.draw()
 
         # self.robot_elements.draw()
 

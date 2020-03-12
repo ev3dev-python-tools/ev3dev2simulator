@@ -8,7 +8,6 @@ class Edge(BorderObstacle):
     falling of the field.
     """
 
-
     def __init__(self, cfg):
         depth = apply_scaling(cfg['screen_settings']['edge_spacing'])
         edge_spacing = 0

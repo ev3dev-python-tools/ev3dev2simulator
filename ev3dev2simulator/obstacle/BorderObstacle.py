@@ -9,7 +9,6 @@ class BorderObstacle(ColorObstacle):
     This class provides basic functionality for obstacles which act as a border.
     """
 
-
     def __init__(self, cfg, color_code: int, depth: int, edge_spacing: float):
         super(BorderObstacle, self).__init__(color_code)
 
@@ -24,7 +23,6 @@ class BorderObstacle(ColorObstacle):
         self.left_points = None
 
         self._calc_points()
-
 
     def _calc_points(self):
         """
@@ -56,7 +54,6 @@ class BorderObstacle(ColorObstacle):
                                                        screen_center_y,
                                                        self.depth,
                                                        border_long_height)
-
 
     def collided_with(self, x: float, y: float) -> bool:
         if arcade.is_point_in_polygon(x, y, self.top_points):

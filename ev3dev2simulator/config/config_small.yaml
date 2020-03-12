@@ -58,7 +58,7 @@ obstacles:
 
   rock2:
     x: 975
-    y: 375
+    y: 275
     width: 300
     height: 90
     color: (169, 169, 169)
@@ -66,8 +66,8 @@ obstacles:
     type: 'rock'
 
   bottle:
-    x: 1000
-    y: 300
+    x: 500
+    y: 500
     radius: 40
-    color: (85, 107, 47),
+    color: (85, 107, 47)
     type: 'bottle'

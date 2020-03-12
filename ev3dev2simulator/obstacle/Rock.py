@@ -33,10 +33,10 @@ class Rock(TouchObstacle):
         self.shape = None
         self.hole = None
 
-    def get_shape(self):
+    def get_shapes(self):
         if self.shape is None:
             self.create_shape()
-        return self.shape
+        return [self.shape]
 
     def create_shape(self):
         self.points = self._create_points()

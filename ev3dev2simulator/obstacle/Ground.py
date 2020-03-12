@@ -13,10 +13,10 @@ class Ground:
         self.color = color
         self.shape = None
 
-    def get_shape(self):
+    def get_shapes(self):
         if self.shape is None:
             self.create_shape()
-        return self.shape
+        return [self.shape]
 
     def create_shape(self):
         self.shape = create_rectangle(apply_scaling(self.center_x),

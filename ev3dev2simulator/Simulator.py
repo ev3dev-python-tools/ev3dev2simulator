@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from ev3dev2simulator.Visualiser import Visualiser
+from ev3dev2simulator.Visualiser import Visualiser, start
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.ServerSockets import ServerSockets
 from ev3dev2simulator.state.WorldSimulator import WorldSimulator
@@ -102,14 +102,14 @@ def main():
 
     world_simulator = WorldSimulator(world_state)
 
-    visualiser = Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
+    Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
                             use_second_screen_to_show_simulator)
 
     # server_thread = ServerSockets(world_simulator)
     # server_thread.setDaemon(True)
     # server_thread.start()
 
-    visualiser.start()
+    start()
 
 
 main()

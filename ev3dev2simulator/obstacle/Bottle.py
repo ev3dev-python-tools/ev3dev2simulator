@@ -4,6 +4,7 @@ from pymunk import Body, Vec2d, Circle
 
 from ev3dev2simulator.obstacle.TouchObstacle import TouchObstacle
 from ev3dev2simulator.util.Util import get_circle_points
+from ev3dev2simulator.util.Util import apply_scaling
 
 
 class Bottle(TouchObstacle):
@@ -22,12 +23,33 @@ class Bottle(TouchObstacle):
         self.center_x = center_x
         self.center_y = center_y
         self.radius = radius
-        self.color = color
 
+        # visualisation
+        self.color = color
+        self.points = None
+        self.shape = None
+        self.poly = None
+
+
+    @classmethod
+    def from_config(cls, config):
+
+        x = apply_scaling(config['x'])
+        y = apply_scaling(config['y'])
+        radius = apply_scaling(config['radius'])
+        color = eval(config['color'])
+
+        return cls(x, y, radius, color)
+
+    def get_shapes(self):
+        if self.shape is None:
+            self.create_shape()
+        return [self.shape]
+
+    def create_shape(self):
         self.points = self._create_points()
         self.shape = self._create_shape()
         self.poly = self._create_poly()
-
 
     def _create_points(self) -> PointList:
         """
