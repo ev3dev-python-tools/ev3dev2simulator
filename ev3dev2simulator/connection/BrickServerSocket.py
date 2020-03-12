@@ -4,7 +4,7 @@ import time
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.MessageHandler import MessageHandler
 from ev3dev2simulator.connection.MessageProcessor import MessageProcessor
-from ev3dev2simulator.state import RobotState
+from ev3dev2simulator.state import RobotSimulator
 
 
 class ServerSocketSingle(MessageHandler):
@@ -13,7 +13,7 @@ class ServerSocketSingle(MessageHandler):
     """
 
 
-    def __init__(self, robot_state: RobotState):
+    def __init__(self, robot_state: RobotSimulator):
         super(ServerSocketSingle, self).__init__(MessageProcessor('', robot_state))
 
         self.robot_state = robot_state

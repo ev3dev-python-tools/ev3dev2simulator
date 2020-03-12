@@ -19,7 +19,6 @@ class ColorSensor(BodyPart):
     Class representing a ColorSensor of the simulated robot.
     """
 
-
     def __init__(self,
                  address: str,
                  img_cfg,

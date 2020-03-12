@@ -9,6 +9,7 @@ from ev3dev2.sensor.lego import TouchSensor
 from ev3dev2.sensor.lego import UltrasonicSensor
 from ev3dev2.sound import Sound
 
+
 class Rover:
 
     def __init__(self):
@@ -36,19 +37,19 @@ class Rover:
         self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
         while True:
             colorNr = self.cs.color
-            if colorNr == 1: # black line
+            if colorNr == 1:  # black line
                 log("border")
                 self.tank_drive.stop()
                 self.reverseRotations(1)
                 self.rotateDegrees(150)
                 self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
-            elif (colorNr == 2 or colorNr == 4 or colorNr == 5) : # blue or yellow or red
+            elif colorNr == 2 or colorNr == 4 or colorNr == 5:  # blue or yellow or red
                 print("lake with color={color}".format(color=colorNr))
                 log("lake")
                 self.tank_drive.stop()
                 self.rotateDegrees(90)
                 self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
-            elif  self.checkCollision():
+            elif self.checkCollision():
                 log("collision")
                 self.tank_drive.stop()
 
@@ -56,5 +57,6 @@ class Rover:
                 self.reverseRotations(1)
                 self.rotateDegrees(180)
                 self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
+
 
 Rover().run()

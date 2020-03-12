@@ -13,7 +13,6 @@ class Lake(ColorObstacle):
     with a thick colored border.
     """
 
-
     def __init__(self,
                  center_x: int,
                  center_y: int,
@@ -39,6 +38,24 @@ class Lake(ColorObstacle):
 
         self.hole = self._create_hole()
 
+    @classmethod
+    def from_config(cls, config):
+
+        vis_conf = get_config().get_visualisation_config()
+
+        border_width = apply_scaling(config['border_width'])
+        inner_radius = apply_scaling(config['inner_radius'])
+        radius = inner_radius + (border_width / 2)
+
+        edge_spacing = apply_scaling(vis_conf['screen_settings']['edge_spacing'])
+        border_depth = apply_scaling(sim_conf['obstacles']['border']['depth'])
+
+        x = apply_scaling(config['x']) + edge_spacing + border_depth
+        y = apply_scaling(config['y']) + edge_spacing + border_depth
+
+        color = eval(config['color'])
+
+        return cls(x, y, radius, inner_radius, color, border_width)
 
     def _create_points(self) -> PointList:
         """
@@ -49,7 +66,6 @@ class Lake(ColorObstacle):
         return get_circle_points(self.center_x,
                                  self.center_y,
                                  self.radius)
-
 
     def _create_shape(self) -> Shape:
         """
@@ -65,10 +81,8 @@ class Lake(ColorObstacle):
             color_list = [self.color] + [self.color] * (32 + 1)
             return arcade.create_line_generic_with_colors(self.points, color_list, 6)
 
-
     def _create_hole(self):
         return Hole(self.center_x, self.center_y, self.inner_radius)
-
 
     def collided_with(self, x: float, y: float) -> bool:
         distance = distance_between_points(self.center_x,
@@ -80,63 +94,3 @@ class Lake(ColorObstacle):
             return self.inner_radius < distance < self.outer_radius
         else:
             return distance < self.outer_radius
-
-
-class BlueLake(Lake):
-
-    def __init__(self, cfg):
-        lake_cfg = cfg['obstacle_settings']['lake_settings']
-
-        border_width = apply_scaling(lake_cfg['border_width'])
-        inner_radius = apply_scaling(lake_cfg['inner_radius'])
-        radius = inner_radius + (border_width / 2)
-
-        edge_spacing = apply_scaling(cfg['screen_settings']['edge_spacing'])
-        border_depth = apply_scaling(cfg['obstacle_settings']['border_settings']['border_depth'])
-
-        x = apply_scaling(lake_cfg['lake_blue_x']) + edge_spacing + border_depth
-        y = apply_scaling(lake_cfg['lake_blue_y']) + edge_spacing + border_depth
-
-        color = eval(lake_cfg['lake_blue_color'])
-
-        super(BlueLake, self).__init__(x, y, radius, inner_radius, color, border_width)
-
-
-class GreenLake(Lake):
-
-    def __init__(self, cfg):
-        lake_cfg = cfg['obstacle_settings']['lake_settings']
-
-        border_width = apply_scaling(lake_cfg['border_width'])
-        inner_radius = apply_scaling(lake_cfg['inner_radius'])
-        radius = inner_radius + (border_width / 2)
-
-        edge_spacing = apply_scaling(cfg['screen_settings']['edge_spacing'])
-        border_depth = apply_scaling(cfg['obstacle_settings']['border_settings']['border_depth'])
-
-        x = apply_scaling(lake_cfg['lake_green_x']) + edge_spacing + border_depth
-        y = apply_scaling(lake_cfg['lake_green_y']) + edge_spacing + border_depth
-
-        color = eval(lake_cfg['lake_green_color'])
-
-        super(GreenLake, self).__init__(x, y, radius, inner_radius, color, border_width)
-
-
-class RedLake(Lake):
-
-    def __init__(self, cfg):
-        lake_cfg = cfg['obstacle_settings']['lake_settings']
-
-        border_width = apply_scaling(lake_cfg['border_width'])
-        inner_radius = apply_scaling(lake_cfg['inner_radius'])
-        radius = inner_radius + (border_width / 2)
-
-        edge_spacing = apply_scaling(cfg['screen_settings']['edge_spacing'])
-        border_depth = apply_scaling(cfg['obstacle_settings']['border_settings']['border_depth'])
-
-        x = apply_scaling(lake_cfg['lake_red_x']) + edge_spacing + border_depth
-        y = apply_scaling(lake_cfg['lake_red_y']) + edge_spacing + border_depth
-
-        color = eval(lake_cfg['lake_red_color'])
-
-        super(RedLake, self).__init__(x, y, radius, inner_radius, color, border_width)

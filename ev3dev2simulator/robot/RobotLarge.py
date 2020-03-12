@@ -21,13 +21,11 @@ class RobotLarge(Robot):
     of parts defined by BodyParts and ExtraBodyParts.
     """
 
-
     def __init__(self, cfg, center_x: int, center_y: int, orientation: int):
         super(RobotLarge, self).__init__(cfg, center_x, center_y)
 
         img_cfg = cfg['image_paths']
         alloc_cfg = cfg['alloc_settings']
-
 
         address_motor_left = alloc_cfg['motor']['left']
         address_motor_right = alloc_cfg['motor']['right']
@@ -55,11 +53,14 @@ class RobotLarge(Robot):
         self.left_color_sensor = ColorSensor(address_cs_left, img_cfg, self, apply_scaling(-69), apply_scaling(95))
         self.right_color_sensor = ColorSensor(address_cs_right, img_cfg, self, apply_scaling(69), apply_scaling(95))
 
-        self.left_touch_sensor = TouchSensor(address_ts_left, img_cfg, self, apply_scaling(-65), apply_scaling(102), 'left')
-        self.right_touch_sensor = TouchSensor(address_ts_right, img_cfg, self, apply_scaling(65), apply_scaling(102), 'right')
+        self.left_touch_sensor = TouchSensor(address_ts_left, img_cfg, self, apply_scaling(-65), apply_scaling(102),
+                                             'left')
+        self.right_touch_sensor = TouchSensor(address_ts_right, img_cfg, self, apply_scaling(65), apply_scaling(102),
+                                              'right')
         self.rear_touch_sensor = TouchSensor(address_ts_rear, img_cfg, self, 0, apply_scaling(-165), 'rear')
 
-        self.front_ultrasonic_sensor = UltrasonicSensor(address_us_front, img_cfg, self, apply_scaling(-22), apply_scaling(56))
+        self.front_ultrasonic_sensor = UltrasonicSensor(address_us_front, img_cfg, self, apply_scaling(-22),
+                                                        apply_scaling(56))
         self.rear_ultrasonic_sensor = UltrasonicSensorBottom(address_us_rear, img_cfg, self, 0, apply_scaling(-145))
 
         self.left_brick_left_led = Led(img_cfg, self, apply_scaling(-20), apply_scaling(-55))
@@ -84,14 +85,14 @@ class RobotLarge(Robot):
                                 self.left_brick_right_led,
                                 self.right_brick_left_led,
                                 self.right_brick_right_led,
-                                self.arm]
+                                self.arm
+                                ]
 
         self.sprites = self.movable_sprites.copy()
         self.sprites.append(self.arm_large)
 
         if orientation != 0:
             self._rotate(math.radians(orientation))
-
 
     def execute_arm_movement(self, dfp: float):
         """
@@ -101,16 +102,13 @@ class RobotLarge(Robot):
 
         self.arm_large.rotate(dfp)
 
-
     def set_left_brick_led_colors(self, left_color, right_color):
         self.left_brick_left_led.set_color_texture(left_color)
         self.left_brick_right_led.set_color_texture(right_color)
 
-
     def set_right_brick_led_colors(self, left_color, right_color):
         self.right_brick_left_led.set_color_texture(left_color)
         self.right_brick_right_led.set_color_texture(right_color)
-
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
         """
@@ -122,7 +120,6 @@ class RobotLarge(Robot):
         self.left_color_sensor.set_sensible_obstacles(obstacles)
         self.right_color_sensor.set_sensible_obstacles(obstacles)
 
-
     def set_touch_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the touch sensors of this robot.
@@ -132,7 +129,6 @@ class RobotLarge(Robot):
         self.left_touch_sensor.set_sensible_obstacles(obstacles)
         self.right_touch_sensor.set_sensible_obstacles(obstacles)
         self.rear_touch_sensor.set_sensible_obstacles(obstacles)
-
 
     def set_falling_obstacles(self, obstacles):
         """
@@ -145,7 +141,6 @@ class RobotLarge(Robot):
         self.right_wheel.set_sensible_obstacles(obstacles)
         self.rear_ultrasonic_sensor.set_sensible_obstacles(obstacles)
 
-
     def get_sensors(self) -> [BodyPart]:
         return [self.center_color_sensor,
                 self.left_color_sensor,
@@ -155,7 +150,6 @@ class RobotLarge(Robot):
                 self.rear_touch_sensor,
                 self.front_ultrasonic_sensor,
                 self.rear_ultrasonic_sensor]
-
 
     def get_anchor(self) -> BodyPart:
         return self.left_body

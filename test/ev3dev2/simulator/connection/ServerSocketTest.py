@@ -6,7 +6,7 @@ from typing import Any
 
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
-from ev3dev2simulator.state.RobotState import RobotState
+from ev3dev2simulator.state.RobotSimulator import RobotState
 
 
 class ServerSocketTest(unittest.TestCase):

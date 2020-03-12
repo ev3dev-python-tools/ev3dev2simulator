@@ -10,7 +10,6 @@ class Rock(TouchObstacle):
     This class represents a 'rock'. Rocks are rectangles.
     """
 
-
     def __init__(self,
                  center_x: int,
                  center_y: int,
@@ -31,7 +30,6 @@ class Rock(TouchObstacle):
         self.shape = self._create_shape()
         self.poly = self._create_poly()
 
-
     def _create_points(self) -> PointList:
         """
         Create a list of points representing this rock in 2D space.
@@ -43,7 +41,6 @@ class Rock(TouchObstacle):
                                            self.width,
                                            self.height,
                                            self.angle)
-
 
     def _create_shape(self) -> Shape:
         """
@@ -59,7 +56,6 @@ class Rock(TouchObstacle):
         top = arcade.create_rectangles_filled_with_colors(self.points, colors)
 
         return top
-
 
     def _create_poly(self):
         """

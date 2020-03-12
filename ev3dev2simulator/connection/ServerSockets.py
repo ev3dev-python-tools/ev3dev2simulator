@@ -7,7 +7,7 @@ from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
 from ev3dev2simulator.state import RobotSimulator
 
 
-class ServerSocketDouble(threading.Thread):
+class ServerSockets(threading.Thread):
     """
     Class responsible for listening to incoming socket connections from ev3dev2 mock processes.
     """

@@ -8,14 +8,12 @@ class Config:
     Class containing simulation configuration data.
     """
 
-
     def __init__(self):
         self.scale = None
         self.sim_type = None
         self.data = None
 
-
-    def get_data(self):
+    def get_visualisation_config(self):
         """
         Get configuration data. Initialize if data has not been initialized yet.
         :return: a data structure representing the configuration data.
@@ -25,7 +23,6 @@ class Config:
             self.data = self._load_data()
 
         return self.data
-
 
     def get_scale(self) -> float:
         """
@@ -38,6 +35,10 @@ class Config:
 
         return self.scale
 
+    def get_simulation_config(self, name):
+        if name is None:
+            name = 'config_large'
+        return self._load_yaml_file(name)
 
     def get_sim_type(self) -> str:
         """
@@ -50,19 +51,16 @@ class Config:
 
         return self.sim_type
 
-
     def is_large_sim_type(self):
         return self.get_sim_type() == 'large'
 
-
-    def _load_data(self):
+    def _load_yaml_file(self, file_url):
         """
         Load config data from the correct config yaml file. The file to load from depends on the simulation type.
         :return: the config data.
         """
 
-        file = 'config_large' if self.is_large_sim_type() else 'config_small'
-        path = self.get_project_root() + '/' + file + '.yaml'
+        path = self.get_project_root() + '/' + file_url + '.yaml'
 
         with open(path, 'r') as stream:
             try:
@@ -70,6 +68,19 @@ class Config:
             except yaml.YAMLError as exc:
                 print(exc)
 
+    def _load_data(self):
+        """
+        Load config data from the correct config yaml file. The file to load from depends on the simulation type.
+        :return: the config data.
+        """
+        file = 'visualisation'
+        path = self.get_project_root() + '/' + file + '.yaml'
+
+        with open(path, 'r') as stream:
+            try:
+                return yaml.safe_load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
 
     def _load_scale(self):
         """
@@ -82,7 +93,6 @@ class Config:
         with open(path, 'r') as stream:
             return float(stream.read(4))
 
-
     def _load_sim_type(self):
         """
         Load scale multiplier data from the type_config.txt file.
@@ -93,7 +103,6 @@ class Config:
 
         with open(path, 'r') as stream:
             return stream.read(5)
-
 
     def write_scale(self, value: float):
         """
@@ -106,7 +115,6 @@ class Config:
         with open(path, 'w') as stream:
             return stream.write(str(value))
 
-
     def write_sim_type(self, value: str):
         """
         Write the simulation type to type_config.txt
@@ -117,7 +125,6 @@ class Config:
 
         with open(path, 'w') as stream:
             return stream.write(value)
-
 
     def get_project_root(self) -> str:
         """

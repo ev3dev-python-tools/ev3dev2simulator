@@ -2,7 +2,7 @@ import socket
 
 from ev3dev2simulator.connection.MessageHandler import MessageHandler
 from ev3dev2simulator.connection.MessageProcessor import MessageProcessor
-from ev3dev2simulator.state import RobotState
+from ev3dev2simulator.state import RobotSimulator
 
 
 class ClientSocketHandler(MessageHandler):
@@ -10,14 +10,12 @@ class ClientSocketHandler(MessageHandler):
     Class responsible for managing a socket connection from the ev3dev2 mock processes.
     """
 
-
-    def __init__(self, robot_state: RobotState, client, connection_id: str):
+    def __init__(self, robot_state: RobotSimulator, client, connection_id: str):
         super(ClientSocketHandler, self).__init__(MessageProcessor(connection_id, robot_state))
 
         self.client = client
         self.connection_id = connection_id
         self.is_running = True
-
 
     def run(self):
         """

@@ -8,7 +8,7 @@ from ev3dev2simulator.connection.message.DataRequest import DataRequest
 from ev3dev2simulator.connection.message.LedCommand import LedCommand
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
-from ev3dev2simulator.state.RobotState import RobotState
+from ev3dev2simulator.state.RobotSimulator import RobotState
 from ev3dev2simulator.util.Util import apply_scaling
 
 

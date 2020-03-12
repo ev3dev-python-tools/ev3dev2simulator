@@ -18,34 +18,6 @@ alloc_settings:
     front: 'right_brick:ev3-ports:in4'
     rear: 'left_brick:ev3-ports:in4'
 
-exec_settings:
-  bluetooth_port: 6841
-  frames_per_second: 30
-  socket_port: 6840
-
-image_paths:
-  arm: 'assets/images/arm.png'
-  arm_large: 'assets/images/arm_large.png'
-  body: 'assets/images/body.png'
-  color_sensor_black: 'assets/images/color_sensor_black.png'
-  color_sensor_blue: 'assets/images/color_sensor_blue.png'
-  color_sensor_green: 'assets/images/color_sensor_green.png'
-  color_sensor_red: 'assets/images/color_sensor_red.png'
-  color_sensor_white: 'assets/images/color_sensor_white.png'
-  color_sensor_yellow: 'assets/images/color_sensor_yellow.png'
-  led_amber: 'assets/images/led_amber.png'
-  led_black: 'assets/images/led_black.png'
-  led_green: 'assets/images/led_green.png'
-  led_orange: 'assets/images/led_orange.png'
-  led_red: 'assets/images/led_red.png'
-  led_yellow: 'assets/images/led_yellow.png'
-  touch_sensor_left: 'assets/images/touch_sensor_left.png'
-  touch_sensor_rear: 'assets/images/touch_sensor_rear.png'
-  touch_sensor_right: 'assets/images/touch_sensor_right.png'
-  ultrasonic_sensor_top: 'assets/images/ultrasonic_sensor_top.png'
-  ultrasonic_sensor_bottom: 'assets/images/ultrasonic_sensor_bottom.png'
-  wheel: 'assets/images/wheel.png'
-
 obstacle_settings:
   border_settings:
     border_depth: 15
@@ -68,16 +40,6 @@ motor_settings:
   pixel_coasting_subtraction: 0.7
   degree_coasting_subtraction: 1.5
 
-screen_settings:
-  background_color: (59, 60, 54)
-  edge_spacing: 23
-  scaling_multiplier: 0.65
-  screen_height: 1273
-  screen_width: 1273
-  screen_total_width: 1673
-  screen_title: 'Lego ev3dev2 simulator'
-  falling_message: 'Robot has dipped a wheel in a lake or off the map.'
-  restart_message: 'Please restart the mission.'
 
 wheel_settings:
   circumference: 173

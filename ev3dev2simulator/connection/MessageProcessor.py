@@ -4,7 +4,7 @@ from ev3dev2._platform.ev3 import LEDS
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
-from ev3dev2simulator.state import RobotState
+from ev3dev2simulator.state import RobotSimulator
 from ev3dev2simulator.util.Util import remove_scaling, apply_scaling
 
 LED_COLORS = dict()
@@ -22,7 +22,7 @@ class MessageProcessor:
     them to the RobotState.
     """
 
-    def __init__(self, brick_name: str, robot_state: RobotState):
+    def __init__(self, brick_name: str, robot_state: RobotSimulator):
         cfg = get_config().get_data()
         large_sim_type = get_config().is_large_sim_type()
 

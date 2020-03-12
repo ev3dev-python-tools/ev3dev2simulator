@@ -7,7 +7,6 @@ class Wheel(BodyPart):
     Class representing a Wheel of the simulated robot.
     """
 
-
     def __init__(self,
                  address: str,
                  img_cfg,
@@ -16,7 +15,6 @@ class Wheel(BodyPart):
                  delta_y: int):
         super(Wheel, self).__init__(address, robot, delta_x, delta_y)
         self.init_texture(img_cfg['wheel'], 0.33)
-
 
     def is_falling(self) -> bool:
         """
@@ -29,7 +27,6 @@ class Wheel(BodyPart):
                 return True
 
         return self.get_default_value()
-
 
     def get_default_value(self):
         return False

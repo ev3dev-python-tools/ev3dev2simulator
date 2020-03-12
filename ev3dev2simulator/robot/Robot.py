@@ -13,7 +13,6 @@ class Robot:
     of parts defined by BodyParts and ExtraBodyParts.
     """
 
-
     def __init__(self, cfg, center_x: int, center_y: int):
 
         self.wheel_center_x = center_x
@@ -24,7 +23,6 @@ class Robot:
         self.sprites = None
         self.movable_sprites = None
 
-
     def _move_x(self, distance: float):
         """
         Move all parts of this robot by the given distance in the x-direction.
@@ -33,7 +31,6 @@ class Robot:
 
         for s in self.movable_sprites:
             s.move_x(distance)
-
 
     def _move_y(self, distance: float):
         """
@@ -44,7 +41,6 @@ class Robot:
         for s in self.movable_sprites:
             s.move_y(distance)
 
-
     def _rotate(self, radians: float):
         """
         Rotate all parts of this robot by the given angle in radians.
@@ -52,7 +48,6 @@ class Robot:
         """
         for s in self.movable_sprites:
             s.rotate(radians)
-
 
     def execute_movement(self, left_ppf: float, right_ppf: float):
         """
@@ -80,7 +75,6 @@ class Robot:
         self._move_x(diff_x)
         self._move_y(diff_y)
 
-
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
         """
         Set the obstacles which can be detected by the color sensors of this robot.
@@ -89,7 +83,6 @@ class Robot:
 
         pass
 
-
     def set_touch_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the touch sensors of this robot.
@@ -97,7 +90,6 @@ class Robot:
         """
 
         pass
-
 
     def set_falling_obstacles(self, obstacles):
         """
@@ -108,14 +100,11 @@ class Robot:
 
         pass
 
-
     def get_sprites(self) -> [Sprite]:
         return self.sprites
 
-
     def get_sensors(self) -> [BodyPart]:
         return None
-
 
     def get_anchor(self) -> BodyPart:
         return None
