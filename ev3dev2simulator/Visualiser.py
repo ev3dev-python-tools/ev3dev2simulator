@@ -197,8 +197,8 @@ class Visualiser(arcade.Window):
         These elements are added to lists to make buffered rendering possible to improve performance.
         """
 
-        self.robot_elements = arcade.SpriteList()
-        self.obstacle_elements = arcade.ShapeElementList()
+        # self.robot_elements = arcade.SpriteList()
+        # self.obstacle_elements = arcade.ShapeElementList()
 
     def on_close(self):
         sys.exit(0)
@@ -326,16 +326,18 @@ class Visualiser(arcade.Window):
 
     def on_draw(self):
         """
-        Render the simulation. This is done in 30 frames per second.
+        Render the simulation.
         """
+
         arcade.start_render()
         for obstacleList in self.world_state.obstacles:
             for shape in obstacleList.get_shapes():
                 shape.draw()
 
-        # self.robot_elements.draw()
-
+        for robot in self.world_state.robots:
+            robot.get_sprites().draw()
         self._draw_text()
+
 
     def _draw_text(self):
         """
@@ -383,4 +385,3 @@ class Visualiser(arcade.Window):
         All the logic to move the robot. Collision detection is also performed.
         """
         self.update_callback()
-

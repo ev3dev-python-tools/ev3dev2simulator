@@ -28,7 +28,7 @@ class Lake(ColorObstacle):
         self.center_y = center_y
         self.border_width = border_width
 
-        self.radius = radius if self.large_sim_type else radius * 1.2
+        self.radius = radius
         self.inner_radius = inner_radius
         self.outer_radius = self.radius + (self.border_width / 2)
 

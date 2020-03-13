@@ -1,3 +1,4 @@
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
@@ -8,13 +9,14 @@ class Wheel(BodyPart):
     """
 
     def __init__(self,
+                 brick: int,
                  address: str,
-                 img_cfg,
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(Wheel, self).__init__(address, robot, delta_x, delta_y)
-        self.init_texture(img_cfg['wheel'], 0.33)
+        vis_conf = get_config().get_visualisation_config()
+        super(Wheel, self).__init__(brick, address, robot, delta_x, delta_y)
+        self.init_texture(vis_conf['image_paths']['wheel'], 0.33)
 
     def is_falling(self) -> bool:
         """

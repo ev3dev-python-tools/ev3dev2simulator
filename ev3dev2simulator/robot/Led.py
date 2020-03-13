@@ -1,5 +1,6 @@
 import arcade
 
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.robot.BodyPart import BodyPart
 from ev3dev2simulator.util.Util import apply_scaling
@@ -10,13 +11,13 @@ class Led(BodyPart):
     Class representing a Wheel of the simulated robot.
     """
 
-
     def __init__(self,
-                 img_cfg,
+                 brick: int,
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(Led, self).__init__('', robot, delta_x, delta_y)
+        img_cfg = get_config().get_visualisation_config()['image_paths']
+        super(Led, self).__init__(brick, '', robot, delta_x, delta_y)
 
         amber_texture = arcade.load_texture(img_cfg['led_amber'], scale=apply_scaling(0.33))
         black_texture = arcade.load_texture(img_cfg['led_black'], scale=apply_scaling(0.33))
@@ -34,7 +35,6 @@ class Led(BodyPart):
 
         self.old_texture_index = 1
         self.set_texture(1)
-
 
     def set_color_texture(self, color):
         if self.old_texture_index != color:

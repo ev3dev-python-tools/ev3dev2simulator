@@ -11,14 +11,15 @@ class BodyPart(arcade.Sprite):
     Class containing the base functionality of a part of the robot.
     """
 
-
     def __init__(self,
+                 brick: int,
                  address: str,
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
         super(BodyPart, self).__init__()
 
+        self.brick = brick
         self.address = address
         self.robot = robot
         self.center_x = robot.wheel_center_x + delta_x
@@ -32,7 +33,6 @@ class BodyPart(arcade.Sprite):
 
         self.sensible_obstacles = None
 
-
     def move_x(self, distance: float):
         """
         Move this part by the given distance in the x-direction.
@@ -41,7 +41,6 @@ class BodyPart(arcade.Sprite):
 
         self.center_x += distance
 
-
     def move_y(self, distance: float):
         """
         Move this part by the given distance in the y-direction.
@@ -49,7 +48,6 @@ class BodyPart(arcade.Sprite):
         """
 
         self.center_y += distance
-
 
     def rotate(self, radians: float):
         """
@@ -65,7 +63,6 @@ class BodyPart(arcade.Sprite):
         self.center_x = self.sweep_length * math.sin(-rad) + self.robot.wheel_center_x
         self.center_y = self.sweep_length * math.cos(-rad) + self.robot.wheel_center_y
 
-
     def set_sensible_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected via collision detection by this body part.
@@ -73,7 +70,6 @@ class BodyPart(arcade.Sprite):
         """
 
         self.sensible_obstacles = obstacles
-
 
     def get_default_value(self):
         """
@@ -83,7 +79,6 @@ class BodyPart(arcade.Sprite):
         """
 
         pass
-
 
     def init_texture(self, src, scale):
         texture = arcade.load_texture(src, scale=apply_scaling(scale))

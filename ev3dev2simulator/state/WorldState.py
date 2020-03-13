@@ -1,6 +1,6 @@
 import os
 
-from arcade import color
+from ev3dev2simulator.state.RobotState import RobotState
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
@@ -11,9 +11,6 @@ from ev3dev2simulator.obstacle.Bottle import Bottle
 from ev3dev2simulator.obstacle.Edge import Edge
 from ev3dev2simulator.obstacle.Lake import Lake
 from ev3dev2simulator.obstacle.Rock import Rock
-from ev3dev2simulator.robot.RobotLarge import RobotLarge
-from ev3dev2simulator.robot.RobotSmall import RobotSmall
-from ev3dev2simulator.util.Util import apply_scaling
 
 from ev3dev2simulator.config.config import get_config
 
@@ -26,18 +23,8 @@ class WorldState:
         self.color_obstacles = []
         self.robots = []
 
-        # for key, value in config['robots'].items():
-        #     print(key)
-        # if self.large_sim_type:
-        #     self.robot = RobotLarge(self.cfg, self.robot_pos[0], self.robot_pos[1], self.robot_pos[2])
-        # else:
-        #     self.robot = RobotSmall(self.cfg, self.robot_pos[0], self.robot_pos[1], self.robot_pos[2])
-        #
-        # for s in self.robot.get_sprites():
-        #     self.robot_elements.append(s)
-        #
-        # for s in self.robot.get_sensors():
-        #     self.robot_state.load_sensor(s)
+        for robot_conf in config['robots']:
+            self.robots.append(RobotState(robot_conf))
 
         vis_config = get_config().get_visualisation_config()
 
@@ -64,6 +51,11 @@ class WorldState:
                 self.touch_obstacles.append(bottle)
             else:
                 print("unknown obstacle type")
+
+        for robot in self.robots:
+            robot.set_color_obstacles(self.color_obstacles)
+            robot.set_touch_obstacles(self.touch_obstacles)
+            robot.set_falling_obstacles(self.falling_obstacles)
 
         # This should only be added if it has a measurement probe
         # ground = Ground(1460, 950, 300, 10, color.BLACK)

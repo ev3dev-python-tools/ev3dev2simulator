@@ -14,21 +14,20 @@ class UltrasonicSensor(BodyPart):
     Class representing an UltrasonicSensor of the simulated robot.
     """
 
-
     def __init__(self,
+                 brick: int,
                  address: str,
-                 img_cfg,
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(UltrasonicSensor, self).__init__(address, robot, delta_x, delta_y)
+        super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y)
+        img_cfg = get_config().get_visualisation_config()['image_paths']
         self.init_texture(img_cfg['ultrasonic_sensor_top'], 0.20)
 
         self.sensor_half_height = apply_scaling(22.5)
         self.scaling_multiplier = get_config().get_scale()
 
         self.eye_offset = apply_scaling(18)
-
 
     def distance(self, space: Space) -> float:
         """
@@ -53,7 +52,6 @@ class UltrasonicSensor(BodyPart):
 
         return self.get_default_value()
 
-
     def _calc_view_distance(self, space: Space, base_x: float, base_y: float) -> float:
         """
         Calculate the distance between the base point, represented by base_x and base_y, and the furthest
@@ -75,7 +73,6 @@ class UltrasonicSensor(BodyPart):
         else:
             return None
 
-
     def _calc_ray_cast_point(self, from_x: float, from_y: float) -> Point:
         """
         Calculate the coordinates of the point to perform a ray-cast towards
@@ -90,7 +87,6 @@ class UltrasonicSensor(BodyPart):
 
         return x, y
 
-
     def _calc_eye_center(self, angle: float) -> Point:
         """
         Calculate the center point of a location at the given angle relative to this objects center.
@@ -104,7 +100,6 @@ class UltrasonicSensor(BodyPart):
         y = self.eye_offset * math.cos(-rad) + self.center_y
 
         return x, y
-
 
     def get_default_value(self):
         """

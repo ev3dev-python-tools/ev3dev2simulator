@@ -2,7 +2,7 @@ import math
 
 from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
-from ev3dev2simulator.robot.Body import Body
+from ev3dev2simulator.robot.Brick import Brick
 from ev3dev2simulator.robot.ColorSensor import ColorSensor
 from ev3dev2simulator.robot.Led import Led
 from ev3dev2simulator.robot.Robot import Robot
@@ -17,7 +17,6 @@ class RobotSmall(Robot):
     Class representing the simulated robot. This robot has a number
     of parts defined by BodyParts and ExtraBodyParts.
     """
-
 
     def __init__(self, cfg, center_x: int, center_y: int, orientation: int):
         super(RobotSmall, self).__init__(cfg, center_x, center_y)
@@ -34,15 +33,17 @@ class RobotSmall(Robot):
 
         self.wheel_distance = apply_scaling(cfg['wheel_settings']['spacing'])
 
-        self.body = Body(img_cfg, self, 0, apply_scaling(-22.5))
+        self.body = Brick(img_cfg, self, 0, apply_scaling(-22.5))
 
         self.left_wheel = Wheel(address_motor_left, img_cfg, self, (self.wheel_distance / -2), 0.01)
         self.right_wheel = Wheel(address_motor_right, img_cfg, self, (self.wheel_distance / 2), 0.01)
 
         self.center_color_sensor = ColorSensor(address_cs_center, img_cfg, self, 0, apply_scaling(81))
 
-        self.left_touch_sensor = TouchSensor(address_ts_left, img_cfg, self, apply_scaling(-75), apply_scaling(102), 'left')
-        self.right_touch_sensor = TouchSensor(address_ts_right, img_cfg, self, apply_scaling(75), apply_scaling(102), 'right')
+        self.left_touch_sensor = TouchSensor(address_ts_left, img_cfg, self, apply_scaling(-75), apply_scaling(102),
+                                             'left')
+        self.right_touch_sensor = TouchSensor(address_ts_right, img_cfg, self, apply_scaling(75), apply_scaling(102),
+                                              'right')
 
         self.front_ultrasonic_sensor = UltrasonicSensor(address_us_front, img_cfg, self, 0, apply_scaling(-91.5))
 
@@ -64,11 +65,9 @@ class RobotSmall(Robot):
         if orientation != 0:
             self._rotate(math.radians(orientation))
 
-
     def set_led_colors(self, left_color, right_color):
         self.left_led.set_color_texture(left_color)
         self.right_led.set_color_texture(right_color)
-
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
         """
@@ -78,7 +77,6 @@ class RobotSmall(Robot):
 
         self.center_color_sensor.set_sensible_obstacles(obstacles)
 
-
     def set_touch_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the touch sensors of this robot.
@@ -87,7 +85,6 @@ class RobotSmall(Robot):
 
         self.left_touch_sensor.set_sensible_obstacles(obstacles)
         self.right_touch_sensor.set_sensible_obstacles(obstacles)
-
 
     def set_falling_obstacles(self, obstacles):
         """
@@ -99,13 +96,11 @@ class RobotSmall(Robot):
         self.left_wheel.set_sensible_obstacles(obstacles)
         self.right_wheel.set_sensible_obstacles(obstacles)
 
-
     def get_sensors(self) -> [BodyPart]:
         return [self.center_color_sensor,
                 self.right_touch_sensor,
                 self.left_touch_sensor,
                 self.front_ultrasonic_sensor]
-
 
     def get_anchor(self) -> BodyPart:
         return self.body

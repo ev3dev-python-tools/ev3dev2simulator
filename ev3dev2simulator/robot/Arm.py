@@ -7,7 +7,6 @@ class Arm(BodyPart):
     Class representing the body of the simulated robot.
     """
 
-
     def __init__(self,
                  img_cfg,
                  robot: Robot,

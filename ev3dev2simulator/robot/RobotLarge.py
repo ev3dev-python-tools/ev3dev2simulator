@@ -4,7 +4,7 @@ from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
 from ev3dev2simulator.robot.Arm import Arm
 from ev3dev2simulator.robot.ArmLarge import ArmLarge
-from ev3dev2simulator.robot.Body import Body
+from ev3dev2simulator.robot.Brick import Brick
 from ev3dev2simulator.robot.ColorSensor import ColorSensor
 from ev3dev2simulator.robot.Led import Led
 from ev3dev2simulator.robot.Robot import Robot
@@ -40,8 +40,8 @@ class RobotLarge(Robot):
 
         self.wheel_distance = apply_scaling(cfg['wheel_settings']['spacing'])
 
-        self.left_body = Body(img_cfg, self, apply_scaling(39), apply_scaling(-22.5))
-        self.right_body = Body(img_cfg, self, apply_scaling(-39), apply_scaling(-22.5))
+        self.left_body = Brick(img_cfg, self, apply_scaling(39), apply_scaling(-22.5))
+        self.right_body = Brick(img_cfg, self, apply_scaling(-39), apply_scaling(-22.5))
 
         self.arm = Arm(img_cfg, self, apply_scaling(15), apply_scaling(102))
         self.arm_large = ArmLarge(img_cfg, apply_scaling(1450), apply_scaling(1100))

@@ -20,14 +20,15 @@ class ColorSensor(BodyPart):
     """
 
     def __init__(self,
+                 brick: int,
                  address: str,
-                 img_cfg,
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(ColorSensor, self).__init__(address, robot, delta_x, delta_y)
+        super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y)
         self.large_sim_type = get_config().is_large_sim_type()
 
+        img_cfg = get_config().get_visualisation_config()['image_paths']
         black_texture = arcade.load_texture(img_cfg['color_sensor_black'], scale=apply_scaling(0.26))
         blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=apply_scaling(0.26))
         green_texture = arcade.load_texture(img_cfg['color_sensor_green'], scale=apply_scaling(0.26))

@@ -67,6 +67,7 @@ class Config:
                 return yaml.safe_load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
+                raise RuntimeError("there are errors in the yaml file")
 
     def _load_data(self):
         """
