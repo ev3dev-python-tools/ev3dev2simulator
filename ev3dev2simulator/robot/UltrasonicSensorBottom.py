@@ -1,5 +1,4 @@
 from ev3dev2simulator.config.config import get_config
-from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
 
@@ -11,7 +10,7 @@ class UltrasonicSensorBottom(BodyPart):
     def __init__(self,
                  brick: int,
                  address: str,
-                 robot: Robot,
+                 robot,
                  delta_x: int,
                  delta_y: int):
         img_cfg = get_config().get_visualisation_config()['image_paths']

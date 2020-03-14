@@ -1,7 +1,6 @@
 import arcade
 
 from ev3dev2simulator.config.config import get_config
-from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.robot.BodyPart import BodyPart
 from ev3dev2simulator.util.Util import apply_scaling
 
@@ -22,7 +21,7 @@ class ColorSensor(BodyPart):
     def __init__(self,
                  brick: int,
                  address: str,
-                 robot: Robot,
+                 robot,
                  delta_x: int,
                  delta_y: int):
         super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'color_sensor')

@@ -3,6 +3,7 @@ from queue import Queue, Empty
 from typing import Any, Tuple
 
 from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.state.RobotState import RobotState
 
 
 class RobotSimulator:
@@ -21,13 +22,15 @@ class RobotSimulator:
     # self.robot.set_touch_obstacles(touch_obstacles)
     # self.robot.set_falling_obstacles(falling_obstacles)
 
-    def __init__(self):
-        cfg = get_config().get_data()
-        large_sim_type = get_config().is_large_sim_type()
+    def __init__(self, robot: RobotState):
+        # cfg = get_config().get_data()
+        # large_sim_type = get_config().is_large_sim_type()
 
-        self.address_motor_center = cfg['alloc_settings']['motor']['center'] if large_sim_type else ''
-        self.address_motor_left = cfg['alloc_settings']['motor']['left']
-        self.address_motor_right = cfg['alloc_settings']['motor']['right']
+        self.robot = robot
+
+        # self.address_motor_center = cfg['alloc_settings']['motor']['center'] if large_sim_type else ''
+        # self.address_motor_left = cfg['alloc_settings']['motor']['left']
+        # self.address_motor_right = cfg['alloc_settings']['motor']['right']
 
         self.center_motor_queue = Queue()
         self.left_motor_queue = Queue()
@@ -48,9 +51,9 @@ class RobotSimulator:
         self.motor_lock = threading.Lock()
 
     def update(self):
-        if self.robot_state.should_reset:
+        if self.should_reset:
             self.setup()
-            self.robot_state.reset()
+            self.reset()
 
         else:
             self._process_movement()
@@ -217,8 +220,7 @@ class RobotSimulator:
         Request the movement of the robot motors form the robot state and move
         the robot accordingly.
         """
-
-        center_dpf, left_ppf, right_ppf = self.robot_state.next_motor_jobs()
+        center_dpf, left_ppf, right_ppf = self.next_motor_jobs()
 
         if left_ppf or right_ppf:
             self.robot.execute_movement(left_ppf, right_ppf)
@@ -227,15 +229,16 @@ class RobotSimulator:
             self.robot.execute_arm_movement(center_dpf)
 
     def _process_leds(self):
-        if self.large_sim_type:
-            self.robot.set_left_brick_led_colors(self.robot_state.left_brick_left_led_color,
-                                                 self.robot_state.left_brick_right_led_color)
-
-            self.robot.set_right_brick_led_colors(self.robot_state.right_brick_left_led_color,
-                                                  self.robot_state.right_brick_right_led_color)
-        else:
-            self.robot.set_led_colors(self.robot_state.right_brick_left_led_color,
-                                      self.robot_state.right_brick_right_led_color)
+        print("Not implemented: _process_leds")
+        # if self.large_sim_type:
+        #     self.robot.set_left_brick_led_colors(self.robot_state.left_brick_left_led_color,
+        #                                          self.robot_state.left_brick_right_led_color)
+        #
+        #     self.robot.set_right_brick_led_colors(self.robot_state.right_brick_left_led_color,
+        #                                           self.robot_state.right_brick_right_led_color)
+        # else:
+        #     self.robot.set_led_colors(self.robot_state.right_brick_left_led_color,
+        #                               self.robot_state.right_brick_right_led_color)
 
     def _check_fall(self):
         """
@@ -243,29 +246,28 @@ class RobotSimulator:
         middle of a lake. If so display a message on the screen.
         """
 
-        left_wheel_data = self.robot.left_wheel.is_falling()
-        right_wheel_data = self.robot.right_wheel.is_falling()
-
-        if left_wheel_data or right_wheel_data:
-            self.msg_counter = self.frames_per_second * 3
+        wheels = self.robot.get_wheels()
+        for wheel in wheels:
+            if wheel.is_falling():
+                self.msg_counter = self.frames_per_second * 3  # TODO move to visualisation
 
     def _process_sensors(self):
         """
         Process the data of the robot sensors by retrieving the data and putting it
         in the robot state.
         """
-
-        self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
-        self.left_ts_data = self.robot.left_touch_sensor.is_touching()
-        self.right_ts_data = self.robot.right_touch_sensor.is_touching()
-        self.front_us_data = self.robot.front_ultrasonic_sensor.distance(self.space)
-
-        self.robot_state.values[self.robot.center_color_sensor.address] = self.center_cs_data
-        self.robot_state.values[self.robot.left_touch_sensor.address] = self.left_ts_data
-        self.robot_state.values[self.robot.right_touch_sensor.address] = self.right_ts_data
-        self.robot_state.values[self.robot.front_ultrasonic_sensor.address] = self.front_us_data
-
-        self.robot.center_color_sensor.set_color_texture(self.center_cs_data)
+        pass
+        # self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
+        # self.left_ts_data = self.robot.left_touch_sensor.is_touching()
+        # self.right_ts_data = self.robot.right_touch_sensor.is_touching()
+        # self.front_us_data = self.robot.front_ultrasonic_sensor.distance(self.space)
+        #
+        # self.robot_state.values[self.robot.center_color_sensor.address] = self.center_cs_data
+        # self.robot_state.values[self.robot.left_touch_sensor.address] = self.left_ts_data
+        # self.robot_state.values[self.robot.right_touch_sensor.address] = self.right_ts_data
+        # self.robot_state.values[self.robot.front_ultrasonic_sensor.address] = self.front_us_data
+        #
+        # self.robot.center_color_sensor.set_color_texture(self.center_cs_data)
 
         # if self.large_sim_type:
         #     self.left_cs_data = self.robot.left_color_sensor.get_sensed_color()

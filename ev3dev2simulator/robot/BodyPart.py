@@ -2,7 +2,6 @@ import math
 
 import arcade
 
-from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.util.Util import pythagoras, apply_scaling
 
 
@@ -14,7 +13,7 @@ class BodyPart(arcade.Sprite):
     def __init__(self,
                  brick: int,
                  address: str,
-                 robot: Robot,
+                 robot,
                  delta_x: int,
                  delta_y: int,
                  ev3type: str):

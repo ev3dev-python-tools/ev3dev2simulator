@@ -1,7 +1,6 @@
 import arcade
 
 from ev3dev2simulator.config.config import get_config
-from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.robot.BodyPart import BodyPart
 from ev3dev2simulator.util.Util import apply_scaling
 
@@ -13,7 +12,7 @@ class Led(BodyPart):
 
     def __init__(self,
                  brick: int,
-                 robot: Robot,
+                 robot,
                  delta_x: int,
                  delta_y: int):
         img_cfg = get_config().get_visualisation_config()['image_paths']

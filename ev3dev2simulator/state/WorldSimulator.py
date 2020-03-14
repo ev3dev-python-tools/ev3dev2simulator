@@ -1,18 +1,15 @@
-import threading
-from queue import Queue, Empty
-from typing import Any, Tuple
-
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.state.RobotSimulator import RobotSimulator
+from ev3dev2simulator.state.WorldState import WorldState
 
 
 class WorldSimulator:
-    def __init__(self, world_state):
-        self.objects = []
-        self.robots = []
-
-    def initialise(self):
-        pass
+    def __init__(self, world_state: WorldState):
+        self.world_state = world_state
+        self.robotSimulators = []
+        for robot in world_state.robots:
+            robot_sim = RobotSimulator(robot)
+            self.robotSimulators.append(robot_sim)
 
     def update(self):
-        pass
-
+        for robot in self.robotSimulators:
+            robot.update()

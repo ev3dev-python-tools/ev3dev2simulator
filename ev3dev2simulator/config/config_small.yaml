@@ -50,7 +50,7 @@ robots:
 obstacles:
   border:
     depth: 30
-    color: (59, 60, 54)
+    color: (255, 255, 255)
     type: 'border'
 
   lake_blue:

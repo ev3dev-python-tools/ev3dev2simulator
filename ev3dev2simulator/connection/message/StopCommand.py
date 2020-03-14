@@ -8,13 +8,11 @@ class StopCommand(MotorCommand):
     how the motor should stop. This can be 'hold', 'break' or 'coast'.
     """
 
-
     def __init__(self,
                  address: str,
                  speed: float,
                  stop_action: str):
         super(StopCommand, self).__init__(address, speed, stop_action)
-
 
     def serialize(self) -> dict:
         return {

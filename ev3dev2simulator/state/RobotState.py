@@ -186,6 +186,16 @@ class RobotState:
             except RuntimeError:
                 pass
 
+    def get_wheels(self):
+        wheels = []
+        for part in self.movable_sprites:
+            try:
+                if part.get_ev3type() == 'wheel':
+                    wheels.append(part)
+            except RuntimeError:
+                pass
+        return wheels
+
     def get_sprites(self) -> [Sprite]:
         return self.sprites
 

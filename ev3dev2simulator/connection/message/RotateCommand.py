@@ -9,7 +9,6 @@ class RotateCommand(MotorCommand):
     This can be 'hold', 'break' or 'coast'.
     """
 
-
     def __init__(self,
                  address: str,
                  speed: float,
@@ -17,7 +16,6 @@ class RotateCommand(MotorCommand):
                  stop_action: str):
         super(RotateCommand, self).__init__(address, speed, stop_action)
         self.distance = distance
-
 
     def serialize(self) -> dict:
         return {

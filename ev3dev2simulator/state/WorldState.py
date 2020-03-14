@@ -57,7 +57,7 @@ class WorldState:
             robot.set_touch_obstacles(self.touch_obstacles)
             robot.set_falling_obstacles(self.falling_obstacles)
 
-        # This should only be added if it has a measurement probe
+        # TODO This should only be added if it has a measurement probe
         # ground = Ground(1460, 950, 300, 10, color.BLACK)
         # self.obstacles.append(ground)
 
