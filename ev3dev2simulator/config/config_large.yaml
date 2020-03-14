@@ -1,46 +1,146 @@
-alloc_settings:
-  motor:
-    center: 'left_brick:ev3-ports:outB'
-    left: 'left_brick:ev3-ports:outA'
-    right: 'left_brick:ev3-ports:outD'
+robots:
+  - name: robot0
+    center_x: 250
+    center_y: 300
+    orientation: 0
+    parts:
+    - name: brick-left
+      type: brick
+      brick: 0
+      x_offset: -39
+      y_offset: -22.5
+    - name: brick-right
+      type: brick
+      brick: 1
+      x_offset: 39
+      y_offset: -22.5
+    - name: motor-left
+      type: motor
+      x_offset: -60
+      y_offset: 0.01
+      brick: 0
+      port: 'ev3-ports:outA'
+    - name: motor-right
+      type: motor
+      x_offset: 60
+      y_offset: 0.01
+      brick: 0
+      port: 'ev3-ports:outD'
+    - name: color-sensor-center
+      type: color_sensor
+      x_offset: 0
+      y_offset: 84
+      brick: 0
+      port: 'ev3-ports:in2'
+    - name: color-sensor-center
+      type: color_sensor
+      x_offset: 0
+      y_offset: 84
+      brick: 0
+      port: 'ev3-ports:in2'
+    - name: color-sensor-left
+      type: color_sensor
+      x_offset: -69
+      y_offset: 95
+      brick: 0
+      port: 'ev3-ports:in1'
+    - name: color-sensor-right
+      type: color_sensor
+      x_offset: 69
+      y_offset: 95
+      brick: 0
+      port: 'ev3-ports:in3'
+    - name: touch-sensor-left
+      type: touch_sensor
+      side: left
+      x_offset: -65
+      y_offset: 102
+      brick: 1
+      port: 'ev3-ports:in2'
+    - name: touch-sensor-right
+      type: touch_sensor
+      side: right
+      x_offset: 65
+      y_offset: 102
+      brick: 1
+      port: 'ev3-ports:in3'
+    - name: touch-sensor-rear
+      type: touch_sensor
+      x_offset: 0
+      y_offset: -165
+      side: rear
+      brick: 1
+      port: 'ev3-ports:in1'
+    - name: ultrasonic-sensor-front
+      type: ultrasonic_sensor
+      x_offset: -22
+      y_offset: 56
+      brick: 1
+      port: 'ev3-ports:in4'
+    - name: measurement-probe
+      type: arm
+      x_offset: 15
+      y_offset: 102
+      brick: 0
+      port: 'ev3-ports:outB'
+    - name: ultrasonic-sensor-rear
+      type: ultrasonic_sensor
+      x_offset: 0
+      y_offset: -145
+      direction: bottom
+      brick: 0
+      port: 'ev3-ports:in4'
+obstacles:
+  border:
+    depth: 30
+    color: (59, 60, 54)
+    type: 'border'
 
-  color_sensor:
-    center: 'left_brick:ev3-ports:in2'
-    left: 'left_brick:ev3-ports:in1'
-    right: 'left_brick:ev3-ports:in3'
-
-  touch_sensor:
-    left: 'right_brick:ev3-ports:in2'
-    right: 'right_brick:ev3-ports:in3'
-    rear: 'right_brick:ev3-ports:in1'
-
-  ultrasonic_sensor:
-    front: 'right_brick:ev3-ports:in4'
-    rear: 'left_brick:ev3-ports:in4'
-
-obstacle_settings:
-  border_settings:
-    border_depth: 15
-    border_color: (255, 255, 255)
-
-  lake_settings:
+  lake_blue:
     border_width: 29
     inner_radius: 38
-    lake_blue_color: (58, 166, 221)
-    lake_blue_x: 137
-    lake_blue_y: 922
-    lake_green_color: (122, 182, 72)
-    lake_green_x: 1052
-    lake_green_y: 567
-    lake_red_color: (201, 45, 57)
-    lake_red_x: 397
-    lake_red_y: 232
+    color: (58, 166, 221)
+    x: 500
+    y: 170
+    type: 'lake'
 
-motor_settings:
-  pixel_coasting_subtraction: 0.7
-  degree_coasting_subtraction: 1.5
+  lake_green:
+    border_width: 29
+    inner_radius: 38
+    color: (252, 227, 3)
+    x: 250
+    y: 600
+    type: 'lake'
 
+  lake_red:
+    border_width: 29
+    inner_radius: 38
+    color: (201, 45, 57)
+    x: 850
+    y: 500
+    type: 'lake'
 
-wheel_settings:
-  circumference: 173
-  spacing: 120
+  rock1:
+    x: 825
+    y: 1050
+    width: 150
+    height: 60
+    color: (169, 169, 169)
+    angle: 10
+    type: 'rock'
+
+  rock2:
+    x: 975
+    y: 275
+    width: 300
+    height: 90
+    color: (169, 169, 169)
+    angle: 130
+    type: 'rock'
+
+  bottle:
+    x: 500
+    y: 500
+    radius: 40
+    color: (85, 107, 47)
+    type: 'bottle'

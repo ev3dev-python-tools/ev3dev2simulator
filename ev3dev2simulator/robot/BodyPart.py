@@ -16,9 +16,11 @@ class BodyPart(arcade.Sprite):
                  address: str,
                  robot: Robot,
                  delta_x: int,
-                 delta_y: int):
+                 delta_y: int,
+                 ev3type: str):
         super(BodyPart, self).__init__()
 
+        self.ev3type = ev3type
         self.brick = brick
         self.address = address
         self.robot = robot
@@ -85,3 +87,6 @@ class BodyPart(arcade.Sprite):
 
         self.textures.append(texture)
         self.set_texture(0)
+
+    def get_ev3type(self):
+        return self.ev3type

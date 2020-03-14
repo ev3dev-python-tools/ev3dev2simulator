@@ -15,5 +15,5 @@ class Brick(BodyPart):
                  delta_x: int,
                  delta_y: int):
         vis_conf = get_config().get_visualisation_config()
-        super(Brick, self).__init__(brick, '', robot, apply_scaling(delta_x), apply_scaling(delta_y))
+        super(Brick, self).__init__(brick, '', robot, apply_scaling(delta_x), apply_scaling(delta_y), 'brick')
         self.init_texture(vis_conf['image_paths']['body'], 0.15)

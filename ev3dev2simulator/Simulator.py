@@ -103,7 +103,7 @@ def main():
     world_simulator = WorldSimulator(world_state)
 
     Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
-                            use_second_screen_to_show_simulator)
+               use_second_screen_to_show_simulator)
 
     # server_thread = ServerSockets(world_simulator)
     # server_thread.setDaemon(True)

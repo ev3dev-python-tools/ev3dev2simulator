@@ -23,7 +23,7 @@ class TouchSensor(BodyPart):
         else:
             img = 'touch_sensor_rear'
         vis_conf = get_config().get_visualisation_config()
-        super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y)
+        super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'touch_sensor')
         self.init_texture(vis_conf['image_paths'][img], 0.32)
 
     def is_touching(self) -> bool:

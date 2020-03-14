@@ -17,7 +17,7 @@ class Led(BodyPart):
                  delta_x: int,
                  delta_y: int):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        super(Led, self).__init__(brick, '', robot, delta_x, delta_y)
+        super(Led, self).__init__(brick, '', robot, delta_x, delta_y, 'led')
 
         amber_texture = arcade.load_texture(img_cfg['led_amber'], scale=apply_scaling(0.33))
         black_texture = arcade.load_texture(img_cfg['led_black'], scale=apply_scaling(0.33))

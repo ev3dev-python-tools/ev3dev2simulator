@@ -1,3 +1,4 @@
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
@@ -7,16 +8,15 @@ class UltrasonicSensorBottom(BodyPart):
     Class representing an UltrasonicSensor of the simulated robot mounted towards the ground.
     """
 
-
     def __init__(self,
+                 brick: int,
                  address: str,
-                 img_cfg,
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(UltrasonicSensorBottom, self).__init__(address, robot, delta_x, delta_y)
+        img_cfg = get_config().get_visualisation_config()['image_paths']
+        super(UltrasonicSensorBottom, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
         self.init_texture(img_cfg['ultrasonic_sensor_bottom'], 0.20)
-
 
     def distance(self) -> float:
         """
@@ -29,7 +29,6 @@ class UltrasonicSensorBottom(BodyPart):
                 return self.get_default_value()
 
         return 20
-
 
     def get_default_value(self):
         """

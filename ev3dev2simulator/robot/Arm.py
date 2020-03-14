@@ -1,3 +1,4 @@
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot import Robot
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
@@ -8,9 +9,11 @@ class Arm(BodyPart):
     """
 
     def __init__(self,
-                 img_cfg,
+                 brick: int,
+                 address: str,
                  robot: Robot,
                  center_x: int,
                  center_y: int):
-        super(Arm, self).__init__('', robot, center_x, center_y)
-        self.init_texture(img_cfg['arm'], 0.41)
+        vis_conf = get_config().get_visualisation_config()
+        super(Arm, self).__init__(brick, address, robot, center_x, center_y, 'wheel')
+        self.init_texture(vis_conf['image_paths']['arm'], 0.41)

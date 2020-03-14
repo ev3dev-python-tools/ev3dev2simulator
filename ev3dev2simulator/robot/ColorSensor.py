@@ -25,7 +25,7 @@ class ColorSensor(BodyPart):
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y)
+        super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'color_sensor')
         self.large_sim_type = get_config().is_large_sim_type()
 
         img_cfg = get_config().get_visualisation_config()['image_paths']

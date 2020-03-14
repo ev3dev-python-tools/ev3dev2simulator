@@ -2,6 +2,7 @@ import math
 
 from arcade import Sprite
 
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.util.Util import apply_scaling
 
 
@@ -10,12 +11,11 @@ class ArmLarge(Sprite):
     Class representing the body of the simulated robot.
     """
 
-
     def __init__(self,
-                 img_cfg,
                  center_x: int,
                  center_y: int):
-        super(ArmLarge, self).__init__(img_cfg['arm_large'], apply_scaling(0.50))
+        vis_conf = get_config().get_visualisation_config()
+        super(ArmLarge, self).__init__(vis_conf['image_paths']['arm_large'], apply_scaling(0.50))
 
         self.center_x = center_x
         self.center_y = center_y
@@ -26,7 +26,6 @@ class ArmLarge(Sprite):
         self.rotate_y = center_y - self.sweep_length
 
         self.rotate(20)
-
 
     def rotate(self, degrees: float):
         """

@@ -47,55 +47,6 @@ robots:
       y_offset: -91.5
       brick: 0
       port: 'ev3-ports:in3'
-#  - name: robot1
-#    x: 30
-#    y: 50
-#    parts:
-#    - name: motor-center
-#      type: motor
-#      brick: 0
-#      port: 'ev3-ports:outB'
-#    - name: motor-left
-#      type: motor
-#      brick: 0
-#      port: 'ev3-ports:outA'
-#    - name: motor-right
-#      type: motor
-#      brick: 0
-#      port: 'ev3-ports:outD'
-#    - name: color-sensor-center
-#      type: color_sensor
-#      brick: 0
-#      port: 'ev3-ports:in2'
-#    - name: color-sensor-left
-#      type: color_sensor
-#      brick: 0
-#      port: 'ev3-ports:in1'
-#    - name: color-sensor-right
-#      type: color_sensor
-#      brick: 0
-#      port: 'ev3-ports:in3'
-#    - name: touch-sensor-left
-#      type: touch_sensor
-#      brick: 1
-#      port: 'ev3-ports:in2'
-#    - name: touch-sensor-right
-#      type: touch_sensor
-#      brick: 1
-#      port: 'ev3-ports:in3'
-#    - name: touch-sensor-rear
-#      type: touch_sensor
-#      brick: 1
-#      port: 'ev3-ports:in1'
-#    - name: ultrasonic-sensor-front
-#      type: ultrasonic_sensor
-#      brick: 1
-#      port: 'ev3-ports:in4'
-#    - name: ultrasonic-sensor-rear
-#      type: ultrasonic_sensor
-#      brick: 0
-#      port: 'ev3-ports:in4'
-
 obstacles:
   border:
     depth: 30

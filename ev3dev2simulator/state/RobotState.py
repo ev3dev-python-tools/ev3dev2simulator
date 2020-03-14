@@ -4,10 +4,13 @@ from arcade import Sprite, arcade
 
 from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
+from ev3dev2simulator.robot.Arm import Arm
+from ev3dev2simulator.robot.ArmLarge import ArmLarge
 from ev3dev2simulator.robot.Brick import Brick
 from ev3dev2simulator.robot.ColorSensor import ColorSensor
 from ev3dev2simulator.robot.Led import Led
 from ev3dev2simulator.robot.TouchSensor import TouchSensor
+from ev3dev2simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
 from ev3dev2simulator.robot.UltrasonicSensorTop import UltrasonicSensor
 from ev3dev2simulator.robot.Wheel import Wheel
 from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y, apply_scaling
@@ -57,9 +60,27 @@ class RobotState:
                 self.movable_sprites.append(touch_sensor)
 
             elif part['type'] == 'ultrasonic_sensor':
-                ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
-                                                     apply_scaling(part['y_offset']))
+                try:
+                    if part['direction'] == 'bottom':
+                        ultrasonic_sensor = UltrasonicSensorBottom(part['brick'], part['port'], self,
+                                                                   apply_scaling(part['x_offset']),
+                                                                   apply_scaling(part['y_offset']))
+                    elif part['direction'] == 'forward':
+                        ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
+                                                             apply_scaling(part['x_offset']),
+                                                             apply_scaling(part['y_offset']))
+                except KeyError:
+                    ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
+                                                         apply_scaling(part['x_offset']),
+                                                         apply_scaling(part['y_offset']))
                 self.movable_sprites.append(ultrasonic_sensor)
+            elif part['type'] == 'arm':
+                # TODO unused address in part
+                arm = Arm(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
+                          apply_scaling(part['y_offset']))
+                self.movable_sprites.append(arm)
+                arm_large = ArmLarge(apply_scaling(1450), apply_scaling(1100))  # TODO this should be automatic
+                self.sprites.append(arm_large)
             else:
                 print("Unknown robot part in config")
 
@@ -133,18 +154,24 @@ class RobotState:
         Set the obstacles which can be detected by the color sensors of this robot.
         :param obstacles: to be detected.
         """
-        for part in self.sprites:
-            print(type(part))
-            # if type(part) in ['']:
-            #     pass
+        for part in self.movable_sprites:
+            try:
+                if part.get_ev3type() == 'color_sensor':
+                    part.set_sensible_obstacles(obstacles)
+            except RuntimeError:
+                pass
 
     def set_touch_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the touch sensors of this robot.
         :param obstacles: to be detected.
         """
-
-        pass
+        for part in self.movable_sprites:
+            try:
+                if part.get_ev3type() == 'touch_sensor':
+                    part.set_sensible_obstacles(obstacles)
+            except RuntimeError:
+                pass
 
     def set_falling_obstacles(self, obstacles):
         """
@@ -152,14 +179,31 @@ class RobotState:
         the entering of a wheel in a 'hole'. Meaning it is stuck or falling.
         :param obstacles: to be detected.
         """
-
-        pass
+        for part in self.movable_sprites:
+            try:
+                if part.get_ev3type() == 'wheel':
+                    part.set_sensible_obstacles(obstacles)
+            except RuntimeError:
+                pass
 
     def get_sprites(self) -> [Sprite]:
         return self.sprites
 
     def get_sensors(self) -> [BodyPart]:
-        return None
+        sensors = []
+        for part in self.movable_sprites:
+            try:
+                if part.get_ev3type() in ['color_sensor', 'touch_sensor', 'ultrasonic_sensor']:
+                    sensors.append(part)
+            except RuntimeError:
+                pass
+        return sensors
 
     def get_anchor(self) -> BodyPart:
+        for part in self.movable_sprites:
+            try:
+                if part.get_ev3type() == 'brick':
+                    return part
+            except RuntimeError:
+                pass
         return None

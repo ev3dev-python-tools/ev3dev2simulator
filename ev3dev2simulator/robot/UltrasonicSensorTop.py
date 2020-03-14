@@ -20,7 +20,7 @@ class UltrasonicSensor(BodyPart):
                  robot: Robot,
                  delta_x: int,
                  delta_y: int):
-        super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y)
+        super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
         img_cfg = get_config().get_visualisation_config()['image_paths']
         self.init_texture(img_cfg['ultrasonic_sensor_top'], 0.20)
 
