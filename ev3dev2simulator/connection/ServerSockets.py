@@ -4,7 +4,23 @@ import time
 
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
+from ev3dev2simulator.robot.Brick import Brick
 from ev3dev2simulator.state import RobotSimulator
+
+
+def create_handler(client, robot_sim: RobotSimulator, brick: Brick) -> ClientSocketHandler:
+    """
+    Start a ClientSocketHandler tread to manage the given connection.
+    :param client: of the connection to manage.
+    :param robot_sim: Robot simulator that should be connected
+    :param brick: Brick that is going to execute the commands
+    :return: a newly created ClientSocketHandler object.
+    """
+    handler = ClientSocketHandler(robot_sim, client, brick.brick, brick.name)
+    handler.setDaemon(True)
+    handler.start()
+
+    return handler
 
 
 class ServerSockets(threading.Thread):
@@ -12,13 +28,10 @@ class ServerSockets(threading.Thread):
     Class responsible for listening to incoming socket connections from ev3dev2 mock processes.
     """
 
-    def __init__(self, robot_state: RobotSimulator, first_side: str):
+    def __init__(self, robot_simulators: [RobotSimulator]):
         threading.Thread.__init__(self)
-        self.robot_state = robot_state
+        self.robot_simulators = robot_simulators
         self.first_run = True
-
-        self.client1_name = 'left_brick' if first_side == 'left' else 'right_brick'
-        self.client2_name = 'right_brick' if first_side == 'left' else 'left_brick'
 
     def run(self):
         """
@@ -28,7 +41,7 @@ class ServerSockets(threading.Thread):
         for two new connections.
         """
 
-        port = get_config().get_data()['exec_settings']['socket_port']
+        port = get_config().get_visualisation_config()['exec_settings']['socket_port']
 
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -38,44 +51,26 @@ class ServerSockets(threading.Thread):
         while True:
             print('Listening for connections...')
 
-            (client1, address1) = server.accept()
-            handler1 = self.create_handler(client1, self.client1_name)
+            handlers = []
 
-            (client2, address2) = server.accept()
-            handler2 = self.create_handler(client2, self.client2_name)
+            for robot_sim in self.robot_simulators:
+                for brick in robot_sim.robot.get_parts_of_type('brick'):
+                    print(f'Please connect brick "{brick.name}" from robot "{robot_sim.robot.name}" ')
+                    (client, address) = server.accept()
+                    handlers.append(create_handler(client, robot_sim, brick))
 
             if not self.first_run:
-                self.robot_state.should_reset = True
+                for robot_sim in self.robot_simulators:
+                    robot_sim.should_reset = True
 
             self.first_run = False
             time.sleep(1)
 
             while True:
-
-                if not handler1.is_running:
-                    handler2.is_running = False
-                    break
-
-                elif not handler2.is_running:
-                    handler1.is_running = False
-                    break
-
-                else:
-                    time.sleep(1)
-
+                for handler in handlers:
+                    if not handler.is_running:
+                        handler.is_running = False
+                        break
+                time.sleep(1)
             time.sleep(1)
             print('All connections closed')
-
-    def create_handler(self, client, connection_id: str) -> ClientSocketHandler:
-        """
-        Start a ClientSocketHandler tread to manage the given connection.
-        :param client: of the connection to manage.
-        :param connection_id: of the connection.
-        :return: a newly created ClientSocketHandler object.
-        """
-
-        handler = ClientSocketHandler(self.robot_state, client, connection_id)
-        handler.setDaemon(True)
-        handler.start()
-
-        return handler

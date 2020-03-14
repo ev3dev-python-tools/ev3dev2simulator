@@ -31,11 +31,13 @@ class RobotState:
         self.wheel_center_y = config['center_y'] + apply_scaling(22.5)
 
         vis_conf = get_config().get_visualisation_config()
-        self.wheel_distance = apply_scaling(vis_conf['wheel_settings']['spacing'])  # TODO is this required
+        self.wheel_distance = apply_scaling(vis_conf['wheel_settings']['spacing'])  # TODO move this to robot config
+
+        self.name = config['name']
 
         for part in config['parts']:
             if part['type'] == 'brick':
-                brick = Brick(part['brick'], self, part['x_offset'], part['y_offset'])
+                brick = Brick(part['brick'], self, part['x_offset'], part['y_offset'], part['name'])
                 self.movable_sprites.append(brick)
 
                 left_led = Led(part['brick'], self, apply_scaling(part['x_offset'] - 20),
@@ -198,6 +200,16 @@ class RobotState:
 
     def get_sprites(self) -> [Sprite]:
         return self.sprites
+
+    def get_parts_of_type(self, part_type: str):
+        sensors = []
+        for part in self.movable_sprites:
+            try:
+                if part.get_ev3type() == part_type:
+                    sensors.append(part)
+            except RuntimeError:
+                pass
+        return sensors
 
     def get_sensors(self) -> [BodyPart]:
         sensors = []

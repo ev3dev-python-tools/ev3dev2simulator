@@ -28,7 +28,6 @@ class MessageProcessorTest(unittest.TestCase):
 
         self.assertEqual((None, None, None), robot_state.next_motor_jobs())
 
-
     def test_create_jobs_left(self):
         robot_state = RobotState()
 
@@ -42,7 +41,6 @@ class MessageProcessorTest(unittest.TestCase):
             self.assertIsNone(r)
 
         self.assertEqual((None, None, None), robot_state.next_motor_jobs())
-
 
     def test_create_jobs_right(self):
         robot_state = RobotState()
@@ -58,9 +56,8 @@ class MessageProcessorTest(unittest.TestCase):
 
         self.assertEqual((None, None, None), robot_state.next_motor_jobs())
 
-
     def test_create_jobs_coast_center(self):
-        coasting_sub = get_config().get_data()['motor_settings']['degree_coasting_subtraction']
+        coasting_sub = get_config().get_visualisation_config()['motor_settings']['degree_coasting_subtraction']
         robot_state = RobotState()
 
         message_processor = MessageProcessor('left_brick', robot_state)
@@ -82,9 +79,9 @@ class MessageProcessorTest(unittest.TestCase):
 
         self.assertEqual((None, None, None), robot_state.next_motor_jobs())
 
-
     def test_create_jobs_coast_left(self):
-        coasting_sub = apply_scaling(get_config().get_data()['motor_settings']['pixel_coasting_subtraction'])
+        coasting_sub = apply_scaling(
+            get_config().get_visualisation_config()['motor_settings']['pixel_coasting_subtraction'])
         robot_state = RobotState()
 
         message_processor = MessageProcessor('left_brick', robot_state)
@@ -106,11 +103,10 @@ class MessageProcessorTest(unittest.TestCase):
 
         self.assertEqual((None, None, None), robot_state.next_motor_jobs())
 
-
     def test_process_sound_command(self):
         robot_state = RobotState()
 
-        frames_per_second = get_config().get_data()['exec_settings']['frames_per_second']
+        frames_per_second = get_config().get_visualisation_config()['exec_settings']['frames_per_second']
         frames = int(round((32 / 2.5) * frames_per_second))
 
         message_processor = MessageProcessor('left_brick', robot_state)
@@ -122,7 +118,6 @@ class MessageProcessorTest(unittest.TestCase):
         message = robot_state.next_sound_job()
         self.assertEqual(message, 'A test is \nrunning at\n the momen\nt!')
         self.assertIsNone(robot_state.next_sound_job())
-
 
     def test_process_left_led_command(self):
         robot_state = RobotState()
@@ -146,7 +141,6 @@ class MessageProcessorTest(unittest.TestCase):
         self.assertEqual(robot_state.right_brick_left_led_color, 0)
         self.assertEqual(robot_state.right_brick_right_led_color, 4)
 
-
     def test_process_right_led_command(self):
         robot_state = RobotState()
         message_processor = MessageProcessor('right_brick', robot_state)
@@ -168,7 +162,6 @@ class MessageProcessorTest(unittest.TestCase):
 
         self.assertEqual(robot_state.right_brick_left_led_color, 0)
         self.assertEqual(robot_state.right_brick_right_led_color, 4)
-
 
     def test_process_data_request(self):
         robot_state = RobotState()

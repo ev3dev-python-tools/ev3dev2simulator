@@ -6,10 +6,6 @@ from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.ServerSockets import ServerSockets
 from ev3dev2simulator.state.WorldSimulator import WorldSimulator
 from ev3dev2simulator.state.WorldState import WorldState
-from ev3dev2simulator.util.Util import apply_scaling
-
-from ev3dev2simulator.connection.ServerSocketDouble import ServerSocketDouble
-from ev3dev2simulator.connection.BrickServerSocket import ServerSocketSingle
 
 
 def create_arg_parser():
@@ -29,23 +25,6 @@ def create_arg_parser():
             raise argparse.ArgumentTypeError("%s is an invalid scaling value. Should be between 0 and 1" % f)
 
         return f
-
-    # def validate_xy(value):
-    #     """
-    #     Check if the given value is a valid xy value. Throw an Error if this is not the case.
-    #     :param value: to validate.
-    #     :return: a boolean value representing if the validation was successful.
-    #     """
-    #
-    #     try:
-    #         f = int(value)
-    #     except ValueError:
-    #         raise argparse.ArgumentTypeError('Coordinate value must be a integer')
-    #
-    #     if f < 0 or f > 1000:
-    #         raise argparse.ArgumentTypeError("%s is an invalid coordinate. Should be between 0 and 1000" % f)
-    #
-    #     return f
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-V", "--version",
@@ -105,9 +84,9 @@ def main():
     Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
                use_second_screen_to_show_simulator)
 
-    # server_thread = ServerSockets(world_simulator)
-    # server_thread.setDaemon(True)
-    # server_thread.start()
+    server_thread = ServerSockets(world_simulator.robotSimulators)
+    server_thread.setDaemon(True)
+    server_thread.start()
 
     start()
 

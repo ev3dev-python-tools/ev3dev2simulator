@@ -166,7 +166,7 @@ class MotorCommandProcessorTest(unittest.TestCase):
 
 
     def test_coast_frames_required(self):
-        coasting_sub = get_config().get_data()['motor_settings']['pixel_coasting_subtraction']
+        coasting_sub = get_config().get_visualisation_config()['motor_settings']['pixel_coasting_subtraction']
         creator = MotorCommandProcessor()
 
         frames = creator._coast_frames_required(20, coasting_sub)

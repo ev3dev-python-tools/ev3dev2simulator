@@ -23,8 +23,7 @@ class MessageProcessor:
     """
 
     def __init__(self, brick_name: str, robot_state: RobotSimulator):
-        cfg = get_config().get_data()
-        large_sim_type = get_config().is_large_sim_type()
+        cfg = get_config().get_visualisation_config()
 
         self.brick_name = brick_name + ':' if brick_name else ''
 
@@ -32,8 +31,8 @@ class MessageProcessor:
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
 
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
-        self.address_us_front = cfg['alloc_settings']['ultrasonic_sensor']['front']
-        self.address_us_rear = cfg['alloc_settings']['ultrasonic_sensor']['rear'] if large_sim_type else ''
+        # self.address_us_front = cfg['alloc_settings']['ultrasonic_sensor']['front']
+        # self.address_us_rear = cfg['alloc_settings']['ultrasonic_sensor']['rear'] if large_sim_type else ''
 
         self.robot_state = robot_state
         self.command_processor = MotorCommandProcessor()

@@ -55,12 +55,12 @@ def check():
         # checkDistance()
 
 
-bth = BluetoothHelper()
-bth.connect_as_server()
-bth.send("Hello?")
+# bth = BluetoothHelper()
+# bth.connect_as_server()
+# bth.send("Hello?")
 
-leds = Leds()
-leds.animate_rainbow()
+# leds = Leds()
+# leds.animate_rainbow()
 cs = ColorSensor(INPUT_2)
 ts1 = TouchSensor(INPUT_1)
 ts4 = TouchSensor(INPUT_4)
@@ -68,4 +68,4 @@ ts4 = TouchSensor(INPUT_4)
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 
 drive()
-check()
+# check()

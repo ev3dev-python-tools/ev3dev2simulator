@@ -10,19 +10,23 @@ class ClientSocketHandler(MessageHandler):
     Class responsible for managing a socket connection from the ev3dev2 mock processes.
     """
 
-    def __init__(self, robot_state: RobotSimulator, client, connection_id: str):
-        super(ClientSocketHandler, self).__init__(MessageProcessor(connection_id, robot_state))
+    def __init__(self, robot_sim: RobotSimulator, client, brick_id: int, brick_name: str):
+        super(ClientSocketHandler, self).__init__(MessageProcessor(brick_name, robot_sim))
 
         self.client = client
-        self.connection_id = connection_id
+        self.brick_id = brick_id
         self.is_running = True
+        self.brick_name = brick_name
+        self.robot_sim = robot_sim
 
     def run(self):
         """
         Manage the socket connection.
         """
 
-        print('Connection ' + self.connection_id + ' accepted')
+        print(
+            f"Connection from \"{self.brick_name}\" (id: {self.brick_id}) from robot \"{self.robot_sim.robot.name}\" "
+            f"accepted") 
 
         try:
             while self.is_running:

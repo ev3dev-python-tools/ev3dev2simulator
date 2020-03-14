@@ -23,9 +23,6 @@ class RobotSimulator:
     # self.robot.set_falling_obstacles(falling_obstacles)
 
     def __init__(self, robot: RobotState):
-        # cfg = get_config().get_data()
-        # large_sim_type = get_config().is_large_sim_type()
-
         self.robot = robot
 
         # self.address_motor_center = cfg['alloc_settings']['motor']['center'] if large_sim_type else ''
@@ -229,7 +226,7 @@ class RobotSimulator:
             self.robot.execute_arm_movement(center_dpf)
 
     def _process_leds(self):
-        print("Not implemented: _process_leds")
+        pass
         # if self.large_sim_type:
         #     self.robot.set_left_brick_led_colors(self.robot_state.left_brick_left_led_color,
         #                                          self.robot_state.left_brick_right_led_color)

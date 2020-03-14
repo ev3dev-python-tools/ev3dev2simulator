@@ -13,7 +13,7 @@ class MotorCommandProcessor:
 
 
     def __init__(self):
-        cfg = get_config().get_data()
+        cfg = get_config().get_visualisation_config()
 
         self.scaling_multiplier = get_config().get_scale()
         self.pixel_coasting_sub = cfg['motor_settings']['pixel_coasting_subtraction'] * self.scaling_multiplier

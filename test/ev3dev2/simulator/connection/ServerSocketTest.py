@@ -70,7 +70,7 @@ class ServerSocketTest(unittest.TestCase):
             'message': 'A test is running at the moment!',
         }
 
-        frames_per_second = get_config().get_data()['exec_settings']['frames_per_second']
+        frames_per_second = get_config().get_visualisation_config()['exec_settings']['frames_per_second']
         frames = int(round((32 / 2.5) * frames_per_second))
         robot_state = RobotState()
 
