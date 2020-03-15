@@ -47,7 +47,7 @@ while True:
         reverseSmallDistance()
         rotateDegrees(150)
         tankDrive.on(ev3.SpeedPercent(30), ev3.SpeedPercent(30))
-    elif (color == colorSensor.COLOR_BLUE or color == colorSensor.COLOR_YELLOW or color == colorSensor.COLOR_RED):
+    elif color == colorSensor.COLOR_BLUE or color == colorSensor.COLOR_YELLOW or color == colorSensor.COLOR_RED:
         print("lake with color={color}".format(color=color))
         log("lake")
         tankDrive.stop()

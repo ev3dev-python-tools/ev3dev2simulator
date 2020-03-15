@@ -52,7 +52,9 @@ class RobotState:
                 self.movable_sprites.append(right_led)
 
                 self.led_colors[(brick.brick, 'led0')] = 1
+                self.actuators[(brick.brick, 'led0')] = left_led
                 self.led_colors[(brick.brick, 'led1')] = 1
+                self.actuators[(brick.brick, 'led1')] = right_led
 
             elif part['type'] == 'motor':
                 wheel = Wheel(part['brick'], part['port'], self, apply_scaling(part['x_offset']), part['y_offset'])
@@ -162,6 +164,18 @@ class RobotState:
         self._rotate(diff_angle)
         self._move_x(diff_x)
         self._move_y(diff_y)
+
+    def execute_arm_movement(self, address: (int, str), dfp: float):
+        """
+        Move the robot arm by providing the speed of the center motor.
+        :param address: the address of the arm
+        :param dfp: speed in degrees per second of the center motor.
+        """
+
+        self.actuators[address].rotate(dfp)
+
+    def set_led_color(self, address, color):
+        self.actuators[address].set_color_texture(color)
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
         """

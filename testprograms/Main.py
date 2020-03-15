@@ -59,8 +59,8 @@ def check():
 # bth.connect_as_server()
 # bth.send("Hello?")
 
-# leds = Leds()
-# leds.animate_rainbow()
+leds = Leds()
+leds.animate_rainbow(duration=111111, block=False)
 cs = ColorSensor(INPUT_2)
 ts1 = TouchSensor(INPUT_1)
 ts4 = TouchSensor(INPUT_4)
@@ -69,4 +69,4 @@ tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 
 drive(30)
 drive(-30)
-# check()
+check()

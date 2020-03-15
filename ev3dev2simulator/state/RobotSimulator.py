@@ -29,8 +29,9 @@ class RobotSimulator:
         self.queue_info = {}
 
         for actuator in self.robot.get_actuators():
-            self.queue_info[(actuator.brick, actuator.address)] = actuator
-            self.actuator_queues[(actuator.brick, actuator.address)] = Queue()
+            if actuator.ev3type in ['arm', 'motor']:
+                self.queue_info[(actuator.brick, actuator.address)] = actuator
+                self.actuator_queues[(actuator.brick, actuator.address)] = Queue()
 
         self.sound_queue = Queue()
 
@@ -159,7 +160,7 @@ class RobotSimulator:
         for (address, job_of_motor) in job_per_actuator:
             actuator = self.queue_info[address]
             if actuator.ev3type == 'arm':
-                self.robot.execute_arm_movement(job_of_motor)
+                self.robot.execute_arm_movement(address, job_of_motor)
             elif actuator.ev3type == 'motor':
                 if actuator.x_offset < 0:
                     left_ppf = job_of_motor
@@ -170,16 +171,8 @@ class RobotSimulator:
             self.robot.execute_movement(left_ppf, right_ppf)
 
     def _process_leds(self):
-        pass
-        # if self.large_sim_type:
-        #     self.robot.set_left_brick_led_colors(self.robot_state.left_brick_left_led_color,
-        #                                          self.robot_state.left_brick_right_led_color)
-        #
-        #     self.robot.set_right_brick_led_colors(self.robot_state.right_brick_left_led_color,
-        #                                           self.robot_state.right_brick_right_led_color)
-        # else:
-        #     self.robot.set_led_colors(self.robot_state.right_brick_left_led_color,
-        #                               self.robot_state.right_brick_right_led_color)
+        for address, led_color in self.robot.led_colors.items():
+            self.robot.set_led_color(address, led_color)
 
     def _check_fall(self):
         """
@@ -190,7 +183,7 @@ class RobotSimulator:
         wheels = self.robot.get_wheels()
         for wheel in wheels:
             if wheel.is_falling():
-                self.msg_counter = self.frames_per_second * 3  # TODO move to visualisation
+                self.msg_counter = self.frames_per_second * 3
 
     def _process_sensors(self):
         """
