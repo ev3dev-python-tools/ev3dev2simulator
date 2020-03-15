@@ -23,6 +23,12 @@ def create_handler(client, robot_sim: RobotSimulator, brick: Brick) -> ClientSoc
     return handler
 
 
+def is_any_handler_disconnected(handlers):
+    for handler in handlers:
+        if not handler.is_running:
+            return True
+
+
 class ServerSockets(threading.Thread):
     """
     Class responsible for listening to incoming socket connections from ev3dev2 mock processes.
@@ -67,10 +73,10 @@ class ServerSockets(threading.Thread):
             time.sleep(1)
 
             while True:
-                for handler in handlers:
-                    if not handler.is_running:
-                        handler.is_running = False
-                        break
-                time.sleep(1)
-            time.sleep(1)
-            print('All connections closed')
+                if is_any_handler_disconnected(handlers):
+                    time.sleep(1)
+                    print('All connections closed')
+                    break
+                else:
+                    time.sleep(1)
+

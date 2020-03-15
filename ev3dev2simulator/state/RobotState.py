@@ -26,6 +26,10 @@ class RobotState:
     def __init__(self, config):
         self.sprites = arcade.SpriteList()
         self.movable_sprites = arcade.SpriteList()
+        self.sensors = {}
+        self.actuators = {}
+        self.values = {}
+        self.led_colors = {}
 
         self.wheel_center_x = config['center_x']
         self.wheel_center_y = config['center_y'] + apply_scaling(22.5)
@@ -47,19 +51,25 @@ class RobotState:
                 self.movable_sprites.append(left_led)
                 self.movable_sprites.append(right_led)
 
+                self.led_colors[(brick.brick, 'led0')] = 1
+                self.led_colors[(brick.brick, 'led1')] = 1
+
             elif part['type'] == 'motor':
                 wheel = Wheel(part['brick'], part['port'], self, apply_scaling(part['x_offset']), part['y_offset'])
                 self.movable_sprites.append(wheel)
+                self.actuators[(wheel.brick, wheel.address)] = wheel
 
             elif part['type'] == 'color_sensor':
                 color_sensor = ColorSensor(part['brick'], part['port'], self,
                                            apply_scaling(part['x_offset']), apply_scaling(part['y_offset']))
                 self.movable_sprites.append(color_sensor)
+                self.sensors[(color_sensor.brick, color_sensor.address)] = color_sensor
 
             elif part['type'] == 'touch_sensor':
                 touch_sensor = TouchSensor(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
                                            apply_scaling(part['y_offset']), part['side'])
                 self.movable_sprites.append(touch_sensor)
+                self.sensors[(touch_sensor.brick, touch_sensor.address)] = touch_sensor
 
             elif part['type'] == 'ultrasonic_sensor':
                 try:
@@ -76,6 +86,7 @@ class RobotState:
                                                          apply_scaling(part['x_offset']),
                                                          apply_scaling(part['y_offset']))
                 self.movable_sprites.append(ultrasonic_sensor)
+                self.sensors[(ultrasonic_sensor.brick, ultrasonic_sensor.address)] = ultrasonic_sensor
             elif part['type'] == 'arm':
                 # TODO unused address in part
                 arm = Arm(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
@@ -83,6 +94,7 @@ class RobotState:
                 self.movable_sprites.append(arm)
                 arm_large = ArmLarge(apply_scaling(1450), apply_scaling(1100))  # TODO this should be automatic
                 self.sprites.append(arm_large)
+                self.actuators[(arm.brick, arm.address)] = arm
             else:
                 print("Unknown robot part in config")
 
@@ -183,16 +195,29 @@ class RobotState:
         """
         for part in self.movable_sprites:
             try:
-                if part.get_ev3type() == 'wheel':
+                if part.get_ev3type() == 'motor':
                     part.set_sensible_obstacles(obstacles)
             except RuntimeError:
                 pass
+
+    def get_sensor(self, address):
+        return self.sensors.get(address)
+
+    def get_actuators(self):
+        return self.actuators.values()
+
+    def get_actuator(self, address):
+        print('getting actuator with address', address)
+        return self.actuators[address]
+
+    def get_value(self, address):
+        return self.actuators.get(address)
 
     def get_wheels(self):
         wheels = []
         for part in self.movable_sprites:
             try:
-                if part.get_ev3type() == 'wheel':
+                if part.get_ev3type() == 'motor':
                     wheels.append(part)
             except RuntimeError:
                 pass

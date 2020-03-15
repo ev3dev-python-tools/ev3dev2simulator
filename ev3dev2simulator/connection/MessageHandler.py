@@ -10,15 +10,12 @@ from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
 from ev3dev2simulator.connection.message.StopCommand import StopCommand
 
 
-class MessageHandler(threading.Thread):
+class MessageHandler:
 
     def __init__(self, message_processor: MessageProcessor):
-        threading.Thread.__init__(self)
-
         self.message_processor = message_processor
 
-
-    def _process(self, data: bytes) -> bytes:
+    def process(self, data: bytes) -> bytes:
         """
         Process incoming data by decoding it and sending it to the MessageProcessor.
         :param data: to process.
@@ -46,7 +43,6 @@ class MessageHandler(threading.Thread):
         elif tpe == 'DataRequest':
             return self._process_data_request(obj_dict)
 
-
     def _process_drive_command(self, d: dict) -> Any:
         """
         Deserialize the given dictionary into a RotateCommand and send it to the MessageProcessor.
@@ -57,7 +53,6 @@ class MessageHandler(threading.Thread):
         value = self.message_processor.process_rotate_command(command)
 
         return self._serialize_response(value)
-
 
     def _process_stop_command(self, d: dict) -> Any:
         """
@@ -70,7 +65,6 @@ class MessageHandler(threading.Thread):
 
         return self._serialize_response(value)
 
-
     def _process_led_command(self, d: dict) -> Any:
         """
         Deserialize the given dictionary into a LedCommand and send it to the MessageProcessor.
@@ -82,7 +76,6 @@ class MessageHandler(threading.Thread):
 
         return None
 
-
     def _process_sound_command(self, d: dict) -> Any:
         """
         Deserialize the given dictionary into a SoundCommand and send it to the MessageProcessor.
@@ -93,7 +86,6 @@ class MessageHandler(threading.Thread):
         self.message_processor.process_sound_command(command)
 
         return None
-
 
     def _process_data_request(self, d: dict) -> bytes:
         """
@@ -107,7 +99,6 @@ class MessageHandler(threading.Thread):
         value = self.message_processor.process_data_request(request)
 
         return self._serialize_response(value)
-
 
     def _serialize_response(self, value) -> bytes:
         """

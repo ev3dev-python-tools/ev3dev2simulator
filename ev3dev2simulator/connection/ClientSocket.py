@@ -13,7 +13,6 @@ class ClientSocket:
     This connection is a TCP stream.
     """
 
-
     def __init__(self):
         port = get_config().get_visualisation_config()['exec_settings']['socket_port']
 
@@ -21,7 +20,6 @@ class ClientSocket:
         self.client.connect(('localhost', port))
 
         time.sleep(1)
-
 
     def send_motor_command(self, command: MotorCommand) -> float:
         """
@@ -34,7 +32,6 @@ class ClientSocket:
 
         return self._wait_for_response()
 
-
     def send_led_command(self, command: LedCommand):
         """
         Serialise and send the given MotorCommand to the simulator.
@@ -44,7 +41,6 @@ class ClientSocket:
         jsn = self._serialize(command)
         self.client.send(jsn)
 
-
     def send_sound_command(self, command: SoundCommand):
         """
         Serialise and send the given SoundCommand to the simulator.
@@ -53,7 +49,6 @@ class ClientSocket:
 
         jsn = self._serialize(command)
         self.client.send(jsn)
-
 
     def send_data_request(self, request: DataRequest) -> Any:
         """
@@ -68,7 +63,6 @@ class ClientSocket:
 
         return self._wait_for_response()
 
-
     def _wait_for_response(self) -> Any:
         """
         Wait until the simulator responds with a message and deserialize the message.
@@ -81,7 +75,6 @@ class ClientSocket:
 
             if data:
                 return self._deserialize(data)
-
 
     def _serialize(self, message: Any) -> bytes:
         """
@@ -96,7 +89,6 @@ class ClientSocket:
         jsn = jsn.ljust(128, '#')
 
         return str.encode(jsn)
-
 
     def _deserialize(self, data: bytes) -> Any:
         """

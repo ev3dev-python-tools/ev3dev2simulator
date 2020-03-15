@@ -11,7 +11,6 @@ class MotorCommandProcessor:
     These jobs are converted to values the simulator can use for its robot.
     """
 
-
     def __init__(self):
         cfg = get_config().get_visualisation_config()
 
@@ -21,7 +20,6 @@ class MotorCommandProcessor:
 
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
         self.wheel_circumference = cfg['wheel_settings']['circumference']
-
 
     def process_drive_command_degrees(self, command: RotateCommand) -> Tuple[float, int, int, float]:
         """
@@ -46,7 +44,6 @@ class MotorCommandProcessor:
 
         return dpf, frames, coast_frames, run_time
 
-
     def process_drive_command_pixels(self, command: RotateCommand) -> Tuple[float, int, int, float]:
         """
         Process the given RotateCommand which moves the motor for a distance for a number of frames.
@@ -70,7 +67,6 @@ class MotorCommandProcessor:
 
         return ppf, frames, coast_frames, run_time
 
-
     def process_stop_command_degrees(self, command: StopCommand) -> Tuple[float, int, float]:
         """
         Process the given StopCommand to stop the motor.
@@ -89,7 +85,6 @@ class MotorCommandProcessor:
             return dpf, frames, run_time
 
         return 0, 0, 0
-
 
     def process_stop_command_pixels(self, command: StopCommand) -> Tuple[float, int, float]:
         """
@@ -110,7 +105,6 @@ class MotorCommandProcessor:
 
         return 0, 0, 0
 
-
     def _frames_required(self, speed: float, distance: float) -> int:
         """
         Calculate the number of frames required to rotate a motor for a distance at a speed.
@@ -125,7 +119,6 @@ class MotorCommandProcessor:
 
         return max(frames, 1)
 
-
     def _coast_frames_required(self, speed: float, coasting_sub: float) -> int:
         """
         Calculate the number of frames required for a motor to coast to a halt based on the given speed.
@@ -135,7 +128,6 @@ class MotorCommandProcessor:
 
         pos_speed = abs(speed)
         return int(round(pos_speed / coasting_sub))
-
 
     def _to_pixels_per_frame(self, frames: int, distance: float) -> float:
         """
@@ -148,7 +140,6 @@ class MotorCommandProcessor:
         pixel_distance = self._to_pixels(distance)
         return pixel_distance / frames
 
-
     def _to_pixels(self, distance: float) -> float:
         """
         Convert a distance in degrees to a distance in pixels. Calculation is done
@@ -158,7 +149,6 @@ class MotorCommandProcessor:
         """
 
         return self.wheel_circumference * (distance / 360) * self.scaling_multiplier
-
 
     def _to_seconds(self, frames: int) -> float:
         """

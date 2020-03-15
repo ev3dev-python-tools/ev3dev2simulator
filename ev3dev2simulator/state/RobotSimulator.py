@@ -25,20 +25,14 @@ class RobotSimulator:
     def __init__(self, robot: RobotState):
         self.robot = robot
 
-        # self.address_motor_center = cfg['alloc_settings']['motor']['center'] if large_sim_type else ''
-        # self.address_motor_left = cfg['alloc_settings']['motor']['left']
-        # self.address_motor_right = cfg['alloc_settings']['motor']['right']
+        self.actuator_queues = {}
+        self.queue_info = {}
 
-        self.center_motor_queue = Queue()
-        self.left_motor_queue = Queue()
-        self.right_motor_queue = Queue()
+        for actuator in self.robot.get_actuators():
+            self.queue_info[(actuator.brick, actuator.address)] = actuator
+            self.actuator_queues[(actuator.brick, actuator.address)] = Queue()
+
         self.sound_queue = Queue()
-
-        self.left_brick_left_led_color = 1
-        self.left_brick_right_led_color = 1
-
-        self.right_brick_left_led_color = 1
-        self.right_brick_right_led_color = 1
 
         self.should_reset = False
 
@@ -49,40 +43,24 @@ class RobotSimulator:
 
     def update(self):
         if self.should_reset:
-            self.setup()
+            # self.setup()
             self.reset()
 
         else:
-            self._process_movement()
+            self._process_actuators()
             self._process_leds()
             self._process_sensors()
             self._check_fall()
 
-    def put_center_motor_job(self, job: float):
+    def put_actuator_job(self, address: (int, str), job: float):
         """
         Add a new move job to the queue for the center motor.
+        :param address: Address of the actuator
         :param job: to add.
         """
+        self.actuator_queues[address].put_nowait(job)
 
-        self.center_motor_queue.put_nowait(job)
-
-    def put_left_motor_job(self, job: float):
-        """
-        Add a new move job to the queue for the left motor.
-        :param job: to add.
-        """
-
-        self.left_motor_queue.put_nowait(job)
-
-    def put_right_motor_job(self, job: float):
-        """
-        Add a new move job to the queue for the right motor.
-        :param job: to add.
-        """
-
-        self.right_motor_queue.put_nowait(job)
-
-    def next_motor_jobs(self) -> Tuple[float, float, float]:
+    def next_actuator_jobs(self) -> any:
         """
         Get the next move jobs for the left and right motor from the queues.
         :return: a floating point numbers representing the job move distances.
@@ -90,34 +68,20 @@ class RobotSimulator:
 
         self.motor_lock.acquire()
 
-        try:
-            center = self.center_motor_queue.get_nowait()
-        except Empty:
-            center = None
-
-        try:
-            left = self.left_motor_queue.get_nowait()
-        except Empty:
-            left = None
-
-        try:
-            right = self.right_motor_queue.get_nowait()
-        except Empty:
-            right = None
+        motor_jobs = []
+        for actuator, jobs in self.actuator_queues.items():
+            try:
+                job = jobs.get_nowait()
+            except Empty:
+                job = None
+            motor_jobs.append((actuator, job))
 
         self.motor_lock.release()
-        return center, left, right
+        return motor_jobs
 
-    def clear_motor_jobs(self, side: str):
+    def clear_actuator_jobs(self, address: (int, str)):
         self.motor_lock.acquire()
-
-        if side == 'center':
-            self.center_motor_queue = Queue()
-        elif side == 'left':
-            self.left_motor_queue = Queue()
-        else:
-            self.right_motor_queue = Queue()
-
+        self.actuator_queues[address].empty()
         self.motor_lock.release()
 
     def put_sound_job(self, job: str):
@@ -139,47 +103,19 @@ class RobotSimulator:
         except Empty:
             return None
 
-    def set_led_color(self, brick_name, led_id, color):
-        if brick_name == 'left_brick:':
-            if led_id == 'led0':
-                self.left_brick_left_led_color = color
-            else:
-                self.left_brick_right_led_color = color
-
-        else:
-            if led_id == 'led0':
-                self.right_brick_left_led_color = color
-            else:
-                self.right_brick_right_led_color = color
+    def set_led_color(self, brick_id, led_id, color):
+        self.robot.led_colors[(brick_id, led_id)] = color
 
     def reset(self):
         """
         Reset the data of this State
         :return:
         """
+        for key, actuator_queue in self.actuator_queues.items():
+            self.clear_actuator_jobs(key)
 
-        self.clear_motor_jobs('center')
-        self.clear_motor_jobs('left')
-        self.clear_motor_jobs('right')
-
-        self.values.clear()
+        self.robot.values.clear()
         self.should_reset = False
-
-    def get_motor_side(self, address: str) -> str:
-        """
-        Get the location of the motor on the actual robot based on its address.
-        :param address: of the motor
-        :return 'center', 'left' or 'right'
-        """
-
-        if self.address_motor_center == address:
-            return 'center'
-
-        if self.address_motor_left == address:
-            return 'left'
-
-        if self.address_motor_right == address:
-            return 'right'
 
     def load_sensor(self, sensor):
         """
@@ -187,9 +123,9 @@ class RobotSimulator:
         Also create a lock for the given sensor.
         :param sensor: to load.
         """
-
-        self.values[sensor.address] = sensor.get_default_value()
-        self.locks[sensor.address] = threading.Lock()
+        address = (sensor.brick, sensor.address)
+        self.robot.values[address] = sensor.get_default_value()
+        self.locks[address] = threading.Lock()
 
     def release_locks(self):
         """
@@ -201,7 +137,7 @@ class RobotSimulator:
             if lock.locked():
                 lock.release()
 
-    def get_value(self, address: str) -> Any:
+    def get_value(self, address: (int, str)) -> Any:
         """
         Get the value of a sensor by its address. Blocks if the lock of
         the requested sensor is not available.
@@ -212,18 +148,26 @@ class RobotSimulator:
         self.locks[address].acquire()
         return self.values[address]
 
-    def _process_movement(self):
+    def _process_actuators(self):
         """
         Request the movement of the robot motors form the robot state and move
-        the robot accordingly.
+        the robot accordingly. This is where the different motor jobs are combined to a single movement of the robot.
         """
-        center_dpf, left_ppf, right_ppf = self.next_motor_jobs()
+        job_per_actuator = self.next_actuator_jobs()
 
-        if left_ppf or right_ppf:
+        # TODO figure a neat way to determine the location of wheels
+        for (address, job_of_motor) in job_per_actuator:
+            actuator = self.queue_info[address]
+            if actuator.ev3type == 'arm':
+                self.robot.execute_arm_movement(job_of_motor)
+            elif actuator.ev3type == 'motor':
+                if actuator.x_offset < 0:
+                    left_ppf = job_of_motor
+                else:
+                    right_ppf = job_of_motor
+
+        if left_ppf and right_ppf:
             self.robot.execute_movement(left_ppf, right_ppf)
-
-        if center_dpf:
-            self.robot.execute_arm_movement(center_dpf)
 
     def _process_leds(self):
         pass

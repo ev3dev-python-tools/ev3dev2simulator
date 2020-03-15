@@ -32,7 +32,7 @@ class BodyPart(arcade.Sprite):
         if delta_y < 0:
             self.angle_addition += math.radians(180)
 
-        self.sensible_obstacles = None
+        self.sensible_obstacles = []
 
     def move_x(self, distance: float):
         """

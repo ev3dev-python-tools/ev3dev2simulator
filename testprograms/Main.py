@@ -16,8 +16,8 @@ def rotateDegrees(degrees):
     tank_drive.on_for_degrees(SpeedPercent(40), SpeedPercent(0), degrees)
 
 
-def drive():
-    tank_drive.on(SpeedPercent(30), SpeedPercent(30))
+def drive(speed):
+    tank_drive.on_for_seconds(SpeedPercent(speed), SpeedPercent(speed), 2, True)
 
 
 def checkCollision():
@@ -67,5 +67,6 @@ ts4 = TouchSensor(INPUT_4)
 
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 
-drive()
+drive(30)
+drive(-30)
 # check()

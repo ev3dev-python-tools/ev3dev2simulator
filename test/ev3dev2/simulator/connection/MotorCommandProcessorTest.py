@@ -19,7 +19,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(coast_frames, 0)
         self.assertEqual(run_time, 10)
 
-
     def test_process_drive_command_degrees_break(self):
         creator = MotorCommandProcessor()
         command = RotateCommand('ev3-ports:outA', 500, -1000, 'break')
@@ -30,7 +29,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(frames, 60)
         self.assertEqual(coast_frames, 0)
         self.assertEqual(run_time, 2)
-
 
     def test_process_drive_command_degrees_coast(self):
         creator = MotorCommandProcessor()
@@ -43,7 +41,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(coast_frames, 11)
         self.assertAlmostEqual(run_time, 2.367, 3)
 
-
     def test_process_drive_command_pixels_hold(self):
         creator = MotorCommandProcessor()
         command = RotateCommand('ev3-ports:outA', 100, 1000, 'hold')
@@ -54,7 +51,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(frames, 300)
         self.assertEqual(coast_frames, 0)
         self.assertEqual(run_time, 10)
-
 
     def test_process_drive_command_pixels_break(self):
         creator = MotorCommandProcessor()
@@ -67,7 +63,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(coast_frames, 0)
         self.assertEqual(run_time, 2)
 
-
     def test_process_drive_command_pixels_coast(self):
         creator = MotorCommandProcessor()
         command = RotateCommand('ev3-ports:outA', 500, 1000, 'coast')
@@ -79,7 +74,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(coast_frames, 11)
         self.assertAlmostEqual(run_time, 2.367, 3)
 
-
     def test_process_stop_command_degrees_hold(self):
         creator = MotorCommandProcessor()
         command = StopCommand('ev3-ports:outA', 100, 'hold')
@@ -89,7 +83,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(spf, 0)
         self.assertEqual(frames, 0)
         self.assertEqual(run_time, 0)
-
 
     def test_process_stop_command_degrees_break(self):
         creator = MotorCommandProcessor()
@@ -101,7 +94,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(frames, 0)
         self.assertEqual(run_time, 0)
 
-
     def test_process_stop_command_degrees_coast(self):
         creator = MotorCommandProcessor()
         command = StopCommand('ev3-ports:outA', 500, 'coast')
@@ -111,7 +103,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertAlmostEqual(spf, 16.667, 3)
         self.assertEqual(frames, 11)
         self.assertAlmostEqual(run_time, 0.367, 3)
-
 
     def test_process_stop_command_pixels_hold(self):
         creator = MotorCommandProcessor()
@@ -123,7 +114,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(frames, 0)
         self.assertEqual(run_time, 0)
 
-
     def test_process_stop_command_pixels_break(self):
         creator = MotorCommandProcessor()
         command = StopCommand('ev3-ports:outA', -500, 'break')
@@ -134,7 +124,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(frames, 0)
         self.assertEqual(run_time, 0)
 
-
     def test_process_stop_command_pixels_coast(self):
         creator = MotorCommandProcessor()
         command = StopCommand('ev3-ports:outA', 500, 'coast')
@@ -144,7 +133,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertAlmostEqual(spf, 5.206, 3)
         self.assertEqual(frames, 11)
         self.assertAlmostEqual(run_time, 0.367, 3)
-
 
     def test_frames_required(self):
         creator = MotorCommandProcessor()
@@ -164,7 +152,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         frames = creator._frames_required(-66, -700)
         self.assertEqual(frames, 318)
 
-
     def test_coast_frames_required(self):
         coasting_sub = get_config().get_visualisation_config()['motor_settings']['pixel_coasting_subtraction']
         creator = MotorCommandProcessor()
@@ -175,7 +162,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
         frames = creator._coast_frames_required(-20, coasting_sub)
         self.assertEqual(frames, int(round((20 / coasting_sub))), 5)
 
-
     def test_to_pixels_per_frame(self):
         creator = MotorCommandProcessor()
 
@@ -184,7 +170,6 @@ class MotorCommandProcessorTest(unittest.TestCase):
 
         ppf = creator._to_pixels_per_frame(100, -730)
         self.assertAlmostEqual(ppf, -2.280, 3)
-
 
     def test_to_pixels(self):
         # ran with scaling 0.7

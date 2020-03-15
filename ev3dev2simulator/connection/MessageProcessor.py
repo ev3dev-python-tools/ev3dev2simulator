@@ -4,6 +4,7 @@ from ev3dev2._platform.ev3 import LEDS
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
+from ev3dev2simulator.robot.Wheel import Wheel
 from ev3dev2simulator.state import RobotSimulator
 from ev3dev2simulator.util.Util import remove_scaling, apply_scaling
 
@@ -22,19 +23,16 @@ class MessageProcessor:
     them to the RobotState.
     """
 
-    def __init__(self, brick_name: str, robot_state: RobotSimulator):
+    def __init__(self, brick_id: int, robot_sim: RobotSimulator):
         cfg = get_config().get_visualisation_config()
 
-        self.brick_name = brick_name + ':' if brick_name else ''
+        self.brick_id = brick_id
 
         self.pixel_coasting_sub = apply_scaling(cfg['motor_settings']['pixel_coasting_subtraction'])
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
-
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
-        # self.address_us_front = cfg['alloc_settings']['ultrasonic_sensor']['front']
-        # self.address_us_rear = cfg['alloc_settings']['ultrasonic_sensor']['rear'] if large_sim_type else ''
 
-        self.robot_state = robot_state
+        self.robot_sim = robot_sim
         self.command_processor = MotorCommandProcessor()
         self.led_cache = {k: None for k in LEDS.values()}
 
@@ -48,22 +46,19 @@ class MessageProcessor:
         """
 
         full_address = self._to_full_address(command.address)
-        side = self.robot_state.get_motor_side(full_address)
+        motor = self.robot_sim.robot.get_actuator(full_address)
+        print('motor', motor.brick)
+        spf, frames, coast_frames, run_time = self._process_rotate_command_values(command, motor)
 
-        if side is None:
-            return 0
-        else:
-            spf, frames, coast_frames, run_time = self._process_rotate_command_values(command, side)
+        self.robot_sim.clear_actuator_jobs(full_address)
 
-            self.robot_state.clear_motor_jobs(side)
+        for i in range(frames):
+            self.robot_sim.put_actuator_job(full_address, spf)
 
-            for i in range(frames):
-                self._put_motor_job(spf, side)
+        self._process_coast(coast_frames, spf, motor)
+        return run_time
 
-            self._process_coast(coast_frames, spf, side)
-            return run_time
-
-    def _process_rotate_command_values(self, command: RotateCommand, side: str) -> Tuple[float, int, int, float]:
+    def _process_rotate_command_values(self, command: RotateCommand, motor: any) -> Tuple[float, int, int, float]:
         """
         Process the given command into the correct movement values.
         :param command: to process.
@@ -71,7 +66,7 @@ class MessageProcessor:
         :return: a Tuple with the processed values
         """
 
-        if side == 'center':
+        if motor.ev3type == 'arm':
             dpf, frames, coast_frames, run_time = self.command_processor.process_drive_command_degrees(command)
             return -dpf, frames, coast_frames, run_time
         else:
@@ -88,18 +83,15 @@ class MessageProcessor:
         """
 
         full_address = self._to_full_address(command.address)
-        side = self.robot_state.get_motor_side(full_address)
+        motor = self.robot_sim.robot.get_actuator(full_address)
 
-        if side is None:
-            return 0
-        else:
-            spf, frames, run_time = self._process_stop_command_values(command, side)
+        spf, frames, run_time = self._process_stop_command_values(command, motor)
 
-            self.robot_state.clear_motor_jobs(side)
-            self._process_coast(frames, spf, side)
-            return run_time
+        self.robot_sim.clear_actuator_jobs(full_address)
+        self._process_coast(frames, spf, motor)
+        return run_time
 
-    def _process_stop_command_values(self, command: StopCommand, side: str) -> Tuple[float, int, float]:
+    def _process_stop_command_values(self, command: StopCommand, motor: any) -> Tuple[float, int, float]:
         """
         Process the given command into the correct movement values.
         :param command: to process.
@@ -107,13 +99,13 @@ class MessageProcessor:
         :return: a Tuple with the processed values
         """
 
-        if side == 'center':
+        if motor.ev3type == 'arm':
             dpf, frames, run_time = self.command_processor.process_stop_command_degrees(command)
             return -dpf, frames, run_time
         else:
             return self.command_processor.process_stop_command_pixels(command)
 
-    def _process_coast(self, frames, ppf, side):
+    def _process_coast(self, frames, ppf, motor):
         """
         Process coasting by creating move jobs decreasing in speed in the RobotState.
         :param frames: to coast before coming to a halt.
@@ -121,7 +113,7 @@ class MessageProcessor:
         :param side: of the motor in the RobotState.
         """
 
-        coasting_sub = self.degree_coasting_sub if side == 'center' else self.pixel_coasting_sub
+        coasting_sub = self.degree_coasting_sub if motor.ev3type == 'arm' else self.pixel_coasting_sub
         og_ppf = ppf
 
         for i in range(frames):
@@ -129,8 +121,7 @@ class MessageProcessor:
                 ppf = max(ppf - coasting_sub, 0)
             else:
                 ppf = min(ppf + coasting_sub, 0)
-
-            self._put_motor_job(ppf, side)
+            self.robot_sim.put_actuator_job(self._to_full_address(motor.address), ppf)
 
     def process_led_command(self, command: LedCommand):
         """
@@ -145,7 +136,7 @@ class MessageProcessor:
         color = LED_COLORS.get(color_tuple)
 
         if color is not None:
-            self.robot_state.set_led_color(self.brick_name, led_id, color)
+            self.robot_sim.set_led_color(self.brick_id, led_id, color)
 
     def process_sound_command(self, command: SoundCommand):
         """
@@ -157,7 +148,7 @@ class MessageProcessor:
         msg_len = len(command.message)
         message = '\n'.join(command.message[i:i + 10] for i in range(0, msg_len, 10))
         for i in range(frames):
-            self.robot_state.put_sound_job(message)
+            self.robot_sim.put_sound_job(message)
 
     def process_data_request(self, request: DataRequest) -> Any:
         """
@@ -167,26 +158,13 @@ class MessageProcessor:
         """
 
         full_address = self._to_full_address(request.address)
-        value = self.robot_state.get_value(full_address)
+        value = self.robot_sim.robot.get_value(full_address)
 
-        if request.address == self.address_us_front or request.address == self.address_us_rear:
-            return remove_scaling(value)
-        else:
-            return value
-
-    def _put_motor_job(self, job: float, side: str):
-        """
-        Add a new move job to the queue for the motor corresponding to the given side.
-        :param job: to add.
-        :param side: the motor is located.
-        """
-
-        if side == 'center':
-            self.robot_state.put_center_motor_job(job)
-        elif side == 'left':
-            self.robot_state.put_left_motor_job(job)
-        else:
-            self.robot_state.put_right_motor_job(job)
+        # if request.address == self.address_us_front or request.address == self.address_us_rear:
+        #     return remove_scaling(value)
+        # else:
+        # TODO why do we need to remove scaling?
+        return value
 
     def _to_full_address(self, address: str):
-        return self.brick_name + address
+        return self.brick_id, address
