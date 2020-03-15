@@ -49,7 +49,7 @@ class MessageProcessor:
         motor = self.robot_sim.robot.get_actuator(full_address)
         print('motor', motor.brick)
         spf, frames, coast_frames, run_time = self._process_rotate_command_values(command, motor)
-
+        print(spf, frames, coast_frames, run_time)
         self.robot_sim.clear_actuator_jobs(full_address)
 
         for i in range(frames):
@@ -65,7 +65,7 @@ class MessageProcessor:
         :param side: the motor is located.
         :return: a Tuple with the processed values
         """
-
+        print("rotate")
         if motor.ev3type == 'arm':
             dpf, frames, coast_frames, run_time = self.command_processor.process_drive_command_degrees(command)
             return -dpf, frames, coast_frames, run_time
@@ -81,12 +81,12 @@ class MessageProcessor:
         :param command: to process.
         :return: a floating point value representing the time in seconds the given command will take to execute.
         """
-
+        print('time to stop')
         full_address = self._to_full_address(command.address)
         motor = self.robot_sim.robot.get_actuator(full_address)
 
         spf, frames, run_time = self._process_stop_command_values(command, motor)
-
+        print(spf, frames, run_time)
         self.robot_sim.clear_actuator_jobs(full_address)
         self._process_coast(frames, spf, motor)
         return run_time
@@ -98,7 +98,7 @@ class MessageProcessor:
         :param side: the motor is located.
         :return: a Tuple with the processed values
         """
-
+        print("stop")
         if motor.ev3type == 'arm':
             dpf, frames, run_time = self.command_processor.process_stop_command_degrees(command)
             return -dpf, frames, run_time

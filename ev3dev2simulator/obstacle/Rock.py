@@ -7,6 +7,7 @@ from ev3dev2simulator.obstacle.TouchObstacle import TouchObstacle
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.util.Util import apply_scaling
 
+
 class Rock(TouchObstacle):
     """
     This class represents a 'rock'. Rocks are rectangles.
@@ -31,7 +32,7 @@ class Rock(TouchObstacle):
         self.color = color
         self.points = None
         self.shape = None
-        self.hole = None
+        self.poly = None
 
     def get_shapes(self):
         if self.shape is None:
@@ -41,7 +42,7 @@ class Rock(TouchObstacle):
     def create_shape(self):
         self.points = self._create_points()
         self.shape = self._create_shape()
-        self.hole = self._create_hole()
+        self.poly = self._create_poly()
 
     @classmethod
     def from_config(cls, config):

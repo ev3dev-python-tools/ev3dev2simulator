@@ -12,7 +12,6 @@ class Bottle(TouchObstacle):
     This class represents a 'bottle'. Bottles are circles.
     """
 
-
     def __init__(self,
                  center_x: int,
                  center_y: int,
@@ -30,10 +29,8 @@ class Bottle(TouchObstacle):
         self.shape = None
         self.poly = None
 
-
     @classmethod
     def from_config(cls, config):
-
         x = apply_scaling(config['x'])
         y = apply_scaling(config['y'])
         radius = apply_scaling(config['radius'])
@@ -61,7 +58,6 @@ class Bottle(TouchObstacle):
                                  self.center_y,
                                  self.radius)
 
-
     def _create_shape(self) -> Shape:
         """
         Create a shape representing the circle of this bottle.
@@ -70,7 +66,6 @@ class Bottle(TouchObstacle):
 
         color_list = [self.color] + [self.color] * (32 + 1)
         return arcade.create_line_generic_with_colors(self.points, color_list, 6)
-
 
     def _create_poly(self) -> Circle:
         """

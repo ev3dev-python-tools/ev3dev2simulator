@@ -69,7 +69,8 @@ class BodyPart(arcade.Sprite):
         Set the obstacles which can be detected via collision detection by this body part.
         :param obstacles: to be detected.
         """
-
+        for obstacle in obstacles:
+            obstacle.get_shapes()  # TODO the order is not fine yet
         self.sensible_obstacles = obstacles
 
     def get_default_value(self):

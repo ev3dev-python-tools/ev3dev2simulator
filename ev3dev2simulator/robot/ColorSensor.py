@@ -45,6 +45,10 @@ class ColorSensor(BodyPart):
         self.old_texture_index = 0
         self.set_texture(0)
 
+    def get_latest_value(self):
+        latest_data = self.get_sensed_color()
+        self.set_color_texture(latest_data)
+        return latest_data
 
     def get_sensed_color(self) -> int:
         """

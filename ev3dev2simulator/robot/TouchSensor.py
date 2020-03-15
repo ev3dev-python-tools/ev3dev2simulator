@@ -25,12 +25,14 @@ class TouchSensor(BodyPart):
         super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'touch_sensor')
         self.init_texture(vis_conf['image_paths'][img], 0.32)
 
+    def get_latest_value(self):
+        return self.is_touching()
+
     def is_touching(self) -> bool:
         """
         Check if this TouchSensor is touching a TouchObstacle.
         :return: boolean value representing the outcome.
         """
-
         for o in self.sensible_obstacles:
             if o.collided_with(self):
                 return True

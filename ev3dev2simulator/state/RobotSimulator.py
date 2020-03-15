@@ -13,15 +13,6 @@ class RobotSimulator:
     of the simulated robot.
     """
 
-    # self.space = Space()
-    # self.space.add(self.rock1.poly)
-    # self.space.add(self.rock2.poly)
-    # self.space.add(self.bottle1.poly)
-
-    # self.robot.set_color_obstacles(color_obstacles)
-    # self.robot.set_touch_obstacles(touch_obstacles)
-    # self.robot.set_falling_obstacles(falling_obstacles)
-
     def __init__(self, robot: RobotState):
         self.robot = robot
 
@@ -82,7 +73,7 @@ class RobotSimulator:
 
     def clear_actuator_jobs(self, address: (int, str)):
         self.motor_lock.acquire()
-        self.actuator_queues[address].empty()
+        self.actuator_queues[address] = Queue()
         self.motor_lock.release()
 
     def put_sound_job(self, job: str):
@@ -167,7 +158,7 @@ class RobotSimulator:
                 else:
                     right_ppf = job_of_motor
 
-        if left_ppf and right_ppf:
+        if left_ppf or right_ppf:
             self.robot.execute_movement(left_ppf, right_ppf)
 
     def _process_leds(self):
@@ -190,29 +181,6 @@ class RobotSimulator:
         Process the data of the robot sensors by retrieving the data and putting it
         in the robot state.
         """
-        pass
-        # self.center_cs_data = self.robot.center_color_sensor.get_sensed_color()
-        # self.left_ts_data = self.robot.left_touch_sensor.is_touching()
-        # self.right_ts_data = self.robot.right_touch_sensor.is_touching()
-        # self.front_us_data = self.robot.front_ultrasonic_sensor.distance(self.space)
-        #
-        # self.robot_state.values[self.robot.center_color_sensor.address] = self.center_cs_data
-        # self.robot_state.values[self.robot.left_touch_sensor.address] = self.left_ts_data
-        # self.robot_state.values[self.robot.right_touch_sensor.address] = self.right_ts_data
-        # self.robot_state.values[self.robot.front_ultrasonic_sensor.address] = self.front_us_data
-        #
-        # self.robot.center_color_sensor.set_color_texture(self.center_cs_data)
+        for address, sensor in self.robot.sensors.items():
+            self.robot.values[address] = sensor.get_latest_value()
 
-        # if self.large_sim_type:
-        #     self.left_cs_data = self.robot.left_color_sensor.get_sensed_color()
-        #     self.right_cs_data = self.robot.right_color_sensor.get_sensed_color()
-        #     self.rear_ts_data = self.robot.rear_touch_sensor.is_touching()
-        #     self.rear_us_data = self.robot.rear_ultrasonic_sensor.distance()
-        #
-        #     self.robot_state.values[self.robot.left_color_sensor.address] = self.left_cs_data
-        #     self.robot_state.values[self.robot.right_color_sensor.address] = self.right_cs_data
-        #     self.robot_state.values[self.robot.rear_touch_sensor.address] = self.rear_ts_data
-        #     self.robot_state.values[self.robot.rear_ultrasonic_sensor.address] = self.rear_us_data
-        #
-        #     self.robot.left_color_sensor.set_color_texture(self.left_cs_data)
-        #     self.robot.right_color_sensor.set_color_texture(self.right_cs_data)

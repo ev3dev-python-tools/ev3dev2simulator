@@ -1,6 +1,7 @@
 import math
 
 from arcade import Sprite, arcade
+from pymunk import Space
 
 from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
@@ -30,6 +31,7 @@ class RobotState:
         self.actuators = {}
         self.values = {}
         self.led_colors = {}
+        self.space = Space()
 
         self.wheel_center_x = config['center_x']
         self.wheel_center_y = config['center_y'] + apply_scaling(22.5)
@@ -177,6 +179,10 @@ class RobotState:
     def set_led_color(self, address, color):
         self.actuators[address].set_color_texture(color)
 
+    def set_space_obstacles(self, obstacles):
+        for obstacle in obstacles:
+            self.space.add(obstacle.poly)
+
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
         """
         Set the obstacles which can be detected by the color sensors of this robot.
@@ -225,7 +231,7 @@ class RobotState:
         return self.actuators[address]
 
     def get_value(self, address):
-        return self.actuators.get(address)
+        return self.values[address]
 
     def get_wheels(self):
         wheels = []

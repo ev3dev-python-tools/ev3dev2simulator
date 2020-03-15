@@ -28,6 +28,9 @@ class UltrasonicSensor(BodyPart):
 
         self.eye_offset = apply_scaling(18)
 
+    def get_latest_value(self):
+        return self.distance(self.robot.space)
+
     def distance(self, space: Space) -> float:
         """
         Get the distance in pixels between this ultrasonic sensors eyes and an object it is pointed to.

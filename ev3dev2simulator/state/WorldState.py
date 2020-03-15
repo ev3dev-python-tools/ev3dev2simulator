@@ -22,6 +22,7 @@ class WorldState:
         self.falling_obstacles = []
         self.color_obstacles = []
         self.robots = []
+        self.space_obstacles = []
 
         for robot_conf in config['robots']:
             self.robots.append(RobotState(robot_conf))
@@ -41,6 +42,7 @@ class WorldState:
                 rock = Rock.from_config(value)
                 self.obstacles.append(rock)
                 self.touch_obstacles.append(rock)
+                self.space_obstacles.append(rock)
             elif value['type'] == 'border':
                 border = Border.from_config(vis_config, value)
                 self.obstacles.append(border)
@@ -49,18 +51,20 @@ class WorldState:
                 bottle = Bottle.from_config(value)
                 self.obstacles.append(bottle)
                 self.touch_obstacles.append(bottle)
+                self.space_obstacles.append(bottle)
             else:
                 print("unknown obstacle type")
 
+    def setup_visuals(self):
         print('color_obstacles:', self.color_obstacles)
         print('touch_obstacles:', self.touch_obstacles)
         print('falling_obstacles:', self.falling_obstacles)
         for robot in self.robots:
             robot.set_color_obstacles(self.color_obstacles)
             robot.set_touch_obstacles(self.touch_obstacles)
+            robot.set_space_obstacles(self.space_obstacles)
             # robot.set_falling_obstacles(self.falling_obstacles)
 
         # TODO This should only be added if it has a measurement probe
         # ground = Ground(1460, 950, 300, 10, color.BLACK)
         # self.obstacles.append(ground)
-
