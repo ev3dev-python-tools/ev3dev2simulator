@@ -2,7 +2,7 @@ robots:
   - name: robot0
     center_x: 250
     center_y: 300
-    orientation: 0
+    orientation: -85
     parts:
     - name: brick-left
       type: brick

@@ -1,7 +1,6 @@
 import math
 
 from arcade import Sprite, arcade
-from pymunk import Space
 
 from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
@@ -26,12 +25,13 @@ class RobotState:
 
     def __init__(self, config):
         self.sprites = arcade.SpriteList()
-        self.movable_sprites = arcade.SpriteList()
+        self.shapes = []
+        self.space = None
         self.sensors = {}
         self.actuators = {}
         self.values = {}
         self.led_colors = {}
-        self.space = Space()
+        self.bricks = []
 
         self.wheel_center_x = config['center_x']
         self.wheel_center_y = config['center_y'] + apply_scaling(22.5)
@@ -40,18 +40,20 @@ class RobotState:
         self.wheel_distance = apply_scaling(vis_conf['wheel_settings']['spacing'])  # TODO move this to robot config
 
         self.name = config['name']
+        self.is_stuck = False
 
         for part in config['parts']:
             if part['type'] == 'brick':
                 brick = Brick(part['brick'], self, part['x_offset'], part['y_offset'], part['name'])
-                self.movable_sprites.append(brick)
+                self.sprites.append(brick)
+                self.bricks.append(brick)
 
                 left_led = Led(part['brick'], self, apply_scaling(part['x_offset'] - 20),
                                apply_scaling(part['y_offset'] - 32.5))
                 right_led = Led(part['brick'], self, apply_scaling(part['x_offset'] + 20),
                                 apply_scaling(part['y_offset'] - 32.5))
-                self.movable_sprites.append(left_led)
-                self.movable_sprites.append(right_led)
+                self.sprites.append(left_led)
+                self.sprites.append(right_led)
 
                 self.led_colors[(brick.brick, 'led0')] = 1
                 self.actuators[(brick.brick, 'led0')] = left_led
@@ -60,19 +62,19 @@ class RobotState:
 
             elif part['type'] == 'motor':
                 wheel = Wheel(part['brick'], part['port'], self, apply_scaling(part['x_offset']), part['y_offset'])
-                self.movable_sprites.append(wheel)
+                self.sprites.append(wheel)
                 self.actuators[(wheel.brick, wheel.address)] = wheel
 
             elif part['type'] == 'color_sensor':
                 color_sensor = ColorSensor(part['brick'], part['port'], self,
                                            apply_scaling(part['x_offset']), apply_scaling(part['y_offset']))
-                self.movable_sprites.append(color_sensor)
+                self.sprites.append(color_sensor)
                 self.sensors[(color_sensor.brick, color_sensor.address)] = color_sensor
 
             elif part['type'] == 'touch_sensor':
                 touch_sensor = TouchSensor(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
                                            apply_scaling(part['y_offset']), part['side'])
-                self.movable_sprites.append(touch_sensor)
+                self.sprites.append(touch_sensor)
                 self.sensors[(touch_sensor.brick, touch_sensor.address)] = touch_sensor
 
             elif part['type'] == 'ultrasonic_sensor':
@@ -89,24 +91,17 @@ class RobotState:
                     ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
                                                          apply_scaling(part['x_offset']),
                                                          apply_scaling(part['y_offset']))
-                self.movable_sprites.append(ultrasonic_sensor)
+                self.sprites.append(ultrasonic_sensor)
                 self.sensors[(ultrasonic_sensor.brick, ultrasonic_sensor.address)] = ultrasonic_sensor
             elif part['type'] == 'arm':
-                # TODO unused address in part
                 arm = Arm(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
                           apply_scaling(part['y_offset']))
-                self.movable_sprites.append(arm)
-                arm_large = ArmLarge(apply_scaling(1450), apply_scaling(1100))  # TODO this should be automatic
-                self.sprites.append(arm_large)
+                self.sprites.append(arm)
+                self.sprites.append(arm.side_bar_arm)
                 self.actuators[(arm.brick, arm.address)] = arm
+                self.shapes.append(arm.side_bar_ground)
             else:
                 print("Unknown robot part in config")
-
-        for sprite in self.movable_sprites:
-            self.sprites.append(sprite)
-
-        # for s in self.robot.get_sensors():
-        #     self.robot_state.load_sensor(s)
 
         try:
             orientation = config['orientation']
@@ -115,13 +110,19 @@ class RobotState:
         except KeyError:
             pass
 
+    def setup_visuals(self):
+        for part in self.sprites:
+            part.setup_visuals()
+        for static_shapes in self.shapes:
+            static_shapes.create_shape()
+
     def _move_x(self, distance: float):
         """
         Move all parts of this robot by the given distance in the x-direction.
         :param distance: to move
         """
 
-        for s in self.movable_sprites:
+        for s in self.sprites:
             s.move_x(distance)
 
     def _move_y(self, distance: float):
@@ -130,7 +131,7 @@ class RobotState:
         :param distance: to move
         """
 
-        for s in self.movable_sprites:
+        for s in self.sprites:
             s.move_y(distance)
 
     def _rotate(self, radians: float):
@@ -138,7 +139,7 @@ class RobotState:
         Rotate all parts of this robot by the given angle in radians.
         :param radians to rotate
         """
-        for s in self.movable_sprites:
+        for s in self.sprites:
             s.rotate(radians)
 
     def execute_movement(self, left_ppf: float, right_ppf: float):
@@ -174,38 +175,31 @@ class RobotState:
         :param dfp: speed in degrees per second of the center motor.
         """
 
-        self.actuators[address].rotate(dfp)
+        self.actuators[address].rotate_arm(dfp)
 
     def set_led_color(self, address, color):
         self.actuators[address].set_color_texture(color)
-
-    def set_space_obstacles(self, obstacles):
-        for obstacle in obstacles:
-            self.space.add(obstacle.poly)
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
         """
         Set the obstacles which can be detected by the color sensors of this robot.
         :param obstacles: to be detected.
         """
-        for part in self.movable_sprites:
-            try:
-                if part.get_ev3type() == 'color_sensor':
-                    part.set_sensible_obstacles(obstacles)
-            except RuntimeError:
-                pass
+        for part in self.sensors.values():
+            if part.get_ev3type() == 'color_sensor':
+                part.set_sensible_obstacles(obstacles)
 
     def set_touch_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the touch sensors of this robot.
         :param obstacles: to be detected.
         """
-        for part in self.movable_sprites:
-            try:
-                if part.get_ev3type() == 'touch_sensor':
-                    part.set_sensible_obstacles(obstacles)
-            except RuntimeError:
-                pass
+        for part in self.sensors.values():
+            if part.get_ev3type() == 'touch_sensor':
+                part.set_sensible_obstacles(obstacles)
+
+    def set_space(self, space):
+        self.space = space
 
     def set_falling_obstacles(self, obstacles):
         """
@@ -213,12 +207,9 @@ class RobotState:
         the entering of a wheel in a 'hole'. Meaning it is stuck or falling.
         :param obstacles: to be detected.
         """
-        for part in self.movable_sprites:
-            try:
-                if part.get_ev3type() == 'motor':
-                    part.set_sensible_obstacles(obstacles)
-            except RuntimeError:
-                pass
+        for part in self.actuators.values():
+            if part.get_ev3type() == 'motor':
+                part.set_sensible_obstacles(obstacles)
 
     def get_sensor(self, address):
         return self.sensors.get(address)
@@ -227,7 +218,6 @@ class RobotState:
         return self.actuators.values()
 
     def get_actuator(self, address):
-        print('getting actuator with address', address)
         return self.actuators[address]
 
     def get_value(self, address):
@@ -235,42 +225,21 @@ class RobotState:
 
     def get_wheels(self):
         wheels = []
-        for part in self.movable_sprites:
-            try:
-                if part.get_ev3type() == 'motor':
-                    wheels.append(part)
-            except RuntimeError:
-                pass
+        for part in self.actuators.values():
+            if part.get_ev3type() == 'motor':
+                wheels.append(part)
         return wheels
 
     def get_sprites(self) -> [Sprite]:
         return self.sprites
 
-    def get_parts_of_type(self, part_type: str):
-        sensors = []
-        for part in self.movable_sprites:
-            try:
-                if part.get_ev3type() == part_type:
-                    sensors.append(part)
-            except RuntimeError:
-                pass
-        return sensors
+    def get_bricks(self):
+        return self.bricks
 
     def get_sensors(self) -> [BodyPart]:
-        sensors = []
-        for part in self.movable_sprites:
-            try:
-                if part.get_ev3type() in ['color_sensor', 'touch_sensor', 'ultrasonic_sensor']:
-                    sensors.append(part)
-            except RuntimeError:
-                pass
-        return sensors
+        return self.sensors.values()
 
     def get_anchor(self) -> BodyPart:
-        for part in self.movable_sprites:
-            try:
-                if part.get_ev3type() == 'brick':
-                    return part
-            except RuntimeError:
-                pass
+        if len(self.bricks) != 0:
+            return self.bricks[0]
         return None

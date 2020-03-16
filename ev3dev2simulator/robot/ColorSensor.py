@@ -25,8 +25,9 @@ class ColorSensor(BodyPart):
                  delta_x: int,
                  delta_y: int):
         super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'color_sensor')
-        self.large_sim_type = get_config().is_large_sim_type()
+        self.old_texture_index = 0
 
+    def setup_visuals(self):
         img_cfg = get_config().get_visualisation_config()['image_paths']
         black_texture = arcade.load_texture(img_cfg['color_sensor_black'], scale=apply_scaling(0.26))
         blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=apply_scaling(0.26))
@@ -42,7 +43,6 @@ class ColorSensor(BodyPart):
         self.textures.append(white_texture)
         self.textures.append(yellow_texture)
 
-        self.old_texture_index = 0
         self.set_texture(0)
 
     def get_latest_value(self):
@@ -62,15 +62,13 @@ class ColorSensor(BodyPart):
 
         return self.get_default_value()
 
-
     def get_default_value(self):
         """
         1 is the color of black for the real robot. Playing field surface is black.
         :return: integer value representing the color black.
         """
-
-        return 1 if self.large_sim_type else 6
-
+        # TODO find suitable default val
+        return 1
 
     def set_color_texture(self, color):
         converted = COLORS[color]

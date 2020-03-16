@@ -20,7 +20,7 @@ class Border(BorderObstacle):
 
     def get_shapes(self):
         if self.shapes is None:
-            self.shapes = self._create_shapes()
+            self.shapes = self.create_shape()
         return self.shapes
 
 
@@ -32,7 +32,7 @@ class Border(BorderObstacle):
 
         return cls(vis_config, color, depth)
 
-    def _create_shapes(self) -> [arcade.Shape]:
+    def create_shape(self) -> [arcade.Shape]:
         """
         Create a list of shapes representing the four lines that make up this border.
         :return: a list of Arcade shapes.

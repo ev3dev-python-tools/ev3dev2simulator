@@ -13,9 +13,14 @@ class UltrasonicSensorBottom(BodyPart):
                  robot,
                  delta_x: int,
                  delta_y: int):
-        img_cfg = get_config().get_visualisation_config()['image_paths']
         super(UltrasonicSensorBottom, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
+
+    def setup_visuals(self):
+        img_cfg = get_config().get_visualisation_config()['image_paths']
         self.init_texture(img_cfg['ultrasonic_sensor_bottom'], 0.20)
+
+    def get_latest_value(self):
+        return self.distance()
 
     def distance(self) -> float:
         """

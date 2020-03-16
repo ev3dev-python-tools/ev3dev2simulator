@@ -35,14 +35,13 @@ class RobotSimulator:
 
     def update(self):
         if self.should_reset:
-            # self.setup()
             self.reset()
 
         else:
             self._process_actuators()
             self._process_leds()
             self._process_sensors()
-            self._check_fall()
+            self.robot.is_stuck = self._check_fall()
 
     def put_actuator_job(self, address: (int, str), job: float):
         """
@@ -151,7 +150,8 @@ class RobotSimulator:
         for (address, job_of_motor) in job_per_actuator:
             actuator = self.queue_info[address]
             if actuator.ev3type == 'arm':
-                self.robot.execute_arm_movement(address, job_of_motor)
+                if job_of_motor is not None:
+                    self.robot.execute_arm_movement(address, job_of_motor)
             elif actuator.ev3type == 'motor':
                 if actuator.x_offset < 0:
                     left_ppf = job_of_motor
@@ -165,7 +165,7 @@ class RobotSimulator:
         for address, led_color in self.robot.led_colors.items():
             self.robot.set_led_color(address, led_color)
 
-    def _check_fall(self):
+    def _check_fall(self) -> bool:
         """
         Check if the robot has fallen of the playing field or is stuck in the
         middle of a lake. If so display a message on the screen.
@@ -174,7 +174,8 @@ class RobotSimulator:
         wheels = self.robot.get_wheels()
         for wheel in wheels:
             if wheel.is_falling():
-                self.msg_counter = self.frames_per_second * 3
+                return True
+        return False
 
     def _process_sensors(self):
         """
@@ -183,4 +184,3 @@ class RobotSimulator:
         """
         for address, sensor in self.robot.sensors.items():
             self.robot.values[address] = sensor.get_latest_value()
-

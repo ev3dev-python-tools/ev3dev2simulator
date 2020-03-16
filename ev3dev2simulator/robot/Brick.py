@@ -15,6 +15,8 @@ class Brick(BodyPart):
                  delta_y: int,
                  name: str):
         self.name = name  # TODO should every part have a name?
-        vis_conf = get_config().get_visualisation_config()
         super(Brick, self).__init__(brick, '', robot, apply_scaling(delta_x), apply_scaling(delta_y), 'brick')
+
+    def setup_visuals(self):
+        vis_conf = get_config().get_visualisation_config()
         self.init_texture(vis_conf['image_paths']['body'], 0.15)

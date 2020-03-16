@@ -43,7 +43,6 @@ class ClientSocketHandler(threading.Thread):
 
         except socket.error:
             self.is_running = False
-        print(self.is_running)
         print(f'Closing connection from \"{self.brick_name}\" (id: {self.brick_id}) from robot '
               f'\"{self.robot_sim.robot.name}\"')
         self.client.close()

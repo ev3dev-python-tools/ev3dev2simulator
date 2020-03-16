@@ -38,7 +38,6 @@ class Visualiser(arcade.Window):
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
         self.scaling_multiplier = get_config().get_scale()
-        self.large_sim_type = get_config().is_large_sim_type()
         self.sim_config = get_config().get_visualisation_config()
 
         self.screen_total_width = int(apply_scaling(self.sim_config['screen_settings']['screen_total_width']))
@@ -96,7 +95,7 @@ class Visualiser(arcade.Window):
         if use_second_screen_to_show_simulator:
             current_screen_index = 1
         screens = self.get_screens()
-        for screen in screens: print(screen)
+        # for screen in screens: print(screen)
         num_screens = len(screens)
         if num_screens == 1:
             current_screen_index = 0
@@ -321,8 +320,7 @@ class Visualiser(arcade.Window):
         # TODO: fix BUG with resize on large field
         #      the resize works perfect with the small field
         #      but with the large field when use set_viewport on then resize also works, BUT we loose the arm.  Same happens when we change window to maximize or fullscreen!
-        if not self.large_sim_type:
-            self.set_viewport(0, self.screen_width, 0, self.screen_height)
+        # self.set_viewport(0, self.screen_width, 0, self.screen_height)
 
     def on_draw(self):
         """
@@ -336,8 +334,14 @@ class Visualiser(arcade.Window):
 
         for robot in self.world_state.robots:
             robot.get_sprites().draw()
-        self._draw_text()
+            for shapeList in robot.shapes:
+                for shape in shapeList.get_shapes():
+                    shape.draw()
 
+            if robot.is_stuck and self.msg_counter <= 0:
+                self.msg_counter = self.frames_per_second * 3
+
+        self._draw_text()
 
     def _draw_text(self):
         """
@@ -354,7 +358,7 @@ class Visualiser(arcade.Window):
         # message = self.robot_state.next_sound_job()
         # sound = message if message else '-'
         #
-        arcade.draw_text("testeroni", self.text_x, self.screen_height - apply_scaling(70), arcade.color.BLACK, 10)
+        # arcade.draw_text(self.msg_counter, self.text_x, self.screen_height - apply_scaling(70), arcade.color.GOLD, 10)
         # arcade.draw_text(center_cs, self.text_x, self.screen_height - apply_scaling(70), arcade.color.WHITE, 10)
         # arcade.draw_text(left_cs, self.text_x, self.screen_height - apply_scaling(90), arcade.color.WHITE, 10)
         # arcade.draw_text(right_cs, self.text_x, self.screen_height - apply_scaling(110), arcade.color.WHITE, 10)
@@ -370,18 +374,19 @@ class Visualiser(arcade.Window):
         #                  14,
         #                  anchor_x="center")
         #
-        # if self.msg_counter != 0:
-        #     self.msg_counter -= 1
-        #
-        #     arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - apply_scaling(100), arcade.color.WHITE,
-        #                      14,
-        #                      anchor_x="center")
-        #     arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - apply_scaling(130), arcade.color.WHITE,
-        #                      14,
-        #                      anchor_x="center")
+        if self.msg_counter > 0:
+            self.msg_counter -= 1
+
+            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - apply_scaling(100), arcade.color.WHITE,
+                             14,
+                             anchor_x="center")
+            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - apply_scaling(130), arcade.color.WHITE,
+                             14,
+                             anchor_x="center")
 
     def update(self, delta_time):
         """
         All the logic to move the robot. Collision detection is also performed.
+        Callback to WorldSimulator.update is called
         """
         self.update_callback()

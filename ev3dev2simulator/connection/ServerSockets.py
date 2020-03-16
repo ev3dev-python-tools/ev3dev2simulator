@@ -60,7 +60,7 @@ class ServerSockets(threading.Thread):
             handlers = []
 
             for robot_sim in self.robot_simulators:
-                for brick in robot_sim.robot.get_parts_of_type('brick'):
+                for brick in robot_sim.robot.get_bricks():
                     print(f'Please connect brick "{brick.name}" from robot "{robot_sim.robot.name}" ')
                     (client, address) = server.accept()
                     handlers.append(create_handler(client, robot_sim, brick))

@@ -13,10 +13,12 @@ class Wheel(BodyPart):
                  robot,
                  delta_x: int,
                  delta_y: int):
-        vis_conf = get_config().get_visualisation_config()
+        super(Wheel, self).__init__(brick, address, robot, delta_x, delta_y, 'motor')
         self.x_offset = delta_x
         self.y_offset = delta_y
-        super(Wheel, self).__init__(brick, address, robot, delta_x, delta_y, 'motor')
+
+    def setup_visuals(self):
+        vis_conf = get_config().get_visualisation_config()
         self.init_texture(vis_conf['image_paths']['wheel'], 0.33)
 
     def is_falling(self) -> bool:
@@ -26,7 +28,6 @@ class Wheel(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            print(o)
             if o.collided_with(self.center_x, self.center_y):
                 return True
 

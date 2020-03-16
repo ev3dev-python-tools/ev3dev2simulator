@@ -9,7 +9,6 @@ class Hole:
     This class represents a the 'hole' of a 'lake'.
     """
 
-
     def __init__(self,
                  center_x: int,
                  center_y: int,
@@ -18,8 +17,16 @@ class Hole:
         self.center_y = center_y
         self.radius = radius
 
+        # visualisation
         self.points = self._create_points()
 
+    def get_shapes(self):
+        if self.shape is None:
+            self.create_shape()
+        return [self.shape]
+
+    def create_shape(self):
+        self.points = self._create_points()
 
     def _create_points(self) -> PointList:
         """
@@ -30,7 +37,6 @@ class Hole:
         return get_circle_points(self.center_x,
                                  self.center_y,
                                  self.radius)
-
 
     def collided_with(self, x: float, y: float) -> bool:
         """

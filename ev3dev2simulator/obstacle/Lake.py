@@ -22,7 +22,8 @@ class Lake(ColorObstacle):
                  border_width: int):
         super(Lake, self).__init__(to_color_code(color))
 
-        self.large_sim_type = get_config().is_large_sim_type()
+        # TODO large sim type is gone, not sure what to do with this
+        self.lake_type = True
 
         self.center_x = center_x
         self.center_y = center_y
@@ -32,11 +33,12 @@ class Lake(ColorObstacle):
         self.inner_radius = inner_radius
         self.outer_radius = self.radius + (self.border_width / 2)
 
+        self.hole = self._create_hole()
+
         # visualisation
         self.color = color
         self.points = None
         self.shape = None
-        self.hole = None
 
     def get_shapes(self):
         if self.shape is None:
@@ -46,7 +48,7 @@ class Lake(ColorObstacle):
     def create_shape(self):
         self.points = self._create_points()
         self.shape = self._create_shape()
-        self.hole = self._create_hole()
+        self.hole.create_shape()
 
     @classmethod
     def from_config(cls, config):
@@ -83,7 +85,7 @@ class Lake(ColorObstacle):
         :return: a Arcade shape object.
         """
 
-        if self.large_sim_type:
+        if self.lake_type:
             return arcade.create_line_strip(self.points,
                                             self.color,
                                             self.border_width)
@@ -100,7 +102,7 @@ class Lake(ColorObstacle):
                                            x,
                                            y)
 
-        if self.large_sim_type:
+        if self.lake_type:
             return self.inner_radius < distance < self.outer_radius
         else:
             return distance < self.outer_radius

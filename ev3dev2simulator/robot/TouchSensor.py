@@ -14,15 +14,17 @@ class TouchSensor(BodyPart):
                  delta_x: int,
                  delta_y: int,
                  side: str):
+        self.side = side
+        super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'touch_sensor')
 
-        if side == 'left':
+    def setup_visuals(self):
+        if self.side == 'left':
             img = 'touch_sensor_left'
-        elif side == 'right':
+        elif self.side == 'right':
             img = 'touch_sensor_right'
         else:
             img = 'touch_sensor_rear'
         vis_conf = get_config().get_visualisation_config()
-        super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'touch_sensor')
         self.init_texture(vis_conf['image_paths'][img], 0.32)
 
     def get_latest_value(self):

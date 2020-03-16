@@ -48,7 +48,6 @@ class MessageHandler:
         Deserialize the given dictionary into a RotateCommand and send it to the MessageProcessor.
         :param d: to process.
         """
-        print('drive command: ', d['address'], d['speed'], d['distance'], d['stop_action'])
         command = RotateCommand(d['address'], d['speed'], d['distance'], d['stop_action'])
         value = self.message_processor.process_rotate_command(command)
 

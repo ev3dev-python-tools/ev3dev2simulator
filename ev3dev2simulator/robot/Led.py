@@ -15,9 +15,11 @@ class Led(BodyPart):
                  robot,
                  delta_x: int,
                  delta_y: int):
-        img_cfg = get_config().get_visualisation_config()['image_paths']
         super(Led, self).__init__(brick, '', robot, delta_x, delta_y, 'led')
+        self.old_texture_index = 1
 
+    def setup_visuals(self):
+        img_cfg = get_config().get_visualisation_config()['image_paths']
         amber_texture = arcade.load_texture(img_cfg['led_amber'], scale=apply_scaling(0.33))
         black_texture = arcade.load_texture(img_cfg['led_black'], scale=apply_scaling(0.33))
         green_texture = arcade.load_texture(img_cfg['led_green'], scale=apply_scaling(0.33))
@@ -32,7 +34,6 @@ class Led(BodyPart):
         self.textures.append(orange_texture)
         self.textures.append(yellow_texture)
 
-        self.old_texture_index = 1
         self.set_texture(1)
 
     def set_color_texture(self, color):

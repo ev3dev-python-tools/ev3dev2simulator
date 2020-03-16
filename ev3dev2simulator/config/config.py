@@ -51,9 +51,6 @@ class Config:
 
         return self.sim_type
 
-    def is_large_sim_type(self):
-        return self.get_sim_type() == 'large'
-
     def _load_yaml_file(self, file_url):
         """
         Load config data from the correct config yaml file. The file to load from depends on the simulation type.

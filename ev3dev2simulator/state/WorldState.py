@@ -1,5 +1,7 @@
 import os
 
+from pymunk import Space
+
 from ev3dev2simulator.state.RobotState import RobotState
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -23,6 +25,7 @@ class WorldState:
         self.color_obstacles = []
         self.robots = []
         self.space_obstacles = []
+        self.space = Space()
 
         for robot_conf in config['robots']:
             self.robots.append(RobotState(robot_conf))
@@ -56,15 +59,15 @@ class WorldState:
                 print("unknown obstacle type")
 
     def setup_visuals(self):
-        print('color_obstacles:', self.color_obstacles)
-        print('touch_obstacles:', self.touch_obstacles)
-        print('falling_obstacles:', self.falling_obstacles)
+        for obstacle in self.obstacles:
+            obstacle.create_shape()
+
+        for obstacle in self.space_obstacles:
+            self.space.add(obstacle.poly)
+
         for robot in self.robots:
+            robot.setup_visuals()
             robot.set_color_obstacles(self.color_obstacles)
             robot.set_touch_obstacles(self.touch_obstacles)
-            robot.set_space_obstacles(self.space_obstacles)
-            # robot.set_falling_obstacles(self.falling_obstacles)
-
-        # TODO This should only be added if it has a measurement probe
-        # ground = Ground(1460, 950, 300, 10, color.BLACK)
-        # self.obstacles.append(ground)
+            robot.set_falling_obstacles(self.falling_obstacles)
+            robot.set_space(self.space)

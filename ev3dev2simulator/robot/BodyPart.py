@@ -1,4 +1,5 @@
 import math
+from abc import ABC
 
 import arcade
 
@@ -69,8 +70,6 @@ class BodyPart(arcade.Sprite):
         Set the obstacles which can be detected via collision detection by this body part.
         :param obstacles: to be detected.
         """
-        for obstacle in obstacles:
-            obstacle.get_shapes()  # TODO the order is not fine yet
         self.sensible_obstacles = obstacles
 
     def get_default_value(self):
@@ -80,6 +79,9 @@ class BodyPart(arcade.Sprite):
         :return: any possible value representing the default value.
         """
 
+        pass
+
+    def setup_visuals(self):
         pass
 
     def init_texture(self, src, scale):
