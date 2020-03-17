@@ -2,7 +2,6 @@ import arcade
 
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot.BodyPart import BodyPart
-from ev3dev2simulator.util.Util import apply_scaling
 
 COLORS = dict()
 COLORS[1] = 0
@@ -29,14 +28,14 @@ class ColorSensor(BodyPart):
         self.name = name
         self.old_texture_index = 0
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        black_texture = arcade.load_texture(img_cfg['color_sensor_black'], scale=apply_scaling(0.26))
-        blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=apply_scaling(0.26))
-        green_texture = arcade.load_texture(img_cfg['color_sensor_green'], scale=apply_scaling(0.26))
-        red_texture = arcade.load_texture(img_cfg['color_sensor_red'], scale=apply_scaling(0.26))
-        white_texture = arcade.load_texture(img_cfg['color_sensor_white'], scale=apply_scaling(0.26))
-        yellow_texture = arcade.load_texture(img_cfg['color_sensor_yellow'], scale=apply_scaling(0.26))
+        black_texture = arcade.load_texture(img_cfg['color_sensor_black'], scale=scale * 0.26)
+        blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=scale * 0.26)
+        green_texture = arcade.load_texture(img_cfg['color_sensor_green'], scale=scale * 0.26)
+        red_texture = arcade.load_texture(img_cfg['color_sensor_red'], scale=scale * 0.26)
+        white_texture = arcade.load_texture(img_cfg['color_sensor_white'], scale=scale * 0.26)
+        yellow_texture = arcade.load_texture(img_cfg['color_sensor_yellow'], scale=scale * 0.26)
 
         self.textures.append(black_texture)
         self.textures.append(blue_texture)
@@ -59,7 +58,7 @@ class ColorSensor(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            if o.collided_with(self.center_x, self.center_y):
+            if o.collided_with(self.center_x, self.center_y):  # TODO should this be drawing x y?
                 return o.color_code
 
         return self.get_default_value()

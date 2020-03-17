@@ -52,6 +52,18 @@ class Visualiser(arcade.Window):
         self.falling_msg = self.sim_config['screen_settings']['falling_message']
         self.restart_msg = self.sim_config['screen_settings']['restart_message']
 
+        x_scale = (self.screen_width - self.side_bar_width) / world_state.board_width
+        y_scale = self.screen_height / world_state.board_height
+        if x_scale == y_scale:
+            scale = x_scale
+        elif x_scale < y_scale:
+            scale = x_scale
+            self.screen_height = int(scale * world_state.board_height)
+        else:
+            scale = y_scale
+            self.screen_width = self.side_bar_width + int(scale * world_state.board_width)
+        self.scale = scale
+
         super(Visualiser, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30,
                                          resizable=True)
 
@@ -63,9 +75,6 @@ class Visualiser(arcade.Window):
         self.msg_counter = 0
 
         self.setup()
-        x_scale = (self.screen_width - self.side_bar_width) / world_state.board_width
-        y_scale = self.screen_height / world_state.board_height
-        scale = min(x_scale, y_scale)
         self.world_state.setup_visuals(scale)
 
         if show_fullscreen:
@@ -326,6 +335,11 @@ class Visualiser(arcade.Window):
                 shape.draw()
 
         for robot in self.world_state.get_robots():
+            try:
+                for sprite in robot.get_sprites():
+                    sprite.calculate_drawing_position(self.scale)
+            except:
+                print("no good")
             robot.get_sprites().draw()
             for shapeList in robot.shapes:
                 for shape in shapeList.get_shapes():

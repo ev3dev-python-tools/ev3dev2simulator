@@ -19,7 +19,7 @@ class TouchSensor(BodyPart):
         self.side = side
         self.name = name
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         if self.side == 'left':
             img = 'touch_sensor_left'
         elif self.side == 'right':
@@ -27,7 +27,7 @@ class TouchSensor(BodyPart):
         else:
             img = 'touch_sensor_rear'
         vis_conf = get_config().get_visualisation_config()
-        self.init_texture(vis_conf['image_paths'][img], 0.32)
+        self.init_texture(vis_conf['image_paths'][img], scale * 0.32)
 
     def get_latest_value(self):
         return self.is_touching()

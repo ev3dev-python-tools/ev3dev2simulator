@@ -1,7 +1,7 @@
 import math
 import arcade
 
-from ev3dev2simulator.util.Util import pythagoras, apply_scaling
+from ev3dev2simulator.util.Util import pythagoras
 
 
 class BodyPart(arcade.Sprite):
@@ -22,8 +22,8 @@ class BodyPart(arcade.Sprite):
         self.brick = brick
         self.address = address
         self.robot = robot
-        self.center_x = robot.wheel_center_x + delta_x
-        self.center_y = robot.wheel_center_y + delta_y
+        self.x = robot.x + delta_x
+        self.y = robot.y + delta_y
 
         self.angle_addition = -math.atan(delta_x / delta_y)
         self.sweep_length = pythagoras(delta_x, delta_y)
@@ -33,13 +33,17 @@ class BodyPart(arcade.Sprite):
 
         self.sensible_obstacles = []
 
+    def calculate_drawing_position(self, scale):
+        self.center_x = self.x * scale
+        self.center_y = self.y * scale
+
     def move_x(self, distance: float):
         """
         Move this part by the given distance in the x-direction.
         :param distance: to move
         """
 
-        self.center_x += distance
+        self.x += distance
 
     def move_y(self, distance: float):
         """
@@ -47,7 +51,7 @@ class BodyPart(arcade.Sprite):
         :param distance: to move
         """
 
-        self.center_y += distance
+        self.y += distance
 
     def rotate(self, radians: float):
         """
@@ -60,8 +64,8 @@ class BodyPart(arcade.Sprite):
 
         rad = math.radians(self.angle) + self.angle_addition
 
-        self.center_x = self.sweep_length * math.sin(-rad) + self.robot.wheel_center_x
-        self.center_y = self.sweep_length * math.cos(-rad) + self.robot.wheel_center_y
+        self.x = self.sweep_length * math.sin(-rad) + self.robot.x
+        self.y = self.sweep_length * math.cos(-rad) + self.robot.y
 
     def set_sensible_obstacles(self, obstacles):
         """
@@ -78,12 +82,12 @@ class BodyPart(arcade.Sprite):
         """
         pass
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         pass
 
     def init_texture(self, src, scale):
 
-        texture = arcade.load_texture(src, scale=apply_scaling(scale))
+        texture = arcade.load_texture(src, scale=scale)
 
         self.textures.append(texture)
         self.set_texture(0)

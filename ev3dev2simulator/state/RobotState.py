@@ -13,7 +13,7 @@ from ev3dev2simulator.robot.TouchSensor import TouchSensor
 from ev3dev2simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
 from ev3dev2simulator.robot.UltrasonicSensorTop import UltrasonicSensor
 from ev3dev2simulator.robot.Wheel import Wheel
-from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y, apply_scaling
+from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
 from ev3dev2simulator.config.config import get_config
 
 
@@ -34,11 +34,11 @@ class RobotState:
         self.bricks = []
         self.sounds = {}
 
-        self.wheel_center_x = config['center_x']
-        self.wheel_center_y = config['center_y'] + apply_scaling(22.5)
+        self.x = config['center_x']
+        self.y = config['center_y'] + 22.5
 
         vis_conf = get_config().get_visualisation_config()
-        self.wheel_distance = apply_scaling(vis_conf['wheel_settings']['spacing'])  # TODO move this to robot config
+        self.wheel_distance = vis_conf['wheel_settings']['spacing']  # TODO move this to robot config
 
         self.name = config['name']
         self.is_stuck = False
@@ -49,10 +49,10 @@ class RobotState:
                 self.sprites.append(brick)
                 self.bricks.append(brick)
 
-                left_led = Led(part['brick'], self, apply_scaling(part['x_offset'] - 20),
-                               apply_scaling(part['y_offset'] - 32.5))
-                right_led = Led(part['brick'], self, apply_scaling(part['x_offset'] + 20),
-                                apply_scaling(part['y_offset'] - 32.5))
+                left_led = Led(part['brick'], self, part['x_offset'] - 20,
+                               part['y_offset'] - 32.5)
+                right_led = Led(part['brick'], self, part['x_offset'] + 20,
+                                part['y_offset'] - 32.5)
                 self.sprites.append(left_led)
                 self.sprites.append(right_led)
 
@@ -61,26 +61,26 @@ class RobotState:
                 self.led_colors[(brick.brick, 'led1')] = 1
                 self.actuators[(brick.brick, 'led1')] = right_led
 
-                speaker = Speaker(part['brick'], self, apply_scaling(part['x_offset'] + 28),
-                                  apply_scaling(part['y_offset'] - 12.5))
+                speaker = Speaker(part['brick'], self, part['x_offset'] + 28,
+                                  part['y_offset'] - 12.5)
                 self.actuators[(brick.brick, 'speaker')] = speaker
                 self.sprites.append(speaker)
 
             elif part['type'] == 'motor':
-                wheel = Wheel(part['brick'], part['port'], self, apply_scaling(part['x_offset']), part['y_offset'])
+                wheel = Wheel(part['brick'], part['port'], self, part['x_offset'], part['y_offset'])
                 self.sprites.append(wheel)
                 self.actuators[(wheel.brick, wheel.address)] = wheel
 
             elif part['type'] == 'color_sensor':
                 color_sensor = ColorSensor(part['brick'], part['port'], self,
-                                           apply_scaling(part['x_offset']),
-                                           apply_scaling(part['y_offset']), part['name'])
+                                           part['x_offset'],
+                                           part['y_offset'], part['name'])
                 self.sprites.append(color_sensor)
                 self.sensors[(color_sensor.brick, color_sensor.address)] = color_sensor
 
             elif part['type'] == 'touch_sensor':
-                touch_sensor = TouchSensor(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
-                                           apply_scaling(part['y_offset']), part['side'], part['name'])
+                touch_sensor = TouchSensor(part['brick'], part['port'], self, part['x_offset'],
+                                           part['y_offset'], part['side'], part['name'])
                 self.sprites.append(touch_sensor)
                 self.sensors[(touch_sensor.brick, touch_sensor.address)] = touch_sensor
 
@@ -88,24 +88,24 @@ class RobotState:
                 try:
                     if part['direction'] == 'bottom':
                         ultrasonic_sensor = UltrasonicSensorBottom(part['brick'], part['port'], self,
-                                                                   apply_scaling(part['x_offset']),
-                                                                   apply_scaling(part['y_offset']),
+                                                                   part['x_offset'],
+                                                                   part['y_offset'],
                                                                    part['name'])
                     elif part['direction'] == 'forward':
                         ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
-                                                             apply_scaling(part['x_offset']),
-                                                             apply_scaling(part['y_offset']),
+                                                             part['x_offset'],
+                                                             part['y_offset'],
                                                              part['name'])
                 except KeyError:
                     ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
-                                                         apply_scaling(part['x_offset']),
-                                                         apply_scaling(part['y_offset']),
+                                                         part['x_offset'],
+                                                         part['y_offset'],
                                                          part['name'])
                 self.sprites.append(ultrasonic_sensor)
                 self.sensors[(ultrasonic_sensor.brick, ultrasonic_sensor.address)] = ultrasonic_sensor
             elif part['type'] == 'arm':
-                arm = Arm(part['brick'], part['port'], self, apply_scaling(part['x_offset']),
-                          apply_scaling(part['y_offset']))
+                arm = Arm(part['brick'], part['port'], self, part['x_offset'],
+                          part['y_offset'])
                 self.sprites.append(arm)
                 self.sprites.append(arm.side_bar_arm)
                 self.actuators[(arm.brick, arm.address)] = arm
@@ -122,7 +122,7 @@ class RobotState:
 
     def setup_visuals(self, scale):
         for part in self.sprites:
-            part.setup_visuals()
+            part.setup_visuals(scale)
         for static_shapes in self.shapes:
             static_shapes.create_shape(scale)
 
@@ -171,8 +171,8 @@ class RobotState:
                                                  distance_right,
                                                  cur_angle)
 
-        self.wheel_center_x += diff_x
-        self.wheel_center_y += diff_y
+        self.x += diff_x
+        self.y += diff_y
 
         self._rotate(diff_angle)
         self._move_x(diff_x)

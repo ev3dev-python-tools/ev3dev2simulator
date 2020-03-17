@@ -4,7 +4,7 @@ from arcade import Shape, PointList
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
 from ev3dev2simulator.obstacle.Hole import Hole
-from ev3dev2simulator.util.Util import apply_scaling, get_circle_points, distance_between_points, to_color_code
+from ev3dev2simulator.util.Util import get_circle_points, distance_between_points, to_color_code
 
 
 class Lake(ColorObstacle):
@@ -14,8 +14,8 @@ class Lake(ColorObstacle):
     """
 
     def __init__(self,
-                 center_x: int,
-                 center_y: int,
+                 x: int,
+                 y: int,
                  radius: float,
                  inner_radius: float,
                  color: arcade.Color,
@@ -25,8 +25,8 @@ class Lake(ColorObstacle):
         # TODO large sim type is gone, not sure what to do with this
         self.lake_type = True
 
-        self.center_x = center_x
-        self.center_y = center_y
+        self.x = x
+        self.y = y
         self.border_width = border_width
 
         self.radius = radius
@@ -41,8 +41,6 @@ class Lake(ColorObstacle):
         self.shape = None
 
     def get_shapes(self):
-        if self.shape is None:
-            self.create_shape()
         return [self.shape]
 
     def create_shape(self, scale):
@@ -75,8 +73,8 @@ class Lake(ColorObstacle):
         :return: a PointList object.
         """
 
-        return get_circle_points(self.center_x * scale,
-                                 self.center_y * scale,
+        return get_circle_points(self.x * scale,
+                                 self.y * scale,
                                  self.radius * scale)
 
     def _create_shape(self, scale) -> Shape:
@@ -94,11 +92,11 @@ class Lake(ColorObstacle):
             return arcade.create_line_generic_with_colors(self.points, color_list, 6)
 
     def _create_hole(self):
-        return Hole(self.center_x, self.center_y, self.inner_radius)
+        return Hole(self.x, self.y, self.inner_radius)
 
     def collided_with(self, x: float, y: float) -> bool:
-        distance = distance_between_points(self.center_x,
-                                           self.center_y,
+        distance = distance_between_points(self.x,
+                                           self.y,
                                            x,
                                            y)
 

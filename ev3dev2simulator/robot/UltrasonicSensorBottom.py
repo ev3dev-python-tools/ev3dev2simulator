@@ -17,9 +17,9 @@ class UltrasonicSensorBottom(BodyPart):
         super(UltrasonicSensorBottom, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
         self.name = name
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        self.init_texture(img_cfg['ultrasonic_sensor_bottom'], 0.20)
+        self.init_texture(img_cfg['ultrasonic_sensor_bottom'], scale * 0.20)
 
     def get_latest_value(self):
         return self.distance()
@@ -31,7 +31,7 @@ class UltrasonicSensorBottom(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            if o.collided_with(self.center_x, self.center_y):
+            if o.collided_with(self.x, self.y):
                 return self.get_default_value()
 
         return 20

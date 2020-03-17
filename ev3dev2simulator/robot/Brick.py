@@ -1,6 +1,5 @@
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot.BodyPart import BodyPart
-from ev3dev2simulator.util.Util import apply_scaling
 
 
 class Brick(BodyPart):
@@ -14,9 +13,9 @@ class Brick(BodyPart):
                  delta_x: int,
                  delta_y: int,
                  name: str):
-        self.name = name  # TODO should every part have a name?
-        super(Brick, self).__init__(brick, '', robot, apply_scaling(delta_x), apply_scaling(delta_y), 'brick')
+        self.name = name
+        super(Brick, self).__init__(brick, '', robot, delta_x, delta_y, 'brick')
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         vis_conf = get_config().get_visualisation_config()
-        self.init_texture(vis_conf['image_paths']['body'], 0.15)
+        self.init_texture(vis_conf['image_paths']['body'], scale * 0.15)

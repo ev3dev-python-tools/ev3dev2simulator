@@ -5,7 +5,7 @@ from pymunk import Space, ShapeFilter
 
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot.BodyPart import BodyPart
-from ev3dev2simulator.util.Util import apply_scaling, distance_between_points
+from ev3dev2simulator.util.Util import distance_between_points
 
 
 class UltrasonicSensor(BodyPart):
@@ -22,14 +22,13 @@ class UltrasonicSensor(BodyPart):
                  name: str):
         super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
         self.name = name
-        self.sensor_half_height = apply_scaling(22.5)
-        self.scaling_multiplier = get_config().get_scale()
+        self.sensor_half_height = 22.5
 
-        self.eye_offset = apply_scaling(18)
+        self.eye_offset = 18
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        self.init_texture(img_cfg['ultrasonic_sensor_top'], 0.20)
+        self.init_texture(img_cfg['ultrasonic_sensor_top'], scale * 0.20)
 
     def get_latest_value(self):
         return self.distance(self.robot.space)
@@ -101,8 +100,8 @@ class UltrasonicSensor(BodyPart):
 
         rad = math.radians(angle)
 
-        x = self.eye_offset * math.sin(-rad) + self.center_x
-        y = self.eye_offset * math.cos(-rad) + self.center_y
+        x = self.eye_offset * math.sin(-rad) + self.x
+        y = self.eye_offset * math.cos(-rad) + self.y
 
         return x, y
 
@@ -113,4 +112,4 @@ class UltrasonicSensor(BodyPart):
         :return: default value in pixels.
         """
 
-        return 2550 * self.scaling_multiplier
+        return 2550

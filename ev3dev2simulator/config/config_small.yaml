@@ -3,7 +3,7 @@ board_width: 1189
 board_color: (235, 235, 235)
 robots:
   - name: robot0
-    center_x: 250
+    center_x: 200
     center_y: 300
     orientation: 0
     parts:
@@ -80,27 +80,9 @@ obstacles:
     y: 500
     type: 'lake'
 
-  rock1:
-    x: 825
-    y: 1050
-    width: 150
-    height: 60
-    color: (169, 169, 169)
-    angle: 10
-    type: 'rock'
-
-  rock2:
-    x: 975
-    y: 275
-    width: 300
-    height: 90
-    color: (169, 169, 169)
-    angle: 130
-    type: 'rock'
-
   bottle:
-    x: 500
-    y: 500
+    x: 1000
+    y: 300
     radius: 40
     color: (85, 107, 47)
     type: 'bottle'

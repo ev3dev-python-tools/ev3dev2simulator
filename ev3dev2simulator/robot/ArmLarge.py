@@ -3,7 +3,6 @@ import math
 from arcade import Sprite, arcade
 
 from ev3dev2simulator.config.config import get_config
-from ev3dev2simulator.util.Util import apply_scaling
 
 
 class ArmLarge(Sprite):
@@ -12,26 +11,26 @@ class ArmLarge(Sprite):
     """
 
     def __init__(self,
-                 center_x: int,
-                 center_y: int):
+                 x: int,
+                 y: int):
         super(ArmLarge, self).__init__()
 
-        self.center_x = center_x
-        self.center_y = center_y
+        self.x = x
+        self.y = y
 
-        self.sweep_length = apply_scaling(229) / 4
+        self.sweep_length = 229 / 4
 
-        self.rotate_x = center_x
-        self.rotate_y = center_y - self.sweep_length
+        self.rotate_x = x
+        self.rotate_y = y - self.sweep_length
 
         self.rotate(20)
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         vis_conf = get_config().get_visualisation_config()
-        self.init_texture(vis_conf['image_paths']['arm_large'], 0.50)
+        self.init_texture(vis_conf['image_paths']['arm_large'], scale * 0.50)
 
     def init_texture(self, src, scale):
-        texture = arcade.load_texture(src, scale=apply_scaling(scale))
+        texture = arcade.load_texture(src, scale=scale)
 
         self.textures.append(texture)
         self.set_texture(0)
@@ -47,8 +46,12 @@ class ArmLarge(Sprite):
 
         rad = math.radians(self.angle)
 
-        self.center_x = self.sweep_length * math.sin(-rad) + self.rotate_x
-        self.center_y = self.sweep_length * math.cos(-rad) + self.rotate_y
+        self.x = self.sweep_length * math.sin(-rad) + self.rotate_x
+        self.y = self.sweep_length * math.cos(-rad) + self.rotate_y
+
+    def calculate_drawing_position(self, scale):
+        self.center_x = self.x
+        self.center_y = self.y
 
     def move_x(self, distance: float):
         pass

@@ -14,8 +14,7 @@ class MotorCommandProcessor:
     def __init__(self):
         cfg = get_config().get_visualisation_config()
 
-        self.scaling_multiplier = get_config().get_scale()
-        self.pixel_coasting_sub = cfg['motor_settings']['pixel_coasting_subtraction'] * self.scaling_multiplier
+        self.pixel_coasting_sub = cfg['motor_settings']['pixel_coasting_subtraction']
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
 
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
@@ -148,7 +147,7 @@ class MotorCommandProcessor:
         :return: an integer representing the distance in pixels.
         """
 
-        return self.wheel_circumference * (distance / 360) * self.scaling_multiplier
+        return self.wheel_circumference * (distance / 360)
 
     def _to_seconds(self, frames: int) -> float:
         """

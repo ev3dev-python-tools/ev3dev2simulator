@@ -10,11 +10,11 @@ class Hole:
     """
 
     def __init__(self,
-                 center_x: int,
-                 center_y: int,
+                 x: int,
+                 y: int,
                  radius: float):
-        self.center_x = center_x
-        self.center_y = center_y
+        self.x = x
+        self.y = y
         self.radius = radius
 
         # visualisation
@@ -32,8 +32,8 @@ class Hole:
         :return: a PointList object.
         """
 
-        return get_circle_points(self.center_x * scale,
-                                 self.center_y * scale,
+        return get_circle_points(self.x * scale,
+                                 self.y * scale,
                                  self.radius * scale)
 
     def collided_with(self, x: float, y: float) -> bool:

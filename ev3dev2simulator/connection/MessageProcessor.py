@@ -4,9 +4,7 @@ from ev3dev2._platform.ev3 import LEDS
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.connection.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
-from ev3dev2simulator.robot.Wheel import Wheel
 from ev3dev2simulator.state import RobotSimulator
-from ev3dev2simulator.util.Util import remove_scaling, apply_scaling
 
 LED_COLORS = dict()
 LED_COLORS[(1, 1)] = 0  # Amber
@@ -28,7 +26,7 @@ class MessageProcessor:
 
         self.brick_id = brick_id
 
-        self.pixel_coasting_sub = apply_scaling(cfg['motor_settings']['pixel_coasting_subtraction'])
+        self.pixel_coasting_sub = cfg['motor_settings']['pixel_coasting_subtraction']
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
 

@@ -17,9 +17,9 @@ class Wheel(BodyPart):
         self.x_offset = delta_x
         self.y_offset = delta_y
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         vis_conf = get_config().get_visualisation_config()
-        self.init_texture(vis_conf['image_paths']['wheel'], 0.33)
+        self.init_texture(vis_conf['image_paths']['wheel'], scale * 0.33)
 
     def is_falling(self) -> bool:
         """
@@ -28,7 +28,7 @@ class Wheel(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            if o.collided_with(self.center_x, self.center_y):
+            if o.collided_with(self.x, self.y):
                 return True
 
         return self.get_default_value()

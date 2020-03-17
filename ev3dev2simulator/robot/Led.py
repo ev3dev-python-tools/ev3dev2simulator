@@ -2,7 +2,6 @@ import arcade
 
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot.BodyPart import BodyPart
-from ev3dev2simulator.util.Util import apply_scaling
 
 
 class Led(BodyPart):
@@ -18,14 +17,14 @@ class Led(BodyPart):
         super(Led, self).__init__(brick, '', robot, delta_x, delta_y, 'led')
         self.old_texture_index = 1
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        amber_texture = arcade.load_texture(img_cfg['led_amber'], scale=apply_scaling(0.33))
-        black_texture = arcade.load_texture(img_cfg['led_black'], scale=apply_scaling(0.33))
-        green_texture = arcade.load_texture(img_cfg['led_green'], scale=apply_scaling(0.33))
-        red_texture = arcade.load_texture(img_cfg['led_red'], scale=apply_scaling(0.33))
-        orange_texture = arcade.load_texture(img_cfg['led_orange'], scale=apply_scaling(0.33))
-        yellow_texture = arcade.load_texture(img_cfg['led_yellow'], scale=apply_scaling(0.33))
+        amber_texture = arcade.load_texture(img_cfg['led_amber'], scale=scale * 0.33)
+        black_texture = arcade.load_texture(img_cfg['led_black'], scale=scale * 0.33)
+        green_texture = arcade.load_texture(img_cfg['led_green'], scale=scale * 0.33)
+        red_texture = arcade.load_texture(img_cfg['led_red'], scale=scale * 0.33)
+        orange_texture = arcade.load_texture(img_cfg['led_orange'], scale=scale * 0.33)
+        yellow_texture = arcade.load_texture(img_cfg['led_yellow'], scale=scale * 0.33)
 
         self.textures.append(amber_texture)
         self.textures.append(black_texture)

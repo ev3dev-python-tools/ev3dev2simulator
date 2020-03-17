@@ -37,7 +37,7 @@ class WorldState:
 
         vis_config = get_config().get_visualisation_config()
 
-        edge = Edge(vis_config)
+        edge = Edge(self.board_width, self.board_height, vis_config)
         self.obstacles.append(edge)
         self.falling_obstacles.append(edge)
 
@@ -53,7 +53,7 @@ class WorldState:
                 self.touch_obstacles.append(rock)
                 self.space_obstacles.append(rock)
             elif value['type'] == 'border':
-                border = Border.from_config(vis_config, value)
+                border = Border.from_config(self.board_width, self.board_height, value)
                 self.obstacles.append(border)
                 self.color_obstacles.append(border)
             elif value['type'] == 'bottle':

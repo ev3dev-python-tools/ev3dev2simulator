@@ -4,9 +4,6 @@ from pymunk import Body, Poly, Vec2d
 
 from ev3dev2simulator.obstacle.TouchObstacle import TouchObstacle
 
-from ev3dev2simulator.config.config import get_config
-from ev3dev2simulator.util.Util import apply_scaling
-
 
 class Rock(TouchObstacle):
     """
@@ -14,16 +11,16 @@ class Rock(TouchObstacle):
     """
 
     def __init__(self,
-                 center_x: int,
-                 center_y: int,
+                 x: int,
+                 y: int,
                  width: int,
                  height: int,
                  color: arcade.Color,
                  angle: int):
         super(Rock, self).__init__()
 
-        self.center_x = center_x
-        self.center_y = center_y
+        self.x = x
+        self.y = y
         self.width = width
         self.height = height
         self.angle = angle
@@ -44,10 +41,10 @@ class Rock(TouchObstacle):
 
     @classmethod
     def from_config(cls, config):
-        x = apply_scaling(config['x'])
-        y = apply_scaling(config['y'])
-        width = apply_scaling(config['width'])
-        height = apply_scaling(config['height'])
+        x = config['x']
+        y = config['y']
+        width = config['width']
+        height = config['height']
         color = eval(config['color'])
         angle = config['angle']
 
@@ -59,8 +56,8 @@ class Rock(TouchObstacle):
         :return: a PointList object.
         """
 
-        return arcade.get_rectangle_points(self.center_x * scale,
-                                           self.center_y * scale,
+        return arcade.get_rectangle_points(self.x * scale,
+                                           self.y * scale,
                                            self.width * scale,
                                            self.height * scale,
                                            self.angle)
@@ -87,6 +84,6 @@ class Rock(TouchObstacle):
         """
 
         body = Body(body_type=Body.STATIC)
-        body.position = Vec2d(self.center_x * scale, self.center_y * scale)
+        body.position = Vec2d(self.x * scale, self.y * scale)
 
         return Poly.create_box(body, (self.width * scale, self.height * scale))

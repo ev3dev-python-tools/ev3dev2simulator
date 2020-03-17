@@ -4,8 +4,6 @@ from typing import Tuple
 import arcade
 from arcade import PointList
 
-from ev3dev2simulator.config.config import get_config
-
 
 def get_circle_points(center_x: float,
                       center_y: float,
@@ -101,14 +99,6 @@ def get_inch_multiplier() -> float:
     """
 
     return 0.254
-
-
-def apply_scaling(value):
-    return get_config().get_scale() * value
-
-
-def remove_scaling(value):
-    return value / get_config().get_scale()
 
 
 def to_color_code(color: arcade.Color) -> int:

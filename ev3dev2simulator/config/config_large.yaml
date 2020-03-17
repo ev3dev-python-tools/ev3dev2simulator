@@ -92,7 +92,7 @@ robots:
       port: 'ev3-ports:in4'
 board_height: 1273
 board_width: 1273
-board_color: (122, 122, 122)
+board_color: (59, 60, 54)
 obstacles:
   border:
     depth: 30
@@ -103,24 +103,24 @@ obstacles:
     border_width: 29
     inner_radius: 38
     color: (58, 166, 221)
-    x: 500
-    y: 170
+    x: 137
+    y: 922
     type: 'lake'
 
   lake_green:
     border_width: 29
     inner_radius: 38
     color: (252, 227, 3)
-    x: 250
-    y: 600
+    x: 1052
+    y: 567
     type: 'lake'
 
   lake_red:
     border_width: 29
     inner_radius: 38
     color: (201, 45, 57)
-    x: 850
-    y: 500
+    x: 397
+    y: 232
     type: 'lake'
 
   rock1:
@@ -140,10 +140,3 @@ obstacles:
     color: (169, 169, 169)
     angle: 130
     type: 'rock'
-
-  bottle:
-    x: 500
-    y: 500
-    radius: 40
-    color: (85, 107, 47)
-    type: 'bottle'

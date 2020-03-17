@@ -7,14 +7,14 @@ class Board:
     """
 
     def __init__(self,
-                 center_x: int,
-                 center_y: int,
+                 x: int,
+                 y: int,
                  width: int,
                  height: int,
                  color: arcade.Color):
 
-        self.center_x = center_x
-        self.center_y = center_y
+        self.x = x
+        self.y = y
         self.width = width
         self.height = height
         self.angle = 0
@@ -36,9 +36,8 @@ class Board:
         Create a list of points representing this rock in 2D space.
         :return: a PointList object.
         """
-        print(self.width, self.height, self.width * scale, self.height * scale)
-        return arcade.get_rectangle_points(self.center_x * scale,
-                                           self.center_y * scale,
+        return arcade.get_rectangle_points(self.x * scale,
+                                           self.y * scale,
                                            self.width * scale,
                                            self.height * scale,
                                            self.angle)

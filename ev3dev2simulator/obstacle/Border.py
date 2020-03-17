@@ -1,7 +1,8 @@
 import arcade
 
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.obstacle.BorderObstacle import BorderObstacle
-from ev3dev2simulator.util.Util import apply_scaling, to_color_code
+from ev3dev2simulator.util.Util import to_color_code
 
 
 class Border(BorderObstacle):
@@ -9,10 +10,10 @@ class Border(BorderObstacle):
     The outer line surrounding the playing field.
     """
 
-    def __init__(self, cfg, color: arcade.Color, depth):
-        edge_spacing = apply_scaling(cfg['screen_settings']['edge_spacing'])
+    def __init__(self, board_width, board_height, color: arcade.Color, depth):
+        edge_spacing = get_config().get_visualisation_config()['screen_settings']['edge_spacing']
 
-        super(Border, self).__init__(cfg, to_color_code(color), depth, edge_spacing)
+        super(Border, self).__init__(board_width, board_height, to_color_code(color), depth, edge_spacing)
 
         # visualisation
         self.color = color
@@ -21,14 +22,13 @@ class Border(BorderObstacle):
     def get_shapes(self):
         return self.shapes
 
-
     @classmethod
-    def from_config(cls, vis_config, config):
+    def from_config(cls, board_width, board_height, config):
 
         color = eval(config['color'])
         depth = config['depth']
 
-        return cls(vis_config, color, depth)
+        return cls(board_width, board_height, color, depth)
 
     def create_shape(self, scale) -> [arcade.Shape]:
 
