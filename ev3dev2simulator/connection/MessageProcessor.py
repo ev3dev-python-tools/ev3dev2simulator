@@ -154,13 +154,7 @@ class MessageProcessor:
         """
 
         full_address = self._to_full_address(request.address)
-        value = self.robot_sim.robot.get_value(full_address)
-
-        # if request.address == self.address_us_front or request.address == self.address_us_rear:
-        #     return remove_scaling(value)
-        # else:
-        # TODO why do we need to remove scaling?
-        return value
+        return self.robot_sim.robot.get_value(full_address)
 
     def _to_full_address(self, address: str):
         return self.brick_id, address

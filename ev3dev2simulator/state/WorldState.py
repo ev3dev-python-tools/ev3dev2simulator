@@ -28,8 +28,7 @@ class WorldState:
         self.board_height = int(config['board_height'])
         board_color = eval(config['board_color'])
 
-        # TODO should board be measured as a color obstacle?
-        board = Board(self.board_width/2, self.board_height/2, self.board_width, self.board_height, board_color)
+        board = Board(self.board_width / 2, self.board_height / 2, self.board_width, self.board_height, board_color)
         self.obstacles.append(board)
 
         for robot_conf in config['robots']:
@@ -45,7 +44,8 @@ class WorldState:
             if value['type'] == 'lake':
                 lake = Lake.from_config(value)
                 self.obstacles.append(lake)
-                self.falling_obstacles.append(lake.hole)
+                if lake.hole is not None:
+                    self.falling_obstacles.append(lake.hole)
                 self.color_obstacles.append(lake)
             elif value['type'] == 'rock':
                 rock = Rock.from_config(value)
@@ -63,6 +63,8 @@ class WorldState:
                 self.space_obstacles.append(bottle)
             else:
                 print("unknown obstacle type")
+
+        self.color_obstacles.append(board)
 
     def setup_visuals(self, scale):
         for obstacle in self.obstacles:

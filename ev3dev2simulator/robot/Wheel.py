@@ -28,7 +28,7 @@ class Wheel(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            if o.collided_with(self.x, self.y):
+            if o.collided_with(self.center_x, self.center_y):
                 return True
 
         return self.get_default_value()

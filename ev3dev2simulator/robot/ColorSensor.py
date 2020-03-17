@@ -4,6 +4,7 @@ from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
 COLORS = dict()
+COLORS[0] = 0  # set black for no color
 COLORS[1] = 0
 COLORS[2] = 1
 COLORS[3] = 2
@@ -58,7 +59,7 @@ class ColorSensor(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            if o.collided_with(self.center_x, self.center_y):  # TODO should this be drawing x y?
+            if o.collided_with(self.center_x, self.center_y):
                 return o.color_code
 
         return self.get_default_value()
@@ -68,8 +69,7 @@ class ColorSensor(BodyPart):
         1 is the color of black for the real robot. Playing field surface is black.
         :return: integer value representing the color black.
         """
-        # TODO find suitable default val
-        return 1
+        return 0
 
     def set_color_texture(self, color):
         converted = COLORS[color]

@@ -1,7 +1,10 @@
 from arcade import PointList, Color, arcade, Shape
 
+from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
+from ev3dev2simulator.util.Util import to_color_code
 
-class Board:
+
+class Board(ColorObstacle):
     """
     This class represents a 'rock'. Rocks are rectangles.
     """
@@ -12,7 +15,7 @@ class Board:
                  width: int,
                  height: int,
                  color: arcade.Color):
-
+        super(Board, self).__init__(to_color_code(color))
         self.x = x
         self.y = y
         self.width = width
@@ -54,3 +57,13 @@ class Board:
             colors.append(self.color)
 
         return arcade.create_rectangles_filled_with_colors(self.points, colors)
+
+    def collided_with(self, x: float, y: float) -> bool:
+        """
+        Check if this obstacle has collided with the given Point. Meaning the point is inside this obstacle
+        :param x: coordinate of the point.
+        :param y: coordinate of the point.
+        :return: True if collision detected.
+        """
+
+        return arcade.is_point_in_polygon(x, y, self.points)

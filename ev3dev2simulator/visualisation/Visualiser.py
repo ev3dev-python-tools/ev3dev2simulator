@@ -360,10 +360,10 @@ class Visualiser(arcade.Window):
         if self.msg_counter > 0:
             self.msg_counter -= 1
 
-            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - 100, arcade.color.WHITE,
+            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - 100, arcade.color.RADICAL_RED,
                              14,
                              anchor_x="center")
-            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - 130, arcade.color.WHITE,
+            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - 130, arcade.color.RADICAL_RED,
                              14,
                              anchor_x="center")
 
