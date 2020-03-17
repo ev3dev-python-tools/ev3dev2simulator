@@ -27,6 +27,7 @@ def is_any_handler_disconnected(handlers):
     for handler in handlers:
         if not handler.is_running:
             return True
+    return False
 
 
 class ServerSockets(threading.Thread):
@@ -37,7 +38,6 @@ class ServerSockets(threading.Thread):
     def __init__(self, robot_simulators: [RobotSimulator]):
         threading.Thread.__init__(self)
         self.robot_simulators = robot_simulators
-        self.first_run = True
 
     def run(self):
         """
@@ -65,16 +65,15 @@ class ServerSockets(threading.Thread):
                     (client, address) = server.accept()
                     handlers.append(create_handler(client, robot_sim, brick))
 
-            if not self.first_run:
-                for robot_sim in self.robot_simulators:
-                    robot_sim.should_reset = True
-
-            self.first_run = False
             time.sleep(1)
-
+            print('All bricks connected, disconnect one to reset the playing field')
             while True:
                 if is_any_handler_disconnected(handlers):
-                    time.sleep(1)
+                    for handler in handlers:
+                        handler.is_running = False
+                    time.sleep(1)  # give some time to prevent handler from requesting data
+                    for robot_sim in self.robot_simulators:
+                        robot_sim.should_reset = True
                     print('All connections closed')
                     break
                 else:

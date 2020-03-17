@@ -34,8 +34,11 @@ class RobotState:
         self.bricks = []
         self.sounds = {}
 
-        self.x = config['center_x']
-        self.y = config['center_y'] + 22.5
+        self.orig_x = config['center_x']
+        self.orig_y = config['center_y'] + 22.5
+
+        self.x = self.orig_x
+        self.y = self.orig_y
 
         vis_conf = get_config().get_visualisation_config()
         self.wheel_distance = vis_conf['wheel_settings']['spacing']  # TODO move this to robot config
@@ -114,11 +117,19 @@ class RobotState:
                 print("Unknown robot part in config")
 
         try:
-            orientation = config['orientation']
-            if orientation != 0:
-                self._rotate(math.radians(orientation))
+            self.orig_orientation = config['orientation']
+            if self.orig_orientation != 0:
+                self._rotate(math.radians(self.orig_orientation))
         except KeyError:
             pass
+
+    def reset(self):
+        self.values.clear()
+        self._move_x(self.orig_x - self.x)
+        self.x = self.orig_x
+        self._move_y(self.orig_y - self.y)
+        self.y = self.orig_y
+        self._rotate(math.radians(self.orig_orientation) - math.radians(self.get_anchor().angle))
 
     def setup_visuals(self, scale):
         for part in self.sprites:

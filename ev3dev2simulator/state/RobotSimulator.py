@@ -80,10 +80,11 @@ class RobotSimulator:
         Reset the data of this State
         :return:
         """
+        print('resettin robot')
         for key, actuator_queue in self.actuator_queues.items():
             self.clear_actuator_jobs(key)
 
-        self.robot.values.clear()
+        self.robot.reset()
         self.should_reset = False
 
     def load_sensor(self, sensor):
