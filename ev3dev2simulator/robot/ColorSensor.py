@@ -23,8 +23,10 @@ class ColorSensor(BodyPart):
                  address: str,
                  robot,
                  delta_x: int,
-                 delta_y: int):
+                 delta_y: int,
+                 name: str):
         super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'color_sensor')
+        self.name = name
         self.old_texture_index = 0
 
     def setup_visuals(self):

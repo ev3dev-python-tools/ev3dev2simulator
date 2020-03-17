@@ -1,6 +1,4 @@
 import math
-from abc import ABC
-
 import arcade
 
 from ev3dev2simulator.util.Util import pythagoras, apply_scaling
@@ -78,13 +76,13 @@ class BodyPart(arcade.Sprite):
         any interaction with the world.
         :return: any possible value representing the default value.
         """
-
         pass
 
     def setup_visuals(self):
         pass
 
     def init_texture(self, src, scale):
+
         texture = arcade.load_texture(src, scale=apply_scaling(scale))
 
         self.textures.append(texture)

@@ -39,24 +39,22 @@ class Bottle(TouchObstacle):
         return cls(x, y, radius, color)
 
     def get_shapes(self):
-        if self.shape is None:
-            self.create_shape()
         return [self.shape]
 
-    def create_shape(self):
-        self.points = self._create_points()
+    def create_shape(self, scale):
+        self.points = self._create_points(scale)
         self.shape = self._create_shape()
-        self.poly = self._create_poly()
+        self.poly = self._create_poly(scale)
 
-    def _create_points(self) -> PointList:
+    def _create_points(self, scale) -> PointList:
         """
         Create a list of points representing this bottle in 2D space.
         :return: a PointList object.
         """
 
-        return get_circle_points(self.center_x,
-                                 self.center_y,
-                                 self.radius)
+        return get_circle_points(self.center_x * scale,
+                                 self.center_y * scale,
+                                 self.radius * scale)
 
     def _create_shape(self) -> Shape:
         """
@@ -67,13 +65,13 @@ class Bottle(TouchObstacle):
         color_list = [self.color] + [self.color] * (32 + 1)
         return arcade.create_line_generic_with_colors(self.points, color_list, 6)
 
-    def _create_poly(self) -> Circle:
+    def _create_poly(self, scale) -> Circle:
         """
         Create the polygon used for ray-casting. (Ultrasonic sensor)
         :return: a Pymunk Circle object.
         """
 
         body = Body(body_type=Body.STATIC)
-        body.position = Vec2d(self.center_x, self.center_y)
+        body.position = Vec2d(self.center_x * scale, self.center_y * scale)
 
-        return Circle(body, self.radius)
+        return Circle(body, self.radius * scale)

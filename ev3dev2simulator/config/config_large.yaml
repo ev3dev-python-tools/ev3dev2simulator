@@ -90,6 +90,9 @@ robots:
       direction: bottom
       brick: 0
       port: 'ev3-ports:in4'
+board_height: 1273
+board_width: 1273
+board_color: (122, 122, 122)
 obstacles:
   border:
     depth: 30

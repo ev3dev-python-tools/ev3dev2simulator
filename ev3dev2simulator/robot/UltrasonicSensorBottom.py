@@ -12,8 +12,10 @@ class UltrasonicSensorBottom(BodyPart):
                  address: str,
                  robot,
                  delta_x: int,
-                 delta_y: int):
+                 delta_y: int,
+                 name: str):
         super(UltrasonicSensorBottom, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
+        self.name = name
 
     def setup_visuals(self):
         img_cfg = get_config().get_visualisation_config()['image_paths']

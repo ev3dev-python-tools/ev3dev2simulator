@@ -1,14 +1,7 @@
-import arcade
-from arcade import Shape, PointList
-from pymunk import Body, Poly, Vec2d
-
-from ev3dev2simulator.obstacle.TouchObstacle import TouchObstacle
-
-from ev3dev2simulator.config.config import get_config
-from ev3dev2simulator.util.Util import apply_scaling
+from arcade import PointList, Color, arcade, Shape
 
 
-class Rock(TouchObstacle):
+class Board:
     """
     This class represents a 'rock'. Rocks are rectangles.
     """
@@ -18,21 +11,18 @@ class Rock(TouchObstacle):
                  center_y: int,
                  width: int,
                  height: int,
-                 color: arcade.Color,
-                 angle: int):
-        super(Rock, self).__init__()
+                 color: arcade.Color):
 
         self.center_x = center_x
         self.center_y = center_y
         self.width = width
         self.height = height
-        self.angle = angle
+        self.angle = 0
 
         # visualisation
         self.color = color
         self.points = None
         self.shape = None
-        self.poly = None
 
     def get_shapes(self):
         return [self.shape]
@@ -40,18 +30,6 @@ class Rock(TouchObstacle):
     def create_shape(self, scale):
         self.points = self._create_points(scale)
         self.shape = self._create_shape()
-        self.poly = self._create_poly(scale)
-
-    @classmethod
-    def from_config(cls, config):
-        x = apply_scaling(config['x'])
-        y = apply_scaling(config['y'])
-        width = apply_scaling(config['width'])
-        height = apply_scaling(config['height'])
-        color = eval(config['color'])
-        angle = config['angle']
-
-        return cls(x, y, width, height, color, angle)
 
     def _create_points(self, scale) -> PointList:
         """
@@ -76,17 +54,4 @@ class Rock(TouchObstacle):
         for i in range(4):
             colors.append(self.color)
 
-        top = arcade.create_rectangles_filled_with_colors(self.points, colors)
-
-        return top
-
-    def _create_poly(self, scale):
-        """
-        Create the polygon used for ray-casting. (Ultrasonic sensor)
-        :return: a Pymunk Poly object.
-        """
-
-        body = Body(body_type=Body.STATIC)
-        body.position = Vec2d(self.center_x * scale, self.center_y * scale)
-
-        return Poly.create_box(body, (self.width * scale, self.height * scale))
+        return arcade.create_rectangles_filled_with_colors(self.points, colors)

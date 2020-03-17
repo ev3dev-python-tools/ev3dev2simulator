@@ -1,8 +1,14 @@
 import argparse
 import sys
+import os
 
-from ev3dev2simulator.Visualiser import Visualiser, start
+script_dir = os.path.dirname(os.path.realpath(__file__))
+os.chdir(script_dir)
+print('working dir is', script_dir)
+
 from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.state import WorldState
+from ev3dev2simulator.visualisation.Visualiser import Visualiser, start
 from ev3dev2simulator.connection.ServerSockets import ServerSockets
 from ev3dev2simulator.state.WorldSimulator import WorldSimulator
 from ev3dev2simulator.state.WorldState import WorldState
@@ -83,8 +89,6 @@ def main():
 
     Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
                use_second_screen_to_show_simulator)
-
-    world_state.setup_visuals()
 
     server_thread = ServerSockets(world_simulator.robotSimulators)
     server_thread.setDaemon(True)

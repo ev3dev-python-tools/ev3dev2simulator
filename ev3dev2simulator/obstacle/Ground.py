@@ -18,8 +18,6 @@ class Ground:
             self.create_shape()
         return [self.shape]
 
-    def create_shape(self):
-        self.shape = create_rectangle(apply_scaling(self.center_x),
-                                      apply_scaling(self.center_y), apply_scaling(self.width),
-                                      apply_scaling(self.height),
-                                      self.color)
+    def create_shape(self, scale):
+        self.shape = create_rectangle(self.center_x * scale, self.center_y * scale, self.width * scale,
+                                      self.height * scale, self.color)

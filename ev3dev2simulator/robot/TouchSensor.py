@@ -13,9 +13,11 @@ class TouchSensor(BodyPart):
                  robot,
                  delta_x: int,
                  delta_y: int,
-                 side: str):
-        self.side = side
+                 side: str,
+                 name: str):
         super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'touch_sensor')
+        self.side = side
+        self.name = name
 
     def setup_visuals(self):
         if self.side == 'left':

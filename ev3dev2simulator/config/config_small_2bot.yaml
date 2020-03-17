@@ -21,27 +21,27 @@ robots:
       y_offset: 0.01
       brick: 0
       port: 'ev3-ports:outD'
-    - name: color-sensor-center
+    - name: 'cs center'
       type: color_sensor
       x_offset: 0
       y_offset: 81
       brick: 0
       port: 'ev3-ports:in2'
-    - name: touch-sensor-left
+    - name: 'ts left'
       type: touch_sensor
       side: left
       x_offset: -75
       y_offset: 102
       brick: 0
       port: 'ev3-ports:in1'
-    - name: touch-sensor-right
+    - name: 'ts right'
       type: touch_sensor
       side: right
       x_offset: 75
       y_offset: 102
       brick: 0
       port: 'ev3-ports:in4'
-    - name: ultrasonic-sensor-front
+    - name: 'us right'
       type: ultrasonic_sensor
       x_offset: 0
       y_offset: -91.5
@@ -52,49 +52,49 @@ robots:
     center_y: 300
     orientation: 180
     parts:
-      - name: brick1
-        type: brick
-        brick: 0
-        x_offset: 0
-        y_offset: -22.5
-      - name: motor-left
-        type: motor
-        x_offset: -60
-        y_offset: 0.01
-        brick: 0
-        port: 'ev3-ports:outA'
-      - name: motor-right
-        type: motor
-        x_offset: 60
-        y_offset: 0.01
-        brick: 0
-        port: 'ev3-ports:outD'
-      - name: color-sensor-center
-        type: color_sensor
-        x_offset: 0
-        y_offset: 81
-        brick: 0
-        port: 'ev3-ports:in2'
-      - name: touch-sensor-left
-        type: touch_sensor
-        side: left
-        x_offset: -75
-        y_offset: 102
-        brick: 0
-        port: 'ev3-ports:in1'
-      - name: touch-sensor-right
-        type: touch_sensor
-        side: right
-        x_offset: 75
-        y_offset: 102
-        brick: 0
-        port: 'ev3-ports:in4'
-      - name: ultrasonic-sensor-front
-        type: ultrasonic_sensor
-        x_offset: 0
-        y_offset: -91.5
-        brick: 0
-        port: 'ev3-ports:in3'
+    - name: brick1
+      type: brick
+      brick: 0
+      x_offset: 0
+      y_offset: -22.5
+    - name: motor-left
+      type: motor
+      x_offset: -60
+      y_offset: 0.01
+      brick: 0
+      port: 'ev3-ports:outA'
+    - name: motor-right
+      type: motor
+      x_offset: 60
+      y_offset: 0.01
+      brick: 0
+      port: 'ev3-ports:outD'
+    - name: 'cs center'
+      type: color_sensor
+      x_offset: 0
+      y_offset: 81
+      brick: 0
+      port: 'ev3-ports:in2'
+    - name: 'ts left'
+      type: touch_sensor
+      side: left
+      x_offset: -75
+      y_offset: 102
+      brick: 0
+      port: 'ev3-ports:in1'
+    - name: 'ts right'
+      type: touch_sensor
+      side: right
+      x_offset: 75
+      y_offset: 102
+      brick: 0
+      port: 'ev3-ports:in4'
+    - name: 'us right'
+      type: ultrasonic_sensor
+      x_offset: 0
+      y_offset: -91.5
+      brick: 0
+      port: 'ev3-ports:in3'
 obstacles:
   border:
     depth: 30

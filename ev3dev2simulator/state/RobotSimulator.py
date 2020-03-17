@@ -20,15 +20,12 @@ class RobotSimulator:
         self.queue_info = {}
 
         for actuator in self.robot.get_actuators():
-            if actuator.ev3type in ['arm', 'motor']:
+            if actuator.ev3type in ['arm', 'motor', 'speaker']:
+                print((actuator.brick, actuator.address))
                 self.queue_info[(actuator.brick, actuator.address)] = actuator
                 self.actuator_queues[(actuator.brick, actuator.address)] = Queue()
 
-        self.sound_queue = Queue()
-
         self.should_reset = False
-
-        self.values = {}
         self.locks = {}
 
         self.motor_lock = threading.Lock()
@@ -75,25 +72,6 @@ class RobotSimulator:
         self.actuator_queues[address] = Queue()
         self.motor_lock.release()
 
-    def put_sound_job(self, job: str):
-        """
-        Add a new sound job to the queue to be displayed.
-        :param job: to add.
-        """
-
-        self.sound_queue.put_nowait(job)
-
-    def next_sound_job(self) -> str:
-        """
-        Get the next sound job from the queue.
-        :return: a str representing the sound as text to be displayed.
-        """
-
-        try:
-            return self.sound_queue.get_nowait()
-        except Empty:
-            return None
-
     def set_led_color(self, brick_id, led_id, color):
         self.robot.led_colors[(brick_id, led_id)] = color
 
@@ -123,7 +101,6 @@ class RobotSimulator:
         Release all the locked sensor locks. This re-allows for reading
         the sensor values.
         """
-
         for lock in self.locks.values():
             if lock.locked():
                 lock.release()
@@ -135,9 +112,8 @@ class RobotSimulator:
         :param address: of the sensor to get the value from.
         :return: the value of the sensor.
         """
-
         self.locks[address].acquire()
-        return self.values[address]
+        return self.robot.values[address]
 
     def _process_actuators(self):
         """
@@ -147,16 +123,18 @@ class RobotSimulator:
         job_per_actuator = self.next_actuator_jobs()
 
         # TODO figure a neat way to determine the location of wheels
-        for (address, job_of_motor) in job_per_actuator:
+        for (address, job_of_actuator) in job_per_actuator:
             actuator = self.queue_info[address]
             if actuator.ev3type == 'arm':
-                if job_of_motor is not None:
-                    self.robot.execute_arm_movement(address, job_of_motor)
+                if job_of_actuator is not None:
+                    self.robot.execute_arm_movement(address, job_of_actuator)
             elif actuator.ev3type == 'motor':
                 if actuator.x_offset < 0:
-                    left_ppf = job_of_motor
+                    left_ppf = job_of_actuator
                 else:
-                    right_ppf = job_of_motor
+                    right_ppf = job_of_actuator
+            elif actuator.ev3type == 'speaker':
+                self.robot.sounds[address] = job_of_actuator
 
         if left_ppf or right_ppf:
             self.robot.execute_movement(left_ppf, right_ppf)
@@ -170,7 +148,6 @@ class RobotSimulator:
         Check if the robot has fallen of the playing field or is stuck in the
         middle of a lake. If so display a message on the screen.
         """
-
         wheels = self.robot.get_wheels()
         for wheel in wheels:
             if wheel.is_falling():

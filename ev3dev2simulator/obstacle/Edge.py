@@ -1,3 +1,4 @@
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.obstacle.BorderObstacle import BorderObstacle
 from ev3dev2simulator.util.Util import apply_scaling
 
@@ -12,3 +13,9 @@ class Edge(BorderObstacle):
         depth = apply_scaling(cfg['screen_settings']['edge_spacing'])
         edge_spacing = 0
         super(Edge, self).__init__(cfg, 1, depth, edge_spacing)
+
+    def create_shape(self, scale):
+        self._calc_points(scale)
+
+    def get_shapes(self):
+        return []

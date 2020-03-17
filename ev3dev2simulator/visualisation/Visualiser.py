@@ -1,26 +1,24 @@
-import pyglet
-import os
 import sys
-from typing import Tuple
+import os
+import time
+import tempfile
 
 import arcade
-from pymunk import Space
+import pyglet
 
-# HACK: need to change dir to Simulator script's directory because resources are loaded relative from this directory
 from ev3dev2simulator.state import WorldState
-
-script_dir = os.path.dirname(os.path.realpath(__file__))
-os.chdir(script_dir)
-
+from ev3dev2simulator.visualisation.Sidebar import Sidebar
 from ev3dev2simulator.config.config import get_config
-from ev3dev2simulator.util.Util import apply_scaling
-
-import tempfile
-import time
 
 
 def start():
     arcade.run()
+
+
+def get_screens():
+    display = pyglet.canvas.get_display()
+    screens = display.get_screens()
+    return screens
 
 
 class Visualiser(arcade.Window):
@@ -33,16 +31,18 @@ class Visualiser(arcade.Window):
                  show_maximized: bool, use_second_screen_to_show_simulator: bool):
 
         self.check_for_unique_instance()
+        self.update_callback = update_world_cb
+        self.sidebar = None
 
         self.world_state = world_state
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
-        self.scaling_multiplier = get_config().get_scale()
         self.sim_config = get_config().get_visualisation_config()
 
-        self.screen_total_width = int(apply_scaling(self.sim_config['screen_settings']['screen_total_width']))
-        self.screen_width = int(apply_scaling(self.sim_config['screen_settings']['screen_width']))
-        self.screen_height = int(apply_scaling(self.sim_config['screen_settings']['screen_height']))
+        self.screen_width = int(self.sim_config['screen_settings']['screen_width'])
+        self.screen_height = int(self.sim_config['screen_settings']['screen_height'])
+        self.side_bar_width = int(self.sim_config['screen_settings']['side_bar_width'])
+
         from ev3dev2.version import __version__ as apiversion
         from ev3dev2simulator.version import __version__ as simversion
         screen_title = self.sim_config['screen_settings'][
@@ -52,20 +52,21 @@ class Visualiser(arcade.Window):
         self.falling_msg = self.sim_config['screen_settings']['falling_message']
         self.restart_msg = self.sim_config['screen_settings']['restart_message']
 
-        super(Visualiser, self).__init__(self.screen_total_width, self.screen_height, screen_title, update_rate=1 / 30,
+        super(Visualiser, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30,
                                          resizable=True)
 
         icon1 = pyglet.image.load(r'assets/images/body.png')
         self.set_icon(icon1)
         arcade.set_background_color(eval(self.sim_config['screen_settings']['background_color']))
 
-        self.update_callback = update_world_cb
-
-        self.text_x = self.screen_width - apply_scaling(220)
         self.msg_x = self.screen_width / 2
         self.msg_counter = 0
 
         self.setup()
+        x_scale = (self.screen_width - self.side_bar_width) / world_state.board_width
+        y_scale = self.screen_height / world_state.board_height
+        scale = min(x_scale, y_scale)
+        self.world_state.setup_visuals(scale)
 
         if show_fullscreen:
             self.toggleFullScreenOnCurrentScreen()
@@ -74,11 +75,6 @@ class Visualiser(arcade.Window):
             self.maximize()
 
         self.check_for_activation()
-
-    def get_screens(self):
-        display = pyglet.canvas.get_display()
-        screens = display.get_screens()
-        return screens
 
     def set_screen_to_display_simulator_at_startup(self, use_second_screen_to_show_simulator):
         """ Set screen to use to display the simulator at startup. For windows this works only in fullscreen mode.
@@ -94,7 +90,7 @@ class Visualiser(arcade.Window):
         current_screen_index = 0
         if use_second_screen_to_show_simulator:
             current_screen_index = 1
-        screens = self.get_screens()
+        screens = get_screens()
         # for screen in screens: print(screen)
         num_screens = len(screens)
         if num_screens == 1:
@@ -191,13 +187,10 @@ class Visualiser(arcade.Window):
         _user32.ShowWindow(self._hwnd, SW_SHOWNORMAL)
 
     def setup(self):
-        """
-        Set up all the necessary shapes and sprites which are used in the simulation.
-        These elements are added to lists to make buffered rendering possible to improve performance.
-        """
-
-        # self.robot_elements = arcade.SpriteList()
-        # self.obstacle_elements = arcade.ShapeElementList()
+        self.sidebar = Sidebar(self.screen_width - self.side_bar_width, self.screen_height - 70,
+                               self.side_bar_width, self.screen_height)
+        for robot in self.world_state.get_robots():
+            self.sidebar.init_robot(robot.name, robot.sensors, robot.bricks)
 
     def on_close(self):
         sys.exit(0)
@@ -212,7 +205,7 @@ class Visualiser(arcade.Window):
         # Toggle fullscreen between screens (only works at fullscreen mode)
         if key == arcade.key.T:
             # User hits T. When at fullscreen, then switch screen used for fullscreen.
-            if self.fullscreen and len(self.get_screens()) > 1:
+            if self.fullscreen and len(get_screens()) > 1:
                 # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
                 self.set_fullscreen(False)
                 # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
@@ -233,14 +226,14 @@ class Visualiser(arcade.Window):
             self.toggleFullScreenOnCurrentScreen()
 
     # toggle screen for fullscreen
-    # BUG: doesn't work on macos => see explaination in set_screen_to_display_simulator_at_startup() method
+    # BUG: doesn't work on macOS => see explanation in set_screen_to_display_simulator_at_startup() method
     def toggleScreenUsedForFullscreen(self):
 
         # toggle only between screen 0 and 1 (other screens are ignored)
         self.current_screen_index = (self.current_screen_index + 1) % 2
 
         # override hidden screen parameter in window
-        screens = self.get_screens()
+        screens = get_screens()
         self._screen = screens[self.current_screen_index]
 
     def updateCurrentScreen(self):
@@ -248,7 +241,7 @@ class Visualiser(arcade.Window):
             current screen for displaying in fullscreen!!
         """
 
-        screens = self.get_screens()
+        screens = get_screens()
         if len(screens) == 1:
             return
 
@@ -289,7 +282,7 @@ class Visualiser(arcade.Window):
         # do a bit of math for that.
         self.set_viewport(0, self.screen_width, 0, self.screen_height)
 
-        # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
+        # HACK for macOS: without this hack fullscreen on the second screen is shifted downwards in the y direction
         #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
         if self.fullscreen and platform.system().lower() == "darwin":
@@ -332,7 +325,7 @@ class Visualiser(arcade.Window):
             for shape in obstacleList.get_shapes():
                 shape.draw()
 
-        for robot in self.world_state.robots:
+        for robot in self.world_state.get_robots():
             robot.get_sprites().draw()
             for shapeList in robot.shapes:
                 for shape in shapeList.get_shapes():
@@ -341,46 +334,22 @@ class Visualiser(arcade.Window):
             if robot.is_stuck and self.msg_counter <= 0:
                 self.msg_counter = self.frames_per_second * 3
 
-        self._draw_text()
+        for robot in self.world_state.get_robots():
+            try:
+                self.sidebar.add_robot_info(robot.name, robot.values, robot.sounds)
+            except:
+                print("Unexpected error:", sys.exc_info()[0])
 
-    def _draw_text(self):
-        """
-        Draw all the text fields.
-        """
-        # center_cs = 'CS  ctr:       ' + str(self.center_cs_data)
-        # left_cs = 'CS  left:      ' + str(self.left_cs_data)
-        # right_cs = 'CS  right:    ' + str(self.right_cs_data)
-        # left_ts = 'TS  right:     ' + str(self.right_ts_data)
-        # right_ts = 'TS  left:        ' + str(self.left_ts_data)
-        # top_us = 'US  top:       ' + str(int(round(self.front_us_data / self.scaling_multiplier))) + 'mm'
-        # bottom_us = 'US  bot:       ' + str(int(round(self.rear_us_data))) + 'mm'
-        #
-        # message = self.robot_state.next_sound_job()
-        # sound = message if message else '-'
-        #
-        # arcade.draw_text(self.msg_counter, self.text_x, self.screen_height - apply_scaling(70), arcade.color.GOLD, 10)
-        # arcade.draw_text(center_cs, self.text_x, self.screen_height - apply_scaling(70), arcade.color.WHITE, 10)
-        # arcade.draw_text(left_cs, self.text_x, self.screen_height - apply_scaling(90), arcade.color.WHITE, 10)
-        # arcade.draw_text(right_cs, self.text_x, self.screen_height - apply_scaling(110), arcade.color.WHITE, 10)
-        # arcade.draw_text(left_ts, self.text_x, self.screen_height - apply_scaling(130), arcade.color.WHITE, 10)
-        # arcade.draw_text(right_ts, self.text_x, self.screen_height - apply_scaling(150), arcade.color.WHITE, 10)
-        # arcade.draw_text(top_us, self.text_x, self.screen_height - apply_scaling(170), arcade.color.WHITE, 10)
-        # arcade.draw_text(bottom_us, self.text_x, self.screen_height - apply_scaling(190), arcade.color.WHITE, 10)
-        # arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(210), arcade.color.WHITE, 10)
-        # arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(230), arcade.color.WHITE, 10,
-        #                  anchor_y='top')
-        #
-        # arcade.draw_text('Robot Arm', apply_scaling(1450), self.screen_height - apply_scaling(50), arcade.color.WHITE,
-        #                  14,
-        #                  anchor_x="center")
-        #
+        self.sidebar.draw()
+
+        # TODO this is logic, move to world/robot simulator
         if self.msg_counter > 0:
             self.msg_counter -= 1
 
-            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - apply_scaling(100), arcade.color.WHITE,
+            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - 100, arcade.color.WHITE,
                              14,
                              anchor_x="center")
-            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - apply_scaling(130), arcade.color.WHITE,
+            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - 130, arcade.color.WHITE,
                              14,
                              anchor_x="center")
 

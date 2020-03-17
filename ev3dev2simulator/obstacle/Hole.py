@@ -18,25 +18,23 @@ class Hole:
         self.radius = radius
 
         # visualisation
-        self.points = self._create_points()
+        self.points = None
 
     def get_shapes(self):
-        if self.shape is None:
-            self.create_shape()
         return [self.shape]
 
-    def create_shape(self):
-        self.points = self._create_points()
+    def create_shape(self, scale):
+        self.points = self._create_points(scale)
 
-    def _create_points(self) -> PointList:
+    def _create_points(self, scale) -> PointList:
         """
         Create a list of points representing this Lake in 2D space.
         :return: a PointList object.
         """
 
-        return get_circle_points(self.center_x,
-                                 self.center_y,
-                                 self.radius)
+        return get_circle_points(self.center_x * scale,
+                                 self.center_y * scale,
+                                 self.radius * scale)
 
     def collided_with(self, x: float, y: float) -> bool:
         """

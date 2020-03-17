@@ -18,9 +18,10 @@ class UltrasonicSensor(BodyPart):
                  address: str,
                  robot,
                  delta_x: int,
-                 delta_y: int):
+                 delta_y: int,
+                 name: str):
         super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
-
+        self.name = name
         self.sensor_half_height = apply_scaling(22.5)
         self.scaling_multiplier = get_config().get_scale()
 

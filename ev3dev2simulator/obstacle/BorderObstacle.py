@@ -22,9 +22,7 @@ class BorderObstacle(ColorObstacle):
         self.bottom_points = None
         self.left_points = None
 
-        self._calc_points()
-
-    def _calc_points(self):
+    def _calc_points(self, scale):
         """
         Calculate the points of the polygon this BorderObstacle consist of.
         """

@@ -45,41 +45,41 @@ class Lake(ColorObstacle):
             self.create_shape()
         return [self.shape]
 
-    def create_shape(self):
-        self.points = self._create_points()
-        self.shape = self._create_shape()
-        self.hole.create_shape()
+    def create_shape(self, scale):
+        self.points = self._create_points(scale)
+        self.shape = self._create_shape(scale)
+        self.hole.create_shape(scale)
 
     @classmethod
     def from_config(cls, config):
 
         vis_conf = get_config().get_visualisation_config()
 
-        border_width = apply_scaling(config['border_width'])
-        inner_radius = apply_scaling(config['inner_radius'])
+        border_width = config['border_width']
+        inner_radius = config['inner_radius']
         radius = inner_radius + (border_width / 2)
 
-        edge_spacing = apply_scaling(vis_conf['screen_settings']['edge_spacing'])
-        border_depth = apply_scaling(vis_conf['screen_settings']['border_width'])
+        edge_spacing = vis_conf['screen_settings']['edge_spacing']
+        border_depth = vis_conf['screen_settings']['border_width']
 
-        x = apply_scaling(config['x']) + edge_spacing + border_depth
-        y = apply_scaling(config['y']) + edge_spacing + border_depth
+        x = config['x'] + edge_spacing + border_depth
+        y = config['y'] + edge_spacing + border_depth
 
         color = eval(config['color'])
 
         return cls(x, y, radius, inner_radius, color, border_width)
 
-    def _create_points(self) -> PointList:
+    def _create_points(self, scale) -> PointList:
         """
         Create a list of points representing this Lake in 2D space.
         :return: a PointList object.
         """
 
-        return get_circle_points(self.center_x,
-                                 self.center_y,
-                                 self.radius)
+        return get_circle_points(self.center_x * scale,
+                                 self.center_y * scale,
+                                 self.radius * scale)
 
-    def _create_shape(self) -> Shape:
+    def _create_shape(self, scale) -> Shape:
         """
         Create a shape representing this lake.
         :return: a Arcade shape object.
@@ -88,7 +88,7 @@ class Lake(ColorObstacle):
         if self.lake_type:
             return arcade.create_line_strip(self.points,
                                             self.color,
-                                            self.border_width)
+                                            self.border_width * scale)
         else:
             color_list = [self.color] + [self.color] * (32 + 1)
             return arcade.create_line_generic_with_colors(self.points, color_list, 6)

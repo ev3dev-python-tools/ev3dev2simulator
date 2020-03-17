@@ -2,12 +2,9 @@ import os
 
 from pymunk import Space
 
+from ev3dev2simulator.obstacle.Board import Board
 from ev3dev2simulator.state.RobotState import RobotState
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-os.chdir(script_dir)
-
-from ev3dev2simulator.obstacle.Ground import Ground
 from ev3dev2simulator.obstacle.Border import Border
 from ev3dev2simulator.obstacle.Bottle import Bottle
 from ev3dev2simulator.obstacle.Edge import Edge
@@ -27,12 +24,21 @@ class WorldState:
         self.space_obstacles = []
         self.space = Space()
 
+        self.board_width = int(config['board_width'])
+        self.board_height = int(config['board_height'])
+        board_color = eval(config['board_color'])
+
+        # TODO should board be measured as a color obstacle?
+        board = Board(self.board_width/2, self.board_height/2, self.board_width, self.board_height, board_color)
+        self.obstacles.append(board)
+
         for robot_conf in config['robots']:
             self.robots.append(RobotState(robot_conf))
 
         vis_config = get_config().get_visualisation_config()
 
         edge = Edge(vis_config)
+        self.obstacles.append(edge)
         self.falling_obstacles.append(edge)
 
         for key, value in config['obstacles'].items():
@@ -58,16 +64,19 @@ class WorldState:
             else:
                 print("unknown obstacle type")
 
-    def setup_visuals(self):
+    def setup_visuals(self, scale):
         for obstacle in self.obstacles:
-            obstacle.create_shape()
+            obstacle.create_shape(scale)
 
         for obstacle in self.space_obstacles:
             self.space.add(obstacle.poly)
 
         for robot in self.robots:
-            robot.setup_visuals()
+            robot.setup_visuals(scale)
             robot.set_color_obstacles(self.color_obstacles)
             robot.set_touch_obstacles(self.touch_obstacles)
             robot.set_falling_obstacles(self.falling_obstacles)
             robot.set_space(self.space)
+
+    def get_robots(self) -> [RobotState]:
+        return self.robots

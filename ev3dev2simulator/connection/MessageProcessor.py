@@ -142,12 +142,11 @@ class MessageProcessor:
         Process the given sound command by creating a sound job with a message which can be put on the simulator screen.
         :param command: to process.
         """
-
         frames = int(round(self.frames_per_second * command.duration))
         msg_len = len(command.message)
         message = '\n'.join(command.message[i:i + 10] for i in range(0, msg_len, 10))
         for i in range(frames):
-            self.robot_sim.put_sound_job(message)
+            self.robot_sim.put_actuator_job(self._to_full_address('speaker'), message)
 
     def process_data_request(self, request: DataRequest) -> Any:
         """
