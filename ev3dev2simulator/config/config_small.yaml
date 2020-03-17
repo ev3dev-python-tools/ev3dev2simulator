@@ -1,3 +1,6 @@
+board_height: 841
+board_width: 1189
+board_color: (235, 235, 235)
 robots:
   - name: robot0
     center_x: 250
@@ -50,7 +53,7 @@ robots:
 obstacles:
   border:
     depth: 30
-    color: (255, 255, 255)
+    color: (59, 60, 54)
     type: 'border'
 
   lake_blue:

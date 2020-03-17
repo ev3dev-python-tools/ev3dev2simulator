@@ -36,7 +36,7 @@ class Board:
         Create a list of points representing this rock in 2D space.
         :return: a PointList object.
         """
-
+        print(self.width, self.height, self.width * scale, self.height * scale)
         return arcade.get_rectangle_points(self.center_x * scale,
                                            self.center_y * scale,
                                            self.width * scale,
