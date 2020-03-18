@@ -25,7 +25,7 @@ class RobotState:
 
     def __init__(self, config):
         self.sprites = arcade.SpriteList()
-        self.shapes = []
+        self.side_bar_sprites = arcade.SpriteList()
         self.space = None
         self.sensors = {}
         self.actuators = {}
@@ -34,8 +34,8 @@ class RobotState:
         self.bricks = []
         self.sounds = {}
 
-        self.orig_x = config['center_x']
-        self.orig_y = config['center_y'] + 22.5
+        self.orig_x = float(config['center_x'])
+        self.orig_y = float(config['center_y']) + 22.5
 
         self.x = self.orig_x
         self.y = self.orig_y
@@ -48,14 +48,14 @@ class RobotState:
 
         for part in config['parts']:
             if part['type'] == 'brick':
-                brick = Brick(part['brick'], self, part['x_offset'], part['y_offset'], part['name'])
+                brick = Brick(int(part['brick']), self, float(part['x_offset']), float(part['y_offset']), part['name'])
                 self.sprites.append(brick)
                 self.bricks.append(brick)
 
-                left_led = Led(part['brick'], self, part['x_offset'] - 20,
-                               part['y_offset'] - 32.5)
-                right_led = Led(part['brick'], self, part['x_offset'] + 20,
-                                part['y_offset'] - 32.5)
+                left_led = Led(int(part['brick']), self, float(part['x_offset']) - 20,
+                               float(part['y_offset']) - 32.5)
+                right_led = Led(int(part['brick']), self, float(part['x_offset']) + 20,
+                                float(part['y_offset']) - 32.5)
                 self.sprites.append(left_led)
                 self.sprites.append(right_led)
 
@@ -64,55 +64,54 @@ class RobotState:
                 self.led_colors[(brick.brick, 'led1')] = 1
                 self.actuators[(brick.brick, 'led1')] = right_led
 
-                speaker = Speaker(part['brick'], self, part['x_offset'] + 28,
-                                  part['y_offset'] - 12.5)
+                speaker = Speaker(int(part['brick']), self, float(part['x_offset']) + 28,
+                                  float(part['y_offset']) - 12.5)
                 self.actuators[(brick.brick, 'speaker')] = speaker
                 self.sprites.append(speaker)
 
             elif part['type'] == 'motor':
-                wheel = Wheel(part['brick'], part['port'], self, part['x_offset'], part['y_offset'])
+                wheel = Wheel(int(part['brick']), part['port'], self, float(part['x_offset']), float(part['y_offset']))
                 self.sprites.append(wheel)
                 self.actuators[(wheel.brick, wheel.address)] = wheel
 
             elif part['type'] == 'color_sensor':
-                color_sensor = ColorSensor(part['brick'], part['port'], self,
-                                           part['x_offset'],
-                                           part['y_offset'], part['name'])
+                color_sensor = ColorSensor(int(part['brick']), part['port'], self,
+                                           float(part['x_offset']),
+                                           float(part['y_offset']), part['name'])
                 self.sprites.append(color_sensor)
                 self.sensors[(color_sensor.brick, color_sensor.address)] = color_sensor
 
             elif part['type'] == 'touch_sensor':
-                touch_sensor = TouchSensor(part['brick'], part['port'], self, part['x_offset'],
-                                           part['y_offset'], part['side'], part['name'])
+                touch_sensor = TouchSensor(int(part['brick']), part['port'], self, float(part['x_offset']),
+                                           float(part['y_offset']), part['side'], part['name'])
                 self.sprites.append(touch_sensor)
                 self.sensors[(touch_sensor.brick, touch_sensor.address)] = touch_sensor
 
             elif part['type'] == 'ultrasonic_sensor':
                 try:
                     if part['direction'] == 'bottom':
-                        ultrasonic_sensor = UltrasonicSensorBottom(part['brick'], part['port'], self,
-                                                                   part['x_offset'],
-                                                                   part['y_offset'],
+                        ultrasonic_sensor = UltrasonicSensorBottom(int(part['brick']), part['port'], self,
+                                                                   float(part['x_offset']),
+                                                                   float(part['y_offset']),
                                                                    part['name'])
                     elif part['direction'] == 'forward':
-                        ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
-                                                             part['x_offset'],
-                                                             part['y_offset'],
+                        ultrasonic_sensor = UltrasonicSensor(int(part['brick']), part['port'], self,
+                                                             float(part['x_offset']),
+                                                             float(part['y_offset']),
                                                              part['name'])
                 except KeyError:
                     ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
-                                                         part['x_offset'],
-                                                         part['y_offset'],
+                                                         float(part['x_offset']),
+                                                         float(part['y_offset']),
                                                          part['name'])
                 self.sprites.append(ultrasonic_sensor)
                 self.sensors[(ultrasonic_sensor.brick, ultrasonic_sensor.address)] = ultrasonic_sensor
             elif part['type'] == 'arm':
-                arm = Arm(part['brick'], part['port'], self, part['x_offset'],
-                          part['y_offset'])
+                arm = Arm(int(part['brick']), part['port'], self, float(part['x_offset']),
+                          float(part['y_offset']))
                 self.sprites.append(arm)
-                self.sprites.append(arm.side_bar_arm)
+                self.side_bar_sprites.append(arm.side_bar_arm)
                 self.actuators[(arm.brick, arm.address)] = arm
-                self.shapes.append(arm.side_bar_ground)
             else:
                 print("Unknown robot part in config")
 
@@ -134,8 +133,6 @@ class RobotState:
     def setup_visuals(self, scale):
         for part in self.sprites:
             part.setup_visuals(scale)
-        for static_shapes in self.shapes:
-            static_shapes.create_shape(scale)
 
     def _move_x(self, distance: float):
         """

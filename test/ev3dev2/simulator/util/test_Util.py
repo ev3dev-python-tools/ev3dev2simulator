@@ -10,17 +10,14 @@ class UtilTest(unittest.TestCase):
 
         self.assertEqual(len(points), 34)
 
-
     def test_get_circle_points_diff(self):
         points = get_circle_points(100, 100, 10, 64)
 
         self.assertEqual(len(points), 66)
 
-
     def test_pythagoras(self):
         result = pythagoras(2, 3)
         self.assertAlmostEqual(result, 3.606, 3)
-
 
     def test_differential_steering_angle_x_y(self):
         diff_angle, diff_x, diff_y \

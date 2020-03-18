@@ -18,8 +18,7 @@ class Arm(BodyPart):
                  x: int,
                  y: int):
         super(Arm, self).__init__(brick, address, robot, x, y, 'arm')
-        self.side_bar_arm = ArmLarge(1450, 1100)
-        self.side_bar_ground = Ground(1460, 950, 300, 10,  arcade.color.BLACK)
+        self.side_bar_arm = ArmLarge()
 
     def setup_visuals(self, scale):
         vis_conf = get_config().get_visualisation_config()

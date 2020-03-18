@@ -21,7 +21,6 @@ class RobotSimulator:
 
         for actuator in self.robot.get_actuators():
             if actuator.ev3type in ['arm', 'motor', 'speaker']:
-                print((actuator.brick, actuator.address))
                 self.queue_info[(actuator.brick, actuator.address)] = actuator
                 self.actuator_queues[(actuator.brick, actuator.address)] = Queue()
 
@@ -80,7 +79,6 @@ class RobotSimulator:
         Reset the data of this State
         :return:
         """
-        print('resettin robot')
         for key, actuator_queue in self.actuator_queues.items():
             self.clear_actuator_jobs(key)
 

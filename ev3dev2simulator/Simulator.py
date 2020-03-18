@@ -4,7 +4,6 @@ import os
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
-print('working dir is', script_dir)
 
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.state import WorldState

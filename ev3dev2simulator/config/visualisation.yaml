@@ -1,9 +1,9 @@
 screen_settings:
-  background_color: (59, 60, 154)
+  background_color: (100, 100, 150)
   edge_spacing: 23
   screen_height: 800
   screen_width: 1100
-  side_bar_width: 300
+  side_bar_width: 250
   screen_title: 'Lego ev3dev2 simulator'
   falling_message: 'Robot has dipped a wheel off the map.'
   restart_message: 'Please restart the mission.'

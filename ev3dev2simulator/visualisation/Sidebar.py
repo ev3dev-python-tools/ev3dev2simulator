@@ -12,10 +12,19 @@ class Sidebar:
 
         self.text_size = 10
         self.text_spacing = 10
+        self.left_text_padding = 10
         self.text_color = arcade.color.WHITE
         self.robot_info = {}
 
-    def init_robot(self, name, sensors, bricks):
+        self.sprites_total_height = 0
+
+        self.sprites = arcade.SpriteList()
+
+    def init_robot(self, name, sensors, bricks, side_bar_sprites):
+        for sprite in side_bar_sprites:
+            sprite.setup_visuals(self.x + self.width/2, self.y - self.sprites_total_height, 0.7)
+            self.sprites_total_height += 110
+            self.sprites.append(sprite)
         self.robot_info[name] = {}
         for address, sensor in sensors.items():
             self.robot_info[name][address] = {'name': sensor.name, 'value': None}
@@ -31,28 +40,22 @@ class Sidebar:
             robot[address]['value'] = sound
 
     def draw(self):
-        height = 170  # TODO check for robot arms
-        for robot_name, sensorDict in self.robot_info.items():
-            arcade.draw_text(robot_name, self.x, self.y - height, self.text_color, self.text_size, bold=True)
-            height += (self.text_size + self.text_spacing)
-            for address, sensor in sensorDict.items():
-                value = str(sensor['value'])
-                lines = value.count('\n')
-                height += (self.text_size * lines)
-                arcade.draw_text(f"{sensor['name']}: {value}", self.x, self.y - height,
-                                 self.text_color, self.text_size)
+        try:
+            height = self.sprites_total_height
+            for sprite in self.sprites:
+                sprite.draw()
+            for robot_name, sensorDict in self.robot_info.items():
+                arcade.draw_text(robot_name, self.x + self.left_text_padding, self.y - height, self.text_color,
+                                 self.text_size + 2, bold=True)
                 height += (self.text_size + self.text_spacing)
-
-    # TODO add specifics for sensors
-    # top_us = 'US  top:       ' + str(int(round(self.front_us_data / self.scaling_multiplier))) + 'mm'
-    # bottom_us = 'US  bot:       ' + str(int(round(self.rear_us_data))) + 'mm'
-    #
-    #
-    # arcade.draw_text('Sound:', self.text_x, self.screen_height - apply_scaling(210), arcade.color.WHITE, 10)
-    # arcade.draw_text(sound, self.text_x, self.screen_height - apply_scaling(230), arcade.color.WHITE, 10,
-    #                  anchor_y='top')
-    #
-    # arcade.draw_text('Robot Arm', apply_scaling(1450), self.screen_height - apply_scaling(50), arcade.color.WHITE,
-    #                  14,
-    #                  anchor_x="center")
-    #
+                for address, sensor in sensorDict.items():
+                    value = str(sensor['value'])
+                    lines = value.count('\n')
+                    height += (self.text_size * lines)
+                    arcade.draw_text(f"{sensor['name']}: {value}", self.x + 2 * self.left_text_padding, self.y - height,
+                                     self.text_color, self.text_size)
+                    height += (self.text_size + self.text_spacing)
+                height += (self.text_size + self.text_spacing)
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            raise

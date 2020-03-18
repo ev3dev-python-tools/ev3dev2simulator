@@ -74,7 +74,7 @@ class Visualiser(arcade.Window):
         self.msg_x = self.screen_width / 2
         self.msg_counter = 0
 
-        self.setup()
+        self.setup_sidebar()
         self.world_state.setup_visuals(scale)
 
         if show_fullscreen:
@@ -84,6 +84,12 @@ class Visualiser(arcade.Window):
             self.maximize()
 
         self.check_for_activation()
+
+    def setup_sidebar(self):
+        self.sidebar = Sidebar(self.screen_width - self.side_bar_width, self.screen_height - 70,
+                               self.side_bar_width, self.screen_height)
+        for robot in self.world_state.get_robots():
+            self.sidebar.init_robot(robot.name, robot.sensors, robot.bricks, robot.side_bar_sprites)
 
     def set_screen_to_display_simulator_at_startup(self, use_second_screen_to_show_simulator):
         """ Set screen to use to display the simulator at startup. For windows this works only in fullscreen mode.
@@ -194,12 +200,6 @@ class Visualiser(arcade.Window):
         from pyglet.libs.win32.constants import SW_SHOWMINIMIZED, SW_SHOWNORMAL
         _user32.ShowWindow(self._hwnd, SW_SHOWMINIMIZED)
         _user32.ShowWindow(self._hwnd, SW_SHOWNORMAL)
-
-    def setup(self):
-        self.sidebar = Sidebar(self.screen_width - self.side_bar_width, self.screen_height - 70,
-                               self.side_bar_width, self.screen_height)
-        for robot in self.world_state.get_robots():
-            self.sidebar.init_robot(robot.name, robot.sensors, robot.bricks)
 
     def on_close(self):
         sys.exit(0)
@@ -335,15 +335,10 @@ class Visualiser(arcade.Window):
                 shape.draw()
 
         for robot in self.world_state.get_robots():
-            try:
-                for sprite in robot.get_sprites():
-                    sprite.calculate_drawing_position(self.scale)
-            except:
-                print("no good")
+            for sprite in robot.get_sprites():
+                sprite.calculate_drawing_position(self.scale)
+
             robot.get_sprites().draw()
-            for shapeList in robot.shapes:
-                for shape in shapeList.get_shapes():
-                    shape.draw()
 
             if robot.is_stuck and self.msg_counter <= 0:
                 self.msg_counter = self.frames_per_second * 3
