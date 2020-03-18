@@ -9,8 +9,8 @@ from ev3dev2simulator.obstacle.Border import Border
 class BorderTest(unittest.TestCase):
 
     def test_create_border(self):
-        if platform == "linux":
-            print("currently skipping linux")
+        if platform != "darwin":
+            print("currently only executing drawing on macOS")
             return
         arcade.Window()
         config = {
