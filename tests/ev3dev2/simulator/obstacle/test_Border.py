@@ -1,6 +1,7 @@
 import unittest
 import arcade
-from pyglet.canvas.xlib import NoSuchDisplayException
+
+from sys import platform
 
 from ev3dev2simulator.obstacle.Border import Border
 
@@ -8,11 +9,10 @@ from ev3dev2simulator.obstacle.Border import Border
 class BorderTest(unittest.TestCase):
 
     def test_create_border(self):
-        try:
-            arcade.Window()
-        except NoSuchDisplayException:
-            print('COULD NOT RUN TEST: BorderTest since test cannot create window')
+        if platform == "linux":
+            print("currently skipping linux")
             return
+        arcade.Window()
         config = {
             'depth': 15,
             'color': '(255, 255, 255)',
