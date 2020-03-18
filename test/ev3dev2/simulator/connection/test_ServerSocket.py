@@ -19,8 +19,15 @@ def create_robot_sim():
                   'x_offset': '-60',
                   'y_offset': '0.01',
                   'brick': '0',
-                  'port': 'ev3-ports:outA'}
-              ]
+                  'port': 'ev3-ports:outA'},
+                  {
+                      'name': 'motor-right',
+                      'type': 'motor',
+                      'x_offset': '60',
+                      'y_offset': '0.01',
+                      'brick': '0',
+                      'port': 'ev3-ports:outB'}
+                ]
               }
     robot_state = RobotState(config)
     robot_sim = RobotSimulator(robot_state)
@@ -42,7 +49,7 @@ class ServerSocketTest(unittest.TestCase):
         data = server.message_handler._process_drive_command(d)
         val = self._deserialize(data)
 
-        self.assertEqual(15, val)
+        self.assertEqual(10, val)
 
     def test_process_drive_command_pixels(self):
         d = {
@@ -55,7 +62,7 @@ class ServerSocketTest(unittest.TestCase):
 
         server = create_robot_sim()
 
-        data = server._process_drive_command(d)
+        data = server.message_handler._process_drive_command(d)
         val = self._deserialize(data)
 
         self.assertEqual(10, val)
