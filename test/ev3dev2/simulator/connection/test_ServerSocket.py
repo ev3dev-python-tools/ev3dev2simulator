@@ -13,22 +13,39 @@ def create_robot_sim():
     config = {'center_x': 0,
               'center_y': 0,
               'name': 'test_bot',
-              'parts': [{
-                  'name': 'motor-left',
-                  'type': 'motor',
-                  'x_offset': '-60',
-                  'y_offset': '0.01',
-                  'brick': '0',
-                  'port': 'ev3-ports:outA'},
+              'parts': [
+                  {
+                      'name': 'brick-left',
+                      'type': 'brick',
+                      'brick': '0',
+                      'x_offset': '-39',
+                      'y_offset': '-22.5'},
+                  {
+                      'name': 'motor-left',
+                      'type': 'motor',
+                      'x_offset': '-60',
+                      'y_offset': '0.01',
+                      'brick': '0',
+                      'port': 'ev3-ports:outA'
+                  },
                   {
                       'name': 'motor-right',
                       'type': 'motor',
                       'x_offset': '60',
                       'y_offset': '0.01',
                       'brick': '0',
+                      'port': 'ev3-ports:outD'
+                  },
+                  {
+                      'name': 'measurement-probe',
+                      'type': 'arm',
+                      'x_offset': '15',
+                      'y_offset': '102',
+                      'brick': '0',
                       'port': 'ev3-ports:outB'}
-                ]
+              ]
               }
+
     robot_state = RobotState(config)
     robot_sim = RobotSimulator(robot_state)
     return ClientSocketHandler(robot_sim, None, 0, 'left_brick')
@@ -77,7 +94,7 @@ class ServerSocketTest(unittest.TestCase):
 
         server = create_robot_sim()
 
-        data = server._process_stop_command(d)
+        data = server.message_handler._process_stop_command(d)
         val = self._deserialize(data)
 
         self.assertAlmostEqual(0.0667, val, 3)
@@ -86,18 +103,21 @@ class ServerSocketTest(unittest.TestCase):
         d = {
             'type': 'SoundCommand',
             'message': 'A test is running at the moment!',
+            'duration': 2,
+            'soundType': 'speak'
         }
 
         frames_per_second = get_config().get_visualisation_config()['exec_settings']['frames_per_second']
-        frames = int(round((32 / 2.5) * frames_per_second))
+        frames = int(2 * frames_per_second)
 
         server = create_robot_sim()
-        server._process_sound_command(d)
+        server.message_handler._process_sound_command(d)
 
         for i in range(frames):
-            self.assertIsNotNone(server.robot_sim.next_sound_job())
-
-        self.assertIsNone(server.robot_sim.next_sound_job())
+            soundJob = [i[1] for i in server.robot_sim.next_actuator_jobs() if i[0] == (0, 'speaker')][0]
+            self.assertIsNotNone(soundJob)
+        soundJob = [i[1] for i in server.robot_sim.next_actuator_jobs() if i[0] == (0, 'speaker')][0]
+        self.assertIsNone(soundJob)
 
     def test_process_data_request(self):
         d = {
@@ -108,7 +128,7 @@ class ServerSocketTest(unittest.TestCase):
         server = create_robot_sim()
         server.robot_sim.robot.values[(0, 'ev3-ports:in4')] = 10
         server.robot_sim.locks[(0, 'ev3-ports:in4')] = threading.Lock()
-        data = server._process_data_request(d)
+        data = server.message_handler._process_data_request(d)
         val = self._deserialize(data)
 
         self.assertEqual(val, 10)

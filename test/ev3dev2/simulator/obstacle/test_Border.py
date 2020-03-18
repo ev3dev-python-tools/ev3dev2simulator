@@ -2,16 +2,25 @@ import unittest
 
 import arcade
 
-from ev3dev2simulator.config.config import load_config
+from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.obstacle.Border import Border
 
 
 class BorderTest(unittest.TestCase):
 
     def test_create_border(self):
-        cfg = load_config()
+        config = {
+            'depth': 30,
+            'color': '(255, 255, 255)',
+            'type': 'border'
+        }
 
-        border = Border(cfg, arcade.color.WHITE)
+        large_board_height = 1273
+        large_board_width = 1273
+        scale = 0.60
+
+        border = Border.from_config(large_board_width, large_board_height, config)
+        shapes = border.create_shape(scale)
 
         # based on scaling_multiplier: 0.60
         top = [(13.800000000000011, 741.0), (13.800000000000011, 750.0), (750.0, 750.0), (750.0, 741.0)]
@@ -21,10 +30,10 @@ class BorderTest(unittest.TestCase):
         left = [(13.799999999999997, 13.800000000000011), (13.799999999999997, 750.0), (22.799999999999997, 750.0),
                 (22.799999999999997, 13.800000000000011)]
 
-        self.assertEqual(border.top_points, top)
-        self.assertEqual(border.right_points, right)
-        self.assertEqual(border.bottom_points, bottom)
-        self.assertEqual(border.left_points, left)
+        self.assertEqual(shapes[0], top)
+        self.assertEqual(shapes[1], right)
+        self.assertEqual(shapes[2], bottom)
+        self.assertEqual(shapes[3], left)
 
 
 if __name__ == '__main__':

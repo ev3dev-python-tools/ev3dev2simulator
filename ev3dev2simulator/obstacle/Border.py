@@ -26,7 +26,7 @@ class Border(BorderObstacle):
     def from_config(cls, board_width, board_height, config):
 
         color = eval(config['color'])
-        depth = config['depth']
+        depth = int(config['depth'])
 
         return cls(board_width, board_height, color, depth)
 
@@ -48,3 +48,4 @@ class Border(BorderObstacle):
         left = arcade.create_rectangles_filled_with_colors(self.left_points, colors)
 
         self.shapes = [top, right, bottom, left]
+        return self.shapes
