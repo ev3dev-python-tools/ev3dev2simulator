@@ -33,11 +33,11 @@ sleep(3)
 
 for x in range(4):
     drive()
-    s.speak("testjes test test test")
+    s.speak("testjes tests tests tests")
 sleep(3)
 for x in range(4):
     drive()
-    s.speak("testjes test test test", play_type=Sound.PLAY_NO_WAIT_FOR_COMPLETE)
+    s.speak("testjes tests tests tests", play_type=Sound.PLAY_NO_WAIT_FOR_COMPLETE)
 sleep(3)
 
 for x in range(4):

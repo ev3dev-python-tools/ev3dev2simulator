@@ -1731,23 +1731,23 @@ class MoveDifferential(MoveTank):
     get the circumference of the wheels of the robot. The circumference is
     needed for several calculations in this class.
     wheel_distance_mm - The distance between the mid point of the two
-    wheels of the robot. You may need to do some test drives to find
+    wheels of the robot. You may need to do some tests drives to find
     the correct value for your robot.  It is not as simple as measuring
     the distance between the midpoints of the two wheels. The weight of
     the robot, center of gravity, etc come into play.
     You can use utils/move_differential.py to call on_arc_left() to do
-    some test drives of circles with a radius of 200mm. Adjust your
+    some tests drives of circles with a radius of 200mm. Adjust your
     wheel_distance_mm until your robot can drive in a perfect circle
     and stop exactly where it started. It does not have to be a circle
-    with a radius of 200mm, you can test with any size circle but you do
-    not want it to be too small or it will be difficult to test small
+    with a radius of 200mm, you can tests with any size circle but you do
+    not want it to be too small or it will be difficult to tests small
     adjustments to wheel_distance_mm.
     Example:
     .. code:: python
         from ev3dev2.motor import OUTPUT_A, OUTPUT_B, MoveDifferential, SpeedRPM
         from ev3dev2.wheel import EV3Tire
         STUD_MM = 8
-        # test with a robot that:
+        # tests with a robot that:
         # - uses the standard wheels known as EV3Tire
         # - wheels are 16 studs apart
         mdiff = MoveDifferential(OUTPUT_A, OUTPUT_B, EV3Tire, 16 * STUD_MM)

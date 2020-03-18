@@ -7,7 +7,6 @@ screen_settings:
   screen_title: 'Lego ev3dev2 simulator'
   falling_message: 'Robot has dipped a wheel off the map.'
   restart_message: 'Please restart the mission.'
-  border_width: 30
 
 image_paths:
   arm: 'assets/images/arm.png'
@@ -38,7 +37,7 @@ exec_settings:
   bluetooth_port: 6841
 
 motor_settings:
-  pixel_coasting_subtraction: 0.7
+  distance_coasting_subtraction: 0.7
   degree_coasting_subtraction: 1.5
 
 wheel_settings:

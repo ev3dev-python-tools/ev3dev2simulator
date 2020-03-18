@@ -55,17 +55,12 @@ class Lake(ColorObstacle):
     @classmethod
     def from_config(cls, config):
 
-        vis_conf = get_config().get_visualisation_config()
-
         border_width = config['border_width']
         inner_radius = config['inner_radius']
         outer_radius = inner_radius + (border_width / 2)
 
-        edge_spacing = vis_conf['screen_settings']['edge_spacing']
-        border_depth = vis_conf['screen_settings']['border_width']
-
-        x = config['x'] + edge_spacing + border_depth
-        y = config['y'] + edge_spacing + border_depth
+        x = config['x']
+        y = config['y']
         try:
             has_hole = bool(config['hole'])
         except:

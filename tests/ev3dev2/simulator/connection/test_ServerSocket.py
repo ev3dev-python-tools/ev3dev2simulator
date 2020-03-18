@@ -47,7 +47,11 @@ def create_robot_sim():
               }
 
     robot_state = RobotState(config)
-    robot_sim = RobotSimulator(robot_state)
+    return RobotSimulator(robot_state)
+
+
+def create_client_socket_handler():
+    robot_sim = create_robot_sim()
     return ClientSocketHandler(robot_sim, None, 0, 'left_brick')
 
 
@@ -62,7 +66,7 @@ class ServerSocketTest(unittest.TestCase):
             'stop_action': 'hold'
         }
 
-        server = create_robot_sim()
+        server = create_client_socket_handler()
         data = server.message_handler._process_drive_command(d)
         val = self._deserialize(data)
 
@@ -77,7 +81,7 @@ class ServerSocketTest(unittest.TestCase):
             'stop_action': 'hold'
         }
 
-        server = create_robot_sim()
+        server = create_client_socket_handler()
 
         data = server.message_handler._process_drive_command(d)
         val = self._deserialize(data)
@@ -92,7 +96,7 @@ class ServerSocketTest(unittest.TestCase):
             'stop_action': 'coast'
         }
 
-        server = create_robot_sim()
+        server = create_client_socket_handler()
 
         data = server.message_handler._process_stop_command(d)
         val = self._deserialize(data)
@@ -102,7 +106,7 @@ class ServerSocketTest(unittest.TestCase):
     def test_process_sound_command(self):
         d = {
             'type': 'SoundCommand',
-            'message': 'A test is running at the moment!',
+            'message': 'A tests is running at the moment!',
             'duration': 2,
             'soundType': 'speak'
         }
@@ -110,7 +114,7 @@ class ServerSocketTest(unittest.TestCase):
         frames_per_second = get_config().get_visualisation_config()['exec_settings']['frames_per_second']
         frames = int(2 * frames_per_second)
 
-        server = create_robot_sim()
+        server = create_client_socket_handler()
         server.message_handler._process_sound_command(d)
 
         for i in range(frames):
@@ -125,7 +129,7 @@ class ServerSocketTest(unittest.TestCase):
             'address': 'ev3-ports:in4',
         }
 
-        server = create_robot_sim()
+        server = create_client_socket_handler()
         server.robot_sim.robot.values[(0, 'ev3-ports:in4')] = 10
         server.robot_sim.locks[(0, 'ev3-ports:in4')] = threading.Lock()
         data = server.message_handler._process_data_request(d)

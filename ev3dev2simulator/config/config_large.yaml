@@ -95,7 +95,8 @@ board_width: 1273
 board_color: (59, 60, 54)
 obstacles:
   border:
-    depth: 30
+    outer_spacing: 23
+    depth: 15
     color: (255, 255, 255)
     type: 'border'
 

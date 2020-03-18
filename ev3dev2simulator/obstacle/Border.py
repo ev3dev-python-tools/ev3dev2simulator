@@ -10,9 +10,7 @@ class Border(BorderObstacle):
     The outer line surrounding the playing field.
     """
 
-    def __init__(self, board_width, board_height, color: arcade.Color, depth):
-        edge_spacing = get_config().get_visualisation_config()['screen_settings']['edge_spacing']
-
+    def __init__(self, board_width, board_height, color: arcade.Color, depth, edge_spacing):
         super(Border, self).__init__(board_width, board_height, to_color_code(color), depth, edge_spacing)
 
         # visualisation
@@ -27,8 +25,9 @@ class Border(BorderObstacle):
 
         color = eval(config['color'])
         depth = int(config['depth'])
+        spacing = int(config['outer_spacing'])
 
-        return cls(board_width, board_height, color, depth)
+        return cls(board_width, board_height, color, depth, spacing)
 
     def create_shape(self, scale) -> [arcade.Shape]:
 

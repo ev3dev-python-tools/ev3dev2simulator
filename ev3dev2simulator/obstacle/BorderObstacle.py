@@ -29,28 +29,32 @@ class BorderObstacle(ColorObstacle):
         screen_center_x = (self.rectangle_width / 2) * scale
         screen_center_y = (self.rectangle_height / 2) * scale
 
-        height_min_spacing = (self.rectangle_height - self.edge_spacing) * scale
-        width_min_spacing = (self.rectangle_width - self.edge_spacing) * scale
+        screen_height = self.rectangle_height * scale
+        screen_width = self.rectangle_width * scale
+
         draw_depth = self.depth * scale
-        border_long_width = (self.rectangle_width - self.edge_spacing * 2) * scale
-        border_long_height = (self.rectangle_height - self.edge_spacing * 2) * scale
+
+        screen_edge_spacing = self.edge_spacing * scale
+
+        border_long_width = screen_width - screen_edge_spacing * 2
+        border_long_height = screen_height - screen_edge_spacing * 2
 
         self.top_points = arcade.get_rectangle_points(screen_center_x,
-                                                      height_min_spacing - (draw_depth / 2),
+                                                      screen_height - screen_edge_spacing - (draw_depth / 2),
                                                       border_long_width,
                                                       draw_depth)
 
-        self.right_points = arcade.get_rectangle_points(width_min_spacing - (draw_depth / 2),
+        self.right_points = arcade.get_rectangle_points(screen_width - screen_edge_spacing - (draw_depth / 2),
                                                         screen_center_y,
                                                         draw_depth,
                                                         border_long_height)
 
         self.bottom_points = arcade.get_rectangle_points(screen_center_x,
-                                                         (self.edge_spacing * scale) + (draw_depth / 2),
+                                                         screen_edge_spacing + (draw_depth / 2),
                                                          border_long_width,
                                                          draw_depth)
 
-        self.left_points = arcade.get_rectangle_points((self.edge_spacing * scale) + (draw_depth / 2),
+        self.left_points = arcade.get_rectangle_points(screen_edge_spacing + (draw_depth / 2),
                                                        screen_center_y,
                                                        draw_depth,
                                                        border_long_height)

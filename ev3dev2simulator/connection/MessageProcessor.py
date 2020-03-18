@@ -26,7 +26,7 @@ class MessageProcessor:
 
         self.brick_id = brick_id
 
-        self.pixel_coasting_sub = cfg['motor_settings']['pixel_coasting_subtraction']
+        self.distance_coasting_sub = cfg['motor_settings']['distance_coasting_subtraction']
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
         self.frames_per_second = cfg['exec_settings']['frames_per_second']
 
@@ -37,8 +37,8 @@ class MessageProcessor:
     def process_rotate_command(self, command: RotateCommand) -> float:
         """
         Process the given RotateCommand by creating the appropriate motor jobs in the RobotState. The type of jobs created
-        depends on the motor called. The command for the center motor is processed for degrees, while the other motors
-        are processed for pixels.
+        depends on the motor called. The command for the arm motor is processed for degrees, while the other motors
+        are processed for distance.
         :param command: to process.
         :return: a floating point value representing the time in seconds the given command will take to execute.
         """
@@ -67,14 +67,14 @@ class MessageProcessor:
             dpf, frames, coast_frames, run_time = self.command_processor.process_drive_command_degrees(command)
             return -dpf, frames, coast_frames, run_time
         else:
-            return self.command_processor.process_drive_command_pixels(command)
+            return self.command_processor.process_drive_command_distance(command)
 
     def process_stop_command(self, command: StopCommand) -> float:
         """
         Process the given stop command by clearing the current motor job queue
         and creating motor coast jobs in the RobotState. The type of jobs created
         depends on the motor called. The command for the center motor is processed for degrees, while the other motors
-        are processed for pixels.
+        are processed for distance.
         :param command: to process.
         :return: a floating point value representing the time in seconds the given command will take to execute.
         """
@@ -100,7 +100,7 @@ class MessageProcessor:
             dpf, frames, run_time = self.command_processor.process_stop_command_degrees(command)
             return -dpf, frames, run_time
         else:
-            return self.command_processor.process_stop_command_pixels(command)
+            return self.command_processor.process_stop_command_distance(command)
 
     def _process_coast(self, frames, ppf, motor):
         """
@@ -110,7 +110,7 @@ class MessageProcessor:
         :param side: of the motor in the RobotState.
         """
 
-        coasting_sub = self.degree_coasting_sub if motor.ev3type == 'arm' else self.pixel_coasting_sub
+        coasting_sub = self.degree_coasting_sub if motor.ev3type == 'arm' else self.distance_coasting_sub
         og_ppf = ppf
 
         for i in range(frames):

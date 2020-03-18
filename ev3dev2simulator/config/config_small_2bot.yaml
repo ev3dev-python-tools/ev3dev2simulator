@@ -102,6 +102,7 @@ obstacles:
   border:
     depth: 30
     color: (59, 60, 54)
+    outer_spacing: 23
     type: 'border'
 
   lake_blue:
