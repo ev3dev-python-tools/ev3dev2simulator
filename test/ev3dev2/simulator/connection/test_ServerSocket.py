@@ -42,7 +42,7 @@ class ServerSocketTest(unittest.TestCase):
         data = server.message_handler._process_drive_command(d)
         val = self._deserialize(data)
 
-        self.assertEqual(10, val)
+        self.assertEqual(15, val)
 
     def test_process_drive_command_pixels(self):
         d = {
