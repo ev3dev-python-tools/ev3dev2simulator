@@ -8,34 +8,22 @@ class Led(BodyPart):
     """
     Class representing a Wheel of the simulated robot.
     """
-
     def __init__(self,
                  brick: int,
                  robot,
                  delta_x: int,
                  delta_y: int):
-        super(Led, self).__init__(brick, '', robot, delta_x, delta_y, 'led')
+        dims = get_config().get_visualisation_config()['body_part_sizes']['led']
+        super(Led, self).__init__(brick, '', robot, delta_x, delta_y, dims['width'], dims['height'], 'led')
         self.old_texture_index = 1
 
     def setup_visuals(self, scale):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        amber_texture = arcade.load_texture(img_cfg['led_amber'], scale=scale * 0.33)
-        black_texture = arcade.load_texture(img_cfg['led_black'], scale=scale * 0.33)
-        green_texture = arcade.load_texture(img_cfg['led_green'], scale=scale * 0.33)
-        red_texture = arcade.load_texture(img_cfg['led_red'], scale=scale * 0.33)
-        orange_texture = arcade.load_texture(img_cfg['led_orange'], scale=scale * 0.33)
-        yellow_texture = arcade.load_texture(img_cfg['led_yellow'], scale=scale * 0.33)
-
-        self.textures.append(amber_texture)
-        self.textures.append(black_texture)
-        self.textures.append(green_texture)
-        self.textures.append(red_texture)
-        self.textures.append(orange_texture)
-        self.textures.append(yellow_texture)
-
-        self.set_texture(1)
+        src_list = [img_cfg[f'led_{color}'] for color in ['amber', 'black', 'green', 'red', 'orange', 'yellow']]
+        self.init_texture_list(src_list, scale, 1)
 
     def set_color_texture(self, color):
         if self.old_texture_index != color:
             self.old_texture_index = color
             self.set_texture(color)
+            self.set_dimensions(self.width_mm, self.height_mm, self.px_mm_scale)

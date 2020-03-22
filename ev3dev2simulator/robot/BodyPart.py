@@ -15,6 +15,8 @@ class BodyPart(arcade.Sprite):
                  robot,
                  delta_x: int,
                  delta_y: int,
+                 width_mm: int,
+                 height_mm: int,
                  ev3type: str):
         super(BodyPart, self).__init__()
 
@@ -22,10 +24,13 @@ class BodyPart(arcade.Sprite):
         self.brick = brick
         self.address = address
         self.robot = robot
+        self.width_mm = width_mm
+        self.height_mm = height_mm
         self.x = robot.x + delta_x
         self.y = robot.y + delta_y
+        self.px_mm_scale = None
 
-        self.angle_addition = -math.atan(delta_x / delta_y)
+        self.angle_addition = -math.atan(delta_x / delta_y) if delta_y else 0
         self.sweep_length = pythagoras(delta_x, delta_y)
 
         if delta_y < 0:
@@ -85,12 +90,33 @@ class BodyPart(arcade.Sprite):
     def setup_visuals(self, scale):
         pass
 
+    def init_texture_list(self, src_list, scale, start_sprite=0):
+        for texture in src_list:
+            texture = arcade.load_texture(texture)
+            self.append_texture(texture)
+
+        self.set_texture(start_sprite)
+        self.px_mm_scale = scale
+        self.set_dimensions(self.width_mm, self.height_mm, scale)
+        self._set_hit_box_based_on_mm(scale)
+
     def init_texture(self, src, scale):
 
-        texture = arcade.load_texture(src, scale=scale)
-
-        self.textures.append(texture)
+        texture = arcade.load_texture(src)
+        self.append_texture(texture)
         self.set_texture(0)
+        self.px_mm_scale = scale
+        self.set_dimensions(self.width_mm, self.height_mm, scale)
+        self._set_hit_box_based_on_mm(scale)
+
+    def set_dimensions(self, new_width, new_height, scale):
+        self.height = new_height * scale
+        self.width = new_width * scale
 
     def get_ev3type(self):
         return self.ev3type
+
+    def _set_hit_box_based_on_mm(self, scale):
+        full_scale = (self.width_mm / self.texture.width) * scale
+        self.hit_box = [(x * full_scale, y * full_scale) for (x, y) in self.texture.hit_box_points]
+

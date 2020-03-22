@@ -2,18 +2,8 @@ robots:
   - name: robot0
     center_x: 250
     center_y: 300
-    orientation: -85
+    orientation: 0
     parts:
-    - name: brick-left
-      type: brick
-      brick: 0
-      x_offset: -39
-      y_offset: -22.5
-    - name: brick-right
-      type: brick
-      brick: 1
-      x_offset: 39
-      y_offset: -22.5
     - name: motor-left
       type: motor
       x_offset: -60
@@ -26,6 +16,16 @@ robots:
       y_offset: 0.01
       brick: 0
       port: 'ev3-ports:outD'
+    - name: brick-left
+      type: brick
+      brick: 0
+      x_offset: -39
+      y_offset: -22.5
+    - name: brick-right
+      type: brick
+      brick: 1
+      x_offset: 39
+      y_offset: -22.5
     - name: color-sensor-center
       type: color_sensor
       x_offset: 0

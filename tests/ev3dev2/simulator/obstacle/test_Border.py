@@ -12,7 +12,7 @@ class BorderTest(unittest.TestCase):
         if platform != "darwin":
             print("currently only executing drawing on macOS")
             return
-        arcade.Window()
+        arcade.Window(width=1, height=1)
         config = {
             'depth': 15,
             'color': '(255, 255, 255)',
@@ -27,7 +27,6 @@ class BorderTest(unittest.TestCase):
         border = Border.from_config(large_board_width, large_board_height, config)
         border.create_shape(scale)
 
-        # based on scaling_multiplier: 0.60
         top = [(13.800000000000011, 741.0), (13.800000000000011, 750.0), (750.0, 750.0), (750.0, 741.0)]
         right = [(741.0, 13.800000000000011), (741.0, 750.0), (750.0, 750.0), (750.0, 13.800000000000011)]
         bottom = [(13.800000000000011, 13.799999999999997), (13.800000000000011, 22.799999999999997),

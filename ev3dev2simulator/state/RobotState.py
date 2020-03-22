@@ -1,6 +1,6 @@
 import math
 
-from arcade import Sprite, arcade
+from arcade import Sprite, SpriteList
 
 from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
@@ -24,8 +24,8 @@ class RobotState:
     """
 
     def __init__(self, config):
-        self.sprites = arcade.SpriteList()
-        self.side_bar_sprites = arcade.SpriteList()
+        self.sprites = SpriteList()
+        self.side_bar_sprites = SpriteList()
         self.space = None
         self.sensors = {}
         self.actuators = {}
@@ -64,8 +64,8 @@ class RobotState:
                 self.led_colors[(brick.brick, 'led1')] = 1
                 self.actuators[(brick.brick, 'led1')] = right_led
 
-                speaker = Speaker(int(part['brick']), self, float(part['x_offset']) + 28,
-                                  float(part['y_offset']) - 12.5)
+                speaker = Speaker(int(part['brick']), self, 0,
+                                  0)
                 self.actuators[(brick.brick, 'speaker')] = speaker
                 self.sprites.append(speaker)
 

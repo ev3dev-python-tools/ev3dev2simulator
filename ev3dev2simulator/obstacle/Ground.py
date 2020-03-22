@@ -13,6 +13,5 @@ class Ground:
     def get_shapes(self):
         return [self.shape]
 
-    def create_shape(self, x, y, scale):
-        self.shape = create_rectangle(x, y, self.width * scale,
-                                      self.height * scale, self.color)
+    def create_shape(self, x, y, width, height):
+        self.shape = create_rectangle(x, y, width, height, self.color)

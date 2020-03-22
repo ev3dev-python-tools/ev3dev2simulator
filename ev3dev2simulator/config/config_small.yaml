@@ -66,7 +66,7 @@ obstacles:
     hole: False
     type: 'lake'
 
-  lake_green:
+  lake_yellow:
     border_width: 29
     inner_radius: 38
     color: (252, 227, 3)

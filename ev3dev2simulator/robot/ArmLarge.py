@@ -1,6 +1,7 @@
 import math
 
-from arcade import Sprite, arcade
+from arcade import Sprite
+import arcade
 
 from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.obstacle.Ground import Ground
@@ -26,21 +27,23 @@ class ArmLarge(Sprite):
         self.side_bar_ground.shape.draw()
         super(ArmLarge, self).draw()
 
-    def setup_visuals(self, x, y, scale):
+    def setup_visuals(self, x, y, width, height):
         self.center_x = x
         self.center_y = y
         self.rotate_x = x
         self.rotate_y = y + self.sweep_length
         vis_conf = get_config().get_visualisation_config()
-        self.init_texture(vis_conf['image_paths']['arm_large'], scale * 0.5)
-        self.side_bar_ground.create_shape(x, y - 70, scale)
+        self.init_texture(vis_conf['image_paths']['arm_large'], width, height)
+        self.side_bar_ground.create_shape(x, y - 70, width, 10)
         self.rotate(20)
 
-    def init_texture(self, src, scale):
-        texture = arcade.load_texture(src, scale=scale)
+    def init_texture(self, src, width, height):
+        texture = arcade.load_texture(src)
 
         self.textures.append(texture)
         self.set_texture(0)
+        self.height = height
+        self.width = width
 
     def rotate(self, degrees: float):
         """

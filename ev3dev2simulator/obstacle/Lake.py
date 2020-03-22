@@ -1,10 +1,46 @@
 import arcade
-from arcade import Shape, PointList
+from arcade import Shape, PointList, Color, create_line_generic, Point, get_points_for_thick_line, \
+    create_triangles_filled_with_colors
+from pyglet import gl
+from typing import List
 
-from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
 from ev3dev2simulator.obstacle.Hole import Hole
 from ev3dev2simulator.util.Util import get_circle_points, distance_between_points, to_color_code
+
+
+# TODO remove this function if it is fixed in arcade
+def create_line_strip(point_list: PointList,
+                      color: Color, line_width: float = 1):
+    """
+    Create a multi-point line to be rendered later. This works faster than draw_line because
+    the vertexes are only loaded to the graphics card once, rather than each frame.
+
+    :param PointList point_list:
+    :param Color color:
+    :param PointList line_width:
+
+    :Returns Shape:
+
+    """
+    if line_width == 1:
+        return create_line_generic(point_list, color, gl.GL_LINE_STRIP, line_width)
+    else:
+        triangle_point_list: List[Point] = []
+        new_color_list: List[Color] = []
+        for i in range(1, len(point_list)):
+            start_x = point_list[i - 1][0]
+            start_y = point_list[i - 1][1]
+            end_x = point_list[i][0]
+            end_y = point_list[i][1]
+            color1 = color
+            color2 = color
+            points = get_points_for_thick_line(start_x, start_y, end_x, end_y, line_width)
+            new_color_list += color1, color2, color1, color2
+            triangle_point_list += points[1], points[0], points[2], points[3]
+
+        shape = create_triangles_filled_with_colors(triangle_point_list, new_color_list)
+        return shape
 
 
 class Lake(ColorObstacle):
@@ -87,9 +123,9 @@ class Lake(ColorObstacle):
         """
 
         if self.hole is not None:
-            return arcade.create_line_strip(self.points,
-                                            self.color,
-                                            self.border_width * scale)
+            return create_line_strip(self.points,
+                                     self.color,
+                                     self.border_width * scale)
         else:
             color_list = [self.color] + [self.color] * (32 + 1)
             return arcade.create_line_generic_with_colors(self.points, color_list, 6)

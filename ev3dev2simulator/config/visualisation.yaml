@@ -31,6 +31,39 @@ image_paths:
   ultrasonic_sensor_bottom: 'assets/images/ultrasonic_sensor_bottom.png'
   wheel: 'assets/images/wheel.png'
 
+# sizes in mm
+body_part_sizes:
+  arm:
+    height: 72 # 9 lego units
+    width: 8 # 1 lego unit
+  body:
+    width: 71
+    height: 110 # https://www.brickowl.com/catalog/lego-ev3-programable-brick-95646
+  led:
+    width: 8
+    height: 8
+  color_sensor:
+    width: 25
+    height: 25
+  speaker:
+    width: 5
+    height: 5
+  touch_sensor_bar:
+    width: 72 # 9 lego units
+    height: 40  # 5 lego unit
+  touch_sensor_bar_rear:
+    height: 8 # 1 lego units
+    width: 120  # 15 lego unit?
+  ultrasonic_sensor_bottom:
+    height: 25 # approx
+    width: 55 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+  ultrasonic_sensor_top:
+    height: 50
+    width: 55 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+  wheel:
+    height: 56
+    width: 28 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+
 exec_settings:
   frames_per_second: 30
   socket_port: 6840

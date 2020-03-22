@@ -45,7 +45,6 @@ class Bottle(TouchObstacle):
     def create_shape(self, scale):
         self.center_x = self.x * scale
         self.center_y = self.y * scale
-
         self.points = self._create_points(scale)
         self.shape = self._create_shape()
         self.poly = self._create_poly(scale)

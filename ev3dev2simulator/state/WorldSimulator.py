@@ -11,5 +11,6 @@ class WorldSimulator:
             self.robotSimulators.append(robot_sim)
 
     def update(self):
+        self.world_state.space.step(1 / 30.0)
         for robot in self.robotSimulators:
             robot.update()

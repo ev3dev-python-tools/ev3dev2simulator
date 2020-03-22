@@ -13,13 +13,14 @@ class Wheel(BodyPart):
                  robot,
                  delta_x: int,
                  delta_y: int):
-        super(Wheel, self).__init__(brick, address, robot, delta_x, delta_y, 'motor')
+        dims = get_config().get_visualisation_config()['body_part_sizes']['wheel']
+        super(Wheel, self).__init__(brick, address, robot, delta_x, delta_y, dims['width'], dims['height'], 'motor')
         self.x_offset = delta_x
         self.y_offset = delta_y
 
     def setup_visuals(self, scale):
         vis_conf = get_config().get_visualisation_config()
-        self.init_texture(vis_conf['image_paths']['wheel'], scale * 0.33)
+        self.init_texture(vis_conf['image_paths']['wheel'], scale)
 
     def is_falling(self) -> bool:
         """

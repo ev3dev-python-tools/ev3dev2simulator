@@ -20,15 +20,15 @@ class UltrasonicSensor(BodyPart):
                  delta_x: int,
                  delta_y: int,
                  name: str):
-        super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'ultrasonic_sensor')
+        dims = get_config().get_visualisation_config()['body_part_sizes']['ultrasonic_sensor_top']
+        super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y,
+                                               dims['width'], dims['height'], 'ultrasonic_sensor')
         self.name = name
         self.sensor_half_height = 22.5
 
-        self.eye_offset = 18
-
     def setup_visuals(self, scale):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        self.init_texture(img_cfg['ultrasonic_sensor_top'], scale * 0.20)
+        self.init_texture(img_cfg['ultrasonic_sensor_top'], scale)
 
     def get_latest_value(self):
         return self.distance(self.robot.space)
@@ -46,13 +46,13 @@ class UltrasonicSensor(BodyPart):
         distance = self._calc_view_distance(space, left_eye_x, left_eye_y)
 
         if distance:
-            return distance
+            return distance * 1 / self.px_mm_scale
 
         right_eye_x, right_eye_y = self._calc_eye_center(self.angle - 90)
         distance = self._calc_view_distance(space, right_eye_x, right_eye_y)
 
         if distance:
-            return distance
+            return distance * 1 / self.px_mm_scale
 
         return self.get_default_value()
 
@@ -67,7 +67,6 @@ class UltrasonicSensor(BodyPart):
         """
 
         x, y = self._calc_ray_cast_point(base_x, base_y)
-
         query = space.segment_query_first((base_x, base_y), (x, y), 1, ShapeFilter())
         if query:
             return -self.sensor_half_height + distance_between_points(base_x,
@@ -99,9 +98,9 @@ class UltrasonicSensor(BodyPart):
         """
 
         rad = math.radians(angle)
-
-        x = self.eye_offset * math.sin(-rad) + self.x
-        y = self.eye_offset * math.cos(-rad) + self.y
+        eye_offset = 18
+        x = eye_offset * math.sin(-rad) + self.center_x
+        y = eye_offset * math.cos(-rad) + self.center_y
 
         return x, y
 

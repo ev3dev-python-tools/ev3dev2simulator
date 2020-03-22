@@ -15,5 +15,4 @@ class TouchObstacle:
         :param sprite: to check collision for.
         :return: True if collision detected.
         """
-
-        return arcade.are_polygons_intersecting(self.points, sprite.points)
+        return arcade.are_polygons_intersecting(self.points, sprite.get_adjusted_hit_box())

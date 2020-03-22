@@ -5,6 +5,7 @@ import tempfile
 
 import arcade
 import pyglet
+from arcade.color import RED
 
 from ev3dev2simulator.state import WorldState
 from ev3dev2simulator.visualisation.Sidebar import Sidebar
@@ -33,6 +34,7 @@ class Visualiser(arcade.Window):
         self.check_for_unique_instance()
         self.update_callback = update_world_cb
         self.sidebar = None
+        self.debug = False
 
         self.world_state = world_state
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
@@ -63,6 +65,7 @@ class Visualiser(arcade.Window):
             scale = y_scale
             self.screen_width = self.side_bar_width + int(scale * world_state.board_width)
         self.scale = scale
+        print('starting simulation with scaling', scale)
 
         super(Visualiser, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30,
                                          resizable=True)
@@ -339,6 +342,10 @@ class Visualiser(arcade.Window):
                 sprite.calculate_drawing_position(self.scale)
 
             robot.get_sprites().draw()
+
+            if self.debug:
+                for sprite in robot.get_sprites():
+                    sprite.draw_hit_box(color=RED, line_thickness=5)
 
             if robot.is_stuck and self.msg_counter <= 0:
                 self.msg_counter = self.frames_per_second * 3

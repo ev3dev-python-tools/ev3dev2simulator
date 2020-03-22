@@ -15,8 +15,14 @@ class TouchSensor(BodyPart):
                  delta_y: int,
                  side: str,
                  name: str):
-        super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'touch_sensor')
         self.side = side
+        if self.side in ['left', 'right']:
+            dims = get_config().get_visualisation_config()['body_part_sizes']['touch_sensor_bar']
+        else:
+            dims = get_config().get_visualisation_config()['body_part_sizes']['touch_sensor_bar_rear']
+
+        super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, dims['width'], dims['height'],
+                                          'touch_sensor')
         self.name = name
 
     def setup_visuals(self, scale):
@@ -27,7 +33,7 @@ class TouchSensor(BodyPart):
         else:
             img = 'touch_sensor_rear'
         vis_conf = get_config().get_visualisation_config()
-        self.init_texture(vis_conf['image_paths'][img], scale * 0.32)
+        self.init_texture(vis_conf['image_paths'][img], scale)
 
     def get_latest_value(self):
         return self.is_touching()

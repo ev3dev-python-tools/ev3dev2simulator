@@ -1,4 +1,4 @@
-from arcade import PointList, Color, arcade, Shape
+import arcade
 
 from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
 from ev3dev2simulator.util.Util import to_color_code
@@ -34,7 +34,7 @@ class Board(ColorObstacle):
         self.points = self._create_points(scale)
         self.shape = self._create_shape()
 
-    def _create_points(self, scale) -> PointList:
+    def _create_points(self, scale) -> arcade.PointList:
         """
         Create a list of points representing this rock in 2D space.
         :return: a PointList object.
@@ -45,7 +45,7 @@ class Board(ColorObstacle):
                                            self.height * scale,
                                            self.angle)
 
-    def _create_shape(self) -> Shape:
+    def _create_shape(self) -> arcade.Shape:
         """
         Create a shape representing the rectangle of this rock.
         :return: a Arcade shape object.
@@ -61,7 +61,7 @@ class Board(ColorObstacle):
     def collided_with(self, x: float, y: float) -> bool:
         """
         Check if this obstacle has collided with the given Point. Meaning the point is inside this obstacle
-        :param x: coordinate of the point.
+        :param x: coordinate of the  point.
         :param y: coordinate of the point.
         :return: True if collision detected.
         """

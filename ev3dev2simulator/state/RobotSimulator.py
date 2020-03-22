@@ -1,8 +1,7 @@
 import threading
 from queue import Queue, Empty
-from typing import Any, Tuple
+from typing import Any
 
-from ev3dev2simulator.config.config import get_config
 from ev3dev2simulator.state.RobotState import RobotState
 
 

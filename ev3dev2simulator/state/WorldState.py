@@ -1,5 +1,3 @@
-import os
-
 from pymunk import Space
 
 from ev3dev2simulator.obstacle.Board import Board

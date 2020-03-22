@@ -25,27 +25,16 @@ class ColorSensor(BodyPart):
                  delta_x: int,
                  delta_y: int,
                  name: str):
-        super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, 'color_sensor')
+        dims = get_config().get_visualisation_config()['body_part_sizes']['color_sensor']
+        super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, dims['width'], dims['height'],
+                                          'color_sensor')
         self.name = name
         self.old_texture_index = 0
 
     def setup_visuals(self, scale):
         img_cfg = get_config().get_visualisation_config()['image_paths']
-        black_texture = arcade.load_texture(img_cfg['color_sensor_black'], scale=scale * 0.26)
-        blue_texture = arcade.load_texture(img_cfg['color_sensor_blue'], scale=scale * 0.26)
-        green_texture = arcade.load_texture(img_cfg['color_sensor_green'], scale=scale * 0.26)
-        red_texture = arcade.load_texture(img_cfg['color_sensor_red'], scale=scale * 0.26)
-        white_texture = arcade.load_texture(img_cfg['color_sensor_white'], scale=scale * 0.26)
-        yellow_texture = arcade.load_texture(img_cfg['color_sensor_yellow'], scale=scale * 0.26)
-
-        self.textures.append(black_texture)
-        self.textures.append(blue_texture)
-        self.textures.append(green_texture)
-        self.textures.append(red_texture)
-        self.textures.append(white_texture)
-        self.textures.append(yellow_texture)
-
-        self.set_texture(0)
+        src_list = [img_cfg[f'color_sensor_{color}'] for color in ['black', 'blue', 'green', 'red', 'white', 'yellow']]
+        self.init_texture_list(src_list, scale)
 
     def get_latest_value(self):
         latest_data = self.get_sensed_color()
@@ -77,3 +66,4 @@ class ColorSensor(BodyPart):
         if self.old_texture_index != converted:
             self.old_texture_index = converted
             self.set_texture(converted)
+            self.set_dimensions(self.width_mm, self.height_mm, self.px_mm_scale)

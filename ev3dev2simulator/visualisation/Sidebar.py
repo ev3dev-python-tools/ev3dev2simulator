@@ -22,7 +22,8 @@ class Sidebar:
 
     def init_robot(self, name, sensors, bricks, side_bar_sprites):
         for sprite in side_bar_sprites:
-            sprite.setup_visuals(self.x + self.width/2, self.y - self.sprites_total_height, 0.7)
+            sprite.setup_visuals(self.x + self.width/2, self.y - self.sprites_total_height,
+                                 self.width * 0.7, self.width * 0.7 * 0.5)
             self.sprites_total_height += 110
             self.sprites.append(sprite)
         self.robot_info[name] = {}
