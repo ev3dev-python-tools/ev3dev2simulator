@@ -11,8 +11,6 @@ class Config:
     """
 
     def __init__(self):
-        self.scale = None
-        self.sim_type = None
         self.data = None
 
     def get_visualisation_config(self):
@@ -26,32 +24,10 @@ class Config:
 
         return self.data
 
-    def get_scale(self) -> float:
-        """
-        Get scaling variable. Initialize if variable has not been initialized yet.
-        :return: a floating point number representing the scaling multiplier.
-        """
-
-        if self.scale is None:
-            self.scale = self._load_scale()
-
-        return self.scale
-
     def get_simulation_config(self, name):
         if name is None:
             name = 'config_large'
         return self._load_yaml_file(name)
-
-    def get_sim_type(self) -> str:
-        """
-        Get simulation type variable. Initialize if variable has not been initialized yet.
-        :return: a string representing the simulation type.
-        """
-
-        if self.sim_type is None:
-            self.sim_type = self._load_sim_type()
-
-        return self.sim_type
 
     def _load_yaml_file(self, file_url):
         """
@@ -81,50 +57,6 @@ class Config:
                 return yaml.safe_load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
-
-    def _load_scale(self):
-        """
-        Load scale multiplier data from the scale_config.txt file.
-        :return: a floating point number representing the scaling multiplier.
-        """
-
-        path = self.get_project_root() + '/scale_config.txt'
-
-        with open(path, 'r') as stream:
-            return float(stream.read(4))
-
-    def _load_sim_type(self):
-        """
-        Load scale multiplier data from the type_config.txt file.
-        :return: a string representing the simulation type.
-        """
-
-        path = self.get_project_root() + '/type_config.txt'
-
-        with open(path, 'r') as stream:
-            return stream.read(5)
-
-    def write_scale(self, value: float):
-        """
-        Write the scaling multiplier to scale_config.txt
-        :param value: a floating point number representing the scaling multiplier.
-        """
-
-        path = self.get_project_root() + '/scale_config.txt'
-
-        with open(path, 'w') as stream:
-            return stream.write(str(value))
-
-    def write_sim_type(self, value: str):
-        """
-        Write the simulation type to type_config.txt
-        :param value: a string representing the simulation type.
-        """
-
-        path = self.get_project_root() + '/type_config.txt'
-
-        with open(path, 'w') as stream:
-            return stream.write(value)
 
     def get_project_root(self) -> str:
         """

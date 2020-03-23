@@ -74,9 +74,6 @@ def main():
 
     config = get_config()
 
-    s = args['window_scaling']
-    config.write_scale(s)
-
     use_second_screen_to_show_simulator = args['show_on_second_monitor']
     show_fullscreen = args['fullscreen']
     show_maximized = args['maximized']

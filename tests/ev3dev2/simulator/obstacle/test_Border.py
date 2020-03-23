@@ -12,7 +12,7 @@ class BorderTest(unittest.TestCase):
         if platform != "darwin":
             print("currently only executing drawing on macOS")
             return
-        arcade.Window(width=1, height=1)
+        arcade.Window(width=5, height=5)
         config = {
             'depth': 15,
             'color': '(255, 255, 255)',
