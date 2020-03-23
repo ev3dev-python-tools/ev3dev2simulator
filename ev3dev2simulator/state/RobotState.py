@@ -14,7 +14,7 @@ from ev3dev2simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
 from ev3dev2simulator.robot.UltrasonicSensorTop import UltrasonicSensor
 from ev3dev2simulator.robot.Wheel import Wheel
 from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_config, debug
 
 
 class RobotState:
@@ -33,6 +33,9 @@ class RobotState:
         self.led_colors = {}
         self.bricks = []
         self.sounds = {}
+
+        if debug:
+            self.debug_shapes = []
 
         self.orig_x = float(config['center_x'])
         self.orig_y = float(config['center_y']) + 22.5

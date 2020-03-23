@@ -9,7 +9,7 @@ from arcade.color import RED
 
 from ev3dev2simulator.state import WorldState
 from ev3dev2simulator.visualisation.Sidebar import Sidebar
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_config, debug
 
 
 def start():
@@ -34,7 +34,6 @@ class Visualiser(arcade.Window):
         self.check_for_unique_instance()
         self.update_callback = update_world_cb
         self.sidebar = None
-        self.debug = False
 
         self.world_state = world_state
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
@@ -333,6 +332,7 @@ class Visualiser(arcade.Window):
         """
 
         arcade.start_render()
+
         for obstacleList in self.world_state.obstacles:
             for shape in obstacleList.get_shapes():
                 shape.draw()
@@ -343,9 +343,13 @@ class Visualiser(arcade.Window):
 
             robot.get_sprites().draw()
 
-            if self.debug:
+            if debug:
                 for sprite in robot.get_sprites():
                     sprite.draw_hit_box(color=RED, line_thickness=5)
+                    if robot.debug_shapes is not None:
+                        for shape in robot.debug_shapes:
+                            shape.draw()
+                    robot.debug_shapes.clear()
 
             if robot.is_stuck and self.msg_counter <= 0:
                 self.msg_counter = self.frames_per_second * 3
@@ -357,7 +361,6 @@ class Visualiser(arcade.Window):
                 print("Unexpected error:", sys.exc_info()[0])
 
         self.sidebar.draw()
-
         # TODO this is logic, move to world/robot simulator
         if self.msg_counter > 0:
             self.msg_counter -= 1

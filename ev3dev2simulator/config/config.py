@@ -2,6 +2,8 @@ from pathlib import Path
 
 import yaml
 
+debug = True
+
 
 class Config:
     """

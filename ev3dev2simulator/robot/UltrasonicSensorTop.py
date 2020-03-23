@@ -1,9 +1,10 @@
 import math
 
-from arcade import Point
+from arcade import Point, create_line
+from arcade.color import RED
 from pymunk import Space, ShapeFilter
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_config, debug
 from ev3dev2simulator.robot.BodyPart import BodyPart
 from ev3dev2simulator.util.Util import distance_between_points
 
@@ -67,6 +68,10 @@ class UltrasonicSensor(BodyPart):
         """
 
         x, y = self._calc_ray_cast_point(base_x, base_y)
+        if debug:
+            line = create_line(x, y, base_x, base_y, RED, 5)
+            self.robot.debug_shapes.append(line)
+
         query = space.segment_query_first((base_x, base_y), (x, y), 1, ShapeFilter())
         if query:
             return -self.sensor_half_height + distance_between_points(base_x,
