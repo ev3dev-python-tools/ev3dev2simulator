@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-from ev3dev2._platform.ev3 import INPUT_1, INPUT_4, INPUT_2
+from ev3dev2._platform.ev3 import INPUT_1, INPUT_4, INPUT_2, OUTPUT_B
 from ev3dev2.led import Leds
-from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
+from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent, MoveDifferential, MediumMotor
 from ev3dev2.sensor.lego import ColorSensor
 from ev3dev2.sensor.lego import TouchSensor
+from ev3dev2.unit import STUD_MM
+from ev3dev2.wheel import EV3Tire
 from testprograms.BluetoothHelper import BluetoothHelper
 
 
@@ -13,8 +15,7 @@ def reverseRotations(rotations):
 
 
 def rotateDegrees(degrees):
-    degrees = degrees * 2
-    tank_drive.on_for_degrees(SpeedPercent(40), SpeedPercent(0), degrees)
+    tank_drive.turn_left(SpeedPercent(40), degrees)
 
 
 def drive():
@@ -26,7 +27,6 @@ def checkCollision():
         print('gg')
         # leds.set_color("LEFT", "YELLOW")
         tank_drive.stop()
-
         reverseRotations(1)
         rotateDegrees(180)
         drive()
@@ -39,14 +39,19 @@ def checkColor():
         print('gg')
         # leds.set_color("RIGHT", "AMBER")
         tank_drive.stop()
-
         reverseRotations(1)
-        rotateDegrees(150)
-
+        rotateDegrees(180)
         drive()
     # else:
     #     leds.set_color("RIGHT", "GREEN")
 
+
+def measurement_on():
+    tank_measurement.on_to_position(20, -100)
+
+
+def measurement_off():
+    tank_measurement.on_to_position(20, 100)
 
 def check():
     while True:
@@ -64,8 +69,10 @@ leds.animate_rainbow()
 cs = ColorSensor(INPUT_2)
 ts1 = TouchSensor(INPUT_1)
 ts4 = TouchSensor(INPUT_4)
-
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
+
+tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3Tire, 15.5 * STUD_MM)
+tank_measurement = MediumMotor(OUTPUT_B)
 
 drive()
 check()

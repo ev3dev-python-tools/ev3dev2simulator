@@ -230,6 +230,9 @@ class RobotState:
         for part in self.actuators.values():
             if part.get_ev3type() == 'motor':
                 part.set_sensible_obstacles(obstacles)
+        for part in self.sensors.values():
+            if isinstance(part, UltrasonicSensorBottom):
+                part.set_sensible_obstacles(obstacles)
 
     def get_sensor(self, address):
         return self.sensors.get(address)

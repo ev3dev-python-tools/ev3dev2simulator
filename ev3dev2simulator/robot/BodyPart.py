@@ -101,13 +101,7 @@ class BodyPart(arcade.Sprite):
         self._set_hit_box_based_on_mm(scale)
 
     def init_texture(self, src, scale):
-
-        texture = arcade.load_texture(src)
-        self.append_texture(texture)
-        self.set_texture(0)
-        self.px_mm_scale = scale
-        self.set_dimensions(self.width_mm, self.height_mm, scale)
-        self._set_hit_box_based_on_mm(scale)
+        self.init_texture_list([src], scale)
 
     def set_dimensions(self, new_width, new_height, scale):
         self.height = new_height * scale

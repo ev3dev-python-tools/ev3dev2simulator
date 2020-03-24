@@ -33,7 +33,7 @@ class UltrasonicSensorBottom(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            if o.collided_with(self.x, self.y):
+            if o.collided_with(self.center_x, self.center_y):
                 return self.get_default_value()
 
         return 20

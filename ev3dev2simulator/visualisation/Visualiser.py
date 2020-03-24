@@ -64,7 +64,6 @@ class Visualiser(arcade.Window):
         self.set_icon(icon1)
         arcade.set_background_color(eval(self.sim_config['screen_settings']['background_color']))
 
-        self.msg_x = lambda: self.screen_width / 2
         self.msg_counter = 0
 
         self.setup_sidebar()
@@ -77,6 +76,10 @@ class Visualiser(arcade.Window):
             self.maximize()
 
         self.check_for_activation()
+
+    @property
+    def msg_x(self):
+        return (self.screen_width - self.side_bar_width) / 2
 
     def change_scale(self, new_screen_width, new_screen_height):
         x_scale = (new_screen_width - self.side_bar_width) / self.world_state.board_width
