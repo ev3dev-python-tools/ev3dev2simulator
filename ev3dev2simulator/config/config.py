@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-debug = True
+debug = False
 
 
 class Config:

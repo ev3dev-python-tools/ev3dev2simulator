@@ -40,6 +40,7 @@ class Visualiser(arcade.Window):
 
         self.sim_config = get_config().get_visualisation_config()
 
+        self.scale = None
         self.screen_width = int(self.sim_config['screen_settings']['screen_width'])
         self.screen_height = int(self.sim_config['screen_settings']['screen_height'])
         self.side_bar_width = int(self.sim_config['screen_settings']['side_bar_width'])
@@ -53,18 +54,8 @@ class Visualiser(arcade.Window):
         self.falling_msg = self.sim_config['screen_settings']['falling_message']
         self.restart_msg = self.sim_config['screen_settings']['restart_message']
 
-        x_scale = (self.screen_width - self.side_bar_width) / world_state.board_width
-        y_scale = self.screen_height / world_state.board_height
-        if x_scale == y_scale:
-            scale = x_scale
-        elif x_scale < y_scale:
-            scale = x_scale
-            self.screen_height = int(scale * world_state.board_height)
-        else:
-            scale = y_scale
-            self.screen_width = self.side_bar_width + int(scale * world_state.board_width)
-        self.scale = scale
-        print('starting simulation with scaling', scale)
+        self.change_scale(self.screen_width, self.screen_height)
+        print('starting simulation with scaling', self.scale)
 
         super(Visualiser, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30,
                                          resizable=True)
@@ -73,11 +64,11 @@ class Visualiser(arcade.Window):
         self.set_icon(icon1)
         arcade.set_background_color(eval(self.sim_config['screen_settings']['background_color']))
 
-        self.msg_x = self.screen_width / 2
+        self.msg_x = lambda: self.screen_width / 2
         self.msg_counter = 0
 
         self.setup_sidebar()
-        self.world_state.setup_visuals(scale)
+        self.world_state.setup_visuals(self.scale)
 
         if show_fullscreen:
             self.toggleFullScreenOnCurrentScreen()
@@ -86,6 +77,17 @@ class Visualiser(arcade.Window):
             self.maximize()
 
         self.check_for_activation()
+
+    def change_scale(self, new_screen_width, new_screen_height):
+        x_scale = (new_screen_width - self.side_bar_width) / self.world_state.board_width
+        y_scale = new_screen_height / self.world_state.board_height
+        if x_scale <= y_scale:
+            scale = x_scale
+        else:
+            scale = y_scale
+        self.screen_height = int(scale * self.world_state.board_height)
+        self.screen_width = self.side_bar_width + int(scale * self.world_state.board_width)
+        self.scale = scale
 
     def setup_sidebar(self):
         self.sidebar = Sidebar(self.screen_width - self.side_bar_width, self.screen_height - 70,
@@ -104,9 +106,7 @@ class Visualiser(arcade.Window):
         """
 
         # get current_screen_index
-        current_screen_index = 0
-        if use_second_screen_to_show_simulator:
-            current_screen_index = 1
+        current_screen_index = 1 if use_second_screen_to_show_simulator else 0
         screens = get_screens()
         # for screen in screens: print(screen)
         num_screens = len(screens)
@@ -214,31 +214,33 @@ class Visualiser(arcade.Window):
             self.on_close()
 
         # Toggle fullscreen between screens (only works at fullscreen mode)
-        if key == arcade.key.T:
+        elif key == arcade.key.T:
             # User hits T. When at fullscreen, then switch screen used for fullscreen.
-            if self.fullscreen and len(get_screens()) > 1:
+            if len(get_screens()) == 0:
+                return
+            if self.fullscreen:
                 # to switch screen when in fullscreen we first have to back to normal window, and do fullscreen again
-                self.set_fullscreen(False)
-                # switch which screen is used for fullscreen ; Toggle between first and second screen (other screens are ignored)
-                self.toggleScreenUsedForFullscreen()
-                self.setFullScreen()
+                self._set_full_screen(False)
+                # Toggle between first and second screen (other screens are ignored)
+                self.toggle_screen_used_for_fullscreen()
+                self._set_full_screen(True)
 
         # Maximize window
         # note: is toggle on macos, but not on windows
-        if key == arcade.key.M:
+        elif key == arcade.key.M:
             self.maximize()
 
         # Toggle between Fullscreen and window
         #   keeps viewport coordinates the same   STRETCHED (FULLSCREEN)
         #   Instead of a one-to-one mapping to screen size, we use stretch/squash window to match the constants.
         #   src: http://arcade.academy/examples/full_screen_example.html
-        if key == arcade.key.F:
+        elif key == arcade.key.F:
             self.updateCurrentScreen()
-            self.toggleFullScreenOnCurrentScreen()
+            self._set_full_screen(not self.fullscreen)
 
     # toggle screen for fullscreen
     # BUG: doesn't work on macOS => see explanation in set_screen_to_display_simulator_at_startup() method
-    def toggleScreenUsedForFullscreen(self):
+    def toggle_screen_used_for_fullscreen(self):
 
         # toggle only between screen 0 and 1 (other screens are ignored)
         self.current_screen_index = (self.current_screen_index + 1) % 2
@@ -284,24 +286,8 @@ class Visualiser(arcade.Window):
         # override hidden screen parameter in window
         self._screen = screens[self.current_screen_index]
 
-    def toggleFullScreenOnCurrentScreen(self):
-        # User hits 'f' Flip between full and not full screen.
-        self.set_fullscreen(not self.fullscreen)
-
-        # Instead of a one-to-one mapping, stretch/squash window to match the
-        # constants. This does NOT respect aspect ratio. You'd need to
-        # do a bit of math for that.
-        self.set_viewport(0, self.screen_width, 0, self.screen_height)
-
-        # HACK for macOS: without this hack fullscreen on the second screen is shifted downwards in the y direction
-        #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
-        import platform
-        if self.fullscreen and platform.system().lower() == "darwin":
-            self.maximize()
-
-    def setFullScreen(self):
-        # self.fullscreen=True
-        self.set_fullscreen(True)
+    def _set_full_screen(self, is_full_screen: bool = True):
+        self.set_fullscreen(is_full_screen)
 
         # Instead of a one-to-one mapping, stretch/squash window to match the
         # constants. This does NOT respect aspect ratio. You'd need to
@@ -309,7 +295,7 @@ class Visualiser(arcade.Window):
         self.set_viewport(0, self.screen_width, 0, self.screen_height)
 
         # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
-        #                 By also calling the maximize function te position the fullscreen in second screen is corrected!)
+        #     By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
         if platform.system().lower() == "darwin":
             self.maximize()
@@ -319,12 +305,7 @@ class Visualiser(arcade.Window):
 
         # Call the parent. Failing to do this will mess up the coordinates, and default to 0,0 at the center and the
         # edges being -1 to 1.
-        super().on_resize(width, height)
-
-        # TODO: fix BUG with resize on large field
-        #      the resize works perfect with the small field
-        #      but with the large field when use set_viewport on then resize also works, BUT we loose the arm.  Same happens when we change window to maximize or fullscreen!
-        # self.set_viewport(0, self.screen_width, 0, self.screen_height)
+        super().on_resize(self.screen_width, self.screen_height)
 
     def on_draw(self):
         """
