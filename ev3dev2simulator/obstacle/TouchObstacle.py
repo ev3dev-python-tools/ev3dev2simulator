@@ -6,10 +6,9 @@ class TouchObstacle:
     This class provides basic functionality for obstacles which can be interacted with using touch.
     """
 
-
     def __init__(self):
         self.points = None
-
+        self.poly = None
 
     def collided_with(self, sprite: arcade.Sprite) -> bool:
         """
@@ -17,5 +16,4 @@ class TouchObstacle:
         :param sprite: to check collision for.
         :return: True if collision detected.
         """
-
-        return arcade.are_polygons_intersecting(self.points, sprite.points)
+        return arcade.are_polygons_intersecting(self.points, sprite.get_adjusted_hit_box())

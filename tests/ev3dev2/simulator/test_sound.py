@@ -2,7 +2,7 @@ import sys
 import unittest
 from time import sleep
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 
 clientSocketModuleMock = MagicMock()
 sys.modules['ev3dev2simulator.connection.ClientSocket'] = clientSocketModuleMock
@@ -160,7 +160,7 @@ class SoundTest(unittest.TestCase):
     def test_speak(self):
         spkr = Sound()
         spkr.connector.play_actual_sound = False
-        spkr.speak("test test test test test", volume=100, play_type=1)
+        spkr.speak("tests tests tests tests tests", volume=100, play_type=1)
         spkr.speak("kekeroni", volume=100, play_type=0)
 
         self.assertEqual(len(clientSocketMock.mock_calls), 2)
@@ -169,7 +169,7 @@ class SoundTest(unittest.TestCase):
         self.assertEqual(fn_name, 'send_sound_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 1.5,  # 200 words per minute, (5 / 200) * 60 = 1.5
-                              'message': 'Saying: ``test test test test test``',
+                              'message': 'Saying: ``tests tests tests tests tests``',
                               'soundType': 'speak'})
 
 if __name__ == '__main__':

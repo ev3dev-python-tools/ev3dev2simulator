@@ -1,0 +1,143 @@
+robots:
+  - name: robot0
+    center_x: 400
+    center_y: 350
+    orientation: 0
+    parts:
+    - name: motor-left
+      type: motor
+      x_offset: -60
+      y_offset: 0.01
+      brick: 0
+      port: 'ev3-ports:outA'
+    - name: motor-right
+      type: motor
+      x_offset: 60
+      y_offset: 0.01
+      brick: 0
+      port: 'ev3-ports:outD'
+    - name: brick-left
+      type: brick
+      brick: 0
+      x_offset: -39
+      y_offset: -22.5
+    - name: brick-right
+      type: brick
+      brick: 1
+      x_offset: 39
+      y_offset: -22.5
+    - name: color-sensor-center
+      type: color_sensor
+      x_offset: 0
+      y_offset: 84
+      brick: 0
+      port: 'ev3-ports:in2'
+    - name: color-sensor-center
+      type: color_sensor
+      x_offset: 0
+      y_offset: 84
+      brick: 0
+      port: 'ev3-ports:in2'
+    - name: color-sensor-left
+      type: color_sensor
+      x_offset: -69
+      y_offset: 95
+      brick: 0
+      port: 'ev3-ports:in1'
+    - name: color-sensor-right
+      type: color_sensor
+      x_offset: 69
+      y_offset: 95
+      brick: 0
+      port: 'ev3-ports:in3'
+    - name: touch-sensor-left
+      type: touch_sensor
+      side: left
+      x_offset: -65
+      y_offset: 102
+      brick: 1
+      port: 'ev3-ports:in2'
+    - name: touch-sensor-right
+      type: touch_sensor
+      side: right
+      x_offset: 65
+      y_offset: 102
+      brick: 1
+      port: 'ev3-ports:in3'
+    - name: touch-sensor-rear
+      type: touch_sensor
+      x_offset: 0
+      y_offset: -165
+      side: rear
+      brick: 1
+      port: 'ev3-ports:in1'
+    - name: ultrasonic-sensor-front
+      type: ultrasonic_sensor
+      x_offset: -22
+      y_offset: 56
+      brick: 1
+      port: 'ev3-ports:in4'
+    - name: measurement-probe
+      type: arm
+      x_offset: 15
+      y_offset: 102
+      brick: 0
+      port: 'ev3-ports:outB'
+    - name: ultrasonic-sensor-rear
+      type: ultrasonic_sensor
+      x_offset: 0
+      y_offset: -145
+      direction: bottom
+      brick: 0
+      port: 'ev3-ports:in4'
+board_height: 1273
+board_width: 1273
+board_color: (59, 60, 54)
+obstacles:
+  border:
+    outer_spacing: 23
+    depth: 15
+    color: (255, 255, 255)
+    type: 'border'
+
+  lake_blue:
+    border_width: 29
+    inner_radius: 38
+    color: (58, 166, 221)
+    x: 137
+    y: 922
+    type: 'lake'
+
+  lake_green:
+    border_width: 29
+    inner_radius: 38
+    color: (252, 227, 3)
+    x: 1052
+    y: 567
+    type: 'lake'
+
+  lake_red:
+    border_width: 29
+    inner_radius: 38
+    color: (201, 45, 57)
+    x: 397
+    y: 232
+    type: 'lake'
+
+  rock1:
+    x: 825
+    y: 1050
+    width: 150
+    height: 60
+    color: (169, 169, 169)
+    angle: 10
+    type: 'rock'
+
+  rock2:
+    x: 975
+    y: 275
+    width: 300
+    height: 90
+    color: (169, 169, 169)
+    angle: 130
+    type: 'rock'

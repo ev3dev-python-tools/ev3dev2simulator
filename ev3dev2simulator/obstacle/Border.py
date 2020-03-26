@@ -1,7 +1,7 @@
 import arcade
 
 from ev3dev2simulator.obstacle.BorderObstacle import BorderObstacle
-from ev3dev2simulator.util.Util import apply_scaling, to_color_code
+from ev3dev2simulator.util.Util import to_color_code
 
 
 class Border(BorderObstacle):
@@ -9,18 +9,28 @@ class Border(BorderObstacle):
     The outer line surrounding the playing field.
     """
 
+    def __init__(self, board_width, board_height, color: arcade.Color, depth, edge_spacing):
+        super(Border, self).__init__(board_width, board_height, to_color_code(color), depth, edge_spacing)
 
-    def __init__(self, cfg, color: arcade.Color):
-        depth = apply_scaling(cfg['obstacle_settings']['border_settings']['border_depth'])
-        edge_spacing = apply_scaling(cfg['screen_settings']['edge_spacing'])
-
-        super(Border, self).__init__(cfg, to_color_code(color), depth, edge_spacing)
-
+        # visualisation
         self.color = color
-        self.shapes = self._create_shapes()
+        self.shapes = None
 
+    def get_shapes(self):
+        return self.shapes
 
-    def _create_shapes(self) -> [arcade.Shape]:
+    @classmethod
+    def from_config(cls, board_width, board_height, config):
+
+        color = eval(config['color'])
+        depth = int(config['depth'])
+        spacing = int(config['outer_spacing'])
+
+        return cls(board_width, board_height, color, depth, spacing)
+
+    def create_shape(self, scale) -> [arcade.Shape]:
+
+        self._calc_points(scale)
         """
         Create a list of shapes representing the four lines that make up this border.
         :return: a list of Arcade shapes.
@@ -35,4 +45,5 @@ class Border(BorderObstacle):
         bottom = arcade.create_rectangles_filled_with_colors(self.bottom_points, colors)
         left = arcade.create_rectangles_filled_with_colors(self.left_points, colors)
 
-        return [top, right, bottom, left]
+        self.shapes = [top, right, bottom, left]
+        return self.shapes

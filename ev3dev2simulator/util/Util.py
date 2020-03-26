@@ -4,8 +4,6 @@ from typing import Tuple
 import arcade
 from arcade import PointList
 
-from ev3dev2simulator.config.config import get_config
-
 
 def get_circle_points(center_x: float,
                       center_y: float,
@@ -38,17 +36,6 @@ def get_circle_points(center_x: float,
     return points
 
 
-def pythagoras(x: int, y: int) -> float:
-    """
-    Calculate Pythagoras' theorem
-    :param x: length of one side.
-    :param y: length of the other one side.
-    :return: a floating point value representing the length of the third side.
-    """
-
-    return math.sqrt(x * x + y * y)
-
-
 def distance_between_points(x1: float, y1: float, x2: float, y2: float) -> float:
     """
     Calculate the distance between two points in 2D space.
@@ -59,9 +46,7 @@ def distance_between_points(x1: float, y1: float, x2: float, y2: float) -> float
     :return: a floating point value representing the distance.
     """
 
-    v1 = (x2 - x1) ** 2
-    v2 = (y2 - y1) ** 2
-    return math.sqrt(v1 + v2)
+    return math.hypot(x2 - x1, y2 - y1)
 
 
 def calc_differential_steering_angle_x_y(b: int, dl: float, dr: float, o: float) -> Tuple[float, float, float]:
@@ -87,7 +72,7 @@ def calc_differential_steering_angle_x_y(b: int, dl: float, dr: float, o: float)
 
 def get_cm_multiplier() -> float:
     """
-    Get the multiplier needed for converting pixels to centimeters.
+    Get the multiplier needed for converting millimeters to centimeters.
     :return: a floating point value representing the multiplier.
     """
 
@@ -96,19 +81,11 @@ def get_cm_multiplier() -> float:
 
 def get_inch_multiplier() -> float:
     """
-    Get the multiplier needed for converting pixels to inches.
+    Get the multiplier needed for converting millimeters to inches.
     :return: a floating point value representing the multiplier.
     """
 
     return 0.254
-
-
-def apply_scaling(value):
-    return get_config().get_scale() * value
-
-
-def remove_scaling(value):
-    return value / get_config().get_scale()
 
 
 def to_color_code(color: arcade.Color) -> int:

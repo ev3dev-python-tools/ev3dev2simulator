@@ -3,7 +3,7 @@ import socket
 import time
 from typing import Any
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.message import MotorCommand, SoundCommand, DataRequest, LedCommand
 
 
@@ -13,15 +13,13 @@ class ClientSocket:
     This connection is a TCP stream.
     """
 
-
     def __init__(self):
-        port = get_config().get_data()['exec_settings']['socket_port']
+        port = get_simulation_settings()['exec_settings']['socket_port']
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect(('localhost', port))
 
         time.sleep(1)
-
 
     def send_motor_command(self, command: MotorCommand) -> float:
         """
@@ -34,7 +32,6 @@ class ClientSocket:
 
         return self._wait_for_response()
 
-
     def send_led_command(self, command: LedCommand):
         """
         Serialise and send the given MotorCommand to the simulator.
@@ -44,7 +41,6 @@ class ClientSocket:
         jsn = self._serialize(command)
         self.client.send(jsn)
 
-
     def send_sound_command(self, command: SoundCommand):
         """
         Serialise and send the given SoundCommand to the simulator.
@@ -53,7 +49,6 @@ class ClientSocket:
 
         jsn = self._serialize(command)
         self.client.send(jsn)
-
 
     def send_data_request(self, request: DataRequest) -> Any:
         """
@@ -68,7 +63,6 @@ class ClientSocket:
 
         return self._wait_for_response()
 
-
     def _wait_for_response(self) -> Any:
         """
         Wait until the simulator responds with a message and deserialize the message.
@@ -81,7 +75,6 @@ class ClientSocket:
 
             if data:
                 return self._deserialize(data)
-
 
     def _serialize(self, message: Any) -> bytes:
         """
@@ -96,7 +89,6 @@ class ClientSocket:
         jsn = jsn.ljust(128, '#')
 
         return str.encode(jsn)
-
 
     def _deserialize(self, data: bytes) -> Any:
         """

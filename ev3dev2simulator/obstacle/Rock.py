@@ -10,40 +10,56 @@ class Rock(TouchObstacle):
     This class represents a 'rock'. Rocks are rectangles.
     """
 
-
     def __init__(self,
-                 center_x: int,
-                 center_y: int,
+                 x: int,
+                 y: int,
                  width: int,
                  height: int,
                  color: arcade.Color,
                  angle: int):
         super(Rock, self).__init__()
 
-        self.center_x = center_x
-        self.center_y = center_y
+        self.x = x
+        self.y = y
         self.width = width
         self.height = height
-        self.color = color
         self.angle = angle
 
-        self.points = self._create_points()
+        # visualisation
+        self.color = color
+        self.points = None
+        self.shape = None
+
+    def get_shapes(self):
+        return [self.shape]
+
+    def create_shape(self, scale):
+        self.points = self._create_points(scale)
         self.shape = self._create_shape()
-        self.poly = self._create_poly()
+        self.poly = self._create_poly(scale)
 
+    @classmethod
+    def from_config(cls, config):
+        x = config['x']
+        y = config['y']
+        width = config['width']
+        height = config['height']
+        color = eval(config['color'])
+        angle = config['angle']
 
-    def _create_points(self) -> PointList:
+        return cls(x, y, width, height, color, angle)
+
+    def _create_points(self, scale) -> PointList:
         """
         Create a list of points representing this rock in 2D space.
         :return: a PointList object.
         """
 
-        return arcade.get_rectangle_points(self.center_x,
-                                           self.center_y,
-                                           self.width,
-                                           self.height,
+        return arcade.get_rectangle_points(self.x * scale,
+                                           self.y * scale,
+                                           self.width * scale,
+                                           self.height * scale,
                                            self.angle)
-
 
     def _create_shape(self) -> Shape:
         """
@@ -60,14 +76,13 @@ class Rock(TouchObstacle):
 
         return top
 
-
-    def _create_poly(self):
+    def _create_poly(self, scale):
         """
         Create the polygon used for ray-casting. (Ultrasonic sensor)
         :return: a Pymunk Poly object.
         """
 
         body = Body(body_type=Body.STATIC)
-        body.position = Vec2d(self.center_x, self.center_y)
+        body.position = Vec2d(self.x * scale, self.y * scale)
 
-        return Poly.create_box(body, (self.width, self.height))
+        return Poly.create_box(body, (self.width * scale, self.height * scale))

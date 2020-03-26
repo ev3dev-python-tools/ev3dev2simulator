@@ -12,7 +12,7 @@ jobs:
         - os: macos-latest
           OS_DEPENDENCY: ''
         - os: ubuntu-latest
-          OS_DEPENDENCY: sudo apt-get install libasound2-dev espeak
+          OS_DEPENDENCY: sudo apt update; sudo apt-get install libasound2-dev espeak freeglut3-dev
         - os: windows-latest
           OS_DEPENDENCY: ''
     steps:
