@@ -26,7 +26,7 @@ class ClientSocketHandler(threading.Thread):
         """
 
         print(f'Connection from \"{self.brick_name}\" (id: {self.brick_id}) from robot \"{self.robot_sim.robot.name}\" '
-              f'accepted')
+              'accepted\n')
 
         try:
             while self.is_running:

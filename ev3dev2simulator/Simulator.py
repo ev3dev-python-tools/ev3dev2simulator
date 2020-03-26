@@ -14,32 +14,10 @@ from ev3dev2simulator.state.WorldState import WorldState
 
 
 def create_arg_parser():
-    def validate_scale(value):
-        """
-        Check if the given value is a valid scale value. Throw an Error if this is not the case.
-        :param value: to validate.
-        :return: a boolean value representing if the validation was successful.
-        """
-
-        try:
-            f = float(value)
-        except ValueError:
-            raise argparse.ArgumentTypeError('Scaling value must be a floating point number')
-
-        if f < 0.0 or f > 1.0:
-            raise argparse.ArgumentTypeError("%s is an invalid scaling value. Should be between 0 and 1" % f)
-
-        return f
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-V", "--version",
                         action='store_true',
                         help="Show version info")
-    parser.add_argument("-s", "--window_scaling",
-                        default=0.65,
-                        help="Scaling of the screen, default is 0.65",
-                        required=False,
-                        type=validate_scale)
     parser.add_argument("-t", "--simulation_file",
                         default='config_small',
                         help="Path to the configuration file. Defaults to config_small",
@@ -54,7 +32,6 @@ def create_arg_parser():
     parser.add_argument("-m", "--maximized",
                         action='store_true',
                         help="Show simulator maximized")
-
     return parser
 
 
@@ -72,13 +49,11 @@ def main():
         print("version ev3dev2simulator  : " + simversion.__version__)
         sys.exit(0)
 
-    config = get_config()
-
     use_second_screen_to_show_simulator = args['show_on_second_monitor']
     show_fullscreen = args['fullscreen']
     show_maximized = args['maximized']
 
-    simulation_config = config.get_simulation_config(args['simulation_file'])
+    simulation_config = get_config().get_simulation_config(args['simulation_file'])
     world_state = WorldState(simulation_config)
 
     world_simulator = WorldSimulator(world_state)

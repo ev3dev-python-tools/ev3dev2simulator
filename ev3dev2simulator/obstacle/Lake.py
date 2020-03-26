@@ -93,7 +93,7 @@ class Lake(ColorObstacle):
 
         border_width = config['border_width']
         inner_radius = config['inner_radius']
-        outer_radius = inner_radius + (border_width / 2)
+        outer_radius = inner_radius + border_width
 
         x = config['x']
         y = config['y']
@@ -139,6 +139,7 @@ class Lake(ColorObstacle):
                                            x,
                                            y)
         if self.hole is not None:
-            return (self.inner_radius * self.scale) < distance < (self.outer_radius * self.scale)
+            return (self.inner_radius * self.scale) < distance <\
+                   ((self.outer_radius + (self.border_width/2)) * self.scale)
         else:
             return distance < (self.outer_radius * self.scale)

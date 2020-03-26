@@ -1,3 +1,5 @@
+#This file contains settings that should sparely be changed. The world configuration can be done in the folder world_config
+
 screen_settings:
   background_color: (100, 100, 150)
   edge_spacing: 23
@@ -33,12 +35,12 @@ image_paths:
 
 # sizes in mm
 body_part_sizes:
+  body:
+    width: 72
+    height: 110 # https://www.brickowl.com/catalog/lego-ev3-programable-brick-95646
   arm:
     height: 72 # 9 lego units
     width: 8 # 1 lego unit
-  body:
-    width: 71
-    height: 110 # https://www.brickowl.com/catalog/lego-ev3-programable-brick-95646
   led:
     width: 8
     height: 8
@@ -52,17 +54,17 @@ body_part_sizes:
     width: 72 # 9 lego units
     height: 40  # 5 lego unit
   touch_sensor_bar_rear:
-    height: 8 # 1 lego units
     width: 120  # 15 lego unit?
+    height: 8 # 1 lego units
   ultrasonic_sensor_bottom:
+    width: 55 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
     height: 25 # approx
-    width: 55 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
   ultrasonic_sensor_top:
-    height: 50
     width: 55 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+    height: 45
   wheel:
-    height: 56
     width: 28 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+    height: 55
 
 exec_settings:
   frames_per_second: 30
