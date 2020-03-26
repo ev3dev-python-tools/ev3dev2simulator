@@ -1,8 +1,6 @@
 import math
 import arcade
 
-from ev3dev2simulator.util.Util import pythagoras
-
 
 class BodyPart(arcade.Sprite):
     """
@@ -31,7 +29,7 @@ class BodyPart(arcade.Sprite):
         self.px_mm_scale = None
 
         self.angle_addition = -math.atan(delta_x / delta_y) if delta_y else 0
-        self.sweep_length = pythagoras(delta_x, delta_y)
+        self.sweep_length = math.hypot(delta_x, delta_y)
 
         if delta_y < 0:
             self.angle_addition += math.radians(180)

@@ -14,7 +14,7 @@ from ev3dev2simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
 from ev3dev2simulator.robot.UltrasonicSensorTop import UltrasonicSensor
 from ev3dev2simulator.robot.Wheel import Wheel
 from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
-from ev3dev2simulator.config.config import get_config, debug
+from ev3dev2simulator.config.config import get_simulation_settings, debug
 
 
 class RobotState:
@@ -43,8 +43,8 @@ class RobotState:
         self.x = self.orig_x
         self.y = self.orig_y
 
-        vis_conf = get_config().get_visualisation_config()
-        self.wheel_distance = vis_conf['wheel_settings']['spacing']  # TODO move this to robot config
+        sim_settings = get_simulation_settings()
+        self.wheel_distance = sim_settings['wheel_settings']['spacing']  # TODO move this to robot config
 
         self.name = config['name']
         self.is_stuck = False

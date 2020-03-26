@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2simulator.connection.message.StopCommand import StopCommand
 
@@ -12,7 +12,7 @@ class MotorCommandProcessor:
     """
 
     def __init__(self):
-        cfg = get_config().get_visualisation_config()
+        cfg = get_simulation_settings()
 
         self.distance_coasting_sub = cfg['motor_settings']['distance_coasting_subtraction']
         self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
@@ -112,7 +112,8 @@ class MotorCommandProcessor:
 
         return max(frames, 1)
 
-    def _coast_frames_required(self, speed: float, coasting_sub: float) -> int:
+    @staticmethod
+    def _coast_frames_required(speed: float, coasting_sub: float) -> int:
         """
         Calculate the number of frames required for a motor to coast to a halt based on the given speed.
         :param speed: in millimeters per second.

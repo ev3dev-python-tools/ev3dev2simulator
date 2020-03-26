@@ -1,7 +1,7 @@
 from typing import Any, Tuple
 
 from ev3dev2._platform.ev3 import LEDS
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
 from ev3dev2simulator.state import RobotSimulator
@@ -22,7 +22,7 @@ class MessageProcessor:
     """
 
     def __init__(self, brick_id: int, robot_sim: RobotSimulator):
-        cfg = get_config().get_visualisation_config()
+        cfg = get_simulation_settings()
 
         self.brick_id = brick_id
 

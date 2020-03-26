@@ -29,7 +29,6 @@ class Rock(TouchObstacle):
         self.color = color
         self.points = None
         self.shape = None
-        self.poly = None
 
     def get_shapes(self):
         return [self.shape]

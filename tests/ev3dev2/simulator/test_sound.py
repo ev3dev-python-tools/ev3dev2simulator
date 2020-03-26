@@ -2,7 +2,7 @@ import sys
 import unittest
 from time import sleep
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 
 clientSocketModuleMock = MagicMock()
 sys.modules['ev3dev2simulator.connection.ClientSocket'] = clientSocketModuleMock

@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
 from ev3dev2simulator.robot.Brick import Brick
 from ev3dev2simulator.state import RobotSimulator
@@ -47,7 +47,7 @@ class ServerSockets(threading.Thread):
         for two new connections.
         """
 
-        port = get_config().get_visualisation_config()['exec_settings']['socket_port']
+        port = get_simulation_settings()['exec_settings']['socket_port']
 
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

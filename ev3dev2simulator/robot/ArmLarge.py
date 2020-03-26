@@ -3,7 +3,7 @@ import math
 from arcade import Sprite
 import arcade
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.obstacle.Ground import Ground
 
 
@@ -32,7 +32,7 @@ class ArmLarge(Sprite):
         self.center_y = y
         self.rotate_x = x
         self.rotate_y = y + self.sweep_length
-        vis_conf = get_config().get_visualisation_config()
+        vis_conf = get_simulation_settings()
         self.init_texture(vis_conf['image_paths']['arm_large'], width, height)
         self.side_bar_ground.create_shape(x, y - 70, width, 10)
         self.rotate(20)

@@ -1,6 +1,6 @@
 import arcade
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
 COLORS = dict()
@@ -25,14 +25,14 @@ class ColorSensor(BodyPart):
                  delta_x: int,
                  delta_y: int,
                  name: str):
-        dims = get_config().get_visualisation_config()['body_part_sizes']['color_sensor']
+        dims = get_simulation_settings()['body_part_sizes']['color_sensor']
         super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, dims['width'], dims['height'],
                                           'color_sensor')
         self.name = name
         self.old_texture_index = 0
 
     def setup_visuals(self, scale):
-        img_cfg = get_config().get_visualisation_config()['image_paths']
+        img_cfg = get_simulation_settings()['image_paths']
         src_list = [img_cfg[f'color_sensor_{color}'] for color in ['black', 'blue', 'green', 'red', 'white', 'yellow']]
         self.init_texture_list(src_list, scale)
 

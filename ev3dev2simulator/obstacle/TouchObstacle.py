@@ -8,6 +8,7 @@ class TouchObstacle:
 
     def __init__(self):
         self.points = None
+        self.poly = None
 
     def collided_with(self, sprite: arcade.Sprite) -> bool:
         """

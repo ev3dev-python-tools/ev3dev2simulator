@@ -28,7 +28,6 @@ class Bottle(TouchObstacle):
         self.color = color
         self.points = None
         self.shape = None
-        self.poly = None
 
     @classmethod
     def from_config(cls, config):

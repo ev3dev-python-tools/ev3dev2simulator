@@ -9,7 +9,7 @@ from arcade.color import RED
 
 from ev3dev2simulator.state import WorldState
 from ev3dev2simulator.visualisation.Sidebar import Sidebar
-from ev3dev2simulator.config.config import get_config, debug
+from ev3dev2simulator.config.config import get_simulation_settings, debug
 
 
 def start():
@@ -38,21 +38,21 @@ class Visualiser(arcade.Window):
         self.world_state = world_state
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
-        self.sim_config = get_config().get_visualisation_config()
+        sim_settings = get_simulation_settings()
 
         self.scale = None
-        self.screen_width = int(self.sim_config['screen_settings']['screen_width'])
-        self.screen_height = int(self.sim_config['screen_settings']['screen_height'])
-        self.side_bar_width = int(self.sim_config['screen_settings']['side_bar_width'])
+        self.screen_width = int(sim_settings['screen_settings']['screen_width'])
+        self.screen_height = int(sim_settings['screen_settings']['screen_height'])
+        self.side_bar_width = int(sim_settings['screen_settings']['side_bar_width'])
 
         from ev3dev2.version import __version__ as apiversion
         from ev3dev2simulator.version import __version__ as simversion
-        screen_title = self.sim_config['screen_settings'][
+        screen_title = sim_settings['screen_settings'][
                            'screen_title'] + f'          version: {simversion}      ev3dev2 api: {apiversion}'
 
-        self.frames_per_second = self.sim_config['exec_settings']['frames_per_second']
-        self.falling_msg = self.sim_config['screen_settings']['falling_message']
-        self.restart_msg = self.sim_config['screen_settings']['restart_message']
+        self.frames_per_second = sim_settings['exec_settings']['frames_per_second']
+        self.falling_msg = sim_settings['screen_settings']['falling_message']
+        self.restart_msg = sim_settings['screen_settings']['restart_message']
 
         self.change_scale(self.screen_width, self.screen_height)
         print('starting simulation with scaling', self.scale)
@@ -62,7 +62,7 @@ class Visualiser(arcade.Window):
 
         icon1 = pyglet.image.load(r'assets/images/body.png')
         self.set_icon(icon1)
-        arcade.set_background_color(eval(self.sim_config['screen_settings']['background_color']))
+        arcade.set_background_color(eval(sim_settings['screen_settings']['background_color']))
 
         self.msg_counter = 0
 
@@ -319,7 +319,10 @@ class Visualiser(arcade.Window):
 
         for obstacleList in self.world_state.obstacles:
             for shape in obstacleList.get_shapes():
-                shape.draw()
+                if shape.line_width == 1:
+                    shape.draw()
+                else:
+                    print(shape)
 
         for robot in self.world_state.get_robots():
             for sprite in robot.get_sprites():

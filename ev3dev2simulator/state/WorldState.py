@@ -9,8 +9,6 @@ from ev3dev2simulator.obstacle.Edge import Edge
 from ev3dev2simulator.obstacle.Lake import Lake
 from ev3dev2simulator.obstacle.Rock import Rock
 
-from ev3dev2simulator.config.config import get_config
-
 
 class WorldState:
     def __init__(self, config):
@@ -32,9 +30,7 @@ class WorldState:
         for robot_conf in config['robots']:
             self.robots.append(RobotState(robot_conf))
 
-        vis_config = get_config().get_visualisation_config()
-
-        edge = Edge(self.board_width, self.board_height, vis_config)
+        edge = Edge(self.board_width, self.board_height)
         self.obstacles.append(edge)
         self.falling_obstacles.append(edge)
 

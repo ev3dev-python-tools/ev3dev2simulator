@@ -1,6 +1,6 @@
 import socket
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 
 RFCOMM = 0
 
@@ -12,7 +12,7 @@ class BluetoothSocket:
     """
 
     def __init__(self, comm):
-        self.port = get_config().get_visualisation_config()['exec_settings']['bluetooth_port']
+        self.port = get_simulation_settings()['exec_settings']['bluetooth_port']
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def accept(self):

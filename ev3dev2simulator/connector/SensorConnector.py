@@ -1,7 +1,7 @@
 import time
 from typing import Any
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.ClientSocket import get_client_socket
 from ev3dev2simulator.connection.message.DataRequest import DataRequest
 
@@ -13,18 +13,16 @@ class SensorConnector:
     This class is responsible for creating DataRequests to be send to simulator.
     """
 
-
     def __init__(self, address: str):
         self.address = address
         self.client_socket = get_client_socket()
 
         self.wait_time = 0.008
-        self.frame_time = 1 / get_config().get_visualisation_config()['exec_settings']['frames_per_second']
+        self.frame_time = 1 / get_simulation_settings()['exec_settings']['frames_per_second']
         self.last_request_time = 0
 
         self.value_cache = None
         self.delta_sum = 0
-
 
     def get_value(self) -> Any:
         """
@@ -48,7 +46,6 @@ class SensorConnector:
             time.sleep(self.wait_time)
 
         return self.value_cache
-
 
     def _get_value(self) -> Any:
         """

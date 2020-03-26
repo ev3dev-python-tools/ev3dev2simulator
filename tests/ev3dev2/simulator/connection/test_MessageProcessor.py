@@ -1,7 +1,7 @@
 import threading
 import unittest
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.connection.MessageProcessor import MessageProcessor
 from ev3dev2simulator.connection.message.DataRequest import DataRequest
 from ev3dev2simulator.connection.message.LedCommand import LedCommand
@@ -9,6 +9,8 @@ from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
 
 from tests.ev3dev2.simulator.connection.test_ServerSocket import create_robot_sim
+
+load_config(None)
 
 
 class MessageProcessorTest(unittest.TestCase):
@@ -71,7 +73,7 @@ class MessageProcessorTest(unittest.TestCase):
         self.assertEqual((jobs[0][1], jobs[1][1], jobs[2][1], jobs[3][1]), (None, None, None, None))
 
     def test_create_jobs_coast_center(self):
-        coasting_sub = get_config().get_visualisation_config()['motor_settings']['degree_coasting_subtraction']
+        coasting_sub = get_simulation_settings()['motor_settings']['degree_coasting_subtraction']
         robot_sim = create_robot_sim()
 
         message_processor = MessageProcessor(0, robot_sim)
@@ -97,7 +99,7 @@ class MessageProcessorTest(unittest.TestCase):
         self.assertEqual((jobs[0][1], jobs[1][1], jobs[2][1], jobs[3][1]), (None, None, None, None))
 
     def test_create_jobs_coast_left(self):
-        coasting_sub = get_config().get_visualisation_config()['motor_settings']['distance_coasting_subtraction']
+        coasting_sub = get_simulation_settings()['motor_settings']['distance_coasting_subtraction']
         robot_sim = create_robot_sim()
 
         message_processor = MessageProcessor(0, robot_sim)
@@ -130,7 +132,7 @@ class MessageProcessorTest(unittest.TestCase):
     def test_process_sound_command(self):
         robot_sim = create_robot_sim()
 
-        frames_per_second = get_config().get_visualisation_config()['exec_settings']['frames_per_second']
+        frames_per_second = get_simulation_settings()['exec_settings']['frames_per_second']
         frames = int(5 * frames_per_second)
 
         message_processor = MessageProcessor(0, robot_sim)

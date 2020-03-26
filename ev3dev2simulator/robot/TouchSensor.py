@@ -1,4 +1,4 @@
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
 
@@ -17,9 +17,9 @@ class TouchSensor(BodyPart):
                  name: str):
         self.side = side
         if self.side in ['left', 'right']:
-            dims = get_config().get_visualisation_config()['body_part_sizes']['touch_sensor_bar']
+            dims = get_simulation_settings()['body_part_sizes']['touch_sensor_bar']
         else:
-            dims = get_config().get_visualisation_config()['body_part_sizes']['touch_sensor_bar_rear']
+            dims = get_simulation_settings()['body_part_sizes']['touch_sensor_bar_rear']
 
         super(TouchSensor, self).__init__(brick, address, robot, delta_x, delta_y, dims['width'], dims['height'],
                                           'touch_sensor')
@@ -32,7 +32,7 @@ class TouchSensor(BodyPart):
             img = 'touch_sensor_right'
         else:
             img = 'touch_sensor_rear'
-        vis_conf = get_config().get_visualisation_config()
+        vis_conf = get_simulation_settings()
         self.init_texture(vis_conf['image_paths'][img], scale)
 
     def get_latest_value(self):

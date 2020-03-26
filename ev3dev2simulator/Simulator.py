@@ -5,7 +5,7 @@ import os
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import load_config, get_world_config
 from ev3dev2simulator.state import WorldState
 from ev3dev2simulator.visualisation.Visualiser import Visualiser, start
 from ev3dev2simulator.connection.ServerSockets import ServerSockets
@@ -53,8 +53,9 @@ def main():
     show_fullscreen = args['fullscreen']
     show_maximized = args['maximized']
 
-    simulation_config = get_config().get_simulation_config(args['simulation_file'])
-    world_state = WorldState(simulation_config)
+    load_config(args['simulation_file'])
+
+    world_state = WorldState(get_world_config())
 
     world_simulator = WorldSimulator(world_state)
 

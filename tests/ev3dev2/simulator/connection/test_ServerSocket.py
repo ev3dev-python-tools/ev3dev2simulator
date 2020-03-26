@@ -4,9 +4,11 @@ import unittest
 # based on scaling_multiplier: 0.60
 from typing import Any
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
 from ev3dev2simulator.state.RobotSimulator import RobotState, RobotSimulator
+
+load_config(None)
 
 
 def create_robot_sim():
@@ -111,17 +113,17 @@ class ServerSocketTest(unittest.TestCase):
             'soundType': 'speak'
         }
 
-        frames_per_second = get_config().get_visualisation_config()['exec_settings']['frames_per_second']
+        frames_per_second = get_simulation_settings()['exec_settings']['frames_per_second']
         frames = int(2 * frames_per_second)
 
         server = create_client_socket_handler()
         server.message_handler._process_sound_command(d)
 
         for i in range(frames):
-            soundJob = [i[1] for i in server.robot_sim.next_actuator_jobs() if i[0] == (0, 'speaker')][0]
-            self.assertIsNotNone(soundJob)
-        soundJob = [i[1] for i in server.robot_sim.next_actuator_jobs() if i[0] == (0, 'speaker')][0]
-        self.assertIsNone(soundJob)
+            sound_job = [i[1] for i in server.robot_sim.next_actuator_jobs() if i[0] == (0, 'speaker')][0]
+            self.assertIsNotNone(sound_job)
+        sound_job = [i[1] for i in server.robot_sim.next_actuator_jobs() if i[0] == (0, 'speaker')][0]
+        self.assertIsNone(sound_job)
 
     def test_process_data_request(self):
         d = {
@@ -137,7 +139,8 @@ class ServerSocketTest(unittest.TestCase):
 
         self.assertEqual(val, 10)
 
-    def _deserialize(self, data: bytes) -> Any:
+    @staticmethod
+    def _deserialize(data: bytes) -> Any:
         """
         Deserialize the given data.
         :param data: to be deserialized.

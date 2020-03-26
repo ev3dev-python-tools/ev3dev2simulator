@@ -1,9 +1,11 @@
 import unittest
 
-from ev3dev2simulator.config.config import get_config
+from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.connection.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2simulator.connection.message.StopCommand import StopCommand
+
+load_config(None)
 
 
 class MotorCommandProcessorTest(unittest.TestCase):
@@ -171,7 +173,7 @@ class MotorCommandProcessorTest(unittest.TestCase):
         self.assertEqual(frames, 318)
 
     def test_coast_frames_required(self):
-        coasting_sub = get_config().get_visualisation_config()['motor_settings']['distance_coasting_subtraction']
+        coasting_sub = get_simulation_settings()['motor_settings']['distance_coasting_subtraction']
         creator = MotorCommandProcessor()
 
         frames = creator._coast_frames_required(20, coasting_sub)
