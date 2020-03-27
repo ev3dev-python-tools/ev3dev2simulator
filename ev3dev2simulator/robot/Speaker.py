@@ -18,6 +18,6 @@ class Speaker(BodyPart):
         super(Speaker, self).__init__(brick, 'speaker', robot, center_x, center_y,  dims['width'], dims['height'],
                                       'speaker')
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         vis_conf = get_simulation_settings()
-        self.init_texture(vis_conf['image_paths']['led_black'], scale)
+        self.init_sprite(vis_conf['image_paths']['led_black'], scale, body)

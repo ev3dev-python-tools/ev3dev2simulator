@@ -26,11 +26,12 @@ class UltrasonicSensor(BodyPart):
         self.name = name
         self.sensor_half_height = 22.5
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         img_cfg = get_simulation_settings()['image_paths']
-        self.init_texture(img_cfg['ultrasonic_sensor_top'], scale)
+        self.init_sprite(img_cfg['ultrasonic_sensor_top'], scale, body)
 
     def get_latest_value(self):
+        return 5
         return self.distance(self.robot.space)
 
     def distance(self, space: Space) -> float:

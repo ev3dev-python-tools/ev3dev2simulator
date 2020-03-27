@@ -17,6 +17,6 @@ class Brick(BodyPart):
         dims = get_simulation_settings()['body_part_sizes']['body']
         super(Brick, self).__init__(brick, '', robot, delta_x, delta_y, dims['width'], dims['height'], 'brick')
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         vis_conf = get_simulation_settings()
-        self.init_texture(vis_conf['image_paths']['body'], scale)
+        self.init_sprite(vis_conf['image_paths']['body'], scale, body)

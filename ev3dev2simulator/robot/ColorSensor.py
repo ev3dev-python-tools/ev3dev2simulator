@@ -31,10 +31,10 @@ class ColorSensor(BodyPart):
         self.name = name
         self.old_texture_index = 0
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         img_cfg = get_simulation_settings()['image_paths']
         src_list = [img_cfg[f'color_sensor_{color}'] for color in ['black', 'blue', 'green', 'red', 'white', 'yellow']]
-        self.init_texture_list(src_list, scale)
+        self.init_sprite_with_list(src_list, scale, 0, body)
 
     def get_latest_value(self):
         latest_data = self.get_sensed_color()
@@ -48,7 +48,7 @@ class ColorSensor(BodyPart):
         """
 
         for o in self.sensible_obstacles:
-            if o.collided_with(self.center_x, self.center_y):
+            if o.collided_with(self.sprite.center_x, self.sprite.center_y):
                 return o.color_code
 
         return self.get_default_value()
@@ -62,8 +62,6 @@ class ColorSensor(BodyPart):
 
     def set_color_texture(self, color):
         converted = COLORS[color]
-
         if self.old_texture_index != converted:
             self.old_texture_index = converted
-            self.set_texture(converted)
-            self.set_dimensions(self.width_mm, self.height_mm, self.px_mm_scale)
+            self.sprite.set_texture(converted)

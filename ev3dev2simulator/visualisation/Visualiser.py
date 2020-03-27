@@ -5,6 +5,7 @@ import tempfile
 
 import arcade
 import pyglet
+
 from arcade.color import RED
 
 from ev3dev2simulator.state import WorldState
@@ -317,17 +318,15 @@ class Visualiser(arcade.Window):
 
         arcade.start_render()
 
-        for obstacleList in self.world_state.obstacles:
+        for obstacleList in self.world_state.static_obstacles:
             for shape in obstacleList.get_shapes():
                 if shape.line_width == 1:
                     shape.draw()
                 else:
                     print(shape)
+        self.world_state.sprite_list.draw()
 
         for robot in self.world_state.get_robots():
-            for sprite in robot.get_sprites():
-                sprite.calculate_drawing_position(self.scale)
-
             robot.get_sprites().draw()
 
             if debug:

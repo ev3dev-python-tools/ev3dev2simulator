@@ -18,18 +18,18 @@ class Wheel(BodyPart):
         self.x_offset = delta_x
         self.y_offset = delta_y
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         vis_conf = get_simulation_settings()
-        self.init_texture(vis_conf['image_paths']['wheel'], scale)
+        self.init_sprite(vis_conf['image_paths']['wheel'], scale, body)
 
     def is_falling(self) -> bool:
         """
         Check if this Wheel is 'falling' of the playing field.
         :return: boolean value representing the outcome.
         """
-        for o in self.sensible_obstacles:
-            if o.collided_with(self.center_x, self.center_y):
-                return True
+        # for o in self.sensible_obstacles:
+        #     if o.collided_with(self.center_x, self.center_y):
+        #         return True
 
         return self.get_default_value()
 

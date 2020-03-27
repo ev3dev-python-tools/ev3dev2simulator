@@ -3,7 +3,7 @@ import socket
 import time
 from typing import Any
 
-from ev3dev2simulator.config.config import get_simulation_settings
+from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.connection.message import MotorCommand, SoundCommand, DataRequest, LedCommand
 
 
@@ -14,6 +14,7 @@ class ClientSocket:
     """
 
     def __init__(self):
+        load_config(None)
         port = get_simulation_settings()['exec_settings']['socket_port']
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

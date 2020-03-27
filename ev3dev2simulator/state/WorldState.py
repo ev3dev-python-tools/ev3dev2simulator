@@ -1,3 +1,4 @@
+import arcade
 from pymunk import Space
 
 from ev3dev2simulator.obstacle.Board import Board
@@ -8,36 +9,41 @@ from ev3dev2simulator.obstacle.Bottle import Bottle
 from ev3dev2simulator.obstacle.Edge import Edge
 from ev3dev2simulator.obstacle.Lake import Lake
 from ev3dev2simulator.obstacle.Rock import Rock
+from ev3dev2simulator.visualisation.PymunkSprite import PymunkSprite
 
 
 class WorldState:
     def __init__(self, config):
+        self.sprite_list = arcade.SpriteList[PymunkSprite]()
         self.obstacles = []
+        self.static_obstacles = []
         self.touch_obstacles = []
         self.falling_obstacles = []
         self.color_obstacles = []
+
         self.robots = []
         self.space_obstacles = []
         self.space = Space()
+        self.space.damping = 0.99
 
         self.board_width = int(config['board_width'])
         self.board_height = int(config['board_height'])
         board_color = eval(config['board_color'])
 
         board = Board(self.board_width / 2, self.board_height / 2, self.board_width, self.board_height, board_color)
-        self.obstacles.append(board)
+        self.static_obstacles.append(board)
 
         for robot_conf in config['robots']:
             self.robots.append(RobotState(robot_conf))
 
         edge = Edge(self.board_width, self.board_height)
-        self.obstacles.append(edge)
+        self.static_obstacles.append(edge)
         self.falling_obstacles.append(edge)
 
         for key, value in config['obstacles'].items():
             if value['type'] == 'lake':
                 lake = Lake.from_config(value)
-                self.obstacles.append(lake)
+                self.static_obstacles.append(lake)
                 if lake.hole is not None:
                     self.falling_obstacles.append(lake.hole)
                 self.color_obstacles.append(lake)
@@ -45,10 +51,9 @@ class WorldState:
                 rock = Rock.from_config(value)
                 self.obstacles.append(rock)
                 self.touch_obstacles.append(rock)
-                self.space_obstacles.append(rock)
             elif value['type'] == 'border':
                 border = Border.from_config(self.board_width, self.board_height, value)
-                self.obstacles.append(border)
+                self.static_obstacles.append(border)
                 self.color_obstacles.append(border)
             elif value['type'] == 'bottle':
                 bottle = Bottle.from_config(value)
@@ -61,18 +66,30 @@ class WorldState:
         self.color_obstacles.append(board)
 
     def setup_visuals(self, scale):
-        for obstacle in self.obstacles:
+
+        for obstacle in self.static_obstacles:
             obstacle.create_shape(scale)
 
-        for obstacle in self.space_obstacles:
-            self.space.add(obstacle.poly)
+        touch_sprites = arcade.SpriteList[PymunkSprite]()
+
+        for obstacle in self.obstacles:
+            obstacle.create_sprite(scale)
+            self.sprite_list.append(obstacle.sprite)
+            touch_sprites.append(obstacle.sprite)
+
+        for sprite in self.sprite_list:
+            self.space.add(sprite.body)
+            self.space.add(sprite.shape)
 
         for robot in self.robots:
             robot.setup_visuals(scale)
+            for sprite in robot.get_sprites():
+                self.space.add(sprite.shape)
+                print('sprite added', sprite.position)
+            self.space.add(robot.body)
             robot.set_color_obstacles(self.color_obstacles)
-            robot.set_touch_obstacles(self.touch_obstacles)
+            robot.set_touch_obstacles(touch_sprites)
             robot.set_falling_obstacles(self.falling_obstacles)
-            robot.set_space(self.space)
 
     def get_robots(self) -> [RobotState]:
         return self.robots

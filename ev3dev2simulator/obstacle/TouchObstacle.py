@@ -1,4 +1,5 @@
 import arcade
+from arcade import SpriteList
 
 
 class TouchObstacle:
@@ -16,4 +17,4 @@ class TouchObstacle:
         :param sprite: to check collision for.
         :return: True if collision detected.
         """
-        return arcade.are_polygons_intersecting(self.points, sprite.get_adjusted_hit_box())
+        return arcade.check_for_collision_with_list(self.sprite, SpriteList().append(sprite))

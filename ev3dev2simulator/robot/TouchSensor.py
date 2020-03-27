@@ -1,3 +1,5 @@
+import arcade
+
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
@@ -6,7 +8,6 @@ class TouchSensor(BodyPart):
     """
     Class representing a TouchSensor of the simulated robot.
     """
-
     def __init__(self,
                  brick: int,
                  address: str,
@@ -25,7 +26,7 @@ class TouchSensor(BodyPart):
                                           'touch_sensor')
         self.name = name
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         if self.side == 'left':
             img = 'touch_sensor_left'
         elif self.side == 'right':
@@ -33,7 +34,7 @@ class TouchSensor(BodyPart):
         else:
             img = 'touch_sensor_rear'
         vis_conf = get_simulation_settings()
-        self.init_texture(vis_conf['image_paths'][img], scale)
+        self.init_sprite(vis_conf['image_paths'][img], scale, body)
 
     def get_latest_value(self):
         return self.is_touching()
@@ -43,9 +44,10 @@ class TouchSensor(BodyPart):
         Check if this TouchSensor is touching a TouchObstacle.
         :return: boolean value representing the outcome.
         """
-        for o in self.sensible_obstacles:
-            if o.collided_with(self):
-                return True
+        if self.sprite is None:
+            return False
+        if arcade.check_for_collision_with_list(self.sprite, self.sensible_obstacles):
+            return True
 
         return self.get_default_value()
 

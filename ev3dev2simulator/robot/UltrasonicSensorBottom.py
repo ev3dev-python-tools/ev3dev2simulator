@@ -18,9 +18,9 @@ class UltrasonicSensorBottom(BodyPart):
                                                      dims['width'], dims['height'], 'ultrasonic_sensor')
         self.name = name
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         img_cfg = get_simulation_settings()['image_paths']
-        self.init_texture(img_cfg['ultrasonic_sensor_bottom'], scale)
+        self.init_sprite(img_cfg['ultrasonic_sensor_bottom'], scale, body)
 
     def get_latest_value(self):
         return self.distance()

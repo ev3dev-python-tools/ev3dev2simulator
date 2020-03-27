@@ -5,7 +5,7 @@ robots:
   - name: robot0
     center_x: 200
     center_y: 300
-    orientation: -15
+    orientation: 0
     parts:
     - name: brick1
       type: brick
@@ -83,6 +83,15 @@ obstacles:
     y: 500
     hole: False
     type: 'lake'
+
+  rock1:
+    x: 800
+    y: 300
+    width: 50
+    height: 550
+    color: (85, 107, 47)
+    angle: 10
+    type: 'rock'
 
   bottle:
     x: 1000

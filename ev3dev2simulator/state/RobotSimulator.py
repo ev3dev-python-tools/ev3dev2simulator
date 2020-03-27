@@ -1,3 +1,4 @@
+import math
 import threading
 from queue import Queue, Empty
 from typing import Any
@@ -37,6 +38,7 @@ class RobotSimulator:
             self._process_leds()
             self._process_sensors()
             self.robot.is_stuck = self._check_fall()
+            self._resync_physics_sprites()
 
     def put_actuator_job(self, address: (int, str), job: float):
         """
@@ -159,3 +161,9 @@ class RobotSimulator:
         """
         for address, sensor in self.robot.sensors.items():
             self.robot.values[address] = sensor.get_latest_value()
+
+    def _resync_physics_sprites(self):
+        for part in self.robot.parts:
+            part.sprite.center_x = self.robot.body.position.x + part.sprite.shape.center_of_gravity.x # self.robot.body.position.x + part.x_offset * self.robot.scale
+            part.sprite.center_y = self.robot.body.position.y + part.sprite.shape.center_of_gravity.y # self.robot.body.position.y + part.y_offset * self.robot.scale
+            part.sprite.angle = math.degrees(part.sprite.shape.body.angle)

@@ -18,9 +18,9 @@ class Arm(BodyPart):
         super(Arm, self).__init__(brick, address, robot, x, y, dims['width'], dims['height'],  'arm')
         self.side_bar_arm = ArmLarge()
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         vis_conf = get_simulation_settings()
-        self.init_texture(vis_conf['image_paths']['arm'], scale)
+        self.init_sprite(vis_conf['image_paths']['arm'], scale, body=body)
 
     def rotate_arm(self, degrees):
         self.side_bar_arm.rotate(degrees)

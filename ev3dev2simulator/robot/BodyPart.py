@@ -1,8 +1,10 @@
 import math
-import arcade
+from pymunk import Vec2d
+
+from ev3dev2simulator.visualisation.PymunkRobotPartSprite import PymunkRobotPartSprite
 
 
-class BodyPart(arcade.Sprite):
+class BodyPart:
     """
     Class containing the base functionality of a part of the robot.
     """
@@ -16,8 +18,6 @@ class BodyPart(arcade.Sprite):
                  width_mm: int,
                  height_mm: int,
                  ev3type: str):
-        super(BodyPart, self).__init__()
-
         self.ev3type = ev3type
         self.brick = brick
         self.address = address
@@ -26,7 +26,9 @@ class BodyPart(arcade.Sprite):
         self.height_mm = height_mm
         self.x = robot.x + delta_x
         self.y = robot.y + delta_y
-        self.px_mm_scale = None
+
+        self.x_offset = delta_x
+        self.y_offset = delta_y
 
         self.angle_addition = -math.atan(delta_x / delta_y) if delta_y else 0
         self.sweep_length = math.hypot(delta_x, delta_y)
@@ -36,39 +38,7 @@ class BodyPart(arcade.Sprite):
 
         self.sensible_obstacles = []
 
-    def calculate_drawing_position(self, scale):
-        self.center_x = self.x * scale
-        self.center_y = self.y * scale
-
-    def move_x(self, distance: float):
-        """
-        Move this part by the given distance in the x-direction.
-        :param distance: to move
-        """
-
-        self.x += distance
-
-    def move_y(self, distance: float):
-        """
-        Move this part by the given distance in the y-direction.
-        :param distance: to move
-        """
-
-        self.y += distance
-
-    def rotate(self, radians: float):
-        """
-        Rotate this part by the given angle in radians. Make sure it
-        stays 'attached' to its body by also adjusting its x and y values.
-        :param radians: to rotate.
-        """
-
-        self.angle += math.degrees(radians)
-
-        rad = math.radians(self.angle) + self.angle_addition
-
-        self.x = self.sweep_length * math.sin(-rad) + self.robot.x
-        self.y = self.sweep_length * math.cos(-rad) + self.robot.y
+        self.sprite = None
 
     def set_sensible_obstacles(self, obstacles):
         """
@@ -85,30 +55,15 @@ class BodyPart(arcade.Sprite):
         """
         pass
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         pass
 
-    def init_texture_list(self, src_list, scale, start_sprite=0):
-        for texture in src_list:
-            texture = arcade.load_texture(texture)
-            self.append_texture(texture)
+    def init_sprite_with_list(self, src_list, scale, start_sprite=0, body=None):
+        self.sprite = PymunkRobotPartSprite(src_list, start_sprite, self.x_offset, self.y_offset,
+                                            self.width_mm, self.height_mm, scale=scale, body=body)
 
-        self.set_texture(start_sprite)
-        self.px_mm_scale = scale
-        self.set_dimensions(self.width_mm, self.height_mm, scale)
-        self._set_hit_box_based_on_mm(scale)
-
-    def init_texture(self, src, scale):
-        self.init_texture_list([src], scale)
-
-    def set_dimensions(self, new_width, new_height, scale):
-        self.height = new_height * scale
-        self.width = new_width * scale
+    def init_sprite(self, src, scale, body):
+        self.init_sprite_with_list([src], scale, body=body)
 
     def get_ev3type(self):
         return self.ev3type
-
-    def _set_hit_box_based_on_mm(self, scale):
-        full_scale = (self.width_mm / self.texture.width) * scale
-        self.hit_box = [(x * full_scale, y * full_scale) for (x, y) in self.texture.hit_box_points]
-
