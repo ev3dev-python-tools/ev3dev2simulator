@@ -32,11 +32,15 @@ class Visualiser(arcade.Window):
     def __init__(self, update_world_cb, world_state: WorldState, show_fullscreen: bool,
                  show_maximized: bool, use_second_screen_to_show_simulator: bool):
 
+        self.pid_file = None
+        self.pid = None
         self.check_for_unique_instance()
         self.update_callback = update_world_cb
-        self.sidebar = None
 
+        self.sidebar = None
         self.world_state = world_state
+
+        self.current_screen_index = None
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
         sim_settings = get_simulation_settings()
@@ -46,10 +50,10 @@ class Visualiser(arcade.Window):
         self.screen_height = int(sim_settings['screen_settings']['screen_height'])
         self.side_bar_width = int(sim_settings['screen_settings']['side_bar_width'])
 
-        from ev3dev2.version import __version__ as apiversion
-        from ev3dev2simulator.version import __version__ as simversion
+        from ev3dev2.version import __version__ as api_version
+        from ev3dev2simulator.version import __version__ as sim_version
         screen_title = sim_settings['screen_settings'][
-                           'screen_title'] + f'          version: {simversion}      ev3dev2 api: {apiversion}'
+                           'screen_title'] + f'          version: {sim_version}      ev3dev2 api: {api_version}'
 
         self.frames_per_second = sim_settings['exec_settings']['frames_per_second']
         self.falling_msg = sim_settings['screen_settings']['falling_message']
@@ -130,13 +134,13 @@ class Visualiser(arcade.Window):
         display.get_default_screen = get_default_screen
 
         # note:
-        #  for macos  get_default_screen() is also used to as the screen to draw the window initially
+        #  for macOS  get_default_screen() is also used to as the screen to draw the window initially
         #  for windows the current screen is used to to draw the window initially,
         #              however the value set by get_default_screen() is used as the screen
         #              where to display the window fullscreen!
 
-        # note:  BUG: dragging window to other screen in macos messes up view size
-        #   for Macos the screen of the mac can have higher pixel ratio (self.get_pixel_ratio())
+        # note:  BUG: dragging window to other screen in macOS messes up view size
+        #   for macOS the screen of the mac can have higher pixel ratio (self.get_pixel_ratio())
         #   then the second screen connected. If you drag the window from the mac screen to the
         #   second screen then the windows may be the same size, but the simulator is drawn in only
         #   in the lower left quart of the window.
@@ -153,17 +157,17 @@ class Visualiser(arcade.Window):
         """
 
         tmpdir = tempfile.gettempdir()
-        self.pidfile = os.path.join(tmpdir, "ev3dev2simulator.pid")
+        self.pid_file = os.path.join(tmpdir, "ev3dev2simulator.pid")
 
         self.pid = str(os.getpid())
-        f = open(self.pidfile, 'w')
+        f = open(self.pid_file, 'w')
         f.write(self.pid)
         f.flush()
         f.close()
 
         time.sleep(2)
 
-        file = open(self.pidfile, 'r')
+        file = open(self.pid_file, 'r')
         line = file.readline()
         file.close()
         read_pid = line.rstrip()
@@ -180,28 +184,29 @@ class Visualiser(arcade.Window):
         """
         from pyglet import clock
 
-        def callback(dt):
-            file = open(self.pidfile, 'r')
+        def callback(_):
+            file = open(self.pid_file, 'r')
             line = file.readline()
             file.close()
             read_pid = line.rstrip()
             if read_pid != self.pid:
 
                 # other simulator tries to start running
-                # write pid to pidfile to notify this simulator is already running
-                f = open(self.pidfile, 'w')
+                # write pid to pid_file to notify this simulator is already running
+                f = open(self.pid_file, 'w')
                 f.write(self.pid)
                 f.close()
 
                 import platform
                 if platform.system().lower().startswith('win'):
-                    self.windowsActivate()
+                    self.windows_activate()
                 else:
                     self.activate()
 
         clock.schedule_interval(callback, 1)
 
-    def windowsActivate(self):
+    def windows_activate(self):
+        # noinspection PyProtectedMember
         from pyglet.libs.win32 import _user32
         from pyglet.libs.win32.constants import SW_SHOWMINIMIZED, SW_SHOWNORMAL
         _user32.ShowWindow(self._hwnd, SW_SHOWMINIMIZED)
@@ -230,7 +235,7 @@ class Visualiser(arcade.Window):
                 self._set_full_screen(True)
 
         # Maximize window
-        # note: is toggle on macos, but not on windows
+        # note: is toggle on macOS, but not on windows
         elif key == arcade.key.M:
             self.maximize()
 
@@ -239,7 +244,7 @@ class Visualiser(arcade.Window):
         #   Instead of a one-to-one mapping to screen size, we use stretch/squash window to match the constants.
         #   src: http://arcade.academy/examples/full_screen_example.html
         elif key == arcade.key.F:
-            self.updateCurrentScreen()
+            self.update_current_screen()
             self._set_full_screen(not self.fullscreen)
 
     # toggle screen for fullscreen
@@ -253,7 +258,7 @@ class Visualiser(arcade.Window):
         screens = get_screens()
         self._screen = screens[self.current_screen_index]
 
-    def updateCurrentScreen(self):
+    def update_current_screen(self):
         """ using the windows position and size we determine on which screen it is currently displayed and make that
             current screen for displaying in fullscreen!!
         """
@@ -263,15 +268,15 @@ class Visualiser(arcade.Window):
             return
 
         location = self.get_location()
-        topleft_x = location[0]
-        topleft_y = location[1]
+        top_left_x = location[0]
+        top_left_y = location[1]
         size = self.get_size()
         win_width = size[0]
         win_height = size[1]
 
         done = False
-        locations = [location, (topleft_x + win_width, topleft_y), (topleft_x, topleft_y + win_height),
-                     (topleft_x + win_width, topleft_y + win_height)]
+        locations = [location, (top_left_x + win_width, top_left_y), (top_left_x, top_left_y + win_height),
+                     (top_left_x + win_width, top_left_y + win_height)]
         for location in locations:
             if done:
                 break
@@ -298,7 +303,7 @@ class Visualiser(arcade.Window):
         # do a bit of math for that.
         self.set_viewport(0, self.screen_width, 0, self.screen_height)
 
-        # HACK for macos: without this hack fullscreen on the second screen is shifted downwards in the y direction
+        # HACK for macOS: without this hack fullscreen on the second screen is shifted downwards in the y direction
         #     By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
         if platform.system().lower() == "darwin":

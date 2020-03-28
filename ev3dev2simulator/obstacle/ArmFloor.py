@@ -1,7 +1,7 @@
 from arcade import create_rectangle
 
 
-class Ground:
+class ArmFloor:
     def __init__(self, width, height, color):
         self.width = width
         self.height = height

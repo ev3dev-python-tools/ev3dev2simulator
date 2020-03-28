@@ -24,11 +24,11 @@ class PymunkRobotPartSprite(arcade.Sprite):
         for texture in src_list:
             texture = arcade.load_texture(texture)
             self.append_texture(texture)
+        self.set_texture(start_sprite)
 
         px_mm_scale = scale
-        self.scale = px_mm_scale * (width_mm / texture.width)  # required for draw
+        self.scale = px_mm_scale * (width_mm / self.texture.width)  # required for draw
 
-        self.set_texture(start_sprite)
         width = width_mm * px_mm_scale
         height = height_mm * px_mm_scale
 

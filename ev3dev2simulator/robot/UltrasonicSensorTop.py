@@ -1,8 +1,9 @@
 import math
+from typing import Optional
 
 from arcade import Point, create_line
 from arcade.color import RED
-from pymunk import Space, ShapeFilter
+from pymunk import Space
 
 from ev3dev2simulator.config.config import get_simulation_settings, debug
 from ev3dev2simulator.robot.BodyPart import BodyPart
@@ -27,11 +28,10 @@ class UltrasonicSensor(BodyPart):
 
     def distance(self, space: Space) -> float:
         """
-        Get the distance in pixels between this ultrasonic sensors eyes and an object it is pointed to.
-        First check the left eye, if this does not see anything check the right eye.
-        If this sensor is not pointing towards an object return 2550, which is the max distance of the real robot's ultrasonic sensor.
-        :param space: which holds the visible objects.
-        :return: a floating point value representing the distance.
+        Get the distance in pixels between this ultrasonic sensors eyes and an object it is pointed to. First check
+        the left eye, if this does not see anything check the right eye. If this sensor is not pointing towards an
+        object return 2550, which is the max distance of the real robot's ultrasonic sensor. :param space: which
+        holds the visible objects. :return: a floating point value representing the distance.
         """
         left_eye_x, left_eye_y = self._calc_eye_center(self.sprite.angle + 90)
         distance = self._calc_view_distance(space, left_eye_x, left_eye_y)
@@ -47,7 +47,7 @@ class UltrasonicSensor(BodyPart):
 
         return self.get_default_value()
 
-    def _calc_view_distance(self, space: Space, base_x: float, base_y: float) -> float:
+    def _calc_view_distance(self, space: Space, base_x: float, base_y: float) -> Optional[float]:
         """
         Calculate the distance between the base point, represented by base_x and base_y, and the furthest
         viewable object. If no object is in sight, return None.
@@ -62,10 +62,7 @@ class UltrasonicSensor(BodyPart):
             self.robot.debug_shapes.append(line)
         query = space.segment_query_first((base_x, base_y), (x, y), 1, self.sprite.shape.filter)
         if query:
-            return -self.sensor_half_height + distance_between_points(base_x,
-                                                                      base_y,
-                                                                      query.point.x,
-                                                                      query.point.y)
+            return -self.sensor_half_height + distance_between_points(base_x, base_y, query.point.x, query.point.y)
         else:
             return None
 

@@ -26,10 +26,9 @@ class SensorConnector:
 
     def get_value(self) -> Any:
         """
-        Get data of the simulated sensor at the given address if required. Provides caching whenever a second request would
-        result in the same answer as the first, because they happened in such quick succession that the simulator data could
-        not possibly have changed yet.
-        :return: the value in any form of the sensor.
+        Get data of the simulated sensor at the given address if required. Provides caching whenever a second request
+        would result in the same answer as the first, because they happened in such quick succession that the
+        simulator data could not possibly have changed yet. :return: the value in any form of the sensor.
         """
 
         now = time.time()

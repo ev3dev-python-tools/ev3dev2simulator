@@ -1,5 +1,5 @@
 from typing import Any, Tuple
-
+# noinspection PyProtectedMember
 from ev3dev2._platform.ev3 import LEDS
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.MotorCommandProcessor import MotorCommandProcessor
@@ -36,9 +36,9 @@ class MessageProcessor:
 
     def process_rotate_command(self, command: RotateCommand) -> float:
         """
-        Process the given RotateCommand by creating the appropriate motor jobs in the RobotState. The type of jobs created
-        depends on the motor called. The command for the arm motor is processed for degrees, while the other motors
-        are processed for distance.
+        Process the given RotateCommand by creating the appropriate motor jobs in the RobotState.
+        The type of jobs created  depends on the motor called.
+        The command for the arm motor is processed for degrees, while the other motors are processed for distance.
         :param command: to process.
         :return: a floating point value representing the time in seconds the given command will take to execute.
         """
@@ -59,7 +59,7 @@ class MessageProcessor:
         """
         Process the given command into the correct movement values.
         :param command: to process.
-        :param side: the motor is located.
+        :param motor: the motor.
         :return: a Tuple with the processed values
         """
 
@@ -92,7 +92,7 @@ class MessageProcessor:
         """
         Process the given command into the correct movement values.
         :param command: to process.
-        :param side: the motor is located.
+        :param motor: the motor.
         :return: a Tuple with the processed values
         """
 
@@ -107,7 +107,7 @@ class MessageProcessor:
         Process coasting by creating move jobs decreasing in speed in the RobotState.
         :param frames: to coast before coming to a halt.
         :param ppf: speed of motor when the coasting starts.
-        :param side: of the motor in the RobotState.
+        :param motor: the motor in the RobotState.
         """
 
         coasting_sub = self.degree_coasting_sub if motor.ev3type == 'arm' else self.distance_coasting_sub

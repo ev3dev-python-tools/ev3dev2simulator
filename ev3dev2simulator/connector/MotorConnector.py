@@ -13,7 +13,6 @@ class MotorConnector:
     the simulator.
     """
 
-
     def __init__(self, address: str, max_speed: int):
         self.address = address
         self.max_speed = max_speed
@@ -26,7 +25,6 @@ class MotorConnector:
 
         self.client_socket = get_client_socket()
 
-
     def set_duty_cycle(self, duty_cycle: int):
         """
         Set the percentage of power of the motor belonging to the given address.
@@ -36,7 +34,6 @@ class MotorConnector:
 
         self.duty_cycle = duty_cycle
 
-
     def set_speed(self, speed: float):
         """
         Set the speed to run at of the motor belonging to the given address.
@@ -44,7 +41,6 @@ class MotorConnector:
         """
 
         self.speed = speed
-
 
     def set_distance(self, distance: float):
         """
@@ -54,7 +50,6 @@ class MotorConnector:
 
         self.distance = distance
 
-
     def set_time(self, time: int):
         """
         Set the time to run of the motor belonging to the given address.
@@ -63,7 +58,6 @@ class MotorConnector:
 
         self.time = time
 
-
     def set_stop_action(self, action: str):
         """
         Set the speed to run at of the motor belonging to the given address.
@@ -71,7 +65,6 @@ class MotorConnector:
         """
 
         self.stop_action = action
-
 
     def run_forever(self) -> float:
         """
@@ -84,7 +77,6 @@ class MotorConnector:
         self.distance = self.speed * FOREVER_MOCK_SECONDS
         return self._run()
 
-
     def run_to_rel_pos(self) -> float:
         """
         Run the motor for the distance needed to reach a certain position.
@@ -93,7 +85,6 @@ class MotorConnector:
         """
 
         return self._run()
-
 
     def run_timed(self) -> float:
         """
@@ -104,7 +95,6 @@ class MotorConnector:
 
         self.distance = self.speed * (self.time / 1000)
         return self._run()
-
 
     def run_direct(self) -> float:
         """
@@ -117,7 +107,6 @@ class MotorConnector:
         self.distance = self.speed * FOREVER_MOCK_SECONDS
 
         return self._run()
-
 
     def _run(self) -> float:
         """
@@ -135,7 +124,6 @@ class MotorConnector:
                                     self.stop_action)
 
         return self.client_socket.send_motor_command(command)
-
 
     def stop(self) -> float:
         """

@@ -2,6 +2,7 @@ import math
 
 import arcade
 import pymunk
+# noinspection PyProtectedMember
 from pymunk import Vec2d
 
 from ev3dev2simulator.obstacle import ColorObstacle
@@ -89,7 +90,7 @@ class RobotState:
                 direction = part['direction'] if 'direction' in part else 'forward'
                 if direction == 'bottom':
                     ultrasonic_sensor = UltrasonicSensorBottom(part, self)
-                elif direction == 'forward':
+                else:
                     ultrasonic_sensor = UltrasonicSensor(part, self)
                 self.sensors[(ultrasonic_sensor.brick, ultrasonic_sensor.address)] = ultrasonic_sensor
 

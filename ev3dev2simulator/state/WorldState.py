@@ -23,7 +23,6 @@ class WorldState:
         self.color_obstacles = []
 
         self.robots = []
-        self.space_obstacles = []
         self.space = Space()
         self.space.damping = 0.99
 
@@ -60,7 +59,6 @@ class WorldState:
                 bottle = Bottle.from_config(value)
                 self.obstacles.append(bottle)
                 self.touch_obstacles.append(bottle)
-                self.space_obstacles.append(bottle)
             else:
                 print("unknown obstacle type")
 

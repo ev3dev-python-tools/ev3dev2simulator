@@ -20,9 +20,6 @@ class Hole:
         # visualisation
         self.points = None
 
-    def get_shapes(self):
-        return [self.shape]
-
     def create_shape(self, scale):
         self.points = self._create_points(scale)
 

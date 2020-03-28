@@ -2,11 +2,10 @@ import math
 
 import arcade
 
-from ev3dev2simulator.obstacle.TouchObstacle import TouchObstacle
 from ev3dev2simulator.visualisation.PymunkQuadrilateralSprite import PymunkQuadrilateralSprite
 
 
-class Rock(TouchObstacle):
+class Rock:
     """
     This class represents a 'rock'. Rocks are rectangles.
     """
@@ -17,7 +16,6 @@ class Rock(TouchObstacle):
                  height: int,
                  color: arcade.Color,
                  angle: int):
-        super(Rock, self).__init__()
 
         self.x = x
         self.y = y
@@ -28,9 +26,6 @@ class Rock(TouchObstacle):
         # visualisation
         self.color = color
         self.sprite = None
-
-    def get_shapes(self):
-        return [self.shape]
 
     def create_sprite(self, scale):
         self.sprite = PymunkQuadrilateralSprite('assets/images/brick.png',

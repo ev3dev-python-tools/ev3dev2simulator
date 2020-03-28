@@ -1,24 +1,24 @@
 import sys
-import os
-import signal
-import tempfile
 
+
+# noinspection PyUnusedLocal
 def main(args=None):
     """The main routine."""
 
     try:
         from ev3dev2simulator.Simulator import simmain
     except ImportError:
-        ## below HACK not needed if ev3dev2simulator installed on PYTHONPATH
-        ## note: run as 'python3 <path-to-package-dir>'
+        # below HACK not needed if ev3dev2simulator installed on PYTHONPATH
+        # note: run as 'python3 <path-to-package-dir>'
         import os
-        # HACK: need to change dir to Simulator script's directory because resources are loaded relative from this directory
+        # HACK: need to change dir to Simulator script's directory because resources are loaded relative from this
+        # directory
         script_dir = os.path.dirname(os.path.realpath(__file__))
         os.chdir(script_dir)
-        # add directory containing the ev3devsimulator package to the python path
-        ev3devsimulator_dir = os.path.dirname(script_dir)
-        sys.path.insert(0,ev3devsimulator_dir)
-        # import main from ev3devsimulator package
+        # add directory containing the ev3dev2simulator package to the python path
+        ev3dev2simulator_dir = os.path.dirname(script_dir)
+        sys.path.insert(0, ev3dev2simulator_dir)
+        # import main from ev3dev2simulator package
         from ev3dev2simulator.Simulator import main as simmain
 
     sys.exit(simmain())

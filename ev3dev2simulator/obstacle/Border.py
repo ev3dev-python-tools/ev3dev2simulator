@@ -35,15 +35,8 @@ class Border(BorderObstacle):
         Create a list of shapes representing the four lines that make up this border.
         :return: a list of Arcade shapes.
         """
-
-        colors = []
-        for i in range(4):
-            colors.append(self.color)
-
-        top = arcade.create_rectangles_filled_with_colors(self.top_points, colors)
-        right = arcade.create_rectangles_filled_with_colors(self.right_points, colors)
-        bottom = arcade.create_rectangles_filled_with_colors(self.bottom_points, colors)
-        left = arcade.create_rectangles_filled_with_colors(self.left_points, colors)
-
-        self.shapes = [top, right, bottom, left]
+        colors = [self.color for _ in range(4)]
+        self.shapes = []
+        for side in [self.top_points, self.right_points, self.bottom_points, self.left_points]:
+            self.shapes.append(arcade.create_rectangles_filled_with_colors(side, colors))
         return self.shapes

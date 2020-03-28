@@ -1,10 +1,9 @@
 import arcade
 
-from ev3dev2simulator.obstacle.TouchObstacle import TouchObstacle
 from ev3dev2simulator.visualisation.PymunkRoundSprite import PymunkRoundSprite
 
 
-class Bottle(TouchObstacle):
+class Bottle:
     """
     This class represents a 'bottle'. Bottles are circles.
     """
@@ -14,7 +13,6 @@ class Bottle(TouchObstacle):
                  y: int,
                  radius: float,
                  color: arcade.Color):
-        super(Bottle, self).__init__()
 
         self.x = x
         self.y = y

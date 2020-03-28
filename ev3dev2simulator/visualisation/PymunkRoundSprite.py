@@ -1,4 +1,3 @@
-import arcade
 import pymunk
 
 # Default friction used for sprites, unless otherwise specified

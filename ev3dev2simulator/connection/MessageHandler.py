@@ -1,5 +1,4 @@
 import json
-import threading
 from typing import Any
 
 from ev3dev2simulator.connection import MessageProcessor
@@ -99,7 +98,8 @@ class MessageHandler:
 
         return self._serialize_response(value)
 
-    def _serialize_response(self, value) -> bytes:
+    @staticmethod
+    def _serialize_response(value) -> bytes:
         """
         Serialize the given value into a bytes object containing a dictionary.
         :param value: to serialize.
