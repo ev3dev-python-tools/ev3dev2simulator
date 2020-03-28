@@ -21,7 +21,6 @@ class Speaker(BodyPart):
 
         dims = get_simulation_settings()['body_part_sizes']['speaker']
         super(Speaker, self).__init__(config, robot, dims['width'], dims['height'], 'speaker')
-        print(self.ev3type)
 
     def setup_visuals(self, scale, body):
         vis_conf = get_simulation_settings()

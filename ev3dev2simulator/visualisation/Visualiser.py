@@ -60,7 +60,8 @@ class Visualiser(arcade.Window):
         self.restart_msg = sim_settings['screen_settings']['restart_message']
 
         self.change_scale(self.screen_width, self.screen_height)
-        print('starting simulation with scaling', self.scale)
+        if debug:
+            print('starting simulation with scaling', self.scale)
 
         super(Visualiser, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30,
                                          resizable=True)

@@ -3,7 +3,7 @@ import math
 import arcade
 import pymunk
 # noinspection PyProtectedMember
-from pymunk import Vec2d
+from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
@@ -49,14 +49,12 @@ class RobotState:
 
         self.x = self.orig_x
         self.y = self.orig_y
+        self.wheel_distance = None
 
         try:
             self.orig_orientation = config['orientation']
         except KeyError:
             self.orig_orientation = 0
-
-        sim_settings = get_simulation_settings()
-        self.wheel_distance = sim_settings['wheel_settings']['spacing']  # TODO move this to robot config
 
         self.name = config['name']
         self.is_stuck = False
@@ -125,6 +123,14 @@ class RobotState:
         if self.orig_orientation != 0:
             self._rotate(math.radians(self.orig_orientation))
 
+        wheels = self.get_wheels()
+        if len(wheels) == 2:
+            wheel_pos_left = Vec2d(wheels[0].sprite.shape.center_of_gravity)
+            wheel_pos_right = Vec2d(wheels[1].sprite.shape.center_of_gravity)
+            self.wheel_distance = wheel_pos_left.get_distance(wheel_pos_right)
+        else:
+            raise RuntimeError('Currently cannot anything other than 2 wheels')
+
     def _move_position(self, distance: Vec2d):
         """
         Move all parts of this robot by the given distance vector.
@@ -152,11 +158,9 @@ class RobotState:
 
         cur_angle = self.body.angle + math.radians(90)
 
-        diff_angle, diff_x, diff_y = \
-            calc_differential_steering_angle_x_y(self.wheel_distance,
-                                                 distance_left,
-                                                 distance_right,
-                                                 cur_angle)
+        diff_angle, diff_x, diff_y = calc_differential_steering_angle_x_y(self.wheel_distance,
+                                                                          distance_left * self.scale,
+                                                                          distance_right * self.scale, cur_angle)
 
         self._rotate(diff_angle)
         self._move_position(Vec2d(diff_x, diff_y))

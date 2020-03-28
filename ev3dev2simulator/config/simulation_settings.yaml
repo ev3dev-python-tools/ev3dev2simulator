@@ -77,4 +77,3 @@ motor_settings:
 
 wheel_settings:
   circumference: 173
-  spacing: 120

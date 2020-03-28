@@ -37,5 +37,3 @@ class Bottle:
     def create_sprite(self, scale):
         self.sprite = PymunkRoundSprite('assets/images/bottle.png',
                                         self.x * scale, self.y * scale, scale * 2 * (self.radius / 948))
-
-
