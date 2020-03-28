@@ -85,7 +85,6 @@ class WorldState:
             robot.setup_visuals(scale)
             for sprite in robot.get_sprites():
                 self.space.add(sprite.shape)
-                print('sprite added', sprite.position)
             self.space.add(robot.body)
             robot.set_color_obstacles(self.color_obstacles)
             robot.set_touch_obstacles(touch_sprites)

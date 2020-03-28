@@ -114,9 +114,10 @@ class RobotState:
             else:
                 print("Unknown robot part in config")
 
-        self.parts = list(self.sensors.values())
+        self.parts = []
         self.parts.extend(list(self.actuators.values()))
         self.parts.extend(self.bricks)
+        self.parts.extend(list(self.sensors.values()))
 
     def reset(self):
         self.values.clear()

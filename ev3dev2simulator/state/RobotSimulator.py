@@ -3,6 +3,8 @@ import threading
 from queue import Queue, Empty
 from typing import Any
 
+from pymunk import Vec2d
+
 from ev3dev2simulator.state.RobotState import RobotState
 
 
@@ -164,6 +166,8 @@ class RobotSimulator:
 
     def _resync_physics_sprites(self):
         for part in self.robot.parts:
-            part.sprite.center_x = self.robot.body.position.x + part.sprite.shape.center_of_gravity.x # self.robot.body.position.x + part.x_offset * self.robot.scale
-            part.sprite.center_y = self.robot.body.position.y + part.sprite.shape.center_of_gravity.y # self.robot.body.position.y + part.y_offset * self.robot.scale
+            rel = Vec2d(part.sprite.shape.center_of_gravity)
+            x, y = rel.rotated(self.robot.body.angle) + self.robot.body.position
+            part.sprite.center_x = x
+            part.sprite.center_y = y
             part.sprite.angle = math.degrees(part.sprite.shape.body.angle)

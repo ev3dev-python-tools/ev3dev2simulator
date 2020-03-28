@@ -24,7 +24,6 @@ class PymunkRobotPartSprite(arcade.Sprite):
                  friction=DEFAULT_FRICTION,
                  body=None):
         super().__init__()
-        print('orig offset', x_offset, y_offset)
         for texture in src_list:
             texture = arcade.load_texture(texture)
             self.append_texture(texture)
@@ -34,8 +33,8 @@ class PymunkRobotPartSprite(arcade.Sprite):
         self.set_texture(start_sprite)
         width = width_mm * px_mm_scale
         height = height_mm * px_mm_scale
+
         vs = [(0, 0), (width, 0), (width, height), (0, height)]
         t = pymunk.Transform(tx=x_offset * px_mm_scale - width/2, ty=y_offset * px_mm_scale - height/2)
         self.shape = pymunk.Poly(body, vs, transform=t)
-        print(self.shape.center_of_gravity.x, self.shape.center_of_gravity.y)
         self.shape.friction = friction
