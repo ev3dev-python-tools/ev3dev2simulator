@@ -1,9 +1,6 @@
 import arcade
 import pymunk
 
-# Default friction used for sprites, unless otherwise specified
-from pymunk import Circle
-
 from ev3dev2simulator.visualisation.PymunkSprite import DEFAULT_FRICTION, DEFAULT_MASS
 
 
@@ -29,7 +26,8 @@ class PymunkRobotPartSprite(arcade.Sprite):
             self.append_texture(texture)
 
         px_mm_scale = scale
-        self.scale = px_mm_scale * (width_mm / texture.width)
+        self.scale = px_mm_scale * (width_mm / texture.width)  # required for draw
+
         self.set_texture(start_sprite)
         width = width_mm * px_mm_scale
         height = height_mm * px_mm_scale
@@ -38,3 +36,4 @@ class PymunkRobotPartSprite(arcade.Sprite):
         t = pymunk.Transform(tx=x_offset * px_mm_scale - width/2, ty=y_offset * px_mm_scale - height/2)
         self.shape = pymunk.Poly(body, vs, transform=t)
         self.shape.friction = friction
+        self.shape.mass = DEFAULT_MASS

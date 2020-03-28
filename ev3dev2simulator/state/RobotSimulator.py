@@ -124,7 +124,6 @@ class RobotSimulator:
         """
         job_per_actuator = self.next_actuator_jobs()
 
-        # TODO figure a neat way to determine the location of wheels
         for (address, job_of_actuator) in job_per_actuator:
             actuator = self.queue_info[address]
             if actuator.ev3type == 'arm':

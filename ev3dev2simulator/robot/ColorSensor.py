@@ -18,17 +18,9 @@ class ColorSensor(BodyPart):
     Class representing a ColorSensor of the simulated robot.
     """
 
-    def __init__(self,
-                 brick: int,
-                 address: str,
-                 robot,
-                 delta_x: int,
-                 delta_y: int,
-                 name: str):
+    def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['color_sensor']
-        super(ColorSensor, self).__init__(brick, address, robot, delta_x, delta_y, dims['width'], dims['height'],
-                                          'color_sensor')
-        self.name = name
+        super().__init__(config, robot, dims['width'], dims['height'], 'color_sensor')
         self.old_texture_index = 0
 
     def setup_visuals(self, scale, body):

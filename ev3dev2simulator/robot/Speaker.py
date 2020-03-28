@@ -14,9 +14,16 @@ class Speaker(BodyPart):
                  robot,
                  center_x: int,
                  center_y: int):
+        config = {
+            'brick': brick,
+            'x_offset': center_x,
+            'y_offset': center_y,
+            'port': 'speaker'
+        }
+
         dims = get_simulation_settings()['body_part_sizes']['speaker']
-        super(Speaker, self).__init__(brick, 'speaker', robot, center_x, center_y,  dims['width'], dims['height'],
-                                      'speaker')
+        super(Speaker, self).__init__(config, robot, dims['width'], dims['height'], 'speaker')
+        print(self.ev3type)
 
     def setup_visuals(self, scale, body):
         vis_conf = get_simulation_settings()

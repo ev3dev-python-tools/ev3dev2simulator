@@ -1,5 +1,3 @@
-import arcade
-
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.robot.BodyPart import BodyPart
 
@@ -8,13 +6,17 @@ class Led(BodyPart):
     """
     Class representing a Wheel of the simulated robot.
     """
-    def __init__(self,
-                 brick: int,
-                 robot,
-                 delta_x: int,
-                 delta_y: int):
+    def __init__(self, brick: int, robot, side, brick_x_offset, brick_y_offset):
+        offset_x = - 20 if side == 'left' else 20
+        config = {
+            'brick': brick,
+            'name': f'led_{side}',
+            'x_offset': brick_x_offset,
+            'y_offset': brick_y_offset,
+        }
+
         dims = get_simulation_settings()['body_part_sizes']['led']
-        super(Led, self).__init__(brick, '', robot, delta_x, delta_y, dims['width'], dims['height'], 'led')
+        super().__init__(config, robot, dims['width'], dims['height'], 'led', offset_x, - 32.5)
         self.old_texture_index = 1
 
     def setup_visuals(self, scale, body):

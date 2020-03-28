@@ -13,17 +13,9 @@ class UltrasonicSensor(BodyPart):
     """
     Class representing an UltrasonicSensor of the simulated robot.
     """
-    def __init__(self,
-                 brick: int,
-                 address: str,
-                 robot,
-                 delta_x: int,
-                 delta_y: int,
-                 name: str):
+    def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['ultrasonic_sensor_top']
-        super(UltrasonicSensor, self).__init__(brick, address, robot, delta_x, delta_y,
-                                               dims['width'], dims['height'], 'ultrasonic_sensor')
-        self.name = name
+        super(UltrasonicSensor, self).__init__(config, robot, dims['width'], dims['height'], 'ultrasonic_sensor')
         self.sensor_half_height = 22.5
 
     def setup_visuals(self, scale, body):
@@ -31,8 +23,7 @@ class UltrasonicSensor(BodyPart):
         self.init_sprite(img_cfg['ultrasonic_sensor_top'], scale, body)
 
     def get_latest_value(self):
-        return 5
-        return self.distance(self.robot.space)
+        return self.distance(self.sprite.shape.space)
 
     def distance(self, space: Space) -> float:
         """
@@ -42,17 +33,17 @@ class UltrasonicSensor(BodyPart):
         :param space: which holds the visible objects.
         :return: a floating point value representing the distance.
         """
-        left_eye_x, left_eye_y = self._calc_eye_center(self.angle + 90)
+        left_eye_x, left_eye_y = self._calc_eye_center(self.sprite.angle + 90)
         distance = self._calc_view_distance(space, left_eye_x, left_eye_y)
 
         if distance:
-            return distance * 1 / self.px_mm_scale
+            return distance * (1 / self.robot.scale)
 
-        right_eye_x, right_eye_y = self._calc_eye_center(self.angle - 90)
+        right_eye_x, right_eye_y = self._calc_eye_center(self.sprite.angle - 90)
         distance = self._calc_view_distance(space, right_eye_x, right_eye_y)
 
         if distance:
-            return distance * 1 / self.px_mm_scale
+            return distance * (1 / self.robot.scale)
 
         return self.get_default_value()
 
@@ -69,8 +60,7 @@ class UltrasonicSensor(BodyPart):
         if debug:
             line = create_line(x, y, base_x, base_y, RED, 5)
             self.robot.debug_shapes.append(line)
-
-        query = space.segment_query_first((base_x, base_y), (x, y), 1, ShapeFilter())
+        query = space.segment_query_first((base_x, base_y), (x, y), 1, self.sprite.shape.filter)
         if query:
             return -self.sensor_half_height + distance_between_points(base_x,
                                                                       base_y,
@@ -85,7 +75,7 @@ class UltrasonicSensor(BodyPart):
         which covers the entire playing field of the simulator.
         :return: a Point object representing the coordinates of the ray-cast point.
         """
-        rad = math.radians(self.angle)
+        rad = math.radians(self.sprite.angle)
 
         x = 1000 * math.sin(-rad) + from_x
         y = 1000 * math.cos(-rad) + from_y
@@ -100,8 +90,8 @@ class UltrasonicSensor(BodyPart):
         """
         rad = math.radians(angle)
         eye_offset = 18
-        x = eye_offset * math.sin(-rad) + self.center_x
-        y = eye_offset * math.cos(-rad) + self.center_y
+        x = eye_offset * math.sin(-rad) + self.sprite.center_x
+        y = eye_offset * math.cos(-rad) + self.sprite.center_y
 
         return x, y
 

@@ -341,13 +341,9 @@ class Visualiser(arcade.Window):
                 self.msg_counter = self.frames_per_second * 3
 
         for robot in self.world_state.get_robots():
-            try:
-                self.sidebar.add_robot_info(robot.name, robot.values, robot.sounds)
-            except:
-                print("Unexpected error:", sys.exc_info()[0])
+            self.sidebar.add_robot_info(robot.name, robot.values, robot.sounds)
 
         self.sidebar.draw()
-        # TODO this is logic, move to world/robot simulator
         if self.msg_counter > 0:
             self.msg_counter -= 1
 

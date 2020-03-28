@@ -1,4 +1,5 @@
 import arcade
+import pymunk
 from pymunk import Space
 
 from ev3dev2simulator.obstacle.Board import Board
@@ -81,9 +82,10 @@ class WorldState:
             self.space.add(sprite.body)
             self.space.add(sprite.shape)
 
-        for robot in self.robots:
+        for idx, robot in enumerate(self.robots):
             robot.setup_visuals(scale)
             for sprite in robot.get_sprites():
+                sprite.shape.filter = pymunk.ShapeFilter(group=idx+5)
                 self.space.add(sprite.shape)
             self.space.add(robot.body)
             robot.set_color_obstacles(self.color_obstacles)

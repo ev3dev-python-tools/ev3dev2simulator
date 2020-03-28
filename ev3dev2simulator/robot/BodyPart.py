@@ -1,6 +1,3 @@
-import math
-from pymunk import Vec2d
-
 from ev3dev2simulator.visualisation.PymunkRobotPartSprite import PymunkRobotPartSprite
 
 
@@ -9,32 +6,17 @@ class BodyPart:
     Class containing the base functionality of a part of the robot.
     """
 
-    def __init__(self,
-                 brick: int,
-                 address: str,
-                 robot,
-                 delta_x: int,
-                 delta_y: int,
-                 width_mm: int,
-                 height_mm: int,
-                 ev3type: str):
+    def __init__(self, config, robot, width_mm, height_mm, ev3type, offset_x=0.0, offset_y=0.0):
+        self.name = config['name'] if 'name' in config else 'unnamed'
         self.ev3type = ev3type
-        self.brick = brick
-        self.address = address
+        self.brick = int(config['brick'])
+        self.address = config['port'] if 'port' in config else 'no_address'
         self.robot = robot
+
         self.width_mm = width_mm
         self.height_mm = height_mm
-        self.x = robot.x + delta_x
-        self.y = robot.y + delta_y
-
-        self.x_offset = delta_x
-        self.y_offset = delta_y
-
-        self.angle_addition = -math.atan(delta_x / delta_y) if delta_y else 0
-        self.sweep_length = math.hypot(delta_x, delta_y)
-
-        if delta_y < 0:
-            self.angle_addition += math.radians(180)
+        self.x_offset = float(config['x_offset']) + offset_x
+        self.y_offset = float(config['y_offset']) + offset_y
 
         self.sensible_obstacles = []
 
