@@ -2,7 +2,6 @@ import math
 
 import arcade
 import pymunk
-# noinspection PyProtectedMember
 from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.obstacle import ColorObstacle
@@ -16,8 +15,10 @@ from ev3dev2simulator.robot.TouchSensor import TouchSensor
 from ev3dev2simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
 from ev3dev2simulator.robot.UltrasonicSensorTop import UltrasonicSensor
 from ev3dev2simulator.robot.Wheel import Wheel
+
 from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
-from ev3dev2simulator.config.config import get_simulation_settings, debug
+from ev3dev2simulator.config.config import debug
+
 from ev3dev2simulator.visualisation.PymunkRobotPartSprite import PymunkRobotPartSprite
 
 
@@ -44,11 +45,9 @@ class RobotState:
         if debug:
             self.debug_shapes = []
 
-        self.orig_x = float(config['center_x'])
-        self.orig_y = float(config['center_y']) + 22.5
+        self.x = float(config['center_x'])
+        self.y = float(config['center_y']) + 22.5
 
-        self.x = self.orig_x
-        self.y = self.orig_y
         self.wheel_distance = None
 
         try:
@@ -106,8 +105,9 @@ class RobotState:
 
     def reset(self):
         self.values.clear()
-        self._move_position(Vec2d(self.orig_x - self.x, self.orig_y - self.y))
-        self._rotate(math.radians(self.orig_orientation) - math.radians(self.get_anchor().angle))
+        self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
+        self.body.angle = math.radians(self.orig_orientation)
+        self.body.velocity = (0, 0)
 
     def setup_visuals(self, scale):
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
@@ -136,7 +136,7 @@ class RobotState:
         Move all parts of this robot by the given distance vector.
         :param distance: to move
         """
-        self.body.position = self.body.position + (distance * self.scale)
+        self.body.position += distance
 
     def _rotate(self, radians: float):
         """
@@ -153,17 +153,15 @@ class RobotState:
         :param right_ppf: speed in pixels per second of the right motor.
         """
 
-        distance_left = left_ppf if left_ppf is not None else 0
-        distance_right = right_ppf if right_ppf is not None else 0
+        distance_left = left_ppf * self.scale if left_ppf is not None else 0
+        distance_right = right_ppf * self.scale if right_ppf is not None else 0
 
         cur_angle = self.body.angle + math.radians(90)
-
         diff_angle, diff_x, diff_y = calc_differential_steering_angle_x_y(self.wheel_distance,
-                                                                          distance_left * self.scale,
-                                                                          distance_right * self.scale, cur_angle)
-
+                                                                          distance_left,
+                                                                          distance_right, cur_angle)
         self._rotate(diff_angle)
-        self._move_position(Vec2d(diff_x, diff_y))
+        self._move_position((diff_x, diff_y))
 
     def execute_arm_movement(self, address: (int, str), dfp: float):
         """

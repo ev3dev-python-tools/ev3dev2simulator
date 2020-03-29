@@ -62,6 +62,7 @@ class Visualiser(arcade.Window):
         self.change_scale(self.screen_width, self.screen_height)
         if debug:
             print('starting simulation with scaling', self.scale)
+            print('arcade version: ', arcade.version.VERSION)
 
         super(Visualiser, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30,
                                          resizable=True)
@@ -291,7 +292,7 @@ class Visualiser(arcade.Window):
                     self.current_screen_index = num
                     done = True
                     break
-                num = num + 1
+                num += 1
 
         # override hidden screen parameter in window
         self._screen = screens[self.current_screen_index]

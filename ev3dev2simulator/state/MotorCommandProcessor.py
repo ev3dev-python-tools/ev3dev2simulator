@@ -60,7 +60,7 @@ class MotorCommandProcessor:
         else:
             coast_frames = 0
             run_time = self._to_seconds(frames)
-
+        print(run_time, frames)
         return millimeters_per_frame, frames, coast_frames, run_time
 
     def process_stop_command_degrees(self, command: StopCommand) -> Tuple[float, int, float]:

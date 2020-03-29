@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from time import sleep
 
 from ev3dev2._platform.ev3 import INPUT_1, INPUT_4, INPUT_2, OUTPUT_B
 from ev3dev2.led import Leds
@@ -19,7 +20,7 @@ def rotateDegrees(degrees):
 
 
 def drive():
-    tank_drive.on(SpeedPercent(80), SpeedPercent(80))
+    tank_drive.on(SpeedPercent(30), SpeedPercent(30))
 
 
 def checkCollision():
@@ -41,6 +42,7 @@ def checkColor():
         tank_drive.stop()
         reverseRotations(1)
         rotateDegrees(180)
+        sleep(.4)
         drive()
     # else:
     #     leds.set_color("RIGHT", "GREEN")
@@ -74,5 +76,12 @@ tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3Tire, 15 * STUD_MM)
 tank_measurement = MediumMotor(OUTPUT_B)
 
-drive()
-check()
+tank_drive.on_for_seconds(30,30,1)
+tank_drive.on_for_seconds(-30,-30,1)
+sleep(1)
+tank_drive.on_for_seconds(30,30,1)
+sleep(1)
+tank_drive.on_for_seconds(-30,-30,1)
+#
+# drive()
+# check()

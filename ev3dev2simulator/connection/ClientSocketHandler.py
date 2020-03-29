@@ -2,7 +2,7 @@ import socket
 import threading
 
 from ev3dev2simulator.connection.MessageHandler import MessageHandler
-from ev3dev2simulator.connection.MessageProcessor import MessageProcessor
+from ev3dev2simulator.state.MessageProcessor import MessageProcessor
 from ev3dev2simulator.state import RobotSimulator
 
 

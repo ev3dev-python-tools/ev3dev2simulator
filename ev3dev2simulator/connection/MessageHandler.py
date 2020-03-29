@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-from ev3dev2simulator.connection import MessageProcessor
+from ev3dev2simulator.state import MessageProcessor
 from ev3dev2simulator.connection.message.DataRequest import DataRequest
 from ev3dev2simulator.connection.message.LedCommand import LedCommand
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
