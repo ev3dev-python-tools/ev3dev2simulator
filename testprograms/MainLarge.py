@@ -7,7 +7,7 @@ from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent, MoveDiffer
 from ev3dev2.sensor.lego import ColorSensor
 from ev3dev2.sensor.lego import TouchSensor
 from ev3dev2.unit import STUD_MM
-from ev3dev2.wheel import EV3Tire
+from ev3dev2.wheel import EV3EducationSetTire
 from testprograms.BluetoothHelper import BluetoothHelper
 
 
@@ -42,7 +42,6 @@ def checkColor():
         tank_drive.stop()
         reverseRotations(1)
         rotateDegrees(180)
-        sleep(.4)
         drive()
     # else:
     #     leds.set_color("RIGHT", "GREEN")
@@ -71,17 +70,9 @@ leds.animate_rainbow()
 cs = ColorSensor(INPUT_2)
 ts1 = TouchSensor(INPUT_1)
 ts4 = TouchSensor(INPUT_4)
-tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 
-tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3Tire, 15 * STUD_MM)
+tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3EducationSetTire, 15 * STUD_MM)
 tank_measurement = MediumMotor(OUTPUT_B)
 
-tank_drive.on_for_seconds(30,30,1)
-tank_drive.on_for_seconds(-30,-30,1)
-sleep(1)
-tank_drive.on_for_seconds(30,30,1)
-sleep(1)
-tank_drive.on_for_seconds(-30,-30,1)
-#
-# drive()
-# check()
+drive()
+check()

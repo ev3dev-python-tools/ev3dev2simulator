@@ -71,7 +71,6 @@ class RobotSimulator:
 
     def clear_actuator_jobs(self, address: (int, str)):
         self.motor_lock.acquire()
-        print('lost', self.actuator_queues[address].qsize())
         self.actuator_queues[address] = Queue()
         self.motor_lock.release()
 

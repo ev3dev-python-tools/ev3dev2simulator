@@ -11,7 +11,7 @@ from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
 from tests.ev3dev2.simulator.connection.test_ServerSocket import create_robot_sim
 
 load_config(None)
-
+wheel_circumference = 175.92918860
 
 class MessageProcessorTest(unittest.TestCase):
 
@@ -37,7 +37,6 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor = MessageProcessor(0, robot_sim)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 1, 100, 'hold'))
 
-        wheel_circumference = 173
         frames_check = 100 * 30  # (1000/100) * 30 # distance * fps
         distance_in_mm = 100 / 360 * wheel_circumference
         dpf = distance_in_mm / frames_check
@@ -58,7 +57,6 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor = MessageProcessor(0, robot_sim)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outD', 10, 100, 'hold'))
 
-        wheel_circumference = 173
         frames_check = 10 * 30  # (1000/100) * 30 # distance * fps
         distance_in_mm = 100 / 360 * wheel_circumference
         dpf = distance_in_mm / frames_check
@@ -105,7 +103,6 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor = MessageProcessor(0, robot_sim)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 80, 200, 'coast'))
 
-        wheel_circumference = 173
         frames_check = (200/80) * 30  # (1000/100) * 30 # distance * fps
         distance_in_mm = 200 / 360 * wheel_circumference
         dpf = distance_in_mm / frames_check
