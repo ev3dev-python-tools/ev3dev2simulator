@@ -23,7 +23,7 @@ class MotorCommandProcessor:
     def process_drive_command_degrees(self, command: RotateCommand) -> Tuple[float, int, int, float]:
         """
         Process the given RotateCommand which moves the motor for a distance for a number of frames.
-        This is done by calculating degree values per frame and the number of frames required for the command to complete.
+        This is done by calculating degrees per frame and the number of frames required for the command to complete.
         Also calculate a number of frames for coasting speed subtraction. These frames allow
         for the travel distance to decrease bit by bit until the motor does not move anymore.
         :param command: to process.
@@ -44,7 +44,7 @@ class MotorCommandProcessor:
     def process_drive_command_distance(self, command: RotateCommand) -> Tuple[float, int, int, float]:
         """
         Process the given RotateCommand which moves the motor for a distance for a number of frames.
-        This is done by calculating pixel values per frame and the number of frames required for the command to complete.
+        This is done by calculating distance per frame and the number of frames required for the command to complete.
         Also calculate a number of frames for coasting speed subtraction. These frames allow
         for the travel distance to decrease bit by bit until the motor does not move anymore.
         :param command: to process.
@@ -60,7 +60,6 @@ class MotorCommandProcessor:
         else:
             coast_frames = 0
             run_time = self._to_seconds(frames)
-
         return millimeters_per_frame, frames, coast_frames, run_time
 
     def process_stop_command_degrees(self, command: StopCommand) -> Tuple[float, int, float]:

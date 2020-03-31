@@ -1,6 +1,9 @@
+import math
 import threading
 from queue import Queue, Empty
 from typing import Any
+# noinspection PyProtectedMember
+from pymunk import Vec2d
 
 from ev3dev2simulator.state.RobotState import RobotState
 
@@ -34,9 +37,10 @@ class RobotSimulator:
 
         else:
             self._process_actuators()
-            self._process_leds()
+            self._process_LEDs()
             self._process_sensors()
             self.robot.is_stuck = self._check_fall()
+            self._sync_physics_sprites()
 
     def put_actuator_job(self, address: (int, str), job: float):
         """
@@ -119,8 +123,7 @@ class RobotSimulator:
         the robot accordingly. This is where the different motor jobs are combined to a single movement of the robot.
         """
         job_per_actuator = self.next_actuator_jobs()
-
-        # TODO figure a neat way to determine the location of wheels
+        left_ppf = right_ppf = None
         for (address, job_of_actuator) in job_per_actuator:
             actuator = self.queue_info[address]
             if actuator.ev3type == 'arm':
@@ -137,7 +140,7 @@ class RobotSimulator:
         if left_ppf or right_ppf:
             self.robot.execute_movement(left_ppf, right_ppf)
 
-    def _process_leds(self):
+    def _process_LEDs(self):
         for address, led_color in self.robot.led_colors.items():
             self.robot.set_led_color(address, led_color)
 
@@ -159,3 +162,11 @@ class RobotSimulator:
         """
         for address, sensor in self.robot.sensors.items():
             self.robot.values[address] = sensor.get_latest_value()
+
+    def _sync_physics_sprites(self):
+        for part in self.robot.parts:
+            rel = Vec2d(part.sprite.shape.center_of_gravity)
+            x, y = rel.rotated(self.robot.body.angle) + self.robot.body.position
+            part.sprite.center_x = x
+            part.sprite.center_y = y
+            part.sprite.angle = math.degrees(part.sprite.shape.body.angle)

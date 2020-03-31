@@ -1,10 +1,10 @@
 from time import sleep
-from typing import Any
+from typing import Any, Optional
 import threading
 
 from ev3dev2simulator.connection.ClientSocket import get_client_socket
 from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
-
+# noinspection PyProtectedMember
 from simpleaudio._simpleaudio import SimpleaudioError
 
 import simpleaudio as sa
@@ -59,7 +59,7 @@ class SoundConnector:
                     print("An error occurred when trying to play a file. Ignoring to keep simulation running")
             sleep(delay / 1000.0)
 
-    def beep(self, args, play_type: int) -> None:
+    def beep(self, args, play_type: int) -> Optional[threading.Thread]:
         """
         Play a tone sequence and send a SoundCommand to the simulator for each tone.
         Based on the Linux Beep command, but with an object as input instead of string arguments
@@ -82,18 +82,15 @@ class SoundConnector:
 
             if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
                 x.join()
-                return None
-            else:
-                return x
+            return x
 
     def play_file(self, wav_file: str, volume: int, play_type: int) -> None:
         """
-        Play a wav file and send a SoundCommand to the simulator with the given file url.
-        :param string wav_file: The sound file path
-        :param int volume: The play volume, in percent of maximum volume
-        :param play_type: The behavior of ``play_file`` once playback has been initiated
-        :type play_type: ``SoundConnector.PLAY_WAIT_FOR_COMPLETE``, ``SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE`` or ``SoundConnector.PLAY_LOOP``
-        :return: returns ``None``
+        Play a wav file and send a SoundCommand to the simulator with the given file url. :param string wav_file: The
+        sound file path :param int volume: The play volume, in percent of maximum volume :param play_type: The
+        behavior of ``play_file`` once playback has been initiated :type play_type:
+        ``SoundConnector.PLAY_WAIT_FOR_COMPLETE``, ``SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE`` or
+        ``SoundConnector.PLAY_LOOP`` :return: returns ``None``
         """
         wave_read = wave.open(wav_file, 'rb')
         duration = wave_read.getnframes() / wave_read.getframerate()
@@ -142,6 +139,7 @@ class SoundConnector:
         else:
             self._tts(text, espeak_opts, desired_volume)
 
+    # noinspection PyUnusedLocal
     def _tts(self, text, espeak_opts, desired_volume: int) -> None:
         duration = (len(text.split()) / 200) * 60  # based on 200 words per minute as described in the tts docs
 

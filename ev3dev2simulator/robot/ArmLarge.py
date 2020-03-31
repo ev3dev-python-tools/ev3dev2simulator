@@ -4,7 +4,7 @@ from arcade import Sprite
 import arcade
 
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.obstacle.Ground import Ground
+from ev3dev2simulator.obstacle.ArmFloor import ArmFloor
 
 
 class ArmLarge(Sprite):
@@ -19,7 +19,7 @@ class ArmLarge(Sprite):
         self.y = None
         self.rotate_x = None
         self.rotate_y = None
-        self.side_bar_ground = Ground(300, 10, arcade.color.BLACK)
+        self.side_bar_ground = ArmFloor(300, 10, arcade.color.BLACK)
 
         self.sweep_length = 229 / 4
 
@@ -51,20 +51,9 @@ class ArmLarge(Sprite):
         stays 'attached' to its body by also adjusting its x and y values.
         :param degrees: to rotate.
         """
-
         self.angle += degrees
 
         rad = math.radians(self.angle)
 
         self.x = self.sweep_length * math.sin(-rad) + self.rotate_x
         self.y = self.sweep_length * math.cos(-rad) + self.rotate_y
-
-    def calculate_drawing_position(self, scale):
-        self.center_x = self.x
-        self.center_y = self.y
-
-    def move_x(self, distance: float):
-        pass
-
-    def move_y(self, distance: float):
-        pass

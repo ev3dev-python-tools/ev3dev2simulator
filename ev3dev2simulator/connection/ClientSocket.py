@@ -3,7 +3,7 @@ import socket
 import time
 from typing import Any
 
-from ev3dev2simulator.config.config import get_simulation_settings
+from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.connection.message import MotorCommand, SoundCommand, DataRequest, LedCommand
 
 
@@ -14,6 +14,7 @@ class ClientSocket:
     """
 
     def __init__(self):
+        load_config(None)
         port = get_simulation_settings()['exec_settings']['socket_port']
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -76,7 +77,8 @@ class ClientSocket:
             if data:
                 return self._deserialize(data)
 
-    def _serialize(self, message: Any) -> bytes:
+    @staticmethod
+    def _serialize(message: Any) -> bytes:
         """
         Serialize the given message so it can be send via a stream channel.
         :param message: to be serialized.
@@ -90,7 +92,8 @@ class ClientSocket:
 
         return str.encode(jsn)
 
-    def _deserialize(self, data: bytes) -> Any:
+    @staticmethod
+    def _deserialize(data: bytes) -> Any:
         """
         Deserialize the given data.
         :param data: to be deserialized.

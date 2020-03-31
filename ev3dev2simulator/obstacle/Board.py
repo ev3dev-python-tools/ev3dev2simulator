@@ -10,8 +10,8 @@ class Board(ColorObstacle):
     """
 
     def __init__(self,
-                 x: int,
-                 y: int,
+                 x: float,
+                 y: float,
                  width: int,
                  height: int,
                  color: arcade.Color):

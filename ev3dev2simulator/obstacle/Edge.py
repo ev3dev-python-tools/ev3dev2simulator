@@ -17,5 +17,6 @@ class Edge(BorderObstacle):
     def create_shape(self, scale):
         self._calc_points(scale)
 
-    def get_shapes(self):
+    @staticmethod
+    def get_shapes():
         return []

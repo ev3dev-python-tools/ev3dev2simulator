@@ -7,7 +7,7 @@ robots:
     center_y: 300
     orientation: 0
     parts:
-    - name: brick1
+    - name: brick0
       type: brick
       brick: 0
       x_offset: 0
@@ -55,7 +55,7 @@ robots:
     center_y: 641
     orientation: 180
     parts:
-    - name: brick1
+    - name: brick0
       type: brick
       brick: 0
       x_offset: 0

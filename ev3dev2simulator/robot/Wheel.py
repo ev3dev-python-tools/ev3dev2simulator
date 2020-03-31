@@ -7,20 +7,13 @@ class Wheel(BodyPart):
     Class representing a Wheel of the simulated robot.
     """
 
-    def __init__(self,
-                 brick: int,
-                 address: str,
-                 robot,
-                 delta_x: int,
-                 delta_y: int):
+    def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['wheel']
-        super(Wheel, self).__init__(brick, address, robot, delta_x, delta_y, dims['width'], dims['height'], 'motor')
-        self.x_offset = delta_x
-        self.y_offset = delta_y
+        super().__init__(config, robot, dims['width'], dims['height'], 'motor')
 
-    def setup_visuals(self, scale):
+    def setup_visuals(self, scale, body):
         vis_conf = get_simulation_settings()
-        self.init_texture(vis_conf['image_paths']['wheel'], scale)
+        self.init_sprite(vis_conf['image_paths']['wheel'], scale, body)
 
     def is_falling(self) -> bool:
         """
@@ -28,7 +21,7 @@ class Wheel(BodyPart):
         :return: boolean value representing the outcome.
         """
         for o in self.sensible_obstacles:
-            if o.collided_with(self.center_x, self.center_y):
+            if o.collided_with(self.sprite.center_x, self.sprite.center_y):
                 return True
 
         return self.get_default_value()

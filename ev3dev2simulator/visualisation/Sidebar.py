@@ -1,4 +1,3 @@
-import sys
 import arcade
 
 
@@ -41,22 +40,18 @@ class Sidebar:
             robot[address]['value'] = sound
 
     def draw(self):
-        try:
-            height = self.sprites_total_height
-            for sprite in self.sprites:
-                sprite.draw()
-            for robot_name, sensorDict in self.robot_info.items():
-                arcade.draw_text(robot_name, self.x + self.left_text_padding, self.y - height, self.text_color,
-                                 self.text_size + 2, bold=True)
+        height = self.sprites_total_height
+        for sprite in self.sprites:
+            sprite.draw()
+        for robot_name, sensorDict in self.robot_info.items():
+            arcade.draw_text(robot_name, self.x + self.left_text_padding, self.y - height, self.text_color,
+                             self.text_size + 2, bold=True)
+            height += (self.text_size + self.text_spacing)
+            for address, sensor in sensorDict.items():
+                value = f"{sensor['value']:.2f}" if isinstance(sensor['value'], float) else str(sensor['value'])
+                lines = value.count('\n')
+                height += (self.text_size * lines)
+                arcade.draw_text(f"{sensor['name']}: {value}", self.x + 2 * self.left_text_padding, self.y - height,
+                                 self.text_color, self.text_size)
                 height += (self.text_size + self.text_spacing)
-                for address, sensor in sensorDict.items():
-                    value = str(sensor['value'])
-                    lines = value.count('\n')
-                    height += (self.text_size * lines)
-                    arcade.draw_text(f"{sensor['name']}: {value}", self.x + 2 * self.left_text_padding, self.y - height,
-                                     self.text_color, self.text_size)
-                    height += (self.text_size + self.text_spacing)
-                height += (self.text_size + self.text_spacing)
-        except:
-            print("Unexpected error:", sys.exc_info()[0])
-            raise
+            height += (self.text_size + self.text_spacing)

@@ -2,7 +2,7 @@ robots:
   - name: robot0
     center_x: 400
     center_y: 350
-    orientation: 0
+    orientation: -34
     parts:
     - name: motor-left
       type: motor

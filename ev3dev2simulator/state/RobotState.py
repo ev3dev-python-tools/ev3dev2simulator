@@ -1,6 +1,8 @@
 import math
 
-from arcade import Sprite, SpriteList
+import arcade
+import pymunk
+from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.obstacle import ColorObstacle
 from ev3dev2simulator.robot import BodyPart
@@ -13,8 +15,11 @@ from ev3dev2simulator.robot.TouchSensor import TouchSensor
 from ev3dev2simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
 from ev3dev2simulator.robot.UltrasonicSensorTop import UltrasonicSensor
 from ev3dev2simulator.robot.Wheel import Wheel
+
 from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
-from ev3dev2simulator.config.config import get_simulation_settings, debug
+from ev3dev2simulator.config.config import debug
+
+from ev3dev2simulator.visualisation.PymunkRobotPartSprite import PymunkRobotPartSprite
 
 
 class RobotState:
@@ -24,9 +29,9 @@ class RobotState:
     """
 
     def __init__(self, config):
-        self.sprites = SpriteList()
-        self.side_bar_sprites = SpriteList()
-        self.space = None
+        self.sprite_list = arcade.SpriteList[PymunkRobotPartSprite]()
+        self.side_bar_sprites = arcade.SpriteList()
+
         self.sensors = {}
         self.actuators = {}
         self.values = {}
@@ -34,134 +39,111 @@ class RobotState:
         self.bricks = []
         self.sounds = {}
 
+        self.body = None
+        self.scale = None
+
         if debug:
             self.debug_shapes = []
 
-        self.orig_x = float(config['center_x'])
-        self.orig_y = float(config['center_y']) + 22.5
+        self.x = float(config['center_x'])
+        self.y = float(config['center_y']) + 22.5
 
-        self.x = self.orig_x
-        self.y = self.orig_y
+        self.wheel_distance = None
 
-        sim_settings = get_simulation_settings()
-        self.wheel_distance = sim_settings['wheel_settings']['spacing']  # TODO move this to robot config
+        try:
+            self.orig_orientation = config['orientation']
+        except KeyError:
+            self.orig_orientation = 0
 
         self.name = config['name']
         self.is_stuck = False
 
         for part in config['parts']:
             if part['type'] == 'brick':
-                brick = Brick(int(part['brick']), self, float(part['x_offset']), float(part['y_offset']), part['name'])
-                self.sprites.append(brick)
+                brick = Brick(part, self)
                 self.bricks.append(brick)
-
-                left_led = Led(int(part['brick']), self, float(part['x_offset']) - 20,
-                               float(part['y_offset']) - 32.5)
-                right_led = Led(int(part['brick']), self, float(part['x_offset']) + 20,
-                                float(part['y_offset']) - 32.5)
-                self.sprites.append(left_led)
-                self.sprites.append(right_led)
-
                 self.led_colors[(brick.brick, 'led0')] = 1
-                self.actuators[(brick.brick, 'led0')] = left_led
+                self.actuators[(brick.brick, 'led0')] = Led((part['brick']), self, 'left',
+                                                            part['x_offset'], part['y_offset'])
                 self.led_colors[(brick.brick, 'led1')] = 1
-                self.actuators[(brick.brick, 'led1')] = right_led
+                self.actuators[(brick.brick, 'led1')] = Led((part['brick']), self, 'right',
+                                                            part['x_offset'], part['y_offset'])
 
-                speaker = Speaker(int(part['brick']), self, 0,
-                                  0)
-                self.actuators[(brick.brick, 'speaker')] = speaker
-                self.sprites.append(speaker)
+                self.actuators[(brick.brick, 'speaker')] = Speaker(int(part['brick']), self, 0, 0)
 
             elif part['type'] == 'motor':
-                wheel = Wheel(int(part['brick']), part['port'], self, float(part['x_offset']), float(part['y_offset']))
-                self.sprites.append(wheel)
+                wheel = Wheel(part, self)
                 self.actuators[(wheel.brick, wheel.address)] = wheel
 
             elif part['type'] == 'color_sensor':
-                color_sensor = ColorSensor(int(part['brick']), part['port'], self,
-                                           float(part['x_offset']),
-                                           float(part['y_offset']), part['name'])
-                self.sprites.append(color_sensor)
+                color_sensor = ColorSensor(part, self)
                 self.sensors[(color_sensor.brick, color_sensor.address)] = color_sensor
 
             elif part['type'] == 'touch_sensor':
-                touch_sensor = TouchSensor(int(part['brick']), part['port'], self, float(part['x_offset']),
-                                           float(part['y_offset']), part['side'], part['name'])
-                self.sprites.append(touch_sensor)
+                touch_sensor = TouchSensor(part, self)
                 self.sensors[(touch_sensor.brick, touch_sensor.address)] = touch_sensor
 
             elif part['type'] == 'ultrasonic_sensor':
-                try:
-                    if part['direction'] == 'bottom':
-                        ultrasonic_sensor = UltrasonicSensorBottom(int(part['brick']), part['port'], self,
-                                                                   float(part['x_offset']),
-                                                                   float(part['y_offset']),
-                                                                   part['name'])
-                    elif part['direction'] == 'forward':
-                        ultrasonic_sensor = UltrasonicSensor(int(part['brick']), part['port'], self,
-                                                             float(part['x_offset']),
-                                                             float(part['y_offset']),
-                                                             part['name'])
-                except KeyError:
-                    ultrasonic_sensor = UltrasonicSensor(part['brick'], part['port'], self,
-                                                         float(part['x_offset']),
-                                                         float(part['y_offset']),
-                                                         part['name'])
-                self.sprites.append(ultrasonic_sensor)
+                direction = part['direction'] if 'direction' in part else 'forward'
+                if direction == 'bottom':
+                    ultrasonic_sensor = UltrasonicSensorBottom(part, self)
+                else:
+                    ultrasonic_sensor = UltrasonicSensor(part, self)
                 self.sensors[(ultrasonic_sensor.brick, ultrasonic_sensor.address)] = ultrasonic_sensor
+
             elif part['type'] == 'arm':
-                arm = Arm(int(part['brick']), part['port'], self, float(part['x_offset']),
-                          float(part['y_offset']))
-                self.sprites.append(arm)
+                arm = Arm(part, self)
                 self.side_bar_sprites.append(arm.side_bar_arm)
                 self.actuators[(arm.brick, arm.address)] = arm
             else:
                 print("Unknown robot part in config")
 
-        try:
-            self.orig_orientation = config['orientation']
-            if self.orig_orientation != 0:
-                self._rotate(math.radians(self.orig_orientation))
-        except KeyError:
-            pass
+        self.parts = []
+        self.parts.extend(list(self.actuators.values()))
+        self.parts.extend(self.bricks)
+        self.parts.extend(list(self.sensors.values()))
 
     def reset(self):
         self.values.clear()
-        self._move_x(self.orig_x - self.x)
-        self.x = self.orig_x
-        self._move_y(self.orig_y - self.y)
-        self.y = self.orig_y
-        self._rotate(math.radians(self.orig_orientation) - math.radians(self.get_anchor().angle))
+        self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
+        self.body.angle = math.radians(self.orig_orientation)
+        self.body.velocity = (0, 0)
 
     def setup_visuals(self, scale):
-        for part in self.sprites:
-            part.setup_visuals(scale)
+        moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
-    def _move_x(self, distance: float):
+        self.body = pymunk.Body(20, moment, body_type=pymunk.Body.DYNAMIC)
+        self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
+
+        self.scale = scale
+        for part in self.parts:
+            part.setup_visuals(scale, self.body)
+            self.sprite_list.append(part.sprite)
+
+        if self.orig_orientation != 0:
+            self._rotate(math.radians(self.orig_orientation))
+
+        wheels = self.get_wheels()
+        if len(wheels) == 2:
+            wheel_pos_left = Vec2d(wheels[0].sprite.shape.center_of_gravity)
+            wheel_pos_right = Vec2d(wheels[1].sprite.shape.center_of_gravity)
+            self.wheel_distance = wheel_pos_left.get_distance(wheel_pos_right)
+        else:
+            raise RuntimeError('Currently cannot anything other than 2 wheels')
+
+    def _move_position(self, distance: Vec2d):
         """
-        Move all parts of this robot by the given distance in the x-direction.
+        Move all parts of this robot by the given distance vector.
         :param distance: to move
         """
-
-        for s in self.sprites:
-            s.move_x(distance)
-
-    def _move_y(self, distance: float):
-        """
-        Move all parts of this robot by the given distance in the y-direction.
-        :param distance: to move
-        """
-
-        for s in self.sprites:
-            s.move_y(distance)
+        self.body.position += distance
 
     def _rotate(self, radians: float):
         """
         Rotate all parts of this robot by the given angle in radians.
         :param radians to rotate
         """
-        for s in self.sprites:
-            s.rotate(radians)
+        self.body.angle += radians
 
     def execute_movement(self, left_ppf: float, right_ppf: float):
         """
@@ -171,23 +153,15 @@ class RobotState:
         :param right_ppf: speed in pixels per second of the right motor.
         """
 
-        distance_left = left_ppf if left_ppf is not None else 0
-        distance_right = right_ppf if right_ppf is not None else 0
+        distance_left = left_ppf * self.scale if left_ppf is not None else 0
+        distance_right = right_ppf * self.scale if right_ppf is not None else 0
 
-        cur_angle = math.radians(self.get_anchor().angle + 90)
-
-        diff_angle, diff_x, diff_y = \
-            calc_differential_steering_angle_x_y(self.wheel_distance,
-                                                 distance_left,
-                                                 distance_right,
-                                                 cur_angle)
-
-        self.x += diff_x
-        self.y += diff_y
-
+        cur_angle = self.body.angle + math.radians(90)
+        diff_angle, diff_x, diff_y = calc_differential_steering_angle_x_y(self.wheel_distance,
+                                                                          distance_left,
+                                                                          distance_right, cur_angle)
         self._rotate(diff_angle)
-        self._move_x(diff_x)
-        self._move_y(diff_y)
+        self._move_position((diff_x, diff_y))
 
     def execute_arm_movement(self, address: (int, str), dfp: float):
         """
@@ -217,9 +191,6 @@ class RobotState:
         for part in self.sensors.values():
             if part.get_ev3type() == 'touch_sensor':
                 part.set_sensible_obstacles(obstacles)
-
-    def set_space(self, space):
-        self.space = space
 
     def set_falling_obstacles(self, obstacles):
         """
@@ -253,8 +224,8 @@ class RobotState:
                 wheels.append(part)
         return wheels
 
-    def get_sprites(self) -> [Sprite]:
-        return self.sprites
+    def get_sprites(self) -> arcade.SpriteList[PymunkRobotPartSprite]:
+        return self.sprite_list
 
     def get_bricks(self):
         return self.bricks

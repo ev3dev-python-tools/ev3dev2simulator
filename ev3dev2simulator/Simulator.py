@@ -43,10 +43,10 @@ def main():
     args = vars(arg_parser.parse_args())
 
     if args['version']:
-        from ev3dev2 import version as apiversion
-        from ev3dev2simulator import version as simversion
-        print("version ev3dev2           : " + apiversion.__version__)
-        print("version ev3dev2simulator  : " + simversion.__version__)
+        from ev3dev2 import version as api_version
+        from ev3dev2simulator import version as sim_version
+        print("version ev3dev2           : " + api_version.__version__)
+        print("version ev3dev2simulator  : " + sim_version.__version__)
         sys.exit(0)
 
     use_second_screen_to_show_simulator = args['show_on_second_monitor']

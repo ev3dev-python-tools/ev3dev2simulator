@@ -60,7 +60,7 @@ def check():
 # bth.send("Hello?")
 
 leds = Leds()
-leds.animate_rainbow()
+# leds.animate_rainbow()
 cs = ColorSensor(INPUT_2)
 ts1 = TouchSensor(INPUT_1)
 ts4 = TouchSensor(INPUT_4)

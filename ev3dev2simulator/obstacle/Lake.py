@@ -31,6 +31,7 @@ class Lake(ColorObstacle):
         if has_hole:
             self.hole = self._create_hole()
         self.outer_radius = outer_radius
+
         # visualisation
         self.center_x = None
         self.center_y = None
@@ -51,17 +52,13 @@ class Lake(ColorObstacle):
 
     @classmethod
     def from_config(cls, config):
-
         border_width = config['border_width']
         inner_radius = config['inner_radius']
         outer_radius = inner_radius + border_width
 
         x = config['x']
         y = config['y']
-        try:
-            has_hole = bool(config['hole'])
-        except:
-            has_hole = True
+        has_hole = bool(config['hole']) if 'hole' in config else True
 
         color = eval(config['color'])
 
@@ -82,7 +79,6 @@ class Lake(ColorObstacle):
         Create a shape representing this lake.
         :return: a Arcade shape object.
         """
-
         if self.hole is not None:
             points = self._create_points(scale)
             return create_line_strip(points,
@@ -96,10 +92,7 @@ class Lake(ColorObstacle):
         return Hole(self.x, self.y, self.inner_radius)
 
     def collided_with(self, x: float, y: float) -> bool:
-        distance = distance_between_points(self.center_x,
-                                           self.center_y,
-                                           x,
-                                           y)
+        distance = distance_between_points(self.center_x, self.center_y, x, y)
         if self.hole is not None:
             return (self.inner_radius * self.scale) < distance <\
                    ((self.outer_radius + (self.border_width/2)) * self.scale)

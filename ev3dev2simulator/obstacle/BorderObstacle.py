@@ -60,16 +60,7 @@ class BorderObstacle(ColorObstacle):
                                                        border_long_height)
 
     def collided_with(self, x: float, y: float) -> bool:
-        if arcade.is_point_in_polygon(x, y, self.top_points):
-            return True
-
-        if arcade.is_point_in_polygon(x, y, self.left_points):
-            return True
-
-        if arcade.is_point_in_polygon(x, y, self.bottom_points):
-            return True
-
-        if arcade.is_point_in_polygon(x, y, self.right_points):
-            return True
-
+        for side in [self.top_points, self.right_points, self.bottom_points, self.left_points]:
+            if arcade.is_point_in_polygon(x, y, side):
+                return True
         return False
