@@ -49,6 +49,11 @@ _config = None
 def load_config(world_config_file_name):
     global _config
 
+    if world_config_file_name == 'small':
+        world_config_file_name = 'config_small'
+    elif world_config_file_name == 'large':
+        world_config_file_name = 'config_large'
+
     if _config is None:
         _config = Config(world_config_file_name)
 
