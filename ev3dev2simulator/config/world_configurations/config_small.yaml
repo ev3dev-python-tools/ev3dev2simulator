@@ -84,18 +84,9 @@ obstacles:
     hole: False
     type: 'lake'
 
-  rock1:
-    x: 800
-    y: 300
-    width: 50
-    height: 550
-    color: (85, 107, 47)
-    angle: 10
-    type: 'rock'
-
   bottle:
     x: 1000
     y: 300
-    radius: 40
+    radius: 60
     color: (85, 107, 47)
     type: 'bottle'

@@ -136,7 +136,7 @@ class RobotState:
         Move all parts of this robot by the given distance vector.
         :param distance: to move
         """
-        self.body.position += distance
+        self.body.velocity = distance * 30.0
 
     def _rotate(self, radians: float):
         """
@@ -161,7 +161,7 @@ class RobotState:
                                                                           distance_left,
                                                                           distance_right, cur_angle)
         self._rotate(diff_angle)
-        self._move_position((diff_x, diff_y))
+        self._move_position(Vec2d(diff_x, diff_y))
 
     def execute_arm_movement(self, address: (int, str), dfp: float):
         """

@@ -24,7 +24,7 @@ class WorldState:
 
         self.robots = []
         self.space = Space()
-        self.space.damping = 0.99
+        self.space.damping = 0.1
 
         self.board_width = int(config['board_width'])
         self.board_height = int(config['board_height'])

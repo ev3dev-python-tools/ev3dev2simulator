@@ -4,7 +4,7 @@ import arcade
 DEFAULT_FRICTION = 0.2
 
 # Default mass used for sprites
-DEFAULT_MASS = 1
+DEFAULT_MASS = 5
 
 
 class PymunkSprite(arcade.Sprite):
