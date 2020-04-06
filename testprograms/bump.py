@@ -5,6 +5,7 @@ from ev3dev2.motor import OUTPUT_A, OUTPUT_D, SpeedPercent, MoveDifferential, Me
 from ev3dev2.sensor.lego import ColorSensor
 from ev3dev2.unit import STUD_MM
 from ev3dev2.wheel import EV3EducationSetTire
+from ev3dev2.sound import Sound
 
 def reverseRotations(rotations):
     tank_drive.on_for_rotations(SpeedPercent(-35), SpeedPercent(-35), rotations)
@@ -19,10 +20,10 @@ def drive():
 
 def checkColor():
     if cs.color != 6:
-        print('gg')
         tank_drive.stop()
+        sound.speak('gg', play_type=1)
         reverseRotations(1)
-        rotateDegrees(180)
+        rotateDegrees(90)
         drive()
 
 
@@ -42,6 +43,7 @@ cs = ColorSensor(INPUT_2)
 
 tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3EducationSetTire, 15 * STUD_MM)
 tank_measurement = MediumMotor(OUTPUT_B)
+sound = Sound()
 
 tank_drive.turn_right(30, 90)
 drive()

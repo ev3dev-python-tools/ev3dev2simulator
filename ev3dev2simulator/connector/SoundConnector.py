@@ -132,12 +132,12 @@ class SoundConnector:
 
         if play_type == SoundConnector.PLAY_LOOP:
             while True:
-                self._tts(text, espeak_opts, desired_volume)
-        elif play_type == SoundConnector.PLAY_NO_WAIT_FOR_COMPLETE:
-            x = threading.Thread(target=self._tts, args=(text, espeak_opts, desired_volume,))
-            x.start()
-        else:
-            self._tts(text, espeak_opts, desired_volume)
+                self.speak(text, espeak_opts, desired_volume, SoundConnector.PLAY_WAIT_FOR_COMPLETE)
+
+        x = threading.Thread(target=self._tts, args=(text, espeak_opts, desired_volume,), daemon=True)
+        x.start()
+        if play_type == SoundConnector.PLAY_WAIT_FOR_COMPLETE:
+            x.join()
 
     # noinspection PyUnusedLocal
     def _tts(self, text, espeak_opts, desired_volume: int) -> None:

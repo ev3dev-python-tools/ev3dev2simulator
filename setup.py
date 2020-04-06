@@ -48,7 +48,7 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
     platforms=["Windows", "macOS", "Linux"],
     python_requires=">=3.6",
     install_requires=['ev3devlogging', 'arcade==2.3.9', 'pyobjc;sys.platform=="darwin"', 'pyyaml', 'pymunk==5.6.0',
-                      'simpleaudio==1.0.4', 'pyttsx3==2.81', 'numpy', 'pyglet'],
+                      'simpleaudio==1.0.4', 'pyttsx3', 'numpy', 'pyglet'],
     py_modules=["bluetooth"],
     packages=find_packages(exclude=['tests', 'tests.*', '*.tests.*', ]),
     package_data={"ev3dev2simulator": ["config/*", "config/world_configurations/*", "assets/images/*"]},
