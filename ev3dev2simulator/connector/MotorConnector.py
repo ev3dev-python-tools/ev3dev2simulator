@@ -123,7 +123,7 @@ class MotorConnector:
                                     self.distance,
                                     self.stop_action)
 
-        return self.client_socket.send_motor_command(command)
+        return self.client_socket.send_command(command, True)
 
     def stop(self) -> float:
         """
@@ -143,4 +143,4 @@ class MotorConnector:
             speed *= -1
 
         command = StopCommand(self.address, speed, stop_action)
-        return self.client_socket.send_motor_command(command)
+        return self.client_socket.send_command(command, True)

@@ -27,7 +27,7 @@ class SoundTest(unittest.TestCase):
 
         self.assertEqual(len(clientSocketMock.mock_calls), 2)
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 0.2, 'message': 'Playing note with frequency: 440.0',
                               'soundType': 'note'})
@@ -41,13 +41,13 @@ class SoundTest(unittest.TestCase):
 
         self.assertEqual(len(clientSocketMock.mock_calls), 2)
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 0.3, 'message': 'Playing note with frequency: 500',
                               'soundType': 'note'})
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[1]
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 0.4, 'message': 'Playing note with frequency: 1500',
                               'soundType': 'note'})
@@ -62,7 +62,7 @@ class SoundTest(unittest.TestCase):
         self.assertEqual(len(clientSocketMock.mock_calls), 4)
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 0.350, 'message': 'Playing note with frequency: 392',
                               'soundType': 'note'})
@@ -92,7 +92,7 @@ class SoundTest(unittest.TestCase):
         self.assertEqual(len(clientSocketMock.mock_calls), 3)
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[2]
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 0.01, 'message': 'Playing note with frequency: 330',
                               'soundType': 'note'})
@@ -113,7 +113,7 @@ class SoundTest(unittest.TestCase):
         self.assertEqual(len(clientSocketMock.mock_calls), 7)
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 0.8, 'message': 'Playing note with frequency: 392',
                               'soundType': 'note'})
@@ -138,7 +138,7 @@ class SoundTest(unittest.TestCase):
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
 
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 3.0,
                               'message': 'Playing file: ``inputFiles/bark.wav``',
@@ -166,7 +166,7 @@ class SoundTest(unittest.TestCase):
         self.assertEqual(len(clientSocketMock.mock_calls), 2)
 
         fn_name, args, kwargs = clientSocketMock.mock_calls[0]
-        self.assertEqual(fn_name, 'send_sound_command')
+        self.assertEqual(fn_name, 'send_command')
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'SoundCommand', 'duration': 1.5,  # 200 words per minute, (5 / 200) * 60 = 1.5
                               'message': 'Saying: ``tests tests tests tests tests``',

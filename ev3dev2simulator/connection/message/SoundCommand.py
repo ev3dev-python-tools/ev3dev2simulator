@@ -1,4 +1,7 @@
-class SoundCommand:
+from ev3dev2simulator.connection.message.Command import Command
+
+
+class SoundCommand(Command):
     """
     Command send from the ev3dev2 mock to the simulator telling the robot to display the supplied message.
     """

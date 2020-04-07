@@ -1,10 +1,10 @@
 import json
 import socket
 import time
-from typing import Any
+from typing import Any, Optional
 
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
-from ev3dev2simulator.connection.message import MotorCommand, SoundCommand, DataRequest, LedCommand
+from ev3dev2simulator.connection.message.Command import Command
 
 
 class ClientSocket:
@@ -22,60 +22,22 @@ class ClientSocket:
 
         time.sleep(1)
 
-    def send_motor_command(self, command: MotorCommand) -> float:
+    def send_command(self, command: Command, wait_for_response=False) -> Optional[object]:
         """
-        Serialise and send the given MotorCommand to the simulator.
+        Serialise and send the given Command to the simulator.
         :param command: to send.
+        :param wait_for_response: set to True if you expect a result and want to wait for it blocking.
         """
 
         jsn = self._serialize(command)
         self.client.send(jsn)
 
-        return self._wait_for_response()
+        if wait_for_response:
+            while True:
+                data = self.client.recv(32)
 
-    def send_led_command(self, command: LedCommand):
-        """
-        Serialise and send the given MotorCommand to the simulator.
-        :param command: to send.
-        """
-
-        jsn = self._serialize(command)
-        self.client.send(jsn)
-
-    def send_sound_command(self, command: SoundCommand):
-        """
-        Serialise and send the given SoundCommand to the simulator.
-        :param command: to send.
-        """
-
-        jsn = self._serialize(command)
-        self.client.send(jsn)
-
-    def send_data_request(self, request: DataRequest) -> Any:
-        """
-        Serialise and send the given DataRequest to the simulator.
-        Block while waiting for an answer. Return the answer when received.
-        :param request: to send.
-        :return: the answer to the given request.
-        """
-
-        jsn = self._serialize(request)
-        self.client.send(jsn)
-
-        return self._wait_for_response()
-
-    def _wait_for_response(self) -> Any:
-        """
-        Wait until the simulator responds with a message and deserialize the message.
-        This function blocks until a response has been received.
-        :return: the value of the responded message.
-        """
-
-        while True:
-            data = self.client.recv(32)
-
-            if data:
-                return self._deserialize(data)
+                if data:
+                    return self._deserialize(data)
 
     @staticmethod
     def _serialize(message: Any) -> bytes:

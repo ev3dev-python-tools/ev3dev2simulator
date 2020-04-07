@@ -1,11 +1,12 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+
+from ev3dev2simulator.connection.message.Command import Command
 
 
-class MotorCommand(ABC):
+class MotorCommand(Command, ABC):
     """
     Base class for a motor command sent from the ev3dev2 mock to the simulator.
     """
-
     def __init__(self,
                  address: str,
                  speed: float,
@@ -14,10 +15,3 @@ class MotorCommand(ABC):
         self.speed = speed
         self.stop_action = stop_action
 
-    @abstractmethod
-    def serialize(self) -> dict:
-        """
-        Serialize the data of this command into a dictionary.
-        """
-
-        pass

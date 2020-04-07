@@ -366,7 +366,7 @@ class ColorSensor(Sensor):
         if you need to divide to get the actual value.
         """
 
-        return self.color()
+        return self.color
 
 
 class UltrasonicSensor(Sensor):

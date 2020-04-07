@@ -48,7 +48,7 @@ class SoundConnector:
             audio = audio.astype(np.int16)
 
             command = SoundCommand("Playing note with frequency: " + str(frequency), duration, "note")
-            self.client_socket.send_sound_command(command)
+            self.client_socket.send_command(command)
 
             if self.play_actual_sound:
                 try:
@@ -98,7 +98,7 @@ class SoundConnector:
         wave_read.close()
 
         command = SoundCommand(f'Playing file: ``{wav_file}``', duration, "file")
-        self.client_socket.send_sound_command(command)
+        self.client_socket.send_command(command)
 
         if self.play_actual_sound:
             try:
@@ -144,7 +144,7 @@ class SoundConnector:
         duration = (len(text.split()) / 200) * 60  # based on 200 words per minute as described in the tts docs
 
         command = SoundCommand(f'Saying: ``{text}``', duration, 'speak')
-        self.client_socket.send_sound_command(command)
+        self.client_socket.send_command(command)
 
         if self.play_actual_sound:
             try:

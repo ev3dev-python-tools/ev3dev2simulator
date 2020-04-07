@@ -51,6 +51,5 @@ class SensorConnector:
         Get data of the simulated sensor at the given address.
         :return: the value in any form of the sensor.
         """
-
         request = DataRequest(self.address)
-        return self.client_socket.send_data_request(request)
+        return self.client_socket.send_command(request, True)
