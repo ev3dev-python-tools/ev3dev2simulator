@@ -2,8 +2,9 @@ import argparse
 import sys
 import os
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-os.chdir(script_dir)
+if __name__ == '__main__':
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(script_dir)
 
 from ev3dev2simulator.config.config import load_config, get_world_config
 from ev3dev2simulator.state import WorldState
@@ -13,7 +14,12 @@ from ev3dev2simulator.state.WorldSimulator import WorldSimulator
 from ev3dev2simulator.state.WorldState import WorldState
 
 
-def create_arg_parser():
+def parse_args(args):
+    """
+    Parses the arguments given to the program. Mainly arguments for the visualisation.
+    :param args: list of parameters given to program
+    :return: list of parsed values based on parameters
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-V", "--version",
                         action='store_true',
@@ -32,15 +38,14 @@ def create_arg_parser():
     parser.add_argument("-m", "--maximized",
                         action='store_true',
                         help="Show simulator maximized")
-    return parser
+    return parser.parse_args(args)
 
 
 def main():
     """
     Spawns the user thread and creates and starts the simulation.
     """
-    arg_parser = create_arg_parser()
-    args = vars(arg_parser.parse_args())
+    args = vars(parse_args(sys.argv[1:]))
 
     if args['version']:
         from ev3dev2 import version as api_version
@@ -69,4 +74,5 @@ def main():
     start()
 
 
-main()
+if __name__ == '__main__':
+    main()
