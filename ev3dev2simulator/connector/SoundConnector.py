@@ -1,3 +1,4 @@
+import textwrap
 from time import sleep
 from typing import Any, Optional
 import threading
@@ -152,8 +153,13 @@ class SoundConnector:
                 engine.setProperty('volume', desired_volume / 100.0)
                 engine.say(text)
                 engine.runAndWait()
-            except OSError:
-                print("Warning: please make sure you have installed the required text to speech library such as espeak "
-                      "for Linux")
+            except OSError as e:
+                print(textwrap.dedent('''
+                                        Warning, speak could not be executed. Speak makes use of the pyttsx3 library. This requires:
+                                        - Windows users to install pypiwin32, installed by: pip install pypiwin32
+                                        - Linux users to install espeak, installed by: sudo apt-get install espeak
+                                        - Mac users do not need to install any additional software.
+                                        '''))
+                print('original exception', e)
             except RuntimeError:
                 print("Warning: 'speak' called before last text-to-speech was handled")
