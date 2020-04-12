@@ -161,5 +161,6 @@ class SoundConnector:
                                         - Mac users do not need to install any additional software.
                                         '''))
                 print('original exception', e)
-            except RuntimeError:
+            except RuntimeError as e:
                 print("Warning: 'speak' called before last text-to-speech was handled")
+                print(e)

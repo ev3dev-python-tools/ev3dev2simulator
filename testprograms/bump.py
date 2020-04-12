@@ -23,7 +23,7 @@ def checkColor():
         tank_drive.stop()
         sound.speak('gg', play_type=1)
         reverseRotations(1)
-        rotateDegrees(90)
+        rotateDegrees(80)
         drive()
 
 
