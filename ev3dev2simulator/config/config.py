@@ -24,13 +24,14 @@ class Config:
         """
 
         path = Config.get_project_root() + '/' + file_url + '.yaml'
-
-        with open(path, 'r') as stream:
-            try:
+        try:
+            with open(path, 'r') as stream:
                 return yaml.safe_load(stream)
-            except yaml.YAMLError as exc:
-                print(exc)
-                raise RuntimeError("there are errors in the yaml file")
+        except FileNotFoundError as er:
+            raise FileNotFoundError(f'The world configuration {file_url} could not be found')
+        except yaml.YAMLError:
+            raise RuntimeError('there are errors in the yaml file')
+
 
     @staticmethod
     def get_project_root() -> str:
@@ -54,8 +55,7 @@ def load_config(world_config_file_name):
     elif world_config_file_name == 'large':
         world_config_file_name = 'config_large'
 
-    if _config is None:
-        _config = Config(world_config_file_name)
+    _config = Config(world_config_file_name)
 
     return _config
 

@@ -10,10 +10,12 @@ from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
 
 from tests.ev3dev2.simulator.connection.test_ServerSocket import create_robot_sim
 
-load_config(None)
 wheel_circumference = 175.92918860
 
 class MessageProcessorTest(unittest.TestCase):
+
+    def setUp(self) -> None:
+        load_config(None)
 
     def test_create_jobs_center(self):
         robot_sim = create_robot_sim()

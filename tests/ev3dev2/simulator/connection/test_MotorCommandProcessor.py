@@ -5,12 +5,13 @@ from ev3dev2simulator.state.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
 from ev3dev2simulator.connection.message.StopCommand import StopCommand
 
-load_config(None)
-
 # wheel_circumference = 135.7168
 wheel_circumference = 175.92918860
 
 class MotorCommandProcessorTest(unittest.TestCase):
+
+    def setUp(self) -> None:
+        load_config(None)
 
     def test_process_drive_command_degrees_hold(self):
         creator = MotorCommandProcessor()
