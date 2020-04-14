@@ -128,7 +128,7 @@ class RobotState:
             wheel_pos_right = Vec2d(wheels[1].shape.center_of_gravity)
             self.wheel_distance = wheel_pos_left.get_distance(wheel_pos_right)
         else:
-            raise RuntimeError('Currently cannot anything other than 2 wheels')
+            raise RuntimeError('Currently cannot have anything other than 2 wheels')
 
         if self.orig_orientation != 0:
             self._rotate(math.radians(self.orig_orientation))
