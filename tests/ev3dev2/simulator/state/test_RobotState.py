@@ -1,9 +1,8 @@
-import os
 import unittest
 from math import pi
 from unittest.mock import patch, MagicMock
 
-from pymunk import Vec2d
+from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.config.config import load_config
 from ev3dev2simulator.state.RobotState import RobotState
@@ -13,12 +12,8 @@ load_config(None)
 
 class TestRobotState(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        os.chdir(script_dir)
-
-    def default_config(self):
+    @staticmethod
+    def default_config():
         return {'center_x': 0,
                 'center_y': 0,
                 'orientation': 180,

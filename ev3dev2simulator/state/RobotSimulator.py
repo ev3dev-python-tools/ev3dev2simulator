@@ -31,6 +31,9 @@ class RobotSimulator:
 
         self.motor_lock = threading.Lock()
 
+        for sensor in self.robot.get_sensors():
+            self.load_sensor(sensor)
+
     def update(self):
         if self.should_reset:
             self.reset()
@@ -41,6 +44,8 @@ class RobotSimulator:
             self._process_sensors()
             self.robot.is_stuck = self._check_fall()
             self._sync_physics_sprites()
+
+        self.release_locks()
 
     def put_actuator_job(self, address: (int, str), job: float):
         """

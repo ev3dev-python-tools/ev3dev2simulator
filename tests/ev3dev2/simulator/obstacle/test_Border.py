@@ -1,10 +1,9 @@
 import unittest
 import arcade
 
-from sys import platform
-
 from ev3dev2simulator.obstacle.Border import Border
 import ev3dev2simulator.config.config as conf
+
 
 class BorderTest(unittest.TestCase):
 
@@ -37,6 +36,8 @@ class BorderTest(unittest.TestCase):
         self.assertEqual(border.right_points, right)
         self.assertEqual(border.bottom_points, bottom)
         self.assertEqual(border.left_points, left)
+
+        self.assertEqual(len(border.get_shapes()), 4)
 
 
 if __name__ == '__main__':

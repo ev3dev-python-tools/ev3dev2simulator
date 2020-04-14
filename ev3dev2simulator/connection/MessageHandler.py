@@ -92,7 +92,6 @@ class MessageHandler:
         :param d: to process.
         :return: a bytes object representing the serialized response.
         """
-
         request = DataRequest(d['address'])
         value = self.message_processor.process_data_request(request)
 
