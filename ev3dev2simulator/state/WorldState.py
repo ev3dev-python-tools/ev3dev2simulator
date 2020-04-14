@@ -64,6 +64,10 @@ class WorldState:
 
         self.color_obstacles.append(board)
 
+    def reset(self):
+        for obstacle in self.obstacles:
+            obstacle.reset()
+
     def setup_visuals(self, scale):
 
         for obstacle in self.static_obstacles:

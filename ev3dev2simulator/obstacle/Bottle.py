@@ -1,4 +1,5 @@
 import arcade
+import pymunk
 
 from ev3dev2simulator.visualisation.PymunkRoundSprite import PymunkRoundSprite
 
@@ -21,6 +22,7 @@ class Bottle:
         # visualisation
         self.color = color
         self.sprite = None
+        self.scale = None
 
     @classmethod
     def from_config(cls, config):
@@ -37,3 +39,8 @@ class Bottle:
     def create_sprite(self, scale):
         self.sprite = PymunkRoundSprite('assets/images/bottle.png',
                                         self.x * scale, self.y * scale, scale * 2 * (self.radius / 948))
+        self.scale = scale
+
+    def reset(self):
+        self.sprite.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
+        self.sprite.body.velocity = (0, 0)

@@ -1,7 +1,7 @@
 import socket
-import sys
 import threading
 import unittest
+
 
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
@@ -17,16 +17,21 @@ class TestClientSocket(unittest.TestCase):
         port = get_simulation_settings()['exec_settings']['socket_port']
         server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_sock.bind(('localhost', port))
-        server_sock.listen(5)
-        (client, address) = server_sock.accept()
-        while True:
-            data = client.recv(128)
-            if data:
-                if data == b'close_test_server':
-                    client.close()
-                    server_sock.close()
-                    return
+        server_sock.settimeout(2)
+        try:
+            server_sock.bind(('localhost', port))
+            server_sock.listen(5)
+            (client, address) = server_sock.accept()
+            while True:
+                data = client.recv(128)
+                if data:
+                    if data == b'close_test_server':
+                        client.close()
+                        server_sock.close()
+                        return
+        except:
+            server_sock.close()
+
 
     def test_serialize_deserialize(self):
         server_thread = threading.Thread(target=self.run_fake_server)

@@ -67,7 +67,7 @@ def main():
     Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
                use_second_screen_to_show_simulator)
 
-    server_thread = ServerSockets(world_simulator.robotSimulators)
+    server_thread = ServerSockets(world_simulator)
     server_thread.setDaemon(True)
     server_thread.start()
 

@@ -108,6 +108,7 @@ class RobotState:
         self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
         self.body.angle = math.radians(self.orig_orientation)
         self.body.velocity = (0, 0)
+        self.body.angular_velocity = 0
 
     def setup_visuals(self, scale):
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
