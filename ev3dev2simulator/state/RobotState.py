@@ -19,7 +19,7 @@ from ev3dev2simulator.robot.Wheel import Wheel
 from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
 from ev3dev2simulator.config.config import debug
 
-from ev3dev2simulator.visualisation.PymunkRobotPartSprite import PymunkRobotPartSprite
+from ev3dev2simulator.visualisation.RobotPartSprite import RobotPartSprite
 
 
 class RobotState:
@@ -29,7 +29,7 @@ class RobotState:
     """
 
     def __init__(self, config):
-        self.sprite_list = arcade.SpriteList[PymunkRobotPartSprite]()
+        self.sprite_list = arcade.SpriteList[RobotPartSprite]()
         self.side_bar_sprites = arcade.SpriteList()
 
         self.sensors = {}
@@ -40,6 +40,7 @@ class RobotState:
         self.sounds = {}
 
         self.body = None
+        self.shapes = []
         self.scale = None
 
         if debug:
@@ -110,27 +111,33 @@ class RobotState:
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
 
-    def setup_visuals(self, scale):
+    def setup_pymunk_shapes(self, scale):
+        self.scale = scale
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
         self.body = pymunk.Body(20, moment, body_type=pymunk.Body.DYNAMIC)
         self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
 
-        self.scale = scale
         for part in self.parts:
-            part.setup_visuals(scale, self.body)
-            self.sprite_list.append(part.sprite)
+            part.setup_pymunk_shape(scale, self.body)
+            self.shapes.append(part.shape)
+
+        wheels = self.get_wheels()
+        if len(wheels) == 2:
+            wheel_pos_left = Vec2d(wheels[0].shape.center_of_gravity)
+            wheel_pos_right = Vec2d(wheels[1].shape.center_of_gravity)
+            self.wheel_distance = wheel_pos_left.get_distance(wheel_pos_right)
+        else:
+            raise RuntimeError('Currently cannot anything other than 2 wheels')
 
         if self.orig_orientation != 0:
             self._rotate(math.radians(self.orig_orientation))
 
-        wheels = self.get_wheels()
-        if len(wheels) == 2:
-            wheel_pos_left = Vec2d(wheels[0].sprite.shape.center_of_gravity)
-            wheel_pos_right = Vec2d(wheels[1].sprite.shape.center_of_gravity)
-            self.wheel_distance = wheel_pos_left.get_distance(wheel_pos_right)
-        else:
-            raise RuntimeError('Currently cannot anything other than 2 wheels')
+    def setup_visuals(self, scale):
+        for part in self.parts:
+            part.setup_visuals(scale)
+            self.sprite_list.append(part.sprite)
+
 
     def _move_position(self, distance: Vec2d):
         """
@@ -206,6 +213,9 @@ class RobotState:
             if isinstance(part, UltrasonicSensorBottom):
                 part.set_sensible_obstacles(obstacles)
 
+    def get_shapes(self):
+        return self.shapes
+
     def get_sensor(self, address):
         return self.sensors.get(address)
 
@@ -225,7 +235,7 @@ class RobotState:
                 wheels.append(part)
         return wheels
 
-    def get_sprites(self) -> arcade.SpriteList[PymunkRobotPartSprite]:
+    def get_sprites(self) -> arcade.SpriteList[RobotPartSprite]:
         return self.sprite_list
 
     def get_bricks(self):

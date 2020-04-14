@@ -21,10 +21,10 @@ class ColorSensor(BodyPart):
         super().__init__(config, robot, dims['width'], dims['height'], 'color_sensor')
         self.old_texture_index = 0
 
-    def setup_visuals(self, scale, body):
+    def setup_visuals(self, scale):
         img_cfg = get_simulation_settings()['image_paths']
         src_list = [img_cfg[f'color_sensor_{color}'] for color in ['black', 'blue', 'green', 'red', 'white', 'yellow']]
-        self.init_sprite_with_list(src_list, scale, 0, body)
+        self.init_sprite_with_list(src_list, scale)
 
     def get_latest_value(self):
         latest_data = self.get_sensed_color()

@@ -2,8 +2,7 @@ import math
 
 import arcade
 import pymunk
-
-from ev3dev2simulator.visualisation.PymunkQuadrilateralSprite import PymunkQuadrilateralSprite
+from arcade import Sprite
 
 
 class Rock:
@@ -29,17 +28,36 @@ class Rock:
         self.sprite = None
         self.scale = None
 
+        # physics
+        self.body = None
+        self.shape = None
+
+    def create_shape(self, scale):
+        width = scale * (self.width / 892)
+        height = scale * (self.height / 892)
+
+        mass = 5
+        friction = 0.2
+
+        moment = pymunk.moment_for_box(mass, (width, height))
+
+        self.body = pymunk.Body(mass, moment)
+        self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
+
+        self.shape = pymunk.Poly.create_box(self.body, (width, height))
+        self.shape.friction = friction
+        self.body.angle = math.radians(self.angle)
+
     def create_sprite(self, scale):
-        self.sprite = PymunkQuadrilateralSprite('assets/images/brick.png',
-                                                self.x * scale, self.y * scale, scale * (self.width / 892))
-        self.sprite.body.angle = math.radians(self.angle)
+        self.sprite = Sprite('assets/images/brick.png', scale=scale * (self.width / 892),
+                             center_x=self.x * scale, center_y=self.y * scale)
         self.scale = scale
 
     def reset(self):
-        self.sprite.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
-        self.sprite.body.angle = math.radians(self.angle)
-        self.sprite.body.velocity = (0, 0)
-        self.sprite.body.angular_velocity = 0
+        self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
+        self.body.angle = math.radians(self.angle)
+        self.body.velocity = (0, 0)
+        self.body.angular_velocity = 0
 
     @classmethod
     def from_config(cls, config):

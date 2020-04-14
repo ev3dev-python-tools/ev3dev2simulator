@@ -165,8 +165,8 @@ class RobotSimulator:
 
     def _sync_physics_sprites(self):
         for part in self.robot.parts:
-            rel = Vec2d(part.sprite.shape.center_of_gravity)
+            rel = Vec2d(part.shape.center_of_gravity)
             x, y = rel.rotated(self.robot.body.angle) + self.robot.body.position
             part.sprite.center_x = x
             part.sprite.center_y = y
-            part.sprite.angle = math.degrees(part.sprite.shape.body.angle)
+            part.sprite.angle = math.degrees(part.shape.body.angle)

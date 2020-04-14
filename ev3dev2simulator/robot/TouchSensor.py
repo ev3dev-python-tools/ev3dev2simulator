@@ -17,7 +17,7 @@ class TouchSensor(BodyPart):
 
         super(TouchSensor, self).__init__(config, robot, dims['width'], dims['height'], 'touch_sensor')
 
-    def setup_visuals(self, scale, body):
+    def setup_visuals(self, scale):
         if self.side == 'left':
             img = 'touch_sensor_left'
         elif self.side == 'right':
@@ -25,7 +25,7 @@ class TouchSensor(BodyPart):
         else:
             img = 'touch_sensor_rear'
         vis_conf = get_simulation_settings()
-        self.init_sprite(vis_conf['image_paths'][img], scale, body)
+        self.init_sprite(vis_conf['image_paths'][img], scale)
 
     def get_latest_value(self):
         return self.is_touching()

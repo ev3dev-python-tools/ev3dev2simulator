@@ -19,10 +19,10 @@ class Led(BodyPart):
         super().__init__(config, robot, dims['width'], dims['height'], 'led', offset_x, - 32.5)
         self.old_texture_index = 1
 
-    def setup_visuals(self, scale, body):
+    def setup_visuals(self, scale):
         img_cfg = get_simulation_settings()['image_paths']
         src_list = [img_cfg[f'led_{color}'] for color in ['amber', 'black', 'green', 'red', 'orange', 'yellow']]
-        self.init_sprite_with_list(src_list, scale, 1, body)
+        self.init_sprite_with_list(src_list, scale, 1)
 
     def set_color_texture(self, color):
         if self.old_texture_index != color:

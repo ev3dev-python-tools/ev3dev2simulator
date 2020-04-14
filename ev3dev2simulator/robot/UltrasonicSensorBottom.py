@@ -10,9 +10,9 @@ class UltrasonicSensorBottom(BodyPart):
         dims = get_simulation_settings()['body_part_sizes']['ultrasonic_sensor_bottom']
         super(UltrasonicSensorBottom, self).__init__(config, robot, dims['width'], dims['height'], 'ultrasonic_sensor')
 
-    def setup_visuals(self, scale, body):
+    def setup_visuals(self, scale):
         img_cfg = get_simulation_settings()['image_paths']
-        self.init_sprite(img_cfg['ultrasonic_sensor_bottom'], scale, body)
+        self.init_sprite(img_cfg['ultrasonic_sensor_bottom'], scale)
 
     def get_latest_value(self):
         return self.distance()

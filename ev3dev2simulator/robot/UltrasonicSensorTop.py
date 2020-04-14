@@ -19,12 +19,12 @@ class UltrasonicSensor(BodyPart):
         super(UltrasonicSensor, self).__init__(config, robot, dims['width'], dims['height'], 'ultrasonic_sensor')
         self.sensor_half_height = 22.5
 
-    def setup_visuals(self, scale, body):
+    def setup_visuals(self, scale):
         img_cfg = get_simulation_settings()['image_paths']
-        self.init_sprite(img_cfg['ultrasonic_sensor_top'], scale, body)
+        self.init_sprite(img_cfg['ultrasonic_sensor_top'], scale)
 
     def get_latest_value(self):
-        return self.distance(self.sprite.shape.space)
+        return self.distance(self.shape.space)
 
     def distance(self, space: Space) -> float:
         """
@@ -60,7 +60,7 @@ class UltrasonicSensor(BodyPart):
         if debug:
             line = create_line(x, y, base_x, base_y, RED, 5)
             self.robot.debug_shapes.append(line)
-        query = space.segment_query_first((base_x, base_y), (x, y), 1, self.sprite.shape.filter)
+        query = space.segment_query_first((base_x, base_y), (x, y), 1, self.shape.filter)
         if query:
             return -self.sensor_half_height + distance_between_points(base_x, base_y, query.point.x, query.point.y)
         else:

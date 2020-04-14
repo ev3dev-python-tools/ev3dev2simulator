@@ -1,4 +1,12 @@
-from ev3dev2simulator.visualisation.PymunkRobotPartSprite import PymunkRobotPartSprite
+import pymunk
+
+from ev3dev2simulator.visualisation.RobotPartSprite import RobotPartSprite
+
+# Default friction used for sprites, unless otherwise specified
+DEFAULT_FRICTION = 0.2
+
+# Default mass used for sprites
+DEFAULT_MASS = 5
 
 
 class BodyPart:
@@ -21,6 +29,7 @@ class BodyPart:
         self.sensible_obstacles = []
 
         self.sprite = None
+        self.shape = None
 
     def set_sensible_obstacles(self, obstacles):
         """
@@ -40,12 +49,20 @@ class BodyPart:
     def setup_visuals(self, scale, body):
         pass
 
-    def init_sprite_with_list(self, src_list, scale, start_sprite=0, body=None):
-        self.sprite = PymunkRobotPartSprite(src_list, start_sprite, self.x_offset, self.y_offset,
-                                            self.width_mm, self.height_mm, scale=scale, body=body)
+    def setup_pymunk_shape(self, px_mm_scale, body):
+        width = self.width_mm * px_mm_scale
+        height = self.height_mm * px_mm_scale
+        vs = [(0, 0), (width, 0), (width, height), (0, height)]
+        t = pymunk.Transform(tx=self.x_offset * px_mm_scale - width/2, ty=self.y_offset * px_mm_scale - height/2)
+        self.shape = pymunk.Poly(body, vs, transform=t)
+        self.shape.friction = DEFAULT_FRICTION
+        self.shape.mass = DEFAULT_MASS
 
-    def init_sprite(self, src, scale, body):
-        self.init_sprite_with_list([src], scale, body=body)
+    def init_sprite_with_list(self, src_list, scale, start_sprite=0):
+        self.sprite = RobotPartSprite(src_list, start_sprite, self.width_mm, self.height_mm, scale=scale)
+
+    def init_sprite(self, src, scale):
+        self.init_sprite_with_list([src], scale)
 
     def get_ev3type(self):
         return self.ev3type

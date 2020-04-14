@@ -10,12 +10,11 @@ from ev3dev2simulator.obstacle.Bottle import Bottle
 from ev3dev2simulator.obstacle.Edge import Edge
 from ev3dev2simulator.obstacle.Lake import Lake
 from ev3dev2simulator.obstacle.Rock import Rock
-from ev3dev2simulator.visualisation.PymunkSprite import PymunkSprite
 
 
 class WorldState:
     def __init__(self, config):
-        self.sprite_list = arcade.SpriteList[PymunkSprite]()
+        self.sprite_list = arcade.SpriteList()
         self.obstacles = []
         self.static_obstacles = []
         self.touch_obstacles = []
@@ -68,28 +67,34 @@ class WorldState:
         for obstacle in self.obstacles:
             obstacle.reset()
 
+    def setup_pymunk_shapes(self, scale):
+        for idx, robot in enumerate(self.robots):
+            robot.setup_pymunk_shapes(scale)
+            for shape in robot.get_shapes():
+                shape.filter = pymunk.ShapeFilter(group=idx+5)
+                self.space.add(shape)
+            self.space.add(robot.body)
+
+        for obstacle in self.obstacles:
+            obstacle.create_shape(scale)
+            print(obstacle.shape)
+            self.space.add(obstacle.body)
+            self.space.add(obstacle.shape)
+
     def setup_visuals(self, scale):
 
         for obstacle in self.static_obstacles:
             obstacle.create_shape(scale)
 
-        touch_sprites = arcade.SpriteList[PymunkSprite]()
+        touch_sprites = arcade.SpriteList()
 
         for obstacle in self.obstacles:
             obstacle.create_sprite(scale)
             self.sprite_list.append(obstacle.sprite)
             touch_sprites.append(obstacle.sprite)
 
-        for sprite in self.sprite_list:
-            self.space.add(sprite.body)
-            self.space.add(sprite.shape)
-
-        for idx, robot in enumerate(self.robots):
+        for robot in self.robots:
             robot.setup_visuals(scale)
-            for sprite in robot.get_sprites():
-                sprite.shape.filter = pymunk.ShapeFilter(group=idx+5)
-                self.space.add(sprite.shape)
-            self.space.add(robot.body)
             robot.set_color_obstacles(self.color_obstacles)
             robot.set_touch_obstacles(touch_sprites)
             robot.set_falling_obstacles(self.falling_obstacles)

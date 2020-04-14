@@ -22,6 +22,6 @@ class Speaker(BodyPart):
         dims = get_simulation_settings()['body_part_sizes']['speaker']
         super(Speaker, self).__init__(config, robot, dims['width'], dims['height'], 'speaker')
 
-    def setup_visuals(self, scale, body):
+    def setup_visuals(self, scale):
         vis_conf = get_simulation_settings()
-        self.init_sprite(vis_conf['image_paths']['led_black'], scale, body)
+        self.init_sprite(vis_conf['image_paths']['led_black'], scale)

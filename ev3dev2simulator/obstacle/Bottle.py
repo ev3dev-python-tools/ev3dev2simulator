@@ -1,7 +1,6 @@
 import arcade
 import pymunk
-
-from ev3dev2simulator.visualisation.PymunkRoundSprite import PymunkRoundSprite
+from arcade import Sprite
 
 
 class Bottle:
@@ -24,6 +23,11 @@ class Bottle:
         self.sprite = None
         self.scale = None
 
+        # physics
+        self.body = None
+        self.shape = None
+
+
     @classmethod
     def from_config(cls, config):
         x = config['x']
@@ -36,11 +40,25 @@ class Bottle:
     def get_sprite(self):
         return self.sprite
 
+    def create_shape(self, scale):
+        radius = scale * self.radius
+        mass = 5
+        friction = 0.2
+        moment = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
+
+        self.body = pymunk.Body(mass, moment)
+        self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
+
+        self.shape = pymunk.Circle(self.body, radius, (0, 0))
+        self.shape.friction = friction
+
     def create_sprite(self, scale):
-        self.sprite = PymunkRoundSprite('assets/images/bottle.png',
-                                        self.x * scale, self.y * scale, scale * 2 * (self.radius / 948))
+        self.sprite = Sprite('assets/images/bottle.png', scale=scale * 2 * (self.radius / 948),
+                             center_x=self.x * scale, center_y=self.y * scale)
+        print(self.sprite.scale)
         self.scale = scale
 
     def reset(self):
-        self.sprite.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
-        self.sprite.body.velocity = (0, 0)
+        self.body.velocity = (0, 0)
+        self.body.angular_velocity = 0
+        self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)

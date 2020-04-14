@@ -74,6 +74,7 @@ class Visualiser(arcade.Window):
         self.msg_counter = 0
 
         self.setup_sidebar()
+        self.world_state.setup_pymunk_shapes(self.scale)
         self.world_state.setup_visuals(self.scale)
 
         if show_fullscreen:

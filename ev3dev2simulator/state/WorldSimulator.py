@@ -35,7 +35,7 @@ class WorldSimulator:
 
     def sync_physics_sprites(self):
         """ Move sprites to where physics objects are """
-        for sprite in self.world_state.sprite_list:
-            sprite.center_x = sprite.shape.body.position.x
-            sprite.center_y = sprite.shape.body.position.y
-            sprite.angle = math.degrees(sprite.shape.body.angle)
+        for obstacle in self.world_state.obstacles:
+            obstacle.sprite.center_x = obstacle.body.position.x
+            obstacle.sprite.center_y = obstacle.body.position.y
+            obstacle.sprite.angle = math.degrees(obstacle.body.angle)
