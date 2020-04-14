@@ -4,13 +4,12 @@ import arcade
 from sys import platform
 
 from ev3dev2simulator.obstacle.Border import Border
-
+import ev3dev2simulator.config.config as conf
 
 class BorderTest(unittest.TestCase):
 
     def test_create_border(self):
-        if platform != "darwin":
-            print("currently only executing drawing on macOS")
+        if conf.production:
             return
         arcade.Window(width=5, height=5)
         config = {

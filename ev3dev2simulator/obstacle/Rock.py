@@ -12,16 +12,16 @@ class Rock:
     def __init__(self,
                  x: int,
                  y: int,
-                 width: int,
-                 height: int,
+                 width: float,
+                 height: float,
                  color: arcade.Color,
                  angle: int):
 
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.angle = angle
+        self.x = int(x)
+        self.y = int(y)
+        self.width = float(width)
+        self.height = float(height)
+        self.angle = int(angle)
 
         # visualisation
         self.color = color
@@ -47,11 +47,11 @@ class Rock:
         self.shape = pymunk.Poly.create_box(self.body, (width, height))
         self.shape.friction = friction
         self.body.angle = math.radians(self.angle)
+        self.scale = scale
 
     def create_sprite(self, scale):
         self.sprite = Sprite('assets/images/brick.png', scale=scale * (self.width / 892),
                              center_x=self.x * scale, center_y=self.y * scale)
-        self.scale = scale
 
     def reset(self):
         self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)

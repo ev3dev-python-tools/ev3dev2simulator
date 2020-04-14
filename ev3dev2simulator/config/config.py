@@ -44,6 +44,7 @@ class Config:
 
 
 debug = False
+production = True
 _config = None
 
 

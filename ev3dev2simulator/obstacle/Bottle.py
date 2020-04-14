@@ -30,9 +30,9 @@ class Bottle:
 
     @classmethod
     def from_config(cls, config):
-        x = config['x']
-        y = config['y']
-        radius = config['radius']
+        x = int(config['x'])
+        y = int(config['y'])
+        radius = int(config['radius'])
         color = eval(config['color'])
 
         return cls(x, y, radius, color)
@@ -51,12 +51,11 @@ class Bottle:
 
         self.shape = pymunk.Circle(self.body, radius, (0, 0))
         self.shape.friction = friction
+        self.scale = scale
 
     def create_sprite(self, scale):
         self.sprite = Sprite('assets/images/bottle.png', scale=scale * 2 * (self.radius / 948),
                              center_x=self.x * scale, center_y=self.y * scale)
-        print(self.sprite.scale)
-        self.scale = scale
 
     def reset(self):
         self.body.velocity = (0, 0)

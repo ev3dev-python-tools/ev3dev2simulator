@@ -77,7 +77,6 @@ class WorldState:
 
         for obstacle in self.obstacles:
             obstacle.create_shape(scale)
-            print(obstacle.shape)
             self.space.add(obstacle.body)
             self.space.add(obstacle.shape)
 
