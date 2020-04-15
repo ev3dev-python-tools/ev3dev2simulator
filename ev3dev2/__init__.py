@@ -25,6 +25,8 @@
 import re
 import sys
 
+from ev3dev2simulator.connector.DeviceConnector import DeviceConnector
+
 
 def is_micropython():
     return sys.implementation.name == "micropython"
@@ -111,6 +113,7 @@ class Device(object):
 
         self.kwargs = kwargs
         self._attr_cache = {}
+        self.connector = DeviceConnector(self.kwargs.get('address'), class_name)
 
 
     def __str__(self):

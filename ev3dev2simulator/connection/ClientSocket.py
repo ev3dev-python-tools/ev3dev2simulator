@@ -68,8 +68,11 @@ class ClientSocket:
         return obj_dict['value']
 
 
-client_socket = ClientSocket()
+client_socket = None
 
 
 def get_client_socket() -> ClientSocket:
+    global client_socket
+    if not client_socket:
+        client_socket = ClientSocket()
     return client_socket

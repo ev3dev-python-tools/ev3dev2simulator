@@ -2,32 +2,29 @@ import sys
 import unittest
 from time import sleep
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from ev3dev2._platform.ev3 import OUTPUT_A
+from ev3dev2.motor import Motor
+
 
 class MotorConnectorTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.clientSocketModuleMock = MagicMock()
-        sys.modules['ev3dev2simulator.connection.ClientSocket'] = cls.clientSocketModuleMock
-        # you cannot import ClientSocket, since that sets up a connection
+    def setUp(self) -> None:
+        self.DeviceMockPatcher = patch('ev3dev2.DeviceConnector')
+        self.get_client_socketPatcher = patch('ev3dev2simulator.connector.MotorConnector.get_client_socket')
 
-        cls.clientSocketMock = MagicMock()
-        cls.clientSocketModuleMock.get_client_socket = lambda: cls.clientSocketMock
+        self.DeviceMockPatcher.start()
+        self.get_client_socketMock = self.get_client_socketPatcher.start()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        del sys.modules['ev3dev2simulator.connection.ClientSocket']
+        self.addCleanup(self.DeviceMockPatcher.stop)
+        self.addCleanup(self.get_client_socketPatcher.stop)
 
-    def tearDown(self):
-        self.clientSocketMock.reset_mock()
+        self.clientSocketMock = MagicMock()
+        self.get_client_socketMock.return_value = self.clientSocketMock
 
     def test_run_timed(self):
-        from ev3dev2.motor import Motor
         self.clientSocketMock.send_command.return_value = 1
-
         motor = Motor(OUTPUT_A)
         motor.on_for_seconds(30, 1)
 
@@ -39,7 +36,6 @@ class MotorConnectorTest(unittest.TestCase):
                               'speed': 315, 'distance': 315.0})
 
     def test_direct_on_and_stop(self):
-        from ev3dev2.motor import Motor
         self.clientSocketMock.send_command.return_value = 1
 
         motor = Motor(OUTPUT_A)
@@ -62,7 +58,6 @@ class MotorConnectorTest(unittest.TestCase):
                               'speed': 105})
 
     def test_stop_with_no_speed(self):
-        from ev3dev2.motor import Motor
         motor = Motor(OUTPUT_A)
         self.clientSocketMock.send_command.return_value = 0
         motor.on(0, False)
@@ -71,7 +66,6 @@ class MotorConnectorTest(unittest.TestCase):
         self.assertEqual(motor.speed_sp, 0)
 
     def test_stop_reverse(self):
-        from ev3dev2.motor import Motor
         motor = Motor(OUTPUT_A)
         self.clientSocketMock.send_command.return_value = 0
         motor.on(-10, False)
@@ -84,7 +78,6 @@ class MotorConnectorTest(unittest.TestCase):
                               'speed': 105})
 
     def test_run_to_rel_pos(self):
-        from ev3dev2.motor import Motor
         self.clientSocketMock.send_command.return_value = 1
 
         motor = Motor(OUTPUT_A)
@@ -98,7 +91,6 @@ class MotorConnectorTest(unittest.TestCase):
                               'speed': 315, 'distance': 30})
 
     def test_run_direct(self):
-        from ev3dev2.motor import Motor
         self.clientSocketMock.send_command.return_value = 1
 
         motor = Motor(OUTPUT_A)
@@ -112,6 +104,7 @@ class MotorConnectorTest(unittest.TestCase):
         self.assertDictEqual(args[0].serialize(),
                              {'type': 'RotateCommand', 'address': 'ev3-ports:outA', 'stop_action': 'coast',
                               'speed': 315, 'distance': 14175.0})
+
 
 if __name__ == '__main__':
     unittest.main()

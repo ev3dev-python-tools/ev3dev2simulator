@@ -2,29 +2,26 @@ import sys
 import unittest
 from time import sleep
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
+from ev3dev2.sound import Sound
 
 class SoundTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.clientSocketModuleMock = MagicMock()
-        sys.modules['ev3dev2simulator.connection.ClientSocket'] = cls.clientSocketModuleMock
-        # you cannot import ClientSocket, since that sets up a connection
+    def setUp(self) -> None:
+        self.DeviceMockPatcher = patch('ev3dev2.DeviceConnector')
+        self.get_client_socketPatcher = patch('ev3dev2simulator.connector.SoundConnector.get_client_socket')
 
-        cls.clientSocketMock = MagicMock()
-        cls.clientSocketModuleMock.get_client_socket = lambda: cls.clientSocketMock
+        self.DeviceMockPatcher.start()
+        self.get_client_socketMock = self.get_client_socketPatcher.start()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        del sys.modules['ev3dev2simulator.connection.ClientSocket']
+        self.addCleanup(self.DeviceMockPatcher.stop)
+        self.addCleanup(self.get_client_socketPatcher.stop)
 
-    def tearDown(self):
-        self.clientSocketMock.reset_mock()
+        self.clientSocketMock = MagicMock()
+        self.get_client_socketMock.return_value = self.clientSocketMock
 
     def test_beep(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.beep(play_type=1)
@@ -38,7 +35,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_play_tone(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_tone(500, duration=0.3, volume=50, play_type=1)
@@ -59,7 +55,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_tone(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.tone([
@@ -90,7 +85,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_play_note(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_note("C4", 0.5)
@@ -106,7 +100,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_play_song(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_song((
@@ -139,7 +132,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_play_file(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_file('inputFiles/bark.wav', play_type=0)
@@ -168,7 +160,6 @@ class SoundTest(unittest.TestCase):
 
 
     def test_speak(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.speak("tests tests tests tests tests", volume=100, play_type=1)
