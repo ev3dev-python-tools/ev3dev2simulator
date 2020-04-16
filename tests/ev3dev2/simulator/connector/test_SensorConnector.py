@@ -13,19 +13,23 @@ load_config(None)
 class SensorConnectorTest(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.DeviceMockPatcher = patch('ev3dev2.DeviceConnector')
+        self.DeviceMockPatcher = patch('ev3dev2simulator.connector.DeviceConnector.get_client_socket')
         self.get_client_socketPatcher = patch('ev3dev2simulator.connector.SensorConnector.get_client_socket')
 
-        self.DeviceMockPatcher.start()
+        self.get_device_client_socketMock = self.DeviceMockPatcher.start()
         self.get_client_socketMock = self.get_client_socketPatcher.start()
 
         self.addCleanup(self.DeviceMockPatcher.stop)
         self.addCleanup(self.get_client_socketPatcher.stop)
 
+        self.deviceClientSocketMock = MagicMock()
+        self.get_device_client_socketMock.return_value = self.deviceClientSocketMock
+
         self.clientSocketMock = MagicMock()
         self.get_client_socketMock.return_value = self.clientSocketMock
 
     def test_leds_set_color(self):
+        self.deviceClientSocketMock.send_command.return_value = 'ev3-ports:in2'
         self.clientSocketMock.send_command.return_value = 3
 
         sensor = ColorSensor(INPUT_2)
