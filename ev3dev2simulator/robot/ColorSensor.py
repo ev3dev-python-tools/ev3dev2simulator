@@ -18,7 +18,7 @@ class ColorSensor(BodyPart):
 
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['color_sensor']
-        super().__init__(config, robot, dims['width'], dims['height'], 'color_sensor')
+        super().__init__(config, robot, dims['width'], dims['height'], 'color_sensor', driver_name='lego-ev3-color')
         self.old_texture_index = 0
 
     def setup_visuals(self, scale):

@@ -2,29 +2,27 @@ import sys
 import unittest
 from time import sleep
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+
+from ev3dev2.sound import Sound
 
 
 class SoundTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.clientSocketModuleMock = MagicMock()
-        sys.modules['ev3dev2simulator.connection.ClientSocket'] = cls.clientSocketModuleMock
-        # you cannot import ClientSocket, since that sets up a connection
+    def setUp(self) -> None:
+        self.DeviceMockPatcher = patch('ev3dev2.DeviceConnector')
+        self.get_client_socketPatcher = patch('ev3dev2simulator.connector.SoundConnector.get_client_socket')
 
-        cls.clientSocketMock = MagicMock()
-        cls.clientSocketModuleMock.get_client_socket = lambda: cls.clientSocketMock
+        self.DeviceMockPatcher.start()
+        self.get_client_socketMock = self.get_client_socketPatcher.start()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        del sys.modules['ev3dev2simulator.connection.ClientSocket']
+        self.addCleanup(self.DeviceMockPatcher.stop)
+        self.addCleanup(self.get_client_socketPatcher.stop)
 
-    def tearDown(self):
-        self.clientSocketMock.reset_mock()
+        self.clientSocketMock = MagicMock()
+        self.get_client_socketMock.return_value = self.clientSocketMock
 
     def test_beep(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.beep(play_type=1)
@@ -38,7 +36,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_play_tone(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_tone(500, duration=0.3, volume=50, play_type=1)
@@ -59,7 +56,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_tone(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.tone([
@@ -90,7 +86,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_play_note(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_note("C4", 0.5)
@@ -106,7 +101,6 @@ class SoundTest(unittest.TestCase):
                               'soundType': 'note'})
 
     def test_play_song(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_song((
@@ -134,12 +128,11 @@ class SoundTest(unittest.TestCase):
 
         fn_name, args, kwargs = self.clientSocketMock.mock_calls[2]
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': (0.8/4) * 2/3,  # a triplet
+                             {'type': 'SoundCommand', 'duration': (0.8 / 4) * 2 / 3,  # a triplet
                               'message': 'Playing note with frequency: 523',
                               'soundType': 'note'})
 
     def test_play_file(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.play_file('inputFiles/bark.wav', play_type=0)
@@ -166,9 +159,7 @@ class SoundTest(unittest.TestCase):
 
         self.assertEqual(cm.exception.args[0], 'invalid sound file (inputFiles/bark), only .wav files are supported')
 
-
     def test_speak(self):
-        from ev3dev2.sound import Sound
         spkr = Sound()
         spkr.connector.play_actual_sound = False
         spkr.speak("tests tests tests tests tests", volume=100, play_type=1)
@@ -182,6 +173,7 @@ class SoundTest(unittest.TestCase):
                              {'type': 'SoundCommand', 'duration': 1.5,  # 200 words per minute, (5 / 200) * 60 = 1.5
                               'message': 'Saying: ``tests tests tests tests tests``',
                               'soundType': 'speak'})
+
 
 if __name__ == '__main__':
     unittest.main()

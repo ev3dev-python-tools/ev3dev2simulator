@@ -1,35 +1,37 @@
 import sys
 import unittest
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from ev3dev2._platform.ev3 import INPUT_2
 from ev3dev2simulator.config.config import load_config
+from ev3dev2.sensor.lego import ColorSensor
 
 load_config(None)
 
+
 class SensorConnectorTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.clientSocketModuleMock = MagicMock()
-        sys.modules['ev3dev2simulator.connection.ClientSocket'] = cls.clientSocketModuleMock
-        # you cannot import ClientSocket, since that sets up a connection
+    def setUp(self) -> None:
+        self.DeviceMockPatcher = patch('ev3dev2simulator.connector.DeviceConnector.get_client_socket')
+        self.get_client_socketPatcher = patch('ev3dev2simulator.connector.SensorConnector.get_client_socket')
 
-        cls.clientSocketMock = MagicMock()
-        cls.clientSocketModuleMock.get_client_socket = lambda: cls.clientSocketMock
+        self.get_device_client_socketMock = self.DeviceMockPatcher.start()
+        self.get_client_socketMock = self.get_client_socketPatcher.start()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        del sys.modules['ev3dev2simulator.connection.ClientSocket']
+        self.addCleanup(self.DeviceMockPatcher.stop)
+        self.addCleanup(self.get_client_socketPatcher.stop)
 
-    def tearDown(self):
-        self.clientSocketMock.reset_mock()
+        self.deviceClientSocketMock = MagicMock()
+        self.get_device_client_socketMock.return_value = self.deviceClientSocketMock
+
+        self.clientSocketMock = MagicMock()
+        self.get_client_socketMock.return_value = self.clientSocketMock
 
     def test_leds_set_color(self):
-        from ev3dev2.sensor.lego import ColorSensor
-
+        self.deviceClientSocketMock.send_command.return_value = 'ev3-ports:in2'
         self.clientSocketMock.send_command.return_value = 3
+
         sensor = ColorSensor(INPUT_2)
         val = sensor.value()
         self.assertEqual(val, 3)

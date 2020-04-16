@@ -122,6 +122,32 @@ class RobotSimulator:
         self.locks[address].acquire()
         return self.robot.values[address]
 
+    def determine_port(self, brick_id: int, kwargs: dict):
+        """
+        Determines the port of a device based on the kwargs given to the device.
+        :param brick_id: identifier of the brick, that the device should be connected to.
+        :param kwargs: keyword arguments given by the sensor or actuator to the device.
+        :return: returns 'dev_not_connected' or the port as string.
+        """
+        devices = {**self.robot.sensors, **self.robot.actuators}
+        if kwargs.get('driver_name') is not None:
+            driver_names_pre = kwargs.get('driver_name')
+            driver_names = driver_names_pre if isinstance(driver_names_pre, list) else [driver_names_pre]
+
+            if kwargs.get('address') is not None:
+                device = devices.get((brick_id, kwargs.get('address')))
+                if device:
+                    if devices.get((brick_id, kwargs.get('address'))).driver_name in driver_names:
+                        return kwargs.get('address')
+                else:
+                    print('device not found on brick', brick_id, ' with address', kwargs.get('address'))
+            else:
+                found_devices = list(filter(lambda dev: dev.driver_name in driver_names, devices.values()))
+                if len(found_devices) == 1:
+                    return found_devices[0].address
+
+        return 'dev_not_connected'
+
     def _process_actuators(self):
         """
         Request the movement of the robot motors form the robot state and move

@@ -25,6 +25,8 @@
 import re
 import sys
 
+from ev3dev2simulator.connector.DeviceConnector import DeviceConnector
+
 
 def is_micropython():
     return sys.implementation.name == "micropython"
@@ -111,6 +113,9 @@ class Device(object):
 
         self.kwargs = kwargs
         self._attr_cache = {}
+        self.connector = DeviceConnector(self.kwargs.get('address'), class_name)
+        self.kwargs['address'] = self.connector.request_device_config(kwargs)
+
 
 
     def __str__(self):
@@ -135,7 +140,7 @@ class Device(object):
 
     def _get_attribute(self, attribute, name):
         """Device attribute getter"""
-        pass
+        return attribute, self.kwargs.get(name)
 
 
     def _set_attribute(self, attribute, name, value):
@@ -164,7 +169,7 @@ class Device(object):
 
 
     def get_attr_string(self, attribute, name):
-        pass
+        return self._get_attribute(attribute, name)
 
 
     def get_cached_attr_string(self, filehandle, keyword):

@@ -94,8 +94,8 @@ class Sensor(Device):
         Returns the name of the port that the sensor is connected to, e.g. `ev3:in1`.
         I2C sensors also include the I2C address (decimal), e.g. `ev3:in1:i2c8`.
         """
-
-        return self._address
+        self._address, value = self.get_attr_string(self._address, 'address')
+        return value
 
 
     @property

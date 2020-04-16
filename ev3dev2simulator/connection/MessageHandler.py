@@ -1,6 +1,8 @@
 import json
+from logging import warning
 from typing import Any
 
+from ev3dev2simulator.connection.message.ConfigRequest import ConfigRequest
 from ev3dev2simulator.state import MessageProcessor
 from ev3dev2simulator.connection.message.DataRequest import DataRequest
 from ev3dev2simulator.connection.message.LedCommand import LedCommand
@@ -30,17 +32,23 @@ class MessageHandler:
         if tpe == 'RotateCommand':
             return self._process_drive_command(obj_dict)
 
-        if tpe == 'StopCommand':
+        elif tpe == 'StopCommand':
             return self._process_stop_command(obj_dict)
 
-        if tpe == 'SoundCommand':
+        elif tpe == 'SoundCommand':
             return self._process_sound_command(obj_dict)
 
-        if tpe == 'LedCommand':
+        elif tpe == 'LedCommand':
             return self._process_led_command(obj_dict)
 
         elif tpe == 'DataRequest':
             return self._process_data_request(obj_dict)
+
+        elif tpe == 'ConfigRequest':
+            return self._process_config_request(obj_dict)
+        else:
+            warning(f'Unknown command type {tpe}')
+
 
     def _process_drive_command(self, d: dict) -> Any:
         """
@@ -96,6 +104,19 @@ class MessageHandler:
         value = self.message_processor.process_data_request(request)
 
         return self._serialize_response(value)
+
+    def _process_config_request(self, d: dict):
+        """
+        Deserialize the given dictionary into a ConfigRequest and send it to the MessageProcessor.
+        Return a serialized response with the determined port or a 'dev_not_connected' string.
+        :param d: to process.
+        :return: a bytes object representing the serialized response.
+        """
+        request = ConfigRequest(d['kwargs'])
+        value = self.message_processor.process_config_request(request)
+
+        return self._serialize_response(value)
+
 
     @staticmethod
     def _serialize_response(value) -> bytes:
