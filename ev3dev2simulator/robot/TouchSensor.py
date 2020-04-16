@@ -15,7 +15,8 @@ class TouchSensor(BodyPart):
         else:
             dims = get_simulation_settings()['body_part_sizes']['touch_sensor_bar_rear']
 
-        super(TouchSensor, self).__init__(config, robot, dims['width'], dims['height'], 'touch_sensor')
+        super(TouchSensor, self).__init__(config, robot, dims['width'], dims['height'], 'touch_sensor',
+                                          driver_name='lego-ev3-touch')
 
     def setup_visuals(self, scale):
         if self.side == 'left':

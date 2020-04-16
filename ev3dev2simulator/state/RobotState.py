@@ -115,7 +115,7 @@ class RobotState:
         self.scale = scale
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
-        self.body = pymunk.Body(20, moment, body_type=pymunk.Body.DYNAMIC)
+        self.body = pymunk.Body(20, moment)
         self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
 
         for part in self.parts:

@@ -8,7 +8,8 @@ class UltrasonicSensorBottom(BodyPart):
     """
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['ultrasonic_sensor_bottom']
-        super(UltrasonicSensorBottom, self).__init__(config, robot, dims['width'], dims['height'], 'ultrasonic_sensor')
+        super(UltrasonicSensorBottom, self).__init__(config, robot, dims['width'], dims['height'], 'ultrasonic_sensor',
+                                                     driver_name='lego-ev3-us')
 
     def setup_visuals(self, scale):
         img_cfg = get_simulation_settings()['image_paths']

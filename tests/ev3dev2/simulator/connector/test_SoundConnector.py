@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 
 from ev3dev2.sound import Sound
 
+
 class SoundTest(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -127,7 +128,7 @@ class SoundTest(unittest.TestCase):
 
         fn_name, args, kwargs = self.clientSocketMock.mock_calls[2]
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': (0.8/4) * 2/3,  # a triplet
+                             {'type': 'SoundCommand', 'duration': (0.8 / 4) * 2 / 3,  # a triplet
                               'message': 'Playing note with frequency: 523',
                               'soundType': 'note'})
 
@@ -158,7 +159,6 @@ class SoundTest(unittest.TestCase):
 
         self.assertEqual(cm.exception.args[0], 'invalid sound file (inputFiles/bark), only .wav files are supported')
 
-
     def test_speak(self):
         spkr = Sound()
         spkr.connector.play_actual_sound = False
@@ -173,6 +173,7 @@ class SoundTest(unittest.TestCase):
                              {'type': 'SoundCommand', 'duration': 1.5,  # 200 words per minute, (5 / 200) * 60 = 1.5
                               'message': 'Saying: ``tests tests tests tests tests``',
                               'soundType': 'speak'})
+
 
 if __name__ == '__main__':
     unittest.main()

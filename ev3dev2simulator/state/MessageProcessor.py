@@ -2,6 +2,7 @@ from typing import Any, Tuple
 # noinspection PyProtectedMember
 from ev3dev2._platform.ev3 import LEDS
 from ev3dev2simulator.config.config import get_simulation_settings
+from ev3dev2simulator.connection.message.ConfigRequest import ConfigRequest
 from ev3dev2simulator.state.MotorCommandProcessor import MotorCommandProcessor
 from ev3dev2simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
 from ev3dev2simulator.state import RobotSimulator
@@ -154,6 +155,14 @@ class MessageProcessor:
         """
         full_address = self._to_full_address(request.address)
         return self.robot_sim.get_value(full_address)
+
+    def process_config_request(self, request: ConfigRequest) -> Any:
+        """
+        Process the given data request by retrieving the port of the device from the RobotState and returning this.
+        :param request: to process.
+        :return: a dictionary containing the requested value.
+        """
+        return self.robot_sim.determine_port(self.brick_id, request.kwargs)
 
     def _to_full_address(self, address: str):
         return self.brick_id, address

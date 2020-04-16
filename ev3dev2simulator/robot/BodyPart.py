@@ -14,12 +14,13 @@ class BodyPart:
     Class containing the base functionality of a part of the robot.
     """
 
-    def __init__(self, config, robot, width_mm, height_mm, ev3type, offset_x=0.0, offset_y=0.0):
+    def __init__(self, config, robot, width_mm, height_mm, ev3type, offset_x=0.0, offset_y=0.0, driver_name=None):
         self.name = config['name'] if 'name' in config else 'unnamed'
         self.ev3type = ev3type
         self.brick = int(config['brick'])
         self.address = config['port'] if 'port' in config else 'no_address'
         self.robot = robot
+        self.driver_name = driver_name
 
         self.width_mm = width_mm
         self.height_mm = height_mm

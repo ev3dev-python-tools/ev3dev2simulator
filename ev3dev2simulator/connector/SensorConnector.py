@@ -15,6 +15,9 @@ class SensorConnector:
 
     def __init__(self, address: str):
         self.address = address
+        if address is None:
+            raise RuntimeError('created connector with None as address')
+
         self.client_socket = get_client_socket()
 
         self.wait_time = 0.008
