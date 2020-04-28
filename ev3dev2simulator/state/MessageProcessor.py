@@ -162,7 +162,7 @@ class MessageProcessor:
         :param request: to process.
         :return: a dictionary containing the requested value.
         """
-        return self.robot_sim.determine_port(self.brick_id, request.kwargs)
+        return self.robot_sim.determine_port(self.brick_id, request.kwargs, request.class_name)
 
     def _to_full_address(self, address: str):
         return self.brick_id, address

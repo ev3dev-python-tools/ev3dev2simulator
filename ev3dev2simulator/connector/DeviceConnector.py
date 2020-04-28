@@ -20,9 +20,10 @@ class DeviceConnector:
         Requests the port that the device is attached to. This helps preventing errors if a port is given,
         or retrieves the port that should be used.
         """
-        request = ConfigRequest(kwargs)
+        request = ConfigRequest(kwargs, self.class_name)
         new_port = self.client_socket.send_command(request, True)
         if new_port == 'dev_not_connected':
             raise ev3dev2.DeviceNotFound(
-                f'Could not find device of type(s) {kwargs.get("driver_name")} {f"on port {self.address}" if self.address else ""}')
+                f'Could not find device of type(s) '
+                f'{kwargs.get("driver_name")} {f"on port {self.address}" if self.address else ""}')
         return new_port

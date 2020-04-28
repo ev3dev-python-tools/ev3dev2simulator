@@ -287,8 +287,8 @@ class Visualiser(arcade.Window):
             loc_y = location[1]
             num = 0
             for screen in screens:
-                within_screen_width = (loc_x >= screen.x) and (loc_x < (screen.x + screen.width))
-                within_screen_height = (loc_y >= screen.y) and (loc_y < (screen.y + screen.height))
+                within_screen_width = screen.x <= loc_x < (screen.x + screen.width)
+                within_screen_height = screen.y <= (loc_y < (screen.y + screen.height))
                 if within_screen_width and within_screen_height:
                     self.current_screen_index = num
                     done = True
