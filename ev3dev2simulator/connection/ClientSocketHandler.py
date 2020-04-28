@@ -31,7 +31,7 @@ class ClientSocketHandler(threading.Thread):
         try:
             while self.is_running:
 
-                data = self.client.recv(128)
+                data = self.client.recv(256)
                 if data:
 
                     val = self.message_handler.process(data)
