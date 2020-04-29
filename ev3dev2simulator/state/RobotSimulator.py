@@ -131,7 +131,7 @@ class RobotSimulator:
         :return: returns 'dev_not_connected' or the port as string.
         """
         devices = {**self.robot.sensors, **self.robot.actuators}
-        if class_name == 'leds':
+        if class_name is not None and class_name == 'leds':
             return 'leds_addr'
         if kwargs.get('driver_name') is not None:
             driver_names_pre = kwargs.get('driver_name')

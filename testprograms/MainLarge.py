@@ -64,12 +64,13 @@ def check():
 # bth = BluetoothHelper()
 # bth.connect_as_server()
 # bth.send("Hello?")
-
+print('here')
 leds = Leds()
-leds.animate_rainbow()
+print('here')
+
+# leds.animate_rainbow()
 cs = ColorSensor(INPUT_2)
-ts1 = TouchSensor(INPUT_1)
-ts4 = TouchSensor(INPUT_4)
+print('here')
 
 tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3EducationSetTire, 15 * STUD_MM)
 tank_measurement = MediumMotor(OUTPUT_B)

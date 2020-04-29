@@ -1,6 +1,7 @@
 import socket
 import threading
 
+from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.MessageHandler import MessageHandler
 from ev3dev2simulator.state.MessageProcessor import MessageProcessor
 from ev3dev2simulator.state import RobotSimulator
@@ -31,7 +32,8 @@ class ClientSocketHandler(threading.Thread):
         try:
             while self.is_running:
 
-                data = self.client.recv(256)
+                data = self.client.recv(get_simulation_settings()['exec_settings']['message_size'])
+                print(data)
                 if data:
 
                     val = self.message_handler.process(data)

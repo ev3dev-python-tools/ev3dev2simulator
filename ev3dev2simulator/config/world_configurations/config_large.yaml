@@ -32,12 +32,6 @@ robots:
       y_offset: 84
       brick: 0
       port: 'ev3-ports:in2'
-    - name: color-sensor-center
-      type: color_sensor
-      x_offset: 0
-      y_offset: 84
-      brick: 0
-      port: 'ev3-ports:in2'
     - name: color-sensor-left
       type: color_sensor
       x_offset: -69
