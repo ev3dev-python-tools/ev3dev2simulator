@@ -1,0 +1,125 @@
+ev3dev2\_platform\ev3.py:59: error: Incompatible types in assignment (expression has type "Tuple[int, float]", target has type "Tuple[int, int]")
+ev3dev2\_platform\ev3.py:60: error: Incompatible types in assignment (expression has type "Tuple[float, int]", target has type "Tuple[int, int]")
+ev3dev2simulator\util\Util.py:102: error: Argument 1 to "get" of "Mapping" has incompatible type "Union[Union[Tuple[int, int, int], List[int]], Union[Tuple[int, int, int, int], List[int]]]"; expected "Tuple[int, int, int]"
+ev3dev2simulator\obstacle\Rock.py:4: error: Skipping analyzing 'pymunk': found module but no type hints or library stubs
+ev3dev2simulator\obstacle\Bottle.py:2: error: Skipping analyzing 'pymunk': found module but no type hints or library stubs
+ev3dev2simulator\connection\ClientSocket.py:25: error: Missing return statement
+ev3dev2simulator\robot\BodyPart.py:1: error: Skipping analyzing 'pymunk': found module but no type hints or library stubs
+ev3dev2simulator\obstacle\Border.py:31: error: Bracketed expression "[...]" is not valid as a type
+ev3dev2simulator\obstacle\Border.py:31: note: Did you mean "List[...]"?
+ev3dev2simulator\obstacle\Border.py:39: error: Incompatible types in assignment (expression has type "List[<nothing>]", variable has type "None")
+ev3dev2simulator\obstacle\Border.py:41: error: "None" has no attribute "append"
+ev3dev2simulator\connector\SoundConnector.py:9: error: Skipping analyzing 'simpleaudio._simpleaudio': found module but no type hints or library stubs
+ev3dev2simulator\connector\SoundConnector.py:9: note: See https://mypy.readthedocs.io/en/latest/running_mypy.html#missing-imports
+ev3dev2simulator\connector\SoundConnector.py:11: error: Skipping analyzing 'simpleaudio': found module but no type hints or library stubs
+ev3dev2simulator\connector\SoundConnector.py:12: error: Skipping analyzing 'pyttsx3': found module but no type hints or library stubs
+ev3dev2simulator\connector\SoundConnector.py:13: error: Skipping analyzing 'numpy': found module but no type hints or library stubs
+ev3dev2simulator\connector\SensorConnector.py:40: error: Incompatible types in assignment (expression has type "float", variable has type "int")
+ev3dev2simulator\connector\SensorConnector.py:41: error: Incompatible types in assignment (expression has type "float", variable has type "int")
+ev3dev2simulator\connector\MotorConnector.py:35: error: Incompatible types in assignment (expression has type "int", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:43: error: Incompatible types in assignment (expression has type "float", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:51: error: Incompatible types in assignment (expression has type "float", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:59: error: Incompatible types in assignment (expression has type "int", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:67: error: Incompatible types in assignment (expression has type "str", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:77: error: Unsupported operand types for * ("None" and "int")
+ev3dev2simulator\connector\MotorConnector.py:77: error: Incompatible types in assignment (expression has type "int", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:96: error: Unsupported operand types for * ("None" and "float")
+ev3dev2simulator\connector\MotorConnector.py:96: error: Incompatible types in assignment (expression has type "float", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:96: error: Unsupported operand types for / ("None" and "int")
+ev3dev2simulator\connector\MotorConnector.py:106: error: Unsupported operand types for / ("None" and "int")
+ev3dev2simulator\connector\MotorConnector.py:106: error: Incompatible types in assignment (expression has type "float", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:107: error: Unsupported operand types for * ("None" and "int")
+ev3dev2simulator\connector\MotorConnector.py:107: error: Incompatible types in assignment (expression has type "int", variable has type "None")
+ev3dev2simulator\connector\MotorConnector.py:121: error: Incompatible types in assignment (expression has type "RotateCommand", variable has type "StopCommand")
+ev3dev2simulator\connector\MotorConnector.py:122: error: Argument 2 to "RotateCommand" has incompatible type "None"; expected "float"
+ev3dev2simulator\connector\MotorConnector.py:123: error: Argument 3 to "RotateCommand" has incompatible type "None"; expected "float"
+ev3dev2simulator\connector\MotorConnector.py:124: error: Argument 4 to "RotateCommand" has incompatible type "None"; expected "str"
+ev3dev2simulator\connector\MotorConnector.py:126: error: Incompatible return value type (got "Optional[object]", expected "float")
+ev3dev2simulator\connector\MotorConnector.py:146: error: Incompatible return value type (got "Optional[object]", expected "float")
+ev3dev2simulator\robot\UltrasonicSensorTop.py:6: error: Skipping analyzing 'pymunk': found module but no type hints or library stubs
+ev3dev2simulator\obstacle\Lake.py:73: error: Argument 1 to "get_circle_points" has incompatible type "None"; expected "float"
+ev3dev2simulator\obstacle\Lake.py:74: error: Argument 2 to "get_circle_points" has incompatible type "None"; expected "float"
+ev3dev2simulator\obstacle\Lake.py:88: error: Argument 1 to "create_ellipse_filled" has incompatible type "None"; expected "float"
+ev3dev2simulator\obstacle\Lake.py:88: error: Argument 2 to "create_ellipse_filled" has incompatible type "None"; expected "float"
+ev3dev2simulator\obstacle\Lake.py:95: error: Argument 1 to "distance_between_points" has incompatible type "None"; expected "float"
+ev3dev2simulator\obstacle\Lake.py:95: error: Argument 2 to "distance_between_points" has incompatible type "None"; expected "float"
+ev3dev2simulator\obstacle\Lake.py:97: error: Unsupported operand types for * ("float" and "None")
+ev3dev2simulator\obstacle\Lake.py:98: error: Unsupported operand types for * ("float" and "None")
+ev3dev2simulator\obstacle\Lake.py:100: error: Unsupported operand types for * ("float" and "None")
+ev3dev2simulator\state\RobotState.py:4: error: Skipping analyzing 'pymunk': found module but no type hints or library stubs
+ev3dev2simulator\state\RobotState.py:5: error: Skipping analyzing 'pymunk.vec2d': found module but no type hints or library stubs
+ev3dev2simulator\state\RobotState.py:174: error: Syntax error in type annotation
+ev3dev2simulator\state\RobotState.py:174: note: Suggestion: Use Tuple[T1, ..., Tn] instead of (T1, ..., Tn)
+ev3dev2simulator\state\RobotState.py:185: error: Bracketed expression "[...]" is not valid as a type
+ev3dev2simulator\state\RobotState.py:185: note: Did you mean "List[...]"?
+ev3dev2simulator\state\RobotState.py:244: error: Bracketed expression "[...]" is not valid as a type
+ev3dev2simulator\state\RobotState.py:244: note: Did you mean "List[...]"?
+ev3dev2simulator\state\RobotState.py:247: error: Module "ev3dev2simulator.robot.BodyPart" is not valid as a type
+ev3dev2simulator\state\WorldState.py:2: error: Skipping analyzing 'pymunk': found module but no type hints or library stubs
+ev3dev2simulator\state\WorldState.py:101: error: Bracketed expression "[...]" is not valid as a type
+ev3dev2simulator\state\WorldState.py:101: note: Did you mean "List[...]"?
+ev3dev2simulator\state\RobotSimulator.py:6: error: Skipping analyzing 'pymunk': found module but no type hints or library stubs
+ev3dev2simulator\state\RobotSimulator.py:21: error: Need type annotation for 'actuator_queues' (hint: "actuator_queues: Dict[<type>, <type>] = ...")
+ev3dev2simulator\state\RobotSimulator.py:30: error: Need type annotation for 'locks' (hint: "locks: Dict[<type>, <type>] = ...")
+ev3dev2simulator\state\RobotSimulator.py:50: error: Syntax error in type annotation
+ev3dev2simulator\state\RobotSimulator.py:50: note: Suggestion: Use Tuple[T1, ..., Tn] instead of (T1, ..., Tn)
+ev3dev2simulator\state\RobotSimulator.py:58: error: Function "builtins.any" is not valid as a type
+ev3dev2simulator\state\RobotSimulator.py:58: note: Perhaps you need "Callable[...]" or a callback protocol?
+ev3dev2simulator\state\RobotSimulator.py:77: error: Syntax error in type annotation
+ev3dev2simulator\state\RobotSimulator.py:77: note: Suggestion: Use Tuple[T1, ..., Tn] instead of (T1, ..., Tn)
+ev3dev2simulator\state\RobotSimulator.py:115: error: Syntax error in type annotation
+ev3dev2simulator\state\RobotSimulator.py:115: note: Suggestion: Use Tuple[T1, ..., Tn] instead of (T1, ..., Tn)
+ev3dev2simulator\state\RobotSimulator.py:140: error: Item "None" of "Optional[Any]" has no attribute "driver_name"
+ev3dev2simulator\visualisation\Visualiser.py:7: error: Skipping analyzing 'pyglet': found module but no type hints or library stubs
+ev3dev2simulator\visualisation\Visualiser.py:32: error: Module "ev3dev2simulator.state.WorldState" is not valid as a type
+ev3dev2simulator\visualisation\Visualiser.py:77: error: WorldState? has no attribute "setup_pymunk_shapes"
+ev3dev2simulator\visualisation\Visualiser.py:78: error: WorldState? has no attribute "setup_visuals"
+ev3dev2simulator\visualisation\Visualiser.py:213: error: Skipping analyzing 'pyglet.libs.win32': found module but no type hints or library stubs
+ev3dev2simulator\visualisation\Visualiser.py:214: error: Skipping analyzing 'pyglet.libs.win32.constants': found module but no type hints or library stubs
+ev3dev2simulator\state\MessageProcessor.py:15: error: Invalid index type "Tuple[int, float]" for "Dict[Tuple[int, int], int]"; expected type "Tuple[int, int]"
+ev3dev2simulator\state\MessageProcessor.py:16: error: Invalid index type "Tuple[float, int]" for "Dict[Tuple[int, int], int]"; expected type "Tuple[int, int]"
+ev3dev2simulator\state\MessageProcessor.py:25: error: Module "ev3dev2simulator.state.RobotSimulator" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:38: error: Module "ev3dev2simulator.connection.message.RotateCommand" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:47: error: RotateCommand? has no attribute "address"
+ev3dev2simulator\state\MessageProcessor.py:48: error: RobotSimulator? has no attribute "robot"
+ev3dev2simulator\state\MessageProcessor.py:51: error: RobotSimulator? has no attribute "clear_actuator_jobs"
+ev3dev2simulator\state\MessageProcessor.py:54: error: RobotSimulator? has no attribute "put_actuator_job"
+ev3dev2simulator\state\MessageProcessor.py:59: error: Module "ev3dev2simulator.connection.message.RotateCommand" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:59: error: Function "builtins.any" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:59: note: Perhaps you need "Callable[...]" or a callback protocol?
+ev3dev2simulator\state\MessageProcessor.py:67: error: any? has no attribute "ev3type"
+ev3dev2simulator\state\MessageProcessor.py:73: error: Module "ev3dev2simulator.connection.message.StopCommand" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:83: error: StopCommand? has no attribute "address"
+ev3dev2simulator\state\MessageProcessor.py:84: error: RobotSimulator? has no attribute "robot"
+ev3dev2simulator\state\MessageProcessor.py:88: error: RobotSimulator? has no attribute "clear_actuator_jobs"
+ev3dev2simulator\state\MessageProcessor.py:92: error: Module "ev3dev2simulator.connection.message.StopCommand" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:92: error: Function "builtins.any" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:92: note: Perhaps you need "Callable[...]" or a callback protocol?
+ev3dev2simulator\state\MessageProcessor.py:100: error: any? has no attribute "ev3type"
+ev3dev2simulator\state\MessageProcessor.py:124: error: Module "ev3dev2simulator.connection.message.LedCommand" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:130: error: LedCommand? has no attribute "address"
+ev3dev2simulator\state\MessageProcessor.py:130: error: LedCommand? has no attribute "brightness"
+ev3dev2simulator\state\MessageProcessor.py:131: error: LedCommand? has no attribute "get_led_id"
+ev3dev2simulator\state\MessageProcessor.py:134: error: Argument 1 to "get" of "Mapping" has incompatible type "Tuple[None, None]"; expected "Tuple[int, int]"
+ev3dev2simulator\state\MessageProcessor.py:137: error: RobotSimulator? has no attribute "set_led_color"
+ev3dev2simulator\state\MessageProcessor.py:139: error: Module "ev3dev2simulator.connection.message.SoundCommand" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:144: error: SoundCommand? has no attribute "duration"
+ev3dev2simulator\state\MessageProcessor.py:145: error: SoundCommand? has no attribute "message"
+ev3dev2simulator\state\MessageProcessor.py:146: error: SoundCommand? has no attribute "message"
+ev3dev2simulator\state\MessageProcessor.py:148: error: RobotSimulator? has no attribute "put_actuator_job"
+ev3dev2simulator\state\MessageProcessor.py:150: error: Module "ev3dev2simulator.connection.message.DataRequest" is not valid as a type
+ev3dev2simulator\state\MessageProcessor.py:156: error: DataRequest? has no attribute "address"
+ev3dev2simulator\state\MessageProcessor.py:157: error: RobotSimulator? has no attribute "get_value"
+ev3dev2simulator\state\MessageProcessor.py:165: error: RobotSimulator? has no attribute "determine_port"
+ev3dev2simulator\connection\MessageHandler.py:16: error: Module "ev3dev2simulator.state.MessageProcessor" is not valid as a type
+ev3dev2simulator\connection\MessageHandler.py:19: error: Missing return statement
+ev3dev2simulator\connection\MessageHandler.py:59: error: MessageProcessor? has no attribute "process_rotate_command"
+ev3dev2simulator\connection\MessageHandler.py:70: error: MessageProcessor? has no attribute "process_stop_command"
+ev3dev2simulator\connection\MessageHandler.py:81: error: MessageProcessor? has no attribute "process_led_command"
+ev3dev2simulator\connection\MessageHandler.py:92: error: MessageProcessor? has no attribute "process_sound_command"
+ev3dev2simulator\connection\MessageHandler.py:104: error: MessageProcessor? has no attribute "process_data_request"
+ev3dev2simulator\connection\MessageHandler.py:116: error: MessageProcessor? has no attribute "process_config_request"
+ev3dev2simulator\connection\ClientSocketHandler.py:14: error: Module "ev3dev2simulator.state.RobotSimulator" is not valid as a type
+ev3dev2simulator\connection\ServerSockets.py:12: error: Module "ev3dev2simulator.state.RobotSimulator" is not valid as a type
+ev3dev2simulator\Simulator.py:14: error: Name 'WorldState' already defined (by an import)
+Found 112 errors in 21 files (checked 62 source files)

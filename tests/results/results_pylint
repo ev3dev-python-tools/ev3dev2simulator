@@ -1,0 +1,891 @@
+************* Module ev3dev2simulator.Simulator
+ev3dev2simulator\Simulator.py:34:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\Simulator.py:1:0: C0103: Module name "Simulator" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\Simulator.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\Simulator.py:6:4: C0103: Constant name "script_dir" doesn't conform to UPPER_CASE naming style (invalid-name)
+ev3dev2simulator\Simulator.py:9:0: C0413: Import "from ev3dev2simulator.config.config import load_config, get_world_config" should be placed at the top of the module (wrong-import-position)
+ev3dev2simulator\Simulator.py:10:0: C0413: Import "from ev3dev2simulator.state import WorldState" should be placed at the top of the module (wrong-import-position)
+ev3dev2simulator\Simulator.py:11:0: C0413: Import "from ev3dev2simulator.visualisation.Visualiser import Visualiser, start" should be placed at the top of the module (wrong-import-position)
+ev3dev2simulator\Simulator.py:12:0: C0413: Import "from ev3dev2simulator.connection.ServerSockets import ServerSockets" should be placed at the top of the module (wrong-import-position)
+ev3dev2simulator\Simulator.py:13:0: C0413: Import "from ev3dev2simulator.state.WorldSimulator import WorldSimulator" should be placed at the top of the module (wrong-import-position)
+ev3dev2simulator\Simulator.py:14:0: W0404: Reimport 'WorldState' (imported line 10) (reimported)
+ev3dev2simulator\Simulator.py:14:0: C0413: Import "from ev3dev2simulator.state.WorldState import WorldState" should be placed at the top of the module (wrong-import-position)
+ev3dev2simulator\Simulator.py:51:8: C0415: Import outside toplevel (ev3dev2) (import-outside-toplevel)
+ev3dev2simulator\Simulator.py:52:8: C0415: Import outside toplevel (ev3dev2simulator) (import-outside-toplevel)
+************* Module ev3dev2simulator.version
+ev3dev2simulator\version.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module ev3dev2simulator.__main__
+ev3dev2simulator\__main__.py:14:0: C0301: Line too long (114/100) (line-too-long)
+ev3dev2simulator\__main__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\__main__.py:9:8: C0415: Import outside toplevel (ev3dev2simulator.Simulator) (import-outside-toplevel)
+ev3dev2simulator\__main__.py:13:8: C0415: Import outside toplevel (os) (import-outside-toplevel)
+ev3dev2simulator\__main__.py:22:8: C0415: Import outside toplevel (ev3dev2simulator.Simulator) (import-outside-toplevel)
+ev3dev2simulator\__main__.py:5:9: W0613: Unused argument 'args' (unused-argument)
+************* Module ev3dev2simulator.config.config
+ev3dev2simulator\config\config.py:22:0: C0301: Line too long (113/100) (line-too-long)
+ev3dev2simulator\config\config.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\config\config.py:30:8: C0103: Variable name "er" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\config\config.py:30:8: W0612: Unused variable 'er' (unused-variable)
+ev3dev2simulator\config\config.py:6:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+ev3dev2simulator\config\config.py:46:0: C0103: Constant name "debug" doesn't conform to UPPER_CASE naming style (invalid-name)
+ev3dev2simulator\config\config.py:47:0: C0103: Constant name "production" doesn't conform to UPPER_CASE naming style (invalid-name)
+ev3dev2simulator\config\config.py:48:0: C0103: Constant name "_config" doesn't conform to UPPER_CASE naming style (invalid-name)
+ev3dev2simulator\config\config.py:51:0: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\config\config.py:52:4: C0103: Constant name "_config" doesn't conform to UPPER_CASE naming style (invalid-name)
+ev3dev2simulator\config\config.py:52:4: W0603: Using the global statement (global-statement)
+ev3dev2simulator\config\config.py:64:0: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\config\config.py:68:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.connection.ClientSocket
+ev3dev2simulator\connection\ClientSocket.py:29:0: C0301: Line too long (102/100) (line-too-long)
+ev3dev2simulator\connection\ClientSocket.py:1:0: C0103: Module name "ClientSocket" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\ClientSocket.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\ClientSocket.py:25:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+ev3dev2simulator\connection\ClientSocket.py:10:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+ev3dev2simulator\connection\ClientSocket.py:71:0: C0103: Constant name "client_socket" doesn't conform to UPPER_CASE naming style (invalid-name)
+ev3dev2simulator\connection\ClientSocket.py:74:0: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\connection\ClientSocket.py:75:4: C0103: Constant name "client_socket" doesn't conform to UPPER_CASE naming style (invalid-name)
+ev3dev2simulator\connection\ClientSocket.py:75:4: W0603: Using the global statement (global-statement)
+************* Module ev3dev2simulator.connection.ClientSocketHandler
+ev3dev2simulator\connection\ClientSocketHandler.py:28:0: C0301: Line too long (120/100) (line-too-long)
+ev3dev2simulator\connection\ClientSocketHandler.py:1:0: C0103: Module name "ClientSocketHandler" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\ClientSocketHandler.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module ev3dev2simulator.connection.MessageHandler
+ev3dev2simulator\connection\MessageHandler.py:1:0: C0103: Module name "MessageHandler" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\MessageHandler.py:14:0: C0115: Missing class docstring (missing-class-docstring)
+ev3dev2simulator\connection\MessageHandler.py:32:8: R1705: Unnecessary "elif" after "return" (no-else-return)
+ev3dev2simulator\connection\MessageHandler.py:19:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+ev3dev2simulator\connection\MessageHandler.py:53:4: C0103: Argument name "d" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:63:4: C0103: Argument name "d" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:74:4: C0103: Argument name "d" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:74:4: R1711: Useless return at end of function or method (useless-return)
+ev3dev2simulator\connection\MessageHandler.py:85:4: C0103: Argument name "d" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:85:4: R1711: Useless return at end of function or method (useless-return)
+ev3dev2simulator\connection\MessageHandler.py:96:4: C0103: Argument name "d" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:108:4: C0103: Argument name "d" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:128:8: C0103: Variable name "d" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\MessageHandler.py:14:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connection.ServerSockets
+ev3dev2simulator\connection\ServerSockets.py:45:0: C0301: Line too long (101/100) (line-too-long)
+ev3dev2simulator\connection\ServerSockets.py:69:0: C0301: Line too long (102/100) (line-too-long)
+ev3dev2simulator\connection\ServerSockets.py:98:0: C0305: Trailing newlines (trailing-newlines)
+ev3dev2simulator\connection\ServerSockets.py:1:0: C0103: Module name "ServerSockets" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\ServerSockets.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\ServerSockets.py:27:0: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\connection\ServerSockets.py:62:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\connection\ServerSockets.py:83:16: R1723: Unnecessary "else" after "break" (no-else-break)
+ev3dev2simulator\connection\ServerSockets.py:72:37: W0612: Unused variable 'address' (unused-variable)
+ev3dev2simulator\connection\ServerSockets.py:89:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.connection.message.Command
+ev3dev2simulator\connection\message\Command.py:1:0: C0103: Module name "Command" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\Command.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\Command.py:14:8: W0107: Unnecessary pass statement (unnecessary-pass)
+ev3dev2simulator\connection\message\Command.py:4:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connection.message.ConfigRequest
+ev3dev2simulator\connection\message\ConfigRequest.py:7:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\connection\message\ConfigRequest.py:1:0: C0103: Module name "ConfigRequest" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\ConfigRequest.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\ConfigRequest.py:4:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connection.message.DataRequest
+ev3dev2simulator\connection\message\DataRequest.py:6:0: C0301: Line too long (102/100) (line-too-long)
+ev3dev2simulator\connection\message\DataRequest.py:1:0: C0103: Module name "DataRequest" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\DataRequest.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\DataRequest.py:4:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connection.message.LedCommand
+ev3dev2simulator\connection\message\LedCommand.py:6:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\connection\message\LedCommand.py:1:0: C0103: Module name "LedCommand" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\LedCommand.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\LedCommand.py:13:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.connection.message.MotorCommand
+ev3dev2simulator\connection\message\MotorCommand.py:17:0: C0305: Trailing newlines (trailing-newlines)
+ev3dev2simulator\connection\message\MotorCommand.py:1:0: C0103: Module name "MotorCommand" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\MotorCommand.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\MotorCommand.py:6:0: W0223: Method 'serialize' is abstract in class 'Command' but is not overridden (abstract-method)
+ev3dev2simulator\connection\message\MotorCommand.py:6:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connection.message.RotateCommand
+ev3dev2simulator\connection\message\RotateCommand.py:6:0: C0301: Line too long (110/100) (line-too-long)
+ev3dev2simulator\connection\message\RotateCommand.py:8:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\connection\message\RotateCommand.py:1:0: C0103: Module name "RotateCommand" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\RotateCommand.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\RotateCommand.py:4:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connection.message.SoundCommand
+ev3dev2simulator\connection\message\SoundCommand.py:6:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\connection\message\SoundCommand.py:1:0: C0103: Module name "SoundCommand" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\SoundCommand.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\SoundCommand.py:4:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connection.message.StopCommand
+ev3dev2simulator\connection\message\StopCommand.py:6:0: C0301: Line too long (108/100) (line-too-long)
+ev3dev2simulator\connection\message\StopCommand.py:7:0: C0301: Line too long (114/100) (line-too-long)
+ev3dev2simulator\connection\message\StopCommand.py:1:0: C0103: Module name "StopCommand" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connection\message\StopCommand.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connection\message\StopCommand.py:11:4: W0235: Useless super delegation in method '__init__' (useless-super-delegation)
+ev3dev2simulator\connection\message\StopCommand.py:4:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connector.DeviceConnector
+ev3dev2simulator\connector\DeviceConnector.py:20:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\connector\DeviceConnector.py:27:0: C0301: Line too long (132/100) (line-too-long)
+ev3dev2simulator\connector\DeviceConnector.py:1:0: C0103: Module name "DeviceConnector" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\DeviceConnector.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connector\DeviceConnector.py:6:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connector.LedConnector
+ev3dev2simulator\connector\LedConnector.py:1:0: C0103: Module name "LedConnector" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\LedConnector.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connector\LedConnector.py:7:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connector.MotorConnector
+ev3dev2simulator\connector\MotorConnector.py:1:0: C0103: Module name "MotorConnector" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\MotorConnector.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connector\MotorConnector.py:8:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+************* Module ev3dev2simulator.connector.SensorConnector
+ev3dev2simulator\connector\SensorConnector.py:32:0: C0301: Line too long (117/100) (line-too-long)
+ev3dev2simulator\connector\SensorConnector.py:33:0: C0301: Line too long (109/100) (line-too-long)
+ev3dev2simulator\connector\SensorConnector.py:34:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\connector\SensorConnector.py:1:0: C0103: Module name "SensorConnector" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SensorConnector.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connector\SensorConnector.py:9:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.connector.SoundConnector
+ev3dev2simulator\connector\SoundConnector.py:21:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:26:0: C0301: Line too long (111/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:40:0: C0301: Line too long (103/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:41:0: C0301: Line too long (108/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:51:0: C0301: Line too long (102/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:60:0: C0301: Line too long (110/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:90:0: C0301: Line too long (117/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:91:0: C0301: Line too long (110/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:115:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:130:0: C0301: Line too long (117/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:138:0: C0301: Line too long (102/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:145:0: C0301: Line too long (111/100) (line-too-long)
+ev3dev2simulator\connector\SoundConnector.py:1:0: C0103: Module name "SoundConnector" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\connector\SoundConnector.py:9:0: E0611: No name 'SimpleaudioError' in module 'simpleaudio._simpleaudio' (no-name-in-module)
+ev3dev2simulator\connector\SoundConnector.py:44:12: C0103: Variable name "fs" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:45:12: C0103: Variable name "t" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:77:16: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:81:12: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:138:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:156:12: C0103: Variable name "e" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:164:12: C0103: Variable name "e" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\connector\SoundConnector.py:144:25: W0613: Unused argument 'espeak_opts' (unused-argument)
+ev3dev2simulator\connector\SoundConnector.py:9:0: C0411: third party import "from simpleaudio._simpleaudio import SimpleaudioError" should be placed before "from ev3dev2simulator.connection.ClientSocket import get_client_socket" (wrong-import-order)
+ev3dev2simulator\connector\SoundConnector.py:11:0: C0411: third party import "import simpleaudio as sa" should be placed before "from ev3dev2simulator.connection.ClientSocket import get_client_socket" (wrong-import-order)
+ev3dev2simulator\connector\SoundConnector.py:12:0: C0411: third party import "import pyttsx3 as tts" should be placed before "from ev3dev2simulator.connection.ClientSocket import get_client_socket" (wrong-import-order)
+ev3dev2simulator\connector\SoundConnector.py:13:0: C0411: third party import "import numpy as np" should be placed before "from ev3dev2simulator.connection.ClientSocket import get_client_socket" (wrong-import-order)
+ev3dev2simulator\connector\SoundConnector.py:14:0: C0411: standard import "import wave" should be placed before "from simpleaudio._simpleaudio import SimpleaudioError" (wrong-import-order)
+************* Module ev3dev2simulator.obstacle.ArmFloor
+ev3dev2simulator\obstacle\ArmFloor.py:1:0: C0103: Module name "ArmFloor" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\ArmFloor.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\ArmFloor.py:4:0: C0115: Missing class docstring (missing-class-docstring)
+ev3dev2simulator\obstacle\ArmFloor.py:13:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\ArmFloor.py:16:4: C0103: Argument name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\ArmFloor.py:16:4: C0103: Argument name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\ArmFloor.py:16:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.obstacle.Board
+ev3dev2simulator\obstacle\Board.py:63:0: C0301: Line too long (107/100) (line-too-long)
+ev3dev2simulator\obstacle\Board.py:1:0: C0103: Module name "Board" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Board.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\Board.py:19:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Board.py:20:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Board.py:7:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+ev3dev2simulator\obstacle\Board.py:12:4: R0913: Too many arguments (6/5) (too-many-arguments)
+ev3dev2simulator\obstacle\Board.py:30:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Board.py:33:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Board.py:56:12: W0612: Unused variable 'i' (unused-variable)
+************* Module ev3dev2simulator.obstacle.Border
+ev3dev2simulator\obstacle\Border.py:13:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\obstacle\Border.py:1:0: C0103: Module name "Border" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Border.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\Border.py:12:4: R0913: Too many arguments (6/5) (too-many-arguments)
+ev3dev2simulator\obstacle\Border.py:19:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Border.py:23:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Border.py:25:16: W0123: Use of eval (eval-used)
+ev3dev2simulator\obstacle\Border.py:31:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Border.py:34:8: W0105: String statement has no effect (pointless-string-statement)
+************* Module ev3dev2simulator.obstacle.BorderObstacle
+ev3dev2simulator\obstacle\BorderObstacle.py:11:0: C0301: Line too long (108/100) (line-too-long)
+ev3dev2simulator\obstacle\BorderObstacle.py:43:0: C0301: Line too long (109/100) (line-too-long)
+ev3dev2simulator\obstacle\BorderObstacle.py:47:0: C0301: Line too long (110/100) (line-too-long)
+ev3dev2simulator\obstacle\BorderObstacle.py:1:0: C0103: Module name "BorderObstacle" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\BorderObstacle.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\BorderObstacle.py:6:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+ev3dev2simulator\obstacle\BorderObstacle.py:11:4: R0913: Too many arguments (6/5) (too-many-arguments)
+ev3dev2simulator\obstacle\BorderObstacle.py:6:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.obstacle.Bottle
+ev3dev2simulator\obstacle\Bottle.py:1:0: C0103: Module name "Bottle" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Bottle.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\Bottle.py:17:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Bottle.py:18:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Bottle.py:6:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+ev3dev2simulator\obstacle\Bottle.py:32:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Bottle.py:33:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Bottle.py:34:8: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Bottle.py:36:16: W0123: Use of eval (eval-used)
+ev3dev2simulator\obstacle\Bottle.py:40:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Bottle.py:43:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Bottle.py:56:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Bottle.py:60:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.obstacle.ColorObstacle
+ev3dev2simulator\obstacle\ColorObstacle.py:3:0: C0301: Line too long (107/100) (line-too-long)
+ev3dev2simulator\obstacle\ColorObstacle.py:11:0: C0301: Line too long (108/100) (line-too-long)
+ev3dev2simulator\obstacle\ColorObstacle.py:1:0: C0103: Module name "ColorObstacle" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\ColorObstacle.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\ColorObstacle.py:9:4: C0103: Argument name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\ColorObstacle.py:9:4: C0103: Argument name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\ColorObstacle.py:17:8: W0107: Unnecessary pass statement (unnecessary-pass)
+ev3dev2simulator\obstacle\ColorObstacle.py:1:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module ev3dev2simulator.obstacle.Edge
+ev3dev2simulator\obstacle\Edge.py:1:0: C0103: Module name "Edge" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Edge.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\Edge.py:17:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Edge.py:21:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.obstacle.Hole
+ev3dev2simulator\obstacle\Hole.py:38:0: C0301: Line too long (107/100) (line-too-long)
+ev3dev2simulator\obstacle\Hole.py:1:0: C0103: Module name "Hole" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Hole.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\Hole.py:16:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Hole.py:17:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Hole.py:23:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Hole.py:36:4: C0103: Argument name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Hole.py:36:4: C0103: Argument name "y" doesn't conform to snake_case naming style (invalid-name)
+************* Module ev3dev2simulator.obstacle.Lake
+ev3dev2simulator\obstacle\Lake.py:89:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\obstacle\Lake.py:1:0: C0103: Module name "Lake" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Lake.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\Lake.py:25:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Lake.py:26:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Lake.py:9:0: R0902: Too many instance attributes (11/7) (too-many-instance-attributes)
+ev3dev2simulator\obstacle\Lake.py:15:4: R0913: Too many arguments (8/5) (too-many-arguments)
+ev3dev2simulator\obstacle\Lake.py:42:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Lake.py:45:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Lake.py:54:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Lake.py:59:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Lake.py:60:8: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Lake.py:63:16: W0123: Use of eval (eval-used)
+ev3dev2simulator\obstacle\Lake.py:82:8: R1705: Unnecessary "else" after "return" (no-else-return)
+ev3dev2simulator\obstacle\Lake.py:96:8: R1705: Unnecessary "else" after "return" (no-else-return)
+************* Module ev3dev2simulator.obstacle.Rock
+ev3dev2simulator\obstacle\Rock.py:1:0: C0103: Module name "Rock" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Rock.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\obstacle\Rock.py:20:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Rock.py:21:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Rock.py:8:0: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+ev3dev2simulator\obstacle\Rock.py:12:4: R0913: Too many arguments (7/5) (too-many-arguments)
+ev3dev2simulator\obstacle\Rock.py:35:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Rock.py:52:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Rock.py:56:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Rock.py:63:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\obstacle\Rock.py:64:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Rock.py:65:8: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\obstacle\Rock.py:68:16: W0123: Use of eval (eval-used)
+************* Module ev3dev2simulator.robot.Arm
+ev3dev2simulator\robot\Arm.py:12:0: C0301: Line too long (118/100) (line-too-long)
+ev3dev2simulator\robot\Arm.py:1:0: C0103: Module name "Arm" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\Arm.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\Arm.py:15:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+ev3dev2simulator\robot\Arm.py:19:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.robot.ArmLarge
+ev3dev2simulator\robot\ArmLarge.py:1:0: C0103: Module name "ArmLarge" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\ArmLarge.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\ArmLarge.py:18:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\ArmLarge.py:19:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\ArmLarge.py:10:0: R0902: Too many instance attributes (11/7) (too-many-instance-attributes)
+ev3dev2simulator\robot\ArmLarge.py:30:4: C0103: Argument name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\ArmLarge.py:30:4: C0103: Argument name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\ArmLarge.py:30:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\ArmLarge.py:40:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.robot.BodyPart
+ev3dev2simulator\robot\BodyPart.py:17:0: C0301: Line too long (114/100) (line-too-long)
+ev3dev2simulator\robot\BodyPart.py:57:0: C0301: Line too long (113/100) (line-too-long)
+ev3dev2simulator\robot\BodyPart.py:63:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\robot\BodyPart.py:1:0: C0103: Module name "BodyPart" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\BodyPart.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\BodyPart.py:12:0: R0902: Too many instance attributes (13/7) (too-many-instance-attributes)
+ev3dev2simulator\robot\BodyPart.py:17:4: R0913: Too many arguments (9/5) (too-many-arguments)
+ev3dev2simulator\robot\BodyPart.py:48:8: W0107: Unnecessary pass statement (unnecessary-pass)
+ev3dev2simulator\robot\BodyPart.py:50:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\BodyPart.py:53:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\BodyPart.py:56:8: C0103: Variable name "vs" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\BodyPart.py:57:8: C0103: Variable name "t" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\BodyPart.py:62:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\BodyPart.py:65:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\BodyPart.py:68:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.robot.Brick
+ev3dev2simulator\robot\Brick.py:1:0: C0103: Module name "Brick" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\Brick.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\Brick.py:14:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+************* Module ev3dev2simulator.robot.ColorSensor
+ev3dev2simulator\robot\ColorSensor.py:21:0: C0301: Line too long (116/100) (line-too-long)
+ev3dev2simulator\robot\ColorSensor.py:26:0: C0301: Line too long (119/100) (line-too-long)
+ev3dev2simulator\robot\ColorSensor.py:1:0: C0103: Module name "ColorSensor" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\ColorSensor.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\ColorSensor.py:24:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+ev3dev2simulator\robot\ColorSensor.py:29:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\ColorSensor.py:40:12: C0103: Variable name "o" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\ColorSensor.py:53:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.robot.Led
+ev3dev2simulator\robot\Led.py:24:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\robot\Led.py:1:0: C0103: Module name "Led" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\Led.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\Led.py:9:4: R0913: Too many arguments (6/5) (too-many-arguments)
+ev3dev2simulator\robot\Led.py:22:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+ev3dev2simulator\robot\Led.py:27:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.robot.Speaker
+ev3dev2simulator\robot\Speaker.py:1:0: C0103: Module name "Speaker" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\Speaker.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\Speaker.py:25:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+************* Module ev3dev2simulator.robot.TouchSensor
+ev3dev2simulator\robot\TouchSensor.py:18:0: C0301: Line too long (103/100) (line-too-long)
+ev3dev2simulator\robot\TouchSensor.py:1:0: C0103: Module name "TouchSensor" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\TouchSensor.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\TouchSensor.py:21:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+ev3dev2simulator\robot\TouchSensor.py:31:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.robot.UltrasonicSensorBottom
+ev3dev2simulator\robot\UltrasonicSensorBottom.py:11:0: C0301: Line too long (119/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorBottom.py:33:0: C0301: Line too long (104/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorBottom.py:1:0: C0103: Module name "UltrasonicSensorBottom" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\UltrasonicSensorBottom.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\UltrasonicSensorBottom.py:14:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+ev3dev2simulator\robot\UltrasonicSensorBottom.py:18:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\UltrasonicSensorBottom.py:26:12: C0103: Variable name "o" doesn't conform to snake_case naming style (invalid-name)
+************* Module ev3dev2simulator.robot.UltrasonicSensorTop
+ev3dev2simulator\robot\UltrasonicSensorTop.py:19:0: C0301: Line too long (113/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:32:0: C0301: Line too long (115/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:33:0: C0301: Line too long (114/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:34:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:53:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:66:0: C0301: Line too long (115/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:98:0: C0301: Line too long (104/100) (line-too-long)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:1:0: C0103: Module name "UltrasonicSensorTop" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:23:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:27:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:60:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:60:11: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:65:8: R1705: Unnecessary "else" after "return" (no-else-return)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:78:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:79:8: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:91:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\UltrasonicSensorTop.py:92:8: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+************* Module ev3dev2simulator.robot.Wheel
+ev3dev2simulator\robot\Wheel.py:1:0: C0103: Module name "Wheel" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\robot\Wheel.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\robot\Wheel.py:15:4: W0221: Parameters differ from overridden 'setup_visuals' method (arguments-differ)
+ev3dev2simulator\robot\Wheel.py:24:12: C0103: Variable name "o" doesn't conform to snake_case naming style (invalid-name)
+************* Module ev3dev2simulator.state.MessageProcessor
+ev3dev2simulator\state\MessageProcessor.py:7:0: C0301: Line too long (113/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:21:0: C0301: Line too long (115/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:42:0: C0301: Line too long (114/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:44:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:59:0: C0301: Line too long (114/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:68:0: C0301: Line too long (111/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:77:0: C0301: Line too long (118/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:80:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:92:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:114:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:126:0: C0301: Line too long (120/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:133:0: C0301: Line too long (116/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:141:0: C0301: Line too long (120/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:152:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:161:0: C0301: Line too long (115/100) (line-too-long)
+ev3dev2simulator\state\MessageProcessor.py:1:0: C0103: Module name "MessageProcessor" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\MessageProcessor.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\state\MessageProcessor.py:53:12: W0612: Unused variable 'i' (unused-variable)
+ev3dev2simulator\state\MessageProcessor.py:67:8: R1705: Unnecessary "else" after "return" (no-else-return)
+ev3dev2simulator\state\MessageProcessor.py:100:8: R1705: Unnecessary "else" after "return" (no-else-return)
+ev3dev2simulator\state\MessageProcessor.py:117:12: W0612: Unused variable 'i' (unused-variable)
+************* Module ev3dev2simulator.state.MotorCommandProcessor
+ev3dev2simulator\state\MotorCommandProcessor.py:10:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:23:0: C0301: Line too long (101/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:26:0: C0301: Line too long (116/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:44:0: C0301: Line too long (102/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:47:0: C0301: Line too long (117/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:57:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:104:0: C0301: Line too long (117/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:117:0: C0301: Line too long (104/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:126:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\state\MotorCommandProcessor.py:1:0: C0103: Module name "MotorCommandProcessor" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\MotorCommandProcessor.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module ev3dev2simulator.state.RobotSimulator
+ev3dev2simulator\state\RobotSimulator.py:135:0: C0301: Line too long (105/100) (line-too-long)
+ev3dev2simulator\state\RobotSimulator.py:143:0: C0301: Line too long (104/100) (line-too-long)
+ev3dev2simulator\state\RobotSimulator.py:145:0: C0301: Line too long (107/100) (line-too-long)
+ev3dev2simulator\state\RobotSimulator.py:154:0: C0301: Line too long (117/100) (line-too-long)
+ev3dev2simulator\state\RobotSimulator.py:1:0: C0103: Module name "RobotSimulator" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\RobotSimulator.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\state\RobotSimulator.py:37:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotSimulator.py:77:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotSimulator.py:82:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotSimulator.py:90:17: W0612: Unused variable 'actuator_queue' (unused-variable)
+ev3dev2simulator\state\RobotSimulator.py:174:4: C0103: Method name "_process_LEDs" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\RobotSimulator.py:200:12: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\RobotSimulator.py:200:15: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+************* Module ev3dev2simulator.state.RobotState
+ev3dev2simulator\state\RobotState.py:93:0: C0301: Line too long (102/100) (line-too-long)
+ev3dev2simulator\state\RobotState.py:1:0: C0103: Module name "RobotState" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\RobotState.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\state\RobotState.py:49:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\RobotState.py:50:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\RobotState.py:25:0: R0902: Too many instance attributes (19/7) (too-many-instance-attributes)
+ev3dev2simulator\state\RobotState.py:31:4: R0915: Too many statements (57/50) (too-many-statements)
+ev3dev2simulator\state\RobotState.py:107:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:114:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:136:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:182:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:216:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:219:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:222:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:225:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:228:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:231:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:238:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:241:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:244:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\RobotState.py:247:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.state.WorldSimulator
+ev3dev2simulator\state\WorldSimulator.py:19:0: C0301: Line too long (101/100) (line-too-long)
+ev3dev2simulator\state\WorldSimulator.py:1:0: C0103: Module name "WorldSimulator" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\WorldSimulator.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\state\WorldSimulator.py:8:0: C0115: Missing class docstring (missing-class-docstring)
+ev3dev2simulator\state\WorldSimulator.py:21:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\WorldSimulator.py:26:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.state.WorldState
+ev3dev2simulator\state\WorldState.py:32:0: C0301: Line too long (116/100) (line-too-long)
+ev3dev2simulator\state\WorldState.py:1:0: C0103: Module name "WorldState" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\state\WorldState.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\state\WorldState.py:15:0: C0115: Missing class docstring (missing-class-docstring)
+ev3dev2simulator\state\WorldState.py:15:0: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+ev3dev2simulator\state\WorldState.py:30:22: W0123: Use of eval (eval-used)
+ev3dev2simulator\state\WorldState.py:42:12: W0612: Unused variable 'key' (unused-variable)
+ev3dev2simulator\state\WorldState.py:66:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\WorldState.py:70:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\WorldState.py:83:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\state\WorldState.py:101:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.util.Util
+ev3dev2simulator\util\Util.py:13:0: C0301: Line too long (104/100) (line-too-long)
+ev3dev2simulator\util\Util.py:52:0: C0301: Line too long (111/100) (line-too-long)
+ev3dev2simulator\util\Util.py:1:0: C0103: Module name "Util" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\util\Util.py:29:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:30:8: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:39:0: C0103: Argument name "x1" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:39:0: C0103: Argument name "y1" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:39:0: C0103: Argument name "x2" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:39:0: C0103: Argument name "y2" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:52:0: C0103: Argument name "b" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:52:0: C0103: Argument name "dl" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:52:0: C0103: Argument name "dr" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:52:0: C0103: Argument name "o" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:64:4: C0103: Variable name "dc" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\util\Util.py:91:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module ev3dev2simulator.visualisation.RobotPartSprite
+ev3dev2simulator\visualisation\RobotPartSprite.py:1:0: C0103: Module name "RobotPartSprite" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\RobotPartSprite.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\visualisation\RobotPartSprite.py:9:4: R0913: Too many arguments (6/5) (too-many-arguments)
+ev3dev2simulator\visualisation\RobotPartSprite.py:13:17: W0613: Unused argument 'height_mm' (unused-argument)
+************* Module ev3dev2simulator.visualisation.Sidebar
+ev3dev2simulator\visualisation\Sidebar.py:33:0: C0301: Line too long (108/100) (line-too-long)
+ev3dev2simulator\visualisation\Sidebar.py:47:0: C0301: Line too long (107/100) (line-too-long)
+ev3dev2simulator\visualisation\Sidebar.py:51:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\visualisation\Sidebar.py:54:0: C0301: Line too long (116/100) (line-too-long)
+ev3dev2simulator\visualisation\Sidebar.py:1:0: C0103: Module name "Sidebar" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\Sidebar.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\visualisation\Sidebar.py:6:8: C0103: Attribute name "x" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\Sidebar.py:7:8: C0103: Attribute name "y" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\Sidebar.py:4:0: C0115: Missing class docstring (missing-class-docstring)
+ev3dev2simulator\visualisation\Sidebar.py:4:0: R0902: Too many instance attributes (12/7) (too-many-instance-attributes)
+ev3dev2simulator\visualisation\Sidebar.py:22:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Sidebar.py:35:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Sidebar.py:42:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Sidebar.py:46:24: C0103: Variable name "sensorDict" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\Sidebar.py:50:16: W0612: Unused variable 'address' (unused-variable)
+************* Module ev3dev2simulator.visualisation.Visualiser
+ev3dev2simulator\visualisation\Visualiser.py:29:0: C0301: Line too long (104/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:56:0: C0330: Wrong hanging indentation (remove 15 spaces).
+                           'screen_title'] + f'          version: {sim_version}      ev3dev2 api: {api_version}'
+            |              ^ (bad-continuation)
+ev3dev2simulator\visualisation\Visualiser.py:56:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:67:0: C0301: Line too long (113/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:110:0: C0301: Line too long (114/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:112:0: C0301: Line too long (108/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:116:0: C0301: Line too long (111/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:130:0: C0301: Line too long (103/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:140:0: C0301: Line too long (101/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:234:0: C0301: Line too long (117/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:247:0: C0301: Line too long (112/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:254:0: C0301: Line too long (106/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:265:0: C0301: Line too long (116/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:281:0: C0301: Line too long (107/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:309:0: C0301: Line too long (115/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:310:0: C0301: Line too long (110/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:318:0: C0301: Line too long (116/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:358:0: C0301: Line too long (110/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:361:0: C0301: Line too long (110/100) (line-too-long)
+ev3dev2simulator\visualisation\Visualiser.py:1:0: C0103: Module name "Visualiser" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\Visualiser.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:16:0: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:20:0: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:26:0: R0902: Too many instance attributes (15/7) (too-many-instance-attributes)
+ev3dev2simulator\visualisation\Visualiser.py:32:4: R0913: Too many arguments (6/5) (too-many-arguments)
+ev3dev2simulator\visualisation\Visualiser.py:53:8: C0415: Import outside toplevel (ev3dev2.version) (import-outside-toplevel)
+ev3dev2simulator\visualisation\Visualiser.py:54:8: C0415: Import outside toplevel (ev3dev2simulator.version) (import-outside-toplevel)
+ev3dev2simulator\visualisation\Visualiser.py:72:36: W0123: Use of eval (eval-used)
+ev3dev2simulator\visualisation\Visualiser.py:89:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:92:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:103:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:166:8: C0103: Variable name "f" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\Visualiser.py:188:8: C0415: Import outside toplevel (pyglet) (import-outside-toplevel)
+ev3dev2simulator\visualisation\Visualiser.py:199:16: C0103: Variable name "f" doesn't conform to snake_case naming style (invalid-name)
+ev3dev2simulator\visualisation\Visualiser.py:203:16: C0415: Import outside toplevel (platform) (import-outside-toplevel)
+ev3dev2simulator\visualisation\Visualiser.py:211:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:213:8: C0415: Import outside toplevel (pyglet.libs.win32) (import-outside-toplevel)
+ev3dev2simulator\visualisation\Visualiser.py:214:8: C0415: Import outside toplevel (pyglet.libs.win32.constants) (import-outside-toplevel)
+ev3dev2simulator\visualisation\Visualiser.py:221:4: W0221: Parameters differ from overridden 'on_key_press' method (arguments-differ)
+ev3dev2simulator\visualisation\Visualiser.py:255:4: C0116: Missing function or method docstring (missing-function-docstring)
+ev3dev2simulator\visualisation\Visualiser.py:264:4: R0914: Too many local variables (16/15) (too-many-locals)
+ev3dev2simulator\visualisation\Visualiser.py:290:38: R1716: Simplify chained comparison between the operands (chained-comparison)
+ev3dev2simulator\visualisation\Visualiser.py:291:39: R1716: Simplify chained comparison between the operands (chained-comparison)
+ev3dev2simulator\visualisation\Visualiser.py:311:8: C0415: Import outside toplevel (platform) (import-outside-toplevel)
+ev3dev2simulator\visualisation\Visualiser.py:329:12: C0103: Variable name "obstacleList" doesn't conform to snake_case naming style (invalid-name)
+************* Module ev3dev2simulator.visualisation.__init__
+ev3dev2simulator\visualisation\__init__.py:1:0: R0801: Similar lines in 2 files
+==ev3dev2simulator.obstacle.Bottle:21
+==ev3dev2simulator.obstacle.Rock:26
+        self.color = color
+        self.sprite = None
+        self.scale = None
+
+        # physics
+        self.body = None
+        self.shape = None
+ (duplicate-code)
+
+
+Report
+======
+1857 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |62     |NC         |NC         |16.13       |79.03    |
++---------+-------+-----------+-----------+------------+---------+
+|class    |48     |NC         |NC         |89.58       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |247    |NC         |NC         |71.66       |0.40     |
++---------+-------+-----------+-----------+------------+---------+
+|function |19     |NC         |NC         |57.89       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    arcade (ev3dev2simulator.obstacle.ArmFloor,ev3dev2simulator.obstacle.Board,ev3dev2simulator.obstacle.Border,ev3dev2simulator.obstacle.BorderObstacle,ev3dev2simulator.obstacle.Bottle,ev3dev2simulator.obstacle.Hole,ev3dev2simulator.obstacle.Lake,ev3dev2simulator.
+obstacle.Rock,ev3dev2simulator.robot.ArmLarge,ev3dev2simulator.robot.TouchSensor,ev3dev2simulator.robot.UltrasonicSensorTop,ev3dev2simulator.state.RobotState,ev3dev2simulator.state.WorldState,ev3dev2simulator.util.Util,ev3dev2simulator.visualisation.RobotPartSprite
+,ev3dev2simulator.visualisation.Sidebar,ev3dev2simulator.visualisation.Visualiser)
+      \-Sprite (ev3dev2simulator.obstacle.Bottle,ev3dev2simulator.obstacle.Rock,ev3dev2simulator.robot.ArmLarge)
+      \-color (ev3dev2simulator.robot.UltrasonicSensorTop,ev3dev2simulator.visualisation.Visualiser)
+    ev3dev2 (ev3dev2simulator.connector.DeviceConnector)
+      \-_platform
+      | \-ev3 (ev3dev2simulator.state.MessageProcessor)
+      \-version (ev3dev2simulator.Simulator,ev3dev2simulator.visualisation.Visualiser)
+    ev3dev2simulator
+      \-config
+      | \-config (ev3dev2simulator.connection.ClientSocket,ev3dev2simulator.connection.ServerSockets,ev3dev2simulator.connector.SensorConnector,ev3dev2simulator.obstacle.Edge,ev3dev2simulator.robot.Arm,ev3dev2simulator.robot.ArmLarge,ev3dev2simulator.robot.Brick,ev
+3dev2simulator.robot.ColorSensor,ev3dev2simulator.robot.Led,ev3dev2simulator.robot.Speaker,ev3dev2simulator.robot.TouchSensor,ev3dev2simulator.robot.UltrasonicSensorBottom,ev3dev2simulator.robot.UltrasonicSensorTop,ev3dev2simulator.robot.Wheel,ev3dev2simulator.stat
+e.MessageProcessor,ev3dev2simulator.state.MotorCommandProcessor,ev3dev2simulator.state.RobotState,ev3dev2simulator.state.WorldSimulator,ev3dev2simulator.visualisation.Visualiser)
+      \-connection
+      | \-ClientSocket (ev3dev2simulator.connector.DeviceConnector,ev3dev2simulator.connector.LedConnector,ev3dev2simulator.connector.MotorConnector,ev3dev2simulator.connector.SensorConnector,ev3dev2simulator.connector.SoundConnector)
+      | \-message
+      |   \-ConfigRequest (ev3dev2simulator.connector.DeviceConnector,ev3dev2simulator.state.MessageProcessor)
+      |   \-DataRequest (ev3dev2simulator.connector.SensorConnector,ev3dev2simulator.state.MessageProcessor)
+      |   \-LedCommand (ev3dev2simulator.connector.LedConnector,ev3dev2simulator.state.MessageProcessor)
+      |   \-RotateCommand (ev3dev2simulator.connector.MotorConnector,ev3dev2simulator.state.MessageProcessor,ev3dev2simulator.state.MotorCommandProcessor)
+      |   \-SoundCommand (ev3dev2simulator.connector.SoundConnector,ev3dev2simulator.state.MessageProcessor)
+      |   \-StopCommand (ev3dev2simulator.connector.MotorConnector,ev3dev2simulator.state.MessageProcessor,ev3dev2simulator.state.MotorCommandProcessor)
+      \-obstacle
+      | \-ArmFloor (ev3dev2simulator.robot.ArmLarge)
+      | \-Board (ev3dev2simulator.state.WorldState)
+      | \-Border (ev3dev2simulator.state.WorldState)
+      | \-Bottle (ev3dev2simulator.state.WorldState)
+      | \-ColorObstacle (ev3dev2simulator.state.RobotState)
+      | \-Edge (ev3dev2simulator.state.WorldState)
+      | \-Lake (ev3dev2simulator.state.WorldState)
+      | \-Rock (ev3dev2simulator.state.WorldState)
+      \-robot
+      | \-Arm (ev3dev2simulator.state.RobotState)
+      | \-BodyPart (ev3dev2simulator.state.RobotState)
+      | \-Brick (ev3dev2simulator.connection.ServerSockets,ev3dev2simulator.state.RobotState)
+      | \-ColorSensor (ev3dev2simulator.state.RobotState)
+      | \-Led (ev3dev2simulator.state.RobotState)
+      | \-Speaker (ev3dev2simulator.state.RobotState)
+      | \-TouchSensor (ev3dev2simulator.state.RobotState)
+      | \-UltrasonicSensorBottom (ev3dev2simulator.state.RobotState)
+      | \-UltrasonicSensorTop (ev3dev2simulator.state.RobotState)
+      | \-Wheel (ev3dev2simulator.state.RobotState)
+      \-state
+      | \-MessageProcessor (ev3dev2simulator.connection.ClientSocketHandler,ev3dev2simulator.connection.MessageHandler)
+      | \-RobotSimulator (ev3dev2simulator.connection.ClientSocketHandler,ev3dev2simulator.connection.ServerSockets)
+      | \-WorldSimulator (ev3dev2simulator.connection.ServerSockets)
+      | \-WorldState (ev3dev2simulator.visualisation.Visualiser)
+      \-util
+      | \-Util (ev3dev2simulator.obstacle.Board,ev3dev2simulator.obstacle.Border,ev3dev2simulator.obstacle.Hole,ev3dev2simulator.obstacle.Lake,ev3dev2simulator.robot.UltrasonicSensorTop,ev3dev2simulator.state.RobotState)
+      \-version (ev3dev2simulator.visualisation.Visualiser)
+      \-visualisation
+        \-RobotPartSprite (ev3dev2simulator.robot.BodyPart,ev3dev2simulator.state.RobotState)
+    numpy (ev3dev2simulator.connector.SoundConnector)
+    pyglet (ev3dev2simulator.visualisation.Visualiser)
+      \-clock (ev3dev2simulator.visualisation.Visualiser)
+      \-libs
+        \-win32 (ev3dev2simulator.visualisation.Visualiser)
+          \-constants (ev3dev2simulator.visualisation.Visualiser)
+    pymunk (ev3dev2simulator.obstacle.Bottle,ev3dev2simulator.obstacle.Rock,ev3dev2simulator.robot.BodyPart,ev3dev2simulator.state.RobotState,ev3dev2simulator.state.WorldState)
+      \-Space (ev3dev2simulator.robot.UltrasonicSensorTop,ev3dev2simulator.state.WorldState)
+      \-Vec2d (ev3dev2simulator.state.RobotSimulator)
+      \-vec2d (ev3dev2simulator.state.RobotState)
+    pyttsx3 (ev3dev2simulator.connector.SoundConnector)
+    simpleaudio (ev3dev2simulator.connector.SoundConnector)
+      \-_simpleaudio (ev3dev2simulator.connector.SoundConnector)
+    yaml (ev3dev2simulator.config.config)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |2142   |57.78 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |748    |20.18 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |74     |2.00  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |743    |20.04 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |8     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.223 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |404    |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |52     |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |36     |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+% errors / warnings by module
+-----------------------------
+
++--------------------------------------------------+-------+--------+---------+-----------+
+|module                                            |error  |warning |refactor |convention |
++==================================================+=======+========+=========+===========+
+|ev3dev2simulator.connector.SoundConnector         |100.00 |2.78    |0.00     |6.44       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.visualisation.Visualiser         |0.00   |5.56    |9.62     |9.41       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.state.MessageProcessor           |0.00   |5.56    |3.85     |4.21       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.config.config                    |0.00   |5.56    |1.92     |2.48       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.state.WorldState                 |0.00   |5.56    |1.92     |1.98       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.Border                  |0.00   |5.56    |1.92     |1.49       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.Lake                    |0.00   |2.78    |7.69     |2.48       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.BodyPart                   |0.00   |2.78    |3.85     |2.97       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.Rock                    |0.00   |2.78    |3.85     |2.48       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.Board                   |0.00   |2.78    |3.85     |1.73       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.ClientSocket          |0.00   |2.78    |3.85     |1.49       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.UltrasonicSensorTop        |0.00   |2.78    |1.92     |3.96       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.visualisation.Sidebar            |0.00   |2.78    |1.92     |3.22       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.Bottle                  |0.00   |2.78    |1.92     |2.72       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.ServerSockets         |0.00   |2.78    |1.92     |1.98       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.ColorObstacle           |0.00   |2.78    |1.92     |1.49       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.Led                        |0.00   |2.78    |1.92     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.StopCommand   |0.00   |2.78    |1.92     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.MotorCommand  |0.00   |2.78    |1.92     |0.74       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.visualisation.RobotPartSprite    |0.00   |2.78    |1.92     |0.50       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.Command       |0.00   |2.78    |1.92     |0.50       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.state.RobotSimulator             |0.00   |2.78    |0.00     |2.97       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.Simulator                        |0.00   |2.78    |0.00     |2.97       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.ColorSensor                |0.00   |2.78    |0.00     |1.73       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.UltrasonicSensorBottom     |0.00   |2.78    |0.00     |1.49       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.__main__                         |0.00   |2.78    |0.00     |1.24       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.TouchSensor                |0.00   |2.78    |0.00     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.Arm                        |0.00   |2.78    |0.00     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.Wheel                      |0.00   |2.78    |0.00     |0.74       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.Speaker                    |0.00   |2.78    |0.00     |0.50       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.Brick                      |0.00   |2.78    |0.00     |0.50       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.MessageHandler        |0.00   |0.00    |9.62     |2.48       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.BorderObstacle          |0.00   |0.00    |5.77     |1.24       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.state.RobotState                 |0.00   |0.00    |3.85     |4.70       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.robot.ArmLarge                   |0.00   |0.00    |1.92     |1.98       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connector.SensorConnector        |0.00   |0.00    |1.92     |1.24       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connector.DeviceConnector        |0.00   |0.00    |1.92     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.RotateCommand |0.00   |0.00    |1.92     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.SoundCommand  |0.00   |0.00    |1.92     |0.74       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.DataRequest   |0.00   |0.00    |1.92     |0.74       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.ConfigRequest |0.00   |0.00    |1.92     |0.74       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connector.MotorConnector         |0.00   |0.00    |1.92     |0.50       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connector.LedConnector           |0.00   |0.00    |1.92     |0.50       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.visualisation.__init__           |0.00   |0.00    |1.92     |0.00       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.util.Util                        |0.00   |0.00    |0.00     |3.96       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.state.MotorCommandProcessor      |0.00   |0.00    |0.00     |2.72       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.Hole                    |0.00   |0.00    |0.00     |1.98       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.ArmFloor                |0.00   |0.00    |0.00     |1.73       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.state.WorldSimulator             |0.00   |0.00    |0.00     |1.49       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.obstacle.Edge                    |0.00   |0.00    |0.00     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.message.LedCommand    |0.00   |0.00    |0.00     |0.99       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.connection.ClientSocketHandler   |0.00   |0.00    |0.00     |0.74       |
++--------------------------------------------------+-------+--------+---------+-----------+
+|ev3dev2simulator.version                          |0.00   |0.00    |0.00     |0.25       |
++--------------------------------------------------+-------+--------+---------+-----------+
+
+
+
+Messages
+--------
+
++-------------------------------+------------+
+|message id                     |occurrences |
++===============================+============+
+|invalid-name                   |130         |
++-------------------------------+------------+
+|line-too-long                  |113         |
++-------------------------------+------------+
+|missing-function-docstring     |78          |
++-------------------------------+------------+
+|missing-module-docstring       |52          |
++-------------------------------+------------+
+|too-few-public-methods         |15          |
++-------------------------------+------------+
+|too-many-instance-attributes   |12          |
++-------------------------------+------------+
+|import-outside-toplevel        |12          |
++-------------------------------+------------+
+|arguments-differ               |10          |
++-------------------------------+------------+
+|too-many-arguments             |9           |
++-------------------------------+------------+
+|unused-variable                |8           |
++-------------------------------+------------+
+|wrong-import-position          |6           |
++-------------------------------+------------+
+|no-else-return                 |6           |
++-------------------------------+------------+
+|eval-used                      |6           |
++-------------------------------+------------+
+|wrong-import-order             |5           |
++-------------------------------+------------+
+|missing-class-docstring        |5           |
++-------------------------------+------------+
+|unused-argument                |3           |
++-------------------------------+------------+
+|unnecessary-pass               |3           |
++-------------------------------+------------+
+|useless-return                 |2           |
++-------------------------------+------------+
+|trailing-newlines              |2           |
++-------------------------------+------------+
+|inconsistent-return-statements |2           |
++-------------------------------+------------+
+|global-statement               |2           |
++-------------------------------+------------+
+|chained-comparison             |2           |
++-------------------------------+------------+
+|useless-super-delegation       |1           |
++-------------------------------+------------+
+|too-many-statements            |1           |
++-------------------------------+------------+
+|too-many-locals                |1           |
++-------------------------------+------------+
+|reimported                     |1           |
++-------------------------------+------------+
+|pointless-string-statement     |1           |
++-------------------------------+------------+
+|no-name-in-module              |1           |
++-------------------------------+------------+
+|no-else-break                  |1           |
++-------------------------------+------------+
++-------------------------------+------------+
+|bad-continuation               |1           |
+|abstract-method                |1           |
++-------------------------------+------------+
+
+
+
+
+------------------------------------------------------------------
+Your code has been rated at 7.32/10 (previous run: 7.32/10, +0.00)
