@@ -100,9 +100,10 @@ class RobotState:
                 print("Unknown robot part in config")
 
         self.parts = []
-        self.parts.extend(list(self.actuators.values()))
-        self.parts.extend(self.bricks)
+        self.parts.extend(list(self.get_wheels()))
         self.parts.extend(list(self.sensors.values()))
+        self.parts.extend(self.bricks)
+        self.parts.extend(filter(lambda act: act.get_ev3type() != 'motor', list(self.actuators.values())))
 
     def reset(self):
         self.values.clear()

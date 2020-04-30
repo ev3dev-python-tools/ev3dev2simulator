@@ -82,6 +82,15 @@ class RobotSimulator:
     def set_led_color(self, brick_id, led_id, color):
         self.robot.led_colors[(brick_id, led_id)] = color
 
+    def reset_queues_of_brick(self, brick_id: int):
+        """
+        Reset queues if bricks disconnect.
+        :param brick_id: identifier of brick you want to reset the queues of.
+        """
+        for key, actuator_queue in self.actuator_queues.items():
+            if key[0] == brick_id:
+                self.clear_actuator_jobs(key)
+
     def reset(self):
         """
         Reset the data of this State

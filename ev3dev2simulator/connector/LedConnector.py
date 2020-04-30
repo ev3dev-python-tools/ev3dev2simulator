@@ -22,4 +22,4 @@ class LedConnector:
         """
 
         command = LedCommand(self.address, brightness)
-        return self.client_socket.send_command(command, True)
+        return self.client_socket.send_command(command)

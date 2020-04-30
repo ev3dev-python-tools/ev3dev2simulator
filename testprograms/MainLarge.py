@@ -23,18 +23,6 @@ def drive():
     tank_drive.on(SpeedPercent(30), SpeedPercent(30))
 
 
-def checkCollision():
-    if ts1.is_pressed or ts4.is_pressed:
-        print('gg')
-        # leds.set_color("LEFT", "YELLOW")
-        tank_drive.stop()
-        reverseRotations(1)
-        rotateDegrees(180)
-        drive()
-    # else:
-    #     leds.set_color("LEFT", "RED")
-
-
 def checkColor():
     if cs.color != 1:
         print('gg')
