@@ -1,3 +1,5 @@
+from math import radians
+
 import arcade
 import pymunk
 from pymunk import Space
@@ -63,6 +65,8 @@ class WorldState:
 
         self.color_obstacles.append(board)
 
+        self.selected_object = None
+
     def reset(self):
         for obstacle in self.obstacles:
             obstacle.reset()
@@ -97,6 +101,22 @@ class WorldState:
             robot.set_color_obstacles(self.color_obstacles)
             robot.set_touch_obstacles(touch_sprites)
             robot.set_falling_obstacles(self.falling_obstacles)
+
+    def set_object_at_position_as_selected(self, pos):
+        max_distance = 15
+        poly = self.space.point_query_nearest(pos, max_distance, pymunk.ShapeFilter()).shape
+        if hasattr(poly, 'body'):
+            self.selected_object = poly.body
+
+    def move_selected_object(self, dx, dy):
+        if self.selected_object:
+            self.selected_object.position += (dx, dy)
+
+    def rotate_selected_object(self, dx):
+        self.selected_object.angle += radians(dx)
+
+    def unselect_object(self):
+        self.selected_object = None
 
     def get_robots(self) -> [RobotState]:
         return self.robots

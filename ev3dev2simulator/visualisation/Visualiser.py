@@ -368,3 +368,16 @@ class Visualiser(arcade.Window):
         Callback to WorldSimulator.update is called
         """
         self.update_callback()
+
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        self.world_state.set_object_at_position_as_selected((x, y))
+
+    def on_mouse_release(self, x: float, y: float, button: int,
+                         modifiers: int):
+        self.world_state.unselect_object()
+
+    def on_mouse_drag(self, x: float, y: float, dx: float, dy: float, buttons: int, modifiers: int):
+        if buttons == arcade.MOUSE_BUTTON_LEFT:
+            self.world_state.move_selected_object(dx, dy)
+        if buttons == arcade.MOUSE_BUTTON_RIGHT:
+            self.world_state.rotate_selected_object(dy)
