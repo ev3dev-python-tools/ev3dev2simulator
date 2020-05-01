@@ -45,28 +45,31 @@ class ServerSockets(threading.Thread):
         print('Closing server')
 
     def handle_sockets(self, server):
-        show_message = True
         while True:
             for (robot_name, brick_name), sock in self.brick_sockets.items():
                 if not sock.is_connected:
-                    if show_message:
-                        print(f'Please connect brick "{brick_name}" from robot "{robot_name}" ')
-                        show_message = False
-                    try:
-                        (client, address) = server.accept()
-                        self.first_connected = True
-                        print(
-                            f'Connection from \"{brick_name}\" from robot \"{robot_name}\" '
-                            'accepted\n')
-                        sock.client = client
-                        sock.is_connected = True
-                        show_message = True
+                    if self.wait_for_brick_to_connect(robot_name, brick_name, sock, server):
                         break
-                    except socket.timeout:
-                        pass
+            time.sleep(.1)
+
+    def wait_for_brick_to_connect(self, robot_name, brick_name, sock, server):
+        print(f'Please connect brick "{brick_name}" from robot "{robot_name}"')
+        while True:
+            try:
+                (client, address) = server.accept()
+                self.first_connected = True
+                print(
+                    f'Connection from \"{brick_name}\" from robot \"{robot_name}\" '
+                    'accepted\n')
+                sock.client = client
+                sock.is_connected = True
+                return False  # should not restart connection procedure
+            except socket.timeout:
+                pass
             if self.all_sockets_are_disconnected(self.brick_sockets.values()) and self.first_connected:
                 self.word_simulator.request_reset()
-            time.sleep(1)
+                self.first_connected = False
+                return True  # should restart connection procedure
 
     @staticmethod
     def all_sockets_are_disconnected(sockets):
