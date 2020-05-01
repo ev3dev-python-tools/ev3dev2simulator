@@ -1,10 +1,10 @@
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.robot.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.BodyPart import BodyPart
 
 
 class UltrasonicSensorBottom(BodyPart):
     """
-    Class representing an UltrasonicSensor of the simulated robot mounted towards the ground.
+    Class representing an UltrasonicSensor of the simulated robotpart mounted towards the ground.
     """
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['ultrasonic_sensor_bottom']
@@ -31,7 +31,7 @@ class UltrasonicSensorBottom(BodyPart):
     def get_default_value(self):
         """
         1 pixel == 1mm so measurement values this sensor returns are one to one mappable to millimeters.
-        Max distance real world robot ultrasonic sensor returns is 2550mm.
+        Max distance real world robotpart ultrasonic sensor returns is 2550mm.
         :return: default value in pixels.
         """
         return 2550

@@ -1,10 +1,10 @@
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.robot.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.BodyPart import BodyPart
 
 
 class Brick(BodyPart):
     """
-    Class representing the body of the simulated robot.
+    Class representing the body of the simulated robotpart.
     """
 
     def __init__(self, config, robot):

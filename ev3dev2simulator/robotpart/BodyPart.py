@@ -11,7 +11,7 @@ DEFAULT_MASS = 5
 
 class BodyPart:
     """
-    Class containing the base functionality of a part of the robot.
+    Class containing the base functionality of a part of the robotpart.
     """
 
     def __init__(self, config, robot, width_mm, height_mm, ev3type, offset_x=0.0, offset_y=0.0, driver_name=None):

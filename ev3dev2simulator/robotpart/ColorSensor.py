@@ -1,5 +1,5 @@
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.robot.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.BodyPart import BodyPart
 
 COLORS = dict()
 COLORS[0] = 0  # set black for no color
@@ -13,7 +13,7 @@ COLORS[6] = 4
 
 class ColorSensor(BodyPart):
     """
-    Class representing a ColorSensor of the simulated robot.
+    Class representing a ColorSensor of the simulated robotpart.
     """
 
     def __init__(self, config, robot):
@@ -45,7 +45,7 @@ class ColorSensor(BodyPart):
 
     def get_default_value(self):
         """
-        1 is the color of black for the real robot. Playing field surface is black.
+        1 is the color of black for the real robotpart. Playing field surface is black.
         :return: integer value representing the color black.
         """
         return 0

@@ -9,7 +9,7 @@ from ev3dev2simulator.obstacle.ArmFloor import ArmFloor
 
 class ArmLarge(Sprite):
     """
-    Class representing the body of the simulated robot.
+    Class representing the body of the simulated robotpart.
     """
 
     def __init__(self):

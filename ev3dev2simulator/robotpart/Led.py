@@ -1,10 +1,10 @@
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.robot.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.BodyPart import BodyPart
 
 
 class Led(BodyPart):
     """
-    Class representing a Wheel of the simulated robot.
+    Class representing a Wheel of the simulated robotpart.
     """
     def __init__(self, brick: int, robot, side, brick_x_offset, brick_y_offset):
         offset_x = - 20 if side == 'left' else 20

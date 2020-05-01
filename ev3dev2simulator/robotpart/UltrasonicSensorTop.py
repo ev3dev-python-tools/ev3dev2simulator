@@ -6,13 +6,13 @@ from arcade.color import RED
 from pymunk import Space
 
 from ev3dev2simulator.config.config import get_simulation_settings, debug
-from ev3dev2simulator.robot.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.BodyPart import BodyPart
 from ev3dev2simulator.util.Util import distance_between_points
 
 
 class UltrasonicSensor(BodyPart):
     """
-    Class representing an UltrasonicSensor of the simulated robot.
+    Class representing an UltrasonicSensor of the simulated robotpart.
     """
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['ultrasonic_sensor_top']
@@ -31,7 +31,7 @@ class UltrasonicSensor(BodyPart):
         """
         Get the distance in pixels between this ultrasonic sensors eyes and an object it is pointed to. First check
         the left eye, if this does not see anything check the right eye. If this sensor is not pointing towards an
-        object return 2550, which is the max distance of the real robot's ultrasonic sensor. :param space: which
+        object return 2550, which is the max distance of the real robotpart's ultrasonic sensor. :param space: which
         holds the visible objects. :return: a floating point value representing the distance.
         """
         left_eye_x, left_eye_y = self._calc_eye_center(self.sprite.angle + 90)
@@ -96,7 +96,7 @@ class UltrasonicSensor(BodyPart):
     def get_default_value(self):
         """
         1 pixel == 1mm so measurement values this sensor returns are one to one mappable to millimeters.
-        Max distance real world robot ultrasonic sensor returns is 2550mm.
+        Max distance real world robotpart ultrasonic sensor returns is 2550mm.
         :return: default value in pixels.
         """
         return 2550
