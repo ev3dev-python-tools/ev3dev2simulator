@@ -111,7 +111,7 @@ class TestRobotState(unittest.TestCase):
             'port': 'ev3-ports:outB'
         })
 
-        with patch('ev3dev2simulator.robot.Arm.ArmLarge') as ArmLargeMock:
+        with patch('ev3dev2simulator.robotpart.Arm.ArmLarge') as ArmLargeMock:
             arm_instance = ArmLargeMock.return_value
             state = RobotState(self.default_config())
             state.setup_pymunk_shapes(1)

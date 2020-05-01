@@ -33,12 +33,10 @@ class Rock:
         self.shape = None
 
     def create_shape(self, scale):
-        width = scale * (self.width / 892)
-        height = scale * (self.height / 892)
-
+        width = scale * self.width
+        height = scale * self.height
         mass = 5
         friction = 0.2
-
         moment = pymunk.moment_for_box(mass, (width, height))
 
         self.body = pymunk.Body(mass, moment)
@@ -52,6 +50,9 @@ class Rock:
     def create_sprite(self, scale):
         self.sprite = Sprite('assets/images/brick.png', scale=scale * (self.width / 892),
                              center_x=self.x * scale, center_y=self.y * scale)
+        self.sprite.width = scale * self.width
+        self.sprite.height = scale * self.height
+        self.sprite.color = self.color
 
     def reset(self):
         self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
