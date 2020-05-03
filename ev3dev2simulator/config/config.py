@@ -16,6 +16,14 @@ class Config:
         file_name = 'config_large' if file_name is None else file_name
         return self._load_yaml_file(f'world_configurations/{file_name}')
 
+    def load_robot_config(self, file_name: str):
+        """
+        Loads a robot config.
+        @param file_name: the file that contains the robot configuration.
+        @return: dictionary with all the parts.
+        """
+        return self._load_yaml_file(f'robot_configurations/{file_name}')
+
     @staticmethod
     def _load_yaml_file(file_url: str) -> object:
         """
@@ -60,6 +68,8 @@ def load_config(world_config_file_name):
 
     return _config
 
+def get_robot_config(file_name):
+    return _config.load_robot_config(file_name)
 
 def get_world_config():
     return _config.world_config

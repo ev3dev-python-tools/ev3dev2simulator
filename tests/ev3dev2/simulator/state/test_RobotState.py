@@ -61,6 +61,33 @@ class TestRobotState(unittest.TestCase):
                 ]
                 }
 
+    def test_load_robot_config(self):
+        with patch('ev3dev2simulator.state.RobotState.get_robot_config') as get_robot_config_mock:
+            get_robot_config_mock.return_value = {
+                'parts': [
+                    {
+                        'name': 'brick-left',
+                        'type': 'brick',
+                        'brick': '0',
+                        'x_offset': '-39',
+                        'y_offset': '-22.5'
+                    }
+                ]
+            }
+            state = RobotState(self.default_config())
+            self.assertEqual(len(state.parts), 4 + 1 + 2 + 1)  # 4 sensors/actuators + 1 brick + 2 leds + 1 speaker
+            config = {
+                'center_x': 0,
+                'center_y': 0,
+                'orientation': 180,
+                'name': 'test_bot',
+                'type': 'test_robot'
+            }
+            state = RobotState(config)
+            self.assertEqual(4, len(state.parts))  # only a brick
+
+
+
     def test_setup_pymunk_shapes(self):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
