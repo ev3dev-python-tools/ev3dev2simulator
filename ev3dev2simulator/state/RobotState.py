@@ -113,6 +113,8 @@ class RobotState:
         self.body.angle = math.radians(self.orig_orientation)
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
+        for obj in self.side_bar_sprites:
+            obj.reset()
 
     def setup_pymunk_shapes(self, scale):
         self.scale = scale

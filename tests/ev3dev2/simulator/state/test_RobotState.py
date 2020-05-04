@@ -107,6 +107,9 @@ class TestRobotState(unittest.TestCase):
     def test_reset(self):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         x = state.x * state.scale
         y = state.y * state.scale
         state.body.position = Vec2d(5, 5)  # 5 per sec
@@ -122,6 +125,9 @@ class TestRobotState(unittest.TestCase):
     def test_execute_movement(self):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         state.execute_movement(5, 5)
         self.assertAlmostEqual(tuple(state.body.velocity)[0], 0.0, 3)  # no x movement
         self.assertAlmostEqual(tuple(state.body.velocity)[1], -5.0 * 30, 3)  # -150 y distance per second
@@ -173,6 +179,8 @@ class TestRobotState(unittest.TestCase):
         })
         state = RobotState(config)
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
 
         color_obstacle_mock = MagicMock()
         rock_mock = MagicMock()

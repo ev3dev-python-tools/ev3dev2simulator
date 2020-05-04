@@ -67,6 +67,7 @@ class ServerSockets(threading.Thread):
             except socket.timeout:
                 pass
             if self.all_sockets_are_disconnected(self.brick_sockets.values()) and self.first_connected:
+                print('All bricks are disconnected. Resetting world.')
                 self.word_simulator.request_reset()
                 self.first_connected = False
                 return True  # should restart connection procedure

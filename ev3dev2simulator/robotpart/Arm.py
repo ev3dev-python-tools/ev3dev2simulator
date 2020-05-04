@@ -18,3 +18,6 @@ class Arm(BodyPart):
 
     def rotate_arm(self, degrees):
         self.side_bar_arm.rotate(degrees)
+
+    def reset(self):
+        self.side_bar_arm.reset()

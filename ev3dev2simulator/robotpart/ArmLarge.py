@@ -23,6 +23,10 @@ class ArmLarge(Sprite):
 
         self.sweep_length = 229 / 4
 
+    def reset(self):
+        self.angle = 20
+        self.rotate(0)
+
     def draw(self):
         self.side_bar_ground.shape.draw()
         super(ArmLarge, self).draw()

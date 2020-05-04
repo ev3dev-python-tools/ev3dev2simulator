@@ -11,6 +11,9 @@ class TestRobotSimulator(unittest.TestCase):
         conf = TestRobotState.default_config()
         state = RobotState(conf)
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         sim = RobotSimulator(state)
         sim._sync_physics_sprites = MagicMock()
         sim.update()
@@ -26,6 +29,9 @@ class TestRobotSimulator(unittest.TestCase):
         conf = TestRobotState.default_config()
         state = RobotState(conf)
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         sim = RobotSimulator(state)
         sim._sync_physics_sprites = MagicMock()
         val = sim.get_value((0, 'ev3-ports:in4'))

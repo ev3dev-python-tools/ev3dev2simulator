@@ -22,17 +22,24 @@ def rotateDegrees(degrees):
 def drive():
     tank_drive.on(SpeedPercent(30), SpeedPercent(30))
 
+def measurementOn():
+    tank_measurement.on_to_position(20, -100)
+
+def measurementOff():
+    tank_measurement.on_to_position(20, 100)
 
 def checkColor():
     if cs.color != 1:
         print('gg')
-        # leds.set_color("RIGHT", "AMBER")
+        leds.set_color("RIGHT", "AMBER")
         tank_drive.stop()
+        measurementOn()
+        measurementOff()
         reverseRotations(1)
         rotateDegrees(180)
         drive()
-    # else:
-    #     leds.set_color("RIGHT", "GREEN")
+    else:
+        leds.set_color("RIGHT", "GREEN")
 
 
 def measurement_on():
