@@ -76,4 +76,6 @@ def get_world_config():
 
 
 def get_simulation_settings():
+    if not _config:  # clients might need configuration as well, but do not need world settings
+        load_config(None)
     return _config.simulation_settings

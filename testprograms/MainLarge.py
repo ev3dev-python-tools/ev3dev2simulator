@@ -56,11 +56,15 @@ def check():
         # checkDistance()
 
 
-# bth = BluetoothHelper()
-# bth.connect_as_server()
-# bth.send("Hello?")
-print('here')
+bth = BluetoothHelper()
+bth.connect_as_server()
+
 leds = Leds()
+
+bth.send("Hello?")
+
+
+print('here')
 print('here')
 
 # leds.animate_rainbow()
