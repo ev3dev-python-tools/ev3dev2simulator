@@ -180,7 +180,7 @@ class RobotSimulator:
             elif actuator.ev3type == 'speaker':
                 self.robot.sounds[address] = job_of_actuator
 
-        if left_ppf or right_ppf:
+        if left_ppf is not None or right_ppf is not None:
             self.robot.execute_movement(left_ppf, right_ppf)
 
     def _process_LEDs(self):
