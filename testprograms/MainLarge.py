@@ -58,10 +58,10 @@ def check():
 
 bth = BluetoothHelper()
 bth.connect_as_server()
+bth.send("Hello?")
 
 leds = Leds()
 
-bth.send("Hello?")
 
 
 print('here')
