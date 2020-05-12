@@ -125,7 +125,7 @@ class MotorCommandProcessorTest(unittest.TestCase):
         spf, frames, run_time = creator.process_stop_command_distance(command)
 
         self.assertEqual(spf, 0)
-        self.assertEqual(frames, 0)
+        self.assertEqual(frames, 1)
         self.assertEqual(run_time, 0)
 
     def test_process_stop_command_distance_break(self):
@@ -135,7 +135,7 @@ class MotorCommandProcessorTest(unittest.TestCase):
         spf, frames, run_time = creator.process_stop_command_distance(command)
 
         self.assertEqual(spf, 0)
-        self.assertEqual(frames, 0)
+        self.assertEqual(frames, 1)
         self.assertEqual(run_time, 0)
 
     def test_process_stop_command_distance_coast(self):
