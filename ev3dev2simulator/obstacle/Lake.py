@@ -84,9 +84,8 @@ class Lake(ColorObstacle):
             return create_line_strip(points,
                                      self.color,
                                      self.border_width * scale)
-        else:
-            return create_ellipse_filled(self.center_x, self.center_y,
-                                         self.outer_radius * scale, self.outer_radius * scale, self.color)
+        return create_ellipse_filled(self.center_x, self.center_y,
+                                     self.outer_radius * scale, self.outer_radius * scale, self.color)
 
     def _create_hole(self):
         return Hole(self.x, self.y, self.inner_radius)

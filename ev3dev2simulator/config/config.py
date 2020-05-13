@@ -35,7 +35,7 @@ class Config:
         try:
             with open(path, 'r') as stream:
                 return yaml.safe_load(stream)
-        except FileNotFoundError as er:
+        except FileNotFoundError:
             raise FileNotFoundError(f'The world configuration {file_url} could not be found')
         except yaml.YAMLError:
             raise RuntimeError('there are errors in the yaml file')
