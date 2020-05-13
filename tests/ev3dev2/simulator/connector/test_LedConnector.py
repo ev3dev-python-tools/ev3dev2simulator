@@ -8,7 +8,7 @@ class LedConnectorTest(unittest.TestCase):
 
     def test_leds_set_color(self):
         with patch('ev3dev2.DeviceConnector') as DeviceMock:
-            with patch('ev3dev2simulator.connector.LedConnector.get_client_socket') as get_client_socketMock:
+            with patch('ev3dev2.connector.LedConnector.get_client_socket') as get_client_socketMock:
                 mock_instance = MagicMock()
                 get_client_socketMock.return_value = mock_instance
                 leds = Leds()

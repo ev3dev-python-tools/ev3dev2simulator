@@ -11,7 +11,7 @@ class SoundTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.DeviceMockPatcher = patch('ev3dev2.DeviceConnector')
-        self.get_client_socketPatcher = patch('ev3dev2simulator.connector.SoundConnector.get_client_socket')
+        self.get_client_socketPatcher = patch('ev3dev2.connector.SoundConnector.get_client_socket')
 
         self.DeviceMockPatcher.start()
         self.get_client_socketMock = self.get_client_socketPatcher.start()

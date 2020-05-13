@@ -57,7 +57,7 @@ class TestSimulator(unittest.TestCase):
                 with self.assertRaises(SystemExit):
                     Simulator.main()
             output = out.getvalue().strip()
-            self.assertEqual(output, 'version ev3dev2           : 2.0.0beta5\nversion ev3dev2simulator  : 1.3.2')
+            self.assertEqual(output, 'version ev3dev2           : 2.0.0beta5.post2\nversion ev3dev2simulator  : 1.3.2')
 
     def test_main(self):
         testargs = ['name']
