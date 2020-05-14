@@ -61,6 +61,33 @@ class TestRobotState(unittest.TestCase):
                 ]
                 }
 
+    def test_load_robot_config(self):
+        with patch('ev3dev2simulator.state.RobotState.get_robot_config') as get_robot_config_mock:
+            get_robot_config_mock.return_value = {
+                'parts': [
+                    {
+                        'name': 'brick-left',
+                        'type': 'brick',
+                        'brick': '0',
+                        'x_offset': '-39',
+                        'y_offset': '-22.5'
+                    }
+                ]
+            }
+            state = RobotState(self.default_config())
+            self.assertEqual(len(state.parts), 4 + 1 + 2 + 1)  # 4 sensors/actuators + 1 brick + 2 leds + 1 speaker
+            config = {
+                'center_x': 0,
+                'center_y': 0,
+                'orientation': 180,
+                'name': 'test_bot',
+                'type': 'test_robot'
+            }
+            state = RobotState(config)
+            self.assertEqual(4, len(state.parts))  # only a brick
+
+
+
     def test_setup_pymunk_shapes(self):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
@@ -80,6 +107,9 @@ class TestRobotState(unittest.TestCase):
     def test_reset(self):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         x = state.x * state.scale
         y = state.y * state.scale
         state.body.position = Vec2d(5, 5)  # 5 per sec
@@ -95,6 +125,9 @@ class TestRobotState(unittest.TestCase):
     def test_execute_movement(self):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         state.execute_movement(5, 5)
         self.assertAlmostEqual(tuple(state.body.velocity)[0], 0.0, 3)  # no x movement
         self.assertAlmostEqual(tuple(state.body.velocity)[1], -5.0 * 30, 3)  # -150 y distance per second
@@ -111,7 +144,7 @@ class TestRobotState(unittest.TestCase):
             'port': 'ev3-ports:outB'
         })
 
-        with patch('ev3dev2simulator.robot.Arm.ArmLarge') as ArmLargeMock:
+        with patch('ev3dev2simulator.robotpart.Arm.ArmLarge') as ArmLargeMock:
             arm_instance = ArmLargeMock.return_value
             state = RobotState(self.default_config())
             state.setup_pymunk_shapes(1)
@@ -146,6 +179,8 @@ class TestRobotState(unittest.TestCase):
         })
         state = RobotState(config)
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
 
         color_obstacle_mock = MagicMock()
         rock_mock = MagicMock()

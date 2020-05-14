@@ -287,8 +287,8 @@ class Visualiser(arcade.Window):
             loc_y = location[1]
             num = 0
             for screen in screens:
-                within_screen_width = (loc_x >= screen.x) and (loc_x < (screen.x + screen.width))
-                within_screen_height = (loc_y >= screen.y) and (loc_y < (screen.y + screen.height))
+                within_screen_width = screen.x <= loc_x < (screen.x + screen.width)
+                within_screen_height = screen.y <= (loc_y < (screen.y + screen.height))
                 if within_screen_width and within_screen_height:
                     self.current_screen_index = num
                     done = True
@@ -368,3 +368,16 @@ class Visualiser(arcade.Window):
         Callback to WorldSimulator.update is called
         """
         self.update_callback()
+
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        self.world_state.set_object_at_position_as_selected((x, y))
+
+    def on_mouse_release(self, x: float, y: float, button: int,
+                         modifiers: int):
+        self.world_state.unselect_object()
+
+    def on_mouse_drag(self, x: float, y: float, dx: float, dy: float, buttons: int, modifiers: int):
+        if buttons == arcade.MOUSE_BUTTON_LEFT:
+            self.world_state.move_selected_object(dx, dy)
+        if buttons == arcade.MOUSE_BUTTON_RIGHT:
+            self.world_state.rotate_selected_object(dy)

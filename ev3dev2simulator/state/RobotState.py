@@ -5,19 +5,19 @@ import pymunk
 from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.obstacle import ColorObstacle
-from ev3dev2simulator.robot import BodyPart
-from ev3dev2simulator.robot.Arm import Arm
-from ev3dev2simulator.robot.Brick import Brick
-from ev3dev2simulator.robot.ColorSensor import ColorSensor
-from ev3dev2simulator.robot.Led import Led
-from ev3dev2simulator.robot.Speaker import Speaker
-from ev3dev2simulator.robot.TouchSensor import TouchSensor
-from ev3dev2simulator.robot.UltrasonicSensorBottom import UltrasonicSensorBottom
-from ev3dev2simulator.robot.UltrasonicSensorTop import UltrasonicSensor
-from ev3dev2simulator.robot.Wheel import Wheel
+from ev3dev2simulator.robotpart import BodyPart
+from ev3dev2simulator.robotpart.Arm import Arm
+from ev3dev2simulator.robotpart.Brick import Brick
+from ev3dev2simulator.robotpart.ColorSensor import ColorSensor
+from ev3dev2simulator.robotpart.Led import Led
+from ev3dev2simulator.robotpart.Speaker import Speaker
+from ev3dev2simulator.robotpart.TouchSensor import TouchSensor
+from ev3dev2simulator.robotpart.UltrasonicSensorBottom import UltrasonicSensorBottom
+from ev3dev2simulator.robotpart.UltrasonicSensorTop import UltrasonicSensor
+from ev3dev2simulator.robotpart.Wheel import Wheel
 
 from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
-from ev3dev2simulator.config.config import debug
+from ev3dev2simulator.config.config import debug, get_robot_config
 
 from ev3dev2simulator.visualisation.RobotPartSprite import RobotPartSprite
 
@@ -59,7 +59,9 @@ class RobotState:
         self.name = config['name']
         self.is_stuck = False
 
-        for part in config['parts']:
+        parts = get_robot_config(config['type'])['parts'] if 'type' in config else config['parts']
+
+        for part in parts:
             if part['type'] == 'brick':
                 brick = Brick(part, self)
                 self.bricks.append(brick)
@@ -100,9 +102,10 @@ class RobotState:
                 print("Unknown robot part in config")
 
         self.parts = []
-        self.parts.extend(list(self.actuators.values()))
-        self.parts.extend(self.bricks)
+        self.parts.extend(list(self.get_wheels()))
         self.parts.extend(list(self.sensors.values()))
+        self.parts.extend(self.bricks)
+        self.parts.extend(filter(lambda act: act.get_ev3type() != 'motor', list(self.actuators.values())))
 
     def reset(self):
         self.values.clear()
@@ -110,6 +113,8 @@ class RobotState:
         self.body.angle = math.radians(self.orig_orientation)
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
+        for obj in self.side_bar_sprites:
+            obj.reset()
 
     def setup_pymunk_shapes(self, scale):
         self.scale = scale

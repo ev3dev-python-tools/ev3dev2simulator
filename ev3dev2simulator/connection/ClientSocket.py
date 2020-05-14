@@ -50,7 +50,7 @@ class ClientSocket:
         obj_dict = message.serialize()
 
         jsn = json.dumps(obj_dict)
-        jsn = jsn.ljust(128, '#')
+        jsn = jsn.ljust(get_simulation_settings()['exec_settings']['message_size'], '#')
 
         return str.encode(jsn)
 

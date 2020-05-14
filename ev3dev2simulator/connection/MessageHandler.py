@@ -112,7 +112,7 @@ class MessageHandler:
         :param d: to process.
         :return: a bytes object representing the serialized response.
         """
-        request = ConfigRequest(d['kwargs'])
+        request = ConfigRequest(d['kwargs'], d['class_name'])
         value = self.message_processor.process_config_request(request)
 
         return self._serialize_response(value)

@@ -96,7 +96,7 @@ class MotorCommandProcessor:
 
             return millimeters_per_frame, frames, run_time
 
-        return 0, 0, 0
+        return 0, 1, 0
 
     def _frames_required(self, speed: float, distance: float) -> int:
         """

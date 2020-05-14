@@ -36,6 +36,8 @@ class TestClientSocket(unittest.TestCase):
     def test_serialize_deserialize(self):
         server_thread = threading.Thread(target=self.run_fake_server)
         server_thread.start()
+
+        msg_length = get_simulation_settings()['exec_settings']['message_size']
         from ev3dev2simulator.connection.ClientSocket import get_client_socket
         sock = get_client_socket()
 
@@ -43,8 +45,11 @@ class TestClientSocket(unittest.TestCase):
         sock.send_command(command)
 
         ser = sock._serialize(command)
-        self.assertEqual(ser, b'{"type": "RotateCommand", "address": "test_port", "speed": 500.0, "distance"'
-                              b': 100.0, "stop_action": "hold"}#####################')
+        unpadded = (b'{"type": "RotateCommand", "address": "test_port", "speed": 500.0, "distance": 100.0, '
+                    b'"stop_action": "hold"}')
+
+        expected = unpadded.ljust(msg_length, b'#')
+        self.assertEqual(ser, expected)
 
         ser = b'{"value": 15}'
         deser = sock._deserialize(ser)

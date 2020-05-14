@@ -60,14 +60,11 @@ from testprograms.BluetoothHelper import BluetoothHelper
 #         checkColor()
 #         # checkDistance()
 
-
-# bth = BluetoothHelper()
-# bth.connect_as_server()
-# bth.send("Hello?")
+bth = BluetoothHelper()
+bth.connect_as_client()
 
 leds = Leds()
 leds.animate_rainbow()
-# cs = ColorSensor(INPUT_2)
 # ts1 = TouchSensor(INPUT_1)
 # ts4 = TouchSensor(INPUT_4)
 # tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)

@@ -37,15 +37,15 @@ def checkCollision():
 def checkColor():
     if cs.color != 6:
         print('gg')
-        # leds.set_color("RIGHT", "AMBER")
+        leds.set_color("RIGHT", "AMBER")
         tank_drive.stop()
 
         reverseRotations(1)
         rotateDegrees(150)
 
         drive()
-    # else:
-    #     leds.set_color("RIGHT", "GREEN")
+    else:
+        leds.set_color("RIGHT", "GREEN")
 
 
 def check():

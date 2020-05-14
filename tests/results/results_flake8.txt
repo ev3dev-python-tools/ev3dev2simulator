@@ -1,0 +1,17 @@
+.\Simulator.py:9:1: E402 module level import not at top of file
+.\Simulator.py:10:1: E402 module level import not at top of file
+.\Simulator.py:11:1: E402 module level import not at top of file
+.\Simulator.py:12:1: E402 module level import not at top of file
+.\Simulator.py:13:1: E402 module level import not at top of file
+.\Simulator.py:14:1: E402 module level import not at top of file
+.\config\config.py:30:9: F841 local variable 'er' is assigned to but never used
+.\config\config.py:36:5: E303 too many blank lines (2)
+.\connection\MessageHandler.py:53:5: E303 too many blank lines (2)
+.\connection\MessageHandler.py:121:5: E303 too many blank lines (2)
+.\connection\ServerSockets.py:89:5: E303 too many blank lines (2)
+.\connection\ServerSockets.py:98:1: W391 blank line at end of file
+.\connection\message\MotorCommand.py:17:1: W391 blank line at end of file
+.\connector\SoundConnector.py:158:121: E501 line too long (132 > 120 characters)
+.\obstacle\Bottle.py:31:5: E303 too many blank lines (2)
+.\state\RobotState.py:142:5: E303 too many blank lines (2)
+.\visualisation\RobotPartSprite.py:3:1: E302 expected 2 blank lines, found 1

@@ -9,7 +9,7 @@ from ev3dev2simulator.obstacle.ArmFloor import ArmFloor
 
 class ArmLarge(Sprite):
     """
-    Class representing the body of the simulated robot.
+    Class representing the body of the simulated robotpart.
     """
 
     def __init__(self):
@@ -22,6 +22,10 @@ class ArmLarge(Sprite):
         self.side_bar_ground = ArmFloor(300, 10, arcade.color.BLACK)
 
         self.sweep_length = 229 / 4
+
+    def reset(self):
+        self.angle = 20
+        self.rotate(0)
 
     def draw(self):
         self.side_bar_ground.shape.draw()

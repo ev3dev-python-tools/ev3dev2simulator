@@ -11,6 +11,9 @@ class TestRobotSimulator(unittest.TestCase):
         conf = TestRobotState.default_config()
         state = RobotState(conf)
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         sim = RobotSimulator(state)
         sim._sync_physics_sprites = MagicMock()
         sim.update()
@@ -26,6 +29,9 @@ class TestRobotSimulator(unittest.TestCase):
         conf = TestRobotState.default_config()
         state = RobotState(conf)
         state.setup_pymunk_shapes(1)
+        for arm in state.side_bar_sprites:
+            arm.rotate_x = 0  # this is set in setup visuals
+            arm.rotate_y = 0  # this is set in setup visuals
         sim = RobotSimulator(state)
         sim._sync_physics_sprites = MagicMock()
         val = sim.get_value((0, 'ev3-ports:in4'))
@@ -41,38 +47,43 @@ class TestRobotSimulator(unittest.TestCase):
 
         # nothing given
         kwargs = {}
-        port = sim.determine_port(0, kwargs)
+        port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'dev_not_connected')
 
         # no class given
         kwargs = {'address': 'ev3-ports:in4'}
-        port = sim.determine_port(0, kwargs)
+        port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'dev_not_connected')
 
         # single class and address given
         kwargs = {'address': 'ev3-ports:in4', 'driver_name': 'lego-ev3-us'}
-        port = sim.determine_port(0, kwargs)
+        port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'ev3-ports:in4')
 
         # single class and None address given
         kwargs = {'address': None, 'driver_name': 'lego-ev3-us'}
-        port = sim.determine_port(0, kwargs)
+        port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'ev3-ports:in4')
 
         # multiple classes and address given
         kwargs = {'address': 'ev3-ports:outA', 'driver_name': ['lego-ev3-l-motor', 'lego-nxt-motor']}
-        port = sim.determine_port(0, kwargs)
+        port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'ev3-ports:outA')
 
         # single class and invalid address given
         kwargs = {'address': 'ev3-ports:in3', 'driver_name': 'lego-ev3-us'}
-        port = sim.determine_port(0, kwargs)
+        port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'dev_not_connected')
 
         # multiple classes and invalid address given
         kwargs = {'address': 'ev3-ports:outC', 'driver_name': ['lego-ev3-l-motor', 'lego-nxt-motor']}
-        port = sim.determine_port(0, kwargs)
+        port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'dev_not_connected')
+
+        # leds
+        kwargs = {'address': None, 'driver_name': None}
+        port = sim.determine_port(0, kwargs, 'leds')
+        self.assertEqual(port, 'leds_addr')
 
 if __name__ == '__main__':
     unittest.main()

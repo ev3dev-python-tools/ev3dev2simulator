@@ -70,6 +70,7 @@ exec_settings:
   frames_per_second: 30
   socket_port: 6840
   bluetooth_port: 6841
+  message_size: 256
 
 motor_settings:
   distance_coasting_subtraction: 0.7

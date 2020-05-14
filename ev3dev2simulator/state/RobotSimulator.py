@@ -82,6 +82,15 @@ class RobotSimulator:
     def set_led_color(self, brick_id, led_id, color):
         self.robot.led_colors[(brick_id, led_id)] = color
 
+    def reset_queues_of_brick(self, brick_id: int):
+        """
+        Reset queues if bricks disconnect.
+        :param brick_id: identifier of brick you want to reset the queues of.
+        """
+        for key, actuator_queue in self.actuator_queues.items():
+            if key[0] == brick_id:
+                self.clear_actuator_jobs(key)
+
     def reset(self):
         """
         Reset the data of this State
@@ -122,14 +131,17 @@ class RobotSimulator:
         self.locks[address].acquire()
         return self.robot.values[address]
 
-    def determine_port(self, brick_id: int, kwargs: dict):
+    def determine_port(self, brick_id: int, kwargs: dict, class_name: str):
         """
         Determines the port of a device based on the kwargs given to the device.
         :param brick_id: identifier of the brick, that the device should be connected to.
         :param kwargs: keyword arguments given by the sensor or actuator to the device.
+        :param class_name: some devices do not have a driver_name such as leds, for these, we use class_name
         :return: returns 'dev_not_connected' or the port as string.
         """
         devices = {**self.robot.sensors, **self.robot.actuators}
+        if class_name is not None and class_name == 'leds':
+            return 'leds_addr'
         if kwargs.get('driver_name') is not None:
             driver_names_pre = kwargs.get('driver_name')
             driver_names = driver_names_pre if isinstance(driver_names_pre, list) else [driver_names_pre]
@@ -168,7 +180,7 @@ class RobotSimulator:
             elif actuator.ev3type == 'speaker':
                 self.robot.sounds[address] = job_of_actuator
 
-        if left_ppf or right_ppf:
+        if left_ppf is not None or right_ppf is not None:
             self.robot.execute_movement(left_ppf, right_ppf)
 
     def _process_LEDs(self):

@@ -54,7 +54,7 @@ def create_robot_sim():
 
 def create_client_socket_handler():
     robot_sim = create_robot_sim()
-    return ClientSocketHandler(robot_sim, None, 0, 'left_brick')
+    return ClientSocketHandler(robot_sim, 0, 'left_brick')
 
 
 class ServerSocketTest(unittest.TestCase):

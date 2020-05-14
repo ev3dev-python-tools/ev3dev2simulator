@@ -22,29 +22,24 @@ def rotateDegrees(degrees):
 def drive():
     tank_drive.on(SpeedPercent(30), SpeedPercent(30))
 
+def measurementOn():
+    tank_measurement.on_to_position(20, -100)
 
-def checkCollision():
-    if ts1.is_pressed or ts4.is_pressed:
-        print('gg')
-        # leds.set_color("LEFT", "YELLOW")
-        tank_drive.stop()
-        reverseRotations(1)
-        rotateDegrees(180)
-        drive()
-    # else:
-    #     leds.set_color("LEFT", "RED")
-
+def measurementOff():
+    tank_measurement.on_to_position(20, 100)
 
 def checkColor():
     if cs.color != 1:
         print('gg')
-        # leds.set_color("RIGHT", "AMBER")
+        leds.set_color("RIGHT", "AMBER")
         tank_drive.stop()
+        measurementOn()
+        measurementOff()
         reverseRotations(1)
         rotateDegrees(180)
         drive()
-    # else:
-    #     leds.set_color("RIGHT", "GREEN")
+    else:
+        leds.set_color("RIGHT", "GREEN")
 
 
 def measurement_on():
@@ -61,15 +56,20 @@ def check():
         # checkDistance()
 
 
-# bth = BluetoothHelper()
-# bth.connect_as_server()
-# bth.send("Hello?")
+bth = BluetoothHelper()
+bth.connect_as_server()
+bth.send("Hello?")
 
 leds = Leds()
-leds.animate_rainbow()
+
+
+
+print('here')
+print('here')
+
+# leds.animate_rainbow()
 cs = ColorSensor(INPUT_2)
-ts1 = TouchSensor(INPUT_1)
-ts4 = TouchSensor(INPUT_4)
+print('here')
 
 tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3EducationSetTire, 15 * STUD_MM)
 tank_measurement = MediumMotor(OUTPUT_B)

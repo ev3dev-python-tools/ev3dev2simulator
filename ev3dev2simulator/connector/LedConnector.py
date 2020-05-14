@@ -7,7 +7,7 @@ from ev3dev2simulator.connection.message.LedCommand import LedCommand
 class LedConnector:
     """
     The LedConnector class provides a translation layer between the ev3dev2 LED/LEDs classes
-    and the LEDs on the simulated robot.
+    and the LEDs on the simulated robotpart.
     This class is responsible for creating LedCommands to be send to simulator.
     """
 
@@ -22,4 +22,4 @@ class LedConnector:
         """
 
         command = LedCommand(self.address, brightness)
-        return self.client_socket.send_command(command, True)
+        return self.client_socket.send_command(command)

@@ -1,10 +1,10 @@
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.robot.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.BodyPart import BodyPart
 
 
 class Speaker(BodyPart):
     """
-    Class representing the Arm of the simulated robot.
+    Class representing the Arm of the simulated robotpart.
     """
 
     def __init__(self,
