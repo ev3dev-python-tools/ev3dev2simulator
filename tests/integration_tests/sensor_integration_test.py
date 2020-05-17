@@ -16,6 +16,7 @@ from ev3dev2.motor import OUTPUT_A, OUTPUT_D, MoveDifferential
 from ev3dev2._platform.ev3 import INPUT_1, INPUT_2, INPUT_3, INPUT_4
 
 from ev3dev2simulator import __main__
+import ev3dev2simulator.connection.ClientSocket as cs
 
 
 class TestConfig(unittest.TestCase):
@@ -25,9 +26,9 @@ class TestConfig(unittest.TestCase):
         with patch.object(sys, 'argv', test_args):
             sim = Process(target=__main__.main, daemon=True)
             sim.start()
+            cs.client_socket = None
 
-        sleep(4)
-
+        sleep(5)
         clm = ColorSensor(INPUT_2)
         usb = UltrasonicSensor(INPUT_4)
         usb.mode = "US-DIST-CM"
@@ -42,14 +43,17 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(usb.value(), 20.0)
         tank_drive.turn_left(30, 120)
         self.assertEqual(usb.value(), 2550.0)
+        cs.client_socket.client.close()
+        sim.terminate()
 
     def test_touch_and_us_sensor_forward(self):
         test_args = ["program", "-t", "config_small"]
         with patch.object(sys, 'argv', test_args):
             sim = Process(target=__main__.main, daemon=True)
             sim.start()
+            cs.client_socket = None
 
-        sleep(4)
+        sleep(5)
 
         ts1 = TouchSensor(INPUT_1)
         usf = UltrasonicSensor(INPUT_3)
@@ -67,6 +71,8 @@ class TestConfig(unittest.TestCase):
         sleep(3)
         tank_drive.on_for_rotations(20, 0, 0.3)
         self.assertEqual(True, ts1.is_pressed)
+        cs.client_socket.client.close()
+        sim.terminate()
 
 
 
