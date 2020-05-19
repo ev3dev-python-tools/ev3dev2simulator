@@ -47,7 +47,7 @@ class SensorConnector:
         else:
             time.sleep(self.wait_time)
 
-        return self.value_cache
+        return int(self.value_cache)
 
     def _get_value(self) -> Any:
         """

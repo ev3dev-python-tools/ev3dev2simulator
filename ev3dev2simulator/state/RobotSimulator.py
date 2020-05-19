@@ -142,6 +142,8 @@ class RobotSimulator:
         devices = {**self.robot.sensors, **self.robot.actuators}
         if class_name is not None and class_name == 'leds':
             return 'leds_addr'
+        elif class_name is not None and not 'driver_name' in kwargs and class_name == 'tacho-motor':
+            kwargs['driver_name'] = 'lego-ev3-m-motor'
         if kwargs.get('driver_name') is not None:
             driver_names_pre = kwargs.get('driver_name')
             driver_names = driver_names_pre if isinstance(driver_names_pre, list) else [driver_names_pre]
@@ -158,6 +160,8 @@ class RobotSimulator:
                 if len(found_devices) == 1:
                     return found_devices[0].address
 
+        print(f'Could not find device with classname {class_name} and driver name {kwargs.get("driver_name")} on '
+              f'address {kwargs.get("address")} of {self.robot.name}, brick {brick_id}')
         return 'dev_not_connected'
 
     def _process_actuators(self):

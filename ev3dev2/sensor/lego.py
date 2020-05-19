@@ -124,7 +124,7 @@ class TouchSensor(Sensor):
         if you need to divide to get the actual value.
         """
 
-        return self.is_pressed()
+        return self.is_pressed
 
 
 class ColorSensor(Sensor):
