@@ -34,11 +34,11 @@ class TestConfig(unittest.TestCase):
         usb.mode = "US-DIST-CM"
         tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3EducationSetTire, 15 * STUD_MM)
 
-        self.assertEqual(clm.value(), 1)
+        self.assertEqual(clm.color, 1)
         tank_drive.on_for_rotations(0, -55, 1)
         tank_drive.on_for_rotations(10, 0, 0.2)
         tank_drive.stop()
-        self.assertEqual(clm.value(), 5)
+        self.assertEqual(clm.color, 5)
         tank_drive.turn_left(30, -40)
         self.assertEqual(usb.value(), 20.0)
         tank_drive.turn_left(30, 120)

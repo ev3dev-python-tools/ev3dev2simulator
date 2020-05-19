@@ -476,7 +476,7 @@ class ColorSensor(Sensor):
             return color_to_rgb[self.connector.get_value()][n]
 
         else:
-            print('Mode not supported')
+            print(f'Mode {self.mode} not supported')
             return None
 
 
