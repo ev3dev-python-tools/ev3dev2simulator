@@ -217,6 +217,7 @@ obstacles:
     color: (169, 169, 169)
     angle: 10
     type: 'rock'
+    movable: False
 
   rock2:
     x: 975
@@ -226,3 +227,4 @@ obstacles:
     color: (169, 169, 169)
     angle: 130
     type: 'rock'
+    movable: True

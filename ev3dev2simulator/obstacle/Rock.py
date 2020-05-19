@@ -15,7 +15,8 @@ class Rock:
                  width: float,
                  height: float,
                  color: arcade.Color,
-                 angle: int):
+                 angle: int,
+                 movable: bool):
 
         self.x = int(x)
         self.y = int(y)
@@ -31,6 +32,7 @@ class Rock:
         # physics
         self.body = None
         self.shape = None
+        self.movable = movable
 
     def create_shape(self, scale):
         width = scale * self.width
@@ -39,7 +41,7 @@ class Rock:
         friction = 0.2
         moment = pymunk.moment_for_box(mass, (width, height))
 
-        self.body = pymunk.Body(mass, moment)
+        self.body = pymunk.Body(mass, moment, body_type=pymunk.Body.DYNAMIC if self.movable is True else pymunk.Body.STATIC)
         self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
 
         self.shape = pymunk.Poly.create_box(self.body, (width, height))
@@ -68,5 +70,6 @@ class Rock:
         height = config['height']
         color = eval(config['color'])
         angle = config['angle']
+        movable = True if 'movable' not in config else config['movable']
 
-        return cls(x, y, width, height, color, angle)
+        return cls(x, y, width, height, color, angle, movable)
