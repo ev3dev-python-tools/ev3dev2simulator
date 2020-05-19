@@ -1,5 +1,6 @@
 import sys
 import unittest
+from time import sleep
 
 from unittest.mock import MagicMock, patch
 
@@ -33,7 +34,7 @@ class SensorConnectorTest(unittest.TestCase):
         self.clientSocketMock.send_command.return_value = 3
 
         sensor = ColorSensor(INPUT_2)
-        val = sensor.value()
+        val = sensor.color
         self.assertEqual(val, 3)
         self.assertEqual(len(self.clientSocketMock.mock_calls), 1)
         fn_name, args, kwargs = self.clientSocketMock.mock_calls[0]
@@ -44,6 +45,21 @@ class SensorConnectorTest(unittest.TestCase):
         val2 = sensor.value()
         self.assertEqual(len(self.clientSocketMock.mock_calls), 1)
         self.assertEqual(val, val2)
+
+        val = sensor.rgb
+        self.assertEqual(val, (0, 216, 0))  # assumes 400 is max val, but we use 255 as max
+        self.clientSocketMock.send_command.return_value = 6
+        sleep(0.1)  # sleep to wait for cache
+
+        sensor.calibrate_white()
+
+        sleep(0.1)  # sleep to wait for cache
+
+        self.clientSocketMock.send_command.return_value = 3
+        sleep(0.1)  # sleep to wait for cache
+        val = sensor.rgb
+        self.assertEqual((0, 255, 0), val)  # Now calibrated to 255
+
 
 
     def test_touch_sensor(self):
