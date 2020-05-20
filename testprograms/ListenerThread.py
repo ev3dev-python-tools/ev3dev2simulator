@@ -6,7 +6,7 @@ import threading
 class ListenerThread(threading.Thread):
 
     def __init__(self, client):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
 
         self.client = client
 
