@@ -88,11 +88,11 @@ class TestConfig(unittest.TestCase):
         try:
             # Follow the line for 4500ms
             tank.follow_line(
-                kp=11.3, ki=0.05, kd=3.2,
+                kp=11.3/4, ki=0.05/4, kd=3./4,
                 speed=SpeedPercent(10),
                 follow_for=follow_for_ms,
                 ms=14500,
-
+                target_light_intensity=50
             )
         except Exception:
             tank.stop()

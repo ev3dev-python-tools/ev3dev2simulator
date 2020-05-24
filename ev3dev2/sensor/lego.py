@@ -475,7 +475,7 @@ class ColorSensor(Sensor):
             return color_to_rgb[self.connector.get_value()][n]
         elif self.mode == self.MODE_COL_REFLECT:
             total_light = sum(color_to_rgb[self.connector.get_value()])
-            return total_light / (255 * 3)  # percentage of light
+            return total_light / (255 * 3) * 100  # percentage of light
 
         else:
             print(f'Mode {self.mode} not supported')
