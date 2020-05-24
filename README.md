@@ -106,9 +106,6 @@ motor.py
 * class DcMotor
 * class ServoMotor
 * class MoveJoystick
-* class MoveTank
-
-  * def follow\_line()  
   
 port.py <br/>
 power.py 
@@ -126,7 +123,6 @@ sensor/lego.py
 
 * class ColorSensor
 
-  * def reflected\_light\_intensity()
   * def ambient\_light\_intensity()
 
   
