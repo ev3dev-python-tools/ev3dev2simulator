@@ -32,6 +32,7 @@ if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
 
 from logging import getLogger
+from ev3dev2.stopwatch import StopWatch
 from ev3dev2._platform.ev3 import OUTPUT_A, OUTPUT_B, OUTPUT_C, OUTPUT_D
 
 log = getLogger(__name__)
@@ -1413,8 +1414,15 @@ def follow_for_ms(tank, ms):
     ``tank``: the MoveTank object that is following a line
     ``ms`` : the number of milliseconds to follow the line
     """
+    if not hasattr(tank, 'stopwatch') or tank.stopwatch is None:
+        tank.stopwatch = StopWatch()
+        tank.stopwatch.start()
 
-    pass
+    if tank.stopwatch.value_ms >= ms:
+        tank.stopwatch = None
+        return False
+    else:
+        return True
 
 
 class MoveTank(MotorSet):
@@ -1624,8 +1632,58 @@ class MoveTank(MotorSet):
                 tank.stop()
                 raise
         """
+        assert self.cs, "ColorSensor must be defined"
 
-        pass
+        if target_light_intensity is None:
+            target_light_intensity = self.cs.reflected_light_intensity
+
+        integral = 0.0
+        last_error = 0.0
+        derivative = 0.0
+        off_line_count = 0
+        speed_native_units = speed.to_native_units(self.left_motor)
+        MAX_SPEED = SpeedNativeUnits(self.max_speed)
+
+        while follow_for(self, **kwargs):
+            reflected_light_intensity = self.cs.reflected_light_intensity
+            error = target_light_intensity - reflected_light_intensity
+            integral = integral + error
+            derivative = error - last_error
+            last_error = error
+            turn_native_units = (kp * error) + (ki * integral) + (kd * derivative)
+
+            if not follow_left_edge:
+                turn_native_units *= -1
+
+            left_speed = SpeedNativeUnits(speed_native_units - turn_native_units)
+            right_speed = SpeedNativeUnits(speed_native_units + turn_native_units)
+
+            if left_speed > MAX_SPEED:
+                log.info("%s: left_speed %s is greater than MAX_SPEED %s"  % (self, left_speed, MAX_SPEED))
+                self.stop()
+                raise LineFollowErrorTooFast("The robot is moving too fast to follow the line")
+
+            if right_speed > MAX_SPEED:
+                log.info("%s: right_speed %s is greater than MAX_SPEED %s"  % (self, right_speed, MAX_SPEED))
+                self.stop()
+                raise LineFollowErrorTooFast("The robot is moving too fast to follow the line")
+
+            # Have we lost the line?
+            if reflected_light_intensity >= white:
+                off_line_count += 1
+
+                if off_line_count >= off_line_count_max:
+                    self.stop()
+                    raise LineFollowErrorLostLine("we lost the line")
+            else:
+                off_line_count = 0
+
+            if sleep_time:
+                time.sleep(sleep_time)
+
+            self.on(left_speed, right_speed)
+
+        self.stop()
 
 
 class MoveSteering(MoveTank):

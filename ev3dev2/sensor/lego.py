@@ -212,8 +212,8 @@ class ColorSensor(Sensor):
         """
         Reflected light intensity as a percentage (0 to 100). Light on sensor is red.
         """
-
-        pass
+        self._ensure_mode(self.MODE_COL_REFLECT)
+        return self.value(0)
 
 
     @property
@@ -458,22 +458,24 @@ class ColorSensor(Sensor):
         an error. The values are fixed point numbers, so check decimals to see
         if you need to divide to get the actual value.
         """
+        color_to_rgb = [
+            (0, 0, 0),  # 0: No color
+            (0, 0, 0),  # 1: Black
+            (0, 0, 255),  # 2: Blue
+            (0, 255, 0),  # 3: Green
+            (255, 255, 0),  # 4: Yellow
+            (255, 0, 0),  # 5: Red
+            (255, 255, 255),  # 6: White
+            (165, 42, 42)  # 7: Brown
+        ]
 
         if self.mode == self.MODE_COL_COLOR:
             return self.connector.get_value()
         elif self.mode == self.MODE_RGB_RAW:
-            color_to_rgb = [
-                (0,   0,   0),    # 0: No color
-                (0,   0,   0),    # 1: Black
-                (0,   0,   255),  # 2: Blue
-                (0,   255, 0),    # 3: Green
-                (255, 255, 0),    # 4: Yellow
-                (255, 0,   0),    # 5: Red
-                (255, 255, 255),  # 6: White
-                (165, 42,  42)    # 7: Brown
-            ]
-
             return color_to_rgb[self.connector.get_value()][n]
+        elif self.mode == self.MODE_COL_REFLECT:
+            total_light = sum(color_to_rgb[self.connector.get_value()])
+            return total_light / (255 * 3)  # percentage of light
 
         else:
             print(f'Mode {self.mode} not supported')
@@ -1071,10 +1073,10 @@ class LightSensor(Sensor):
     @property
     def reflected_light_intensity(self):
         """
-        A measurement of the reflected light intensity, as a percentage.
+        Reflected light intensity as a percentage (0 to 100). Light on sensor is red.
         """
-
-        pass
+        self._ensure_mode(self.MODE_COL_REFLECT)
+        return self.value(0)
 
 
     @property

@@ -12,7 +12,7 @@ from ev3dev2.unit import STUD_MM
 
 from ev3dev2.wheel import EV3EducationSetTire
 
-from ev3dev2.motor import OUTPUT_A, OUTPUT_D, MoveDifferential
+from ev3dev2.motor import OUTPUT_A, OUTPUT_D, MoveDifferential, MoveTank, SpeedPercent, follow_for_ms
 from ev3dev2._platform.ev3 import INPUT_1, INPUT_2, INPUT_3, INPUT_4
 
 from ev3dev2simulator import __main__
@@ -73,6 +73,30 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(True, ts1.is_pressed)
         cs.client_socket.client.close()
         sim.terminate()
+
+    def test_follow_line(self):
+        test_args = ["program", "-t", "config_small"]
+        with patch.object(sys, 'argv', test_args):
+            sim = Process(target=__main__.main, daemon=True)
+            sim.start()
+            cs.client_socket = None
+
+        sleep(9)
+        from ev3dev2.sensor.lego import ColorSensor
+        tank = MoveTank(OUTPUT_A, OUTPUT_D)
+        tank.cs = ColorSensor(INPUT_2)
+        try:
+            # Follow the line for 4500ms
+            tank.follow_line(
+                kp=11.3, ki=0.05, kd=3.2,
+                speed=SpeedPercent(10),
+                follow_for=follow_for_ms,
+                ms=14500,
+
+            )
+        except Exception:
+            tank.stop()
+            raise
 
 
 
