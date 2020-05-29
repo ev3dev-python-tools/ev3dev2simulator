@@ -41,7 +41,8 @@ class Rock:
         friction = 0.2
         moment = pymunk.moment_for_box(mass, (width, height))
 
-        self.body = pymunk.Body(mass, moment, body_type=pymunk.Body.DYNAMIC if self.movable is True else pymunk.Body.STATIC)
+        self.body = pymunk.Body(mass, moment,
+                                body_type=pymunk.Body.DYNAMIC if self.movable is True else pymunk.Body.KINEMATIC)
         self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
 
         self.shape = pymunk.Poly.create_box(self.body, (width, height))
