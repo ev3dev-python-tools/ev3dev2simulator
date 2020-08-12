@@ -51,9 +51,7 @@ def measurement_off():
 
 def check():
     while True:
-        # checkCollision()
         checkColor()
-        # checkDistance()
 
 
 bth = BluetoothHelper()
@@ -62,14 +60,8 @@ bth.send("Hello?")
 
 leds = Leds()
 
-
-
-print('here')
-print('here')
-
 # leds.animate_rainbow()
 cs = ColorSensor(INPUT_2)
-print('here')
 
 tank_drive = MoveDifferential(OUTPUT_A, OUTPUT_D, EV3EducationSetTire, 15 * STUD_MM)
 tank_measurement = MediumMotor(OUTPUT_B)
