@@ -35,8 +35,9 @@ class BluetoothSocket:
         """
 
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.server.bind(('localhost', self.port))
-
+        port = self.port + (int(tuple[0].replace(':', ''), 16) % 8192) + tuple[1]
+        self.server.bind(('localhost', port))
+ 
     def close(self):
         self.server.close()
 
@@ -45,8 +46,8 @@ class BluetoothSocket:
         Connect to localhost instead of the provided address and port.
         :param tuple: which would normally hold the brick's MAC address.
         """
-
-        self.server.connect(('localhost', self.port))
+        port = self.port + (int(tuple[0].replace(':', ''), 16) % 8192) + tuple[1]
+        self.server.connect(('localhost', port))
 
     def flush(self):
         pass
