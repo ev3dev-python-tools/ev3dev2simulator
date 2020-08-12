@@ -3,6 +3,7 @@ import sys
 import os
 
 if __name__ == '__main__':
+    orig_path = os.getcwd()
     script_dir = os.path.dirname(os.path.realpath(__file__))
     os.chdir(script_dir)
 
@@ -41,7 +42,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main():
+def main(orig_path):
     """
     Spawns the user thread and creates and starts the simulation.
     """
@@ -58,7 +59,7 @@ def main():
     show_fullscreen = args['fullscreen']
     show_maximized = args['maximized']
 
-    load_config(args['simulation_file'])
+    load_config(args['simulation_file'], orig_path)
 
     world_state = WorldState(get_world_config())
 
@@ -75,4 +76,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(orig_path)
