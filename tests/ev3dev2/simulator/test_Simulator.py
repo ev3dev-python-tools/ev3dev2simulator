@@ -55,7 +55,7 @@ class TestSimulator(unittest.TestCase):
         with patch.object(sys, 'argv', testargs):
             with captured_output() as (out, err):
                 with self.assertRaises(SystemExit):
-                    Simulator.main()
+                    Simulator.main(None)
             output = out.getvalue().strip()
             self.assertEqual(output, 'version ev3dev2           : 2.0.0beta5\nversion ev3dev2simulator  : 1.3.2')
 
@@ -66,7 +66,7 @@ class TestSimulator(unittest.TestCase):
                 with patch('ev3dev2simulator.Simulator.start'):
                     with patch('ev3dev2simulator.Simulator.ServerSockets') as serverSocketsMock:
                         sockets_instance = serverSocketsMock.return_value
-                        Simulator.main()
+                        Simulator.main(None)
 
                         self.assertEqual(len(VisualiserMock.mock_calls), 1)
                         fn_name, args, kwargs = VisualiserMock.mock_calls[0]
