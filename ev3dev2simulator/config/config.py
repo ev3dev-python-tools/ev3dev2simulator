@@ -18,7 +18,7 @@ class Config:
 
     def _load_world_config(self, file_name: str):
         file_name = 'config_large' if file_name is None else file_name
-        if os.path.dirname(file_name) is not '':
+        if os.path.dirname(file_name) != '':
             self.rel_world_config_path = os.path.dirname(file_name)
         return self._load_yaml_file('world_configurations', file_name, self.orig_path)
 
