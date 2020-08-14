@@ -37,9 +37,7 @@ class TouchSensor(BodyPart):
         :return: boolean value representing the outcome.
         """
         hits = self.shape.space.shape_query(self.shape)
-        if len(hits) > 0:
-            return True
-        return self.get_default_value()
+        return len(hits) > 0
 
     def get_default_value(self):
         return False

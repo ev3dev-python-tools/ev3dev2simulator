@@ -50,6 +50,8 @@ class RobotState:
         self.y = float(config['center_y']) + 22.5
 
         self.wheel_distance = None
+        self.last_pos_x = None
+        self.last_pos_y = None
 
         try:
             self.orig_orientation = config['orientation']
@@ -107,6 +109,10 @@ class RobotState:
         self.parts.extend(self.bricks)
         self.parts.extend(filter(lambda act: act.get_ev3type() != 'motor', list(self.actuators.values())))
 
+    def set_last_pos(self, pos):
+        self.last_pos_x = pos.x * (1 / self.scale)
+        self.last_pos_y = pos.y * (1 / self.scale)
+
     def reset(self):
         self.values.clear()
         self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
@@ -121,8 +127,7 @@ class RobotState:
 
         self.body = pymunk.Body(20, moment)
         if hasattr(self, 'last_pos'):
-            self.body.position = pymunk.Vec2d(self.last_pos.x * (1/self.scale) * scale,
-                                              self.last_pos.y * (1/self.scale) * scale)
+            self.body.position = pymunk.Vec2d(self.last_pos_x * scale, self.last_pos_y * scale)
         else:
             self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
 

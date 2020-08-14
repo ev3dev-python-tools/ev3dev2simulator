@@ -26,6 +26,8 @@ class Bottle:
         # physics
         self.body = None
         self.shape = None
+        self.new_pos_x = None
+        self.new_pos_y = None
 
 
     @classmethod
@@ -42,8 +44,12 @@ class Bottle:
 
     def get_pos(self):
         if hasattr(self, 'new_pos'):
-            return self.new_pos.x * (1/self.scale), self.new_pos.y * (1/self.scale)
+            return self.new_pos_x, self.new_pos_y
         return self.x, self.y
+
+    def set_new_pos(self, pos):
+        self.new_pos_x = (1 / self.scale) * pos.x
+        self.new_pos_y = (1 / self.scale) * pos.y
 
     def create_shape(self, scale):
         radius = scale * self.radius

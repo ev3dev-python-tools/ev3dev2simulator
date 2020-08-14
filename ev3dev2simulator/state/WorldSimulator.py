@@ -39,5 +39,5 @@ class WorldSimulator:
             obstacle.sprite.center_x = obstacle.body.position.x
             obstacle.sprite.center_y = obstacle.body.position.y
             obstacle.sprite.angle = math.degrees(obstacle.body.angle)
-            obstacle.new_pos = obstacle.body.position
+            obstacle.set_new_pos(obstacle.body.position)
             obstacle.new_angle = obstacle.sprite.angle
