@@ -1,6 +1,6 @@
 import math
 
-import arcade
+from arcade import SpriteList
 import pymunk
 from pymunk.vec2d import Vec2d
 
@@ -29,8 +29,8 @@ class RobotState:
     """
 
     def __init__(self, config):
-        self.sprite_list = arcade.SpriteList()
-        self.side_bar_sprites = arcade.SpriteList()
+        self.sprite_list = SpriteList()
+        self.side_bar_sprites = SpriteList()
 
         self.sensors = {}
         self.actuators = {}
@@ -242,7 +242,7 @@ class RobotState:
                 wheels.append(part)
         return wheels
 
-    def get_sprites(self) -> arcade.SpriteList:
+    def get_sprites(self) -> SpriteList:
         return self.sprite_list
 
     def get_bricks(self):
