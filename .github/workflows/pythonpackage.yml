@@ -12,7 +12,7 @@ jobs:
         - os: macos-latest
           OS_DEPENDENCY: ''
         - os: ubuntu-latest
-          OS_DEPENDENCY: sudo apt update; sudo apt-get install libasound2-dev espeak freeglut3-dev;
+          OS_DEPENDENCY: sudo apt update; sudo apt-get install libasound2-dev espeak freeglut3-dev
         - os: windows-latest
           OS_DEPENDENCY: ''
     steps:
@@ -22,13 +22,10 @@ jobs:
         with:
           python-version: 3.7
       - name: Install dependencies
-        uses: GabrielBB/xvfb-action@v1.2
-        with:
-          working-directory: ./ #optional
-          run: |
-                ${{matrix.OS_DEPENDENCY}}
-                python -m pip install --upgrade pip
-                pip install .
+        run: |
+          ${{matrix.OS_DEPENDENCY}}
+          python -m pip install --upgrade pip
+          pip install .
       - name: Lint with flake8
         run: |
           pip install flake8
@@ -37,5 +34,7 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with unittest
-        run: |
-          python -m unittest discover .
+        uses: GabrielBB/xvfb-action@v1.2
+        with:
+          run: |
+            python -m unittest discover .
