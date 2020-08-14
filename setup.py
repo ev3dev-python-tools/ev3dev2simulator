@@ -47,7 +47,7 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
     keywords="IDE education programming EV3 mindstorms lego",
     platforms=["Windows", "macOS", "Linux"],
     python_requires=">=3.6",
-    install_requires=['ev3devlogging', 'arcade==2.3.9', 'pypiwin32; platform_system=="Windows"',
+    install_requires=['ev3devlogging', 'arcade==2.4.1', 'pypiwin32; platform_system=="Windows"',
                       'pyobjc;sys.platform=="darwin"', 'pyyaml', 'pymunk==5.6.0',
                       'simpleaudio==1.0.4', 'pyttsx3==2.7', 'numpy', 'pyglet'],
     py_modules=["bluetooth"],

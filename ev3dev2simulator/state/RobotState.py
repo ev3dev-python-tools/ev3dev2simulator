@@ -29,7 +29,7 @@ class RobotState:
     """
 
     def __init__(self, config):
-        self.sprite_list = arcade.SpriteList[RobotPartSprite]()
+        self.sprite_list = arcade.SpriteList()
         self.side_bar_sprites = arcade.SpriteList()
 
         self.sensors = {}
@@ -117,11 +117,14 @@ class RobotState:
             obj.reset()
 
     def setup_pymunk_shapes(self, scale):
-        self.scale = scale
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
         self.body = pymunk.Body(20, moment)
-        self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
+        if hasattr(self, 'last_pos'):
+            self.body.position = pymunk.Vec2d(self.last_pos.x * (1/self.scale) * scale,
+                                              self.last_pos.y * (1/self.scale) * scale)
+        else:
+            self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
 
         for part in self.parts:
             part.setup_pymunk_shape(scale, self.body)
@@ -135,14 +138,17 @@ class RobotState:
         else:
             raise RuntimeError('Currently cannot have anything other than 2 wheels')
 
-        if self.orig_orientation != 0:
+        if hasattr(self, 'last_angle'):
+            self._rotate(math.radians(self.last_angle))
+        elif self.orig_orientation != 0:
             self._rotate(math.radians(self.orig_orientation))
+
+        self.scale = scale
 
     def setup_visuals(self, scale):
         for part in self.parts:
             part.setup_visuals(scale)
             self.sprite_list.append(part.sprite)
-
 
     def _move_position(self, distance: Vec2d):
         """
@@ -240,7 +246,7 @@ class RobotState:
                 wheels.append(part)
         return wheels
 
-    def get_sprites(self) -> arcade.SpriteList[RobotPartSprite]:
+    def get_sprites(self) -> arcade.SpriteList:
         return self.sprite_list
 
     def get_bricks(self):

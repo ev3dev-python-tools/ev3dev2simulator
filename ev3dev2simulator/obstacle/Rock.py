@@ -34,6 +34,17 @@ class Rock:
         self.shape = None
         self.movable = movable
 
+    def get_pos(self):
+        if hasattr(self, 'new_pos'):
+            return self.new_pos.x * (1/self.scale), self.new_pos.y * (1/self.scale)
+        return self.x, self.y
+
+    @property
+    def cur_angle(self):
+        if hasattr(self, 'new_angle'):
+            return self.new_angle
+        return self.angle
+
     def create_shape(self, scale):
         width = scale * self.width
         height = scale * self.height
@@ -43,16 +54,19 @@ class Rock:
 
         self.body = pymunk.Body(mass, moment,
                                 body_type=pymunk.Body.DYNAMIC if self.movable is True else pymunk.Body.KINEMATIC)
-        self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
+
+        pos_x, pos_y = self.get_pos()
+        self.body.position = pymunk.Vec2d(pos_x * scale, pos_y * scale)
 
         self.shape = pymunk.Poly.create_box(self.body, (width, height))
         self.shape.friction = friction
-        self.body.angle = math.radians(self.angle)
+        self.body.angle = math.radians(self.cur_angle)
         self.scale = scale
 
     def create_sprite(self, scale):
+        pos_x, pos_y = self.get_pos()
         self.sprite = Sprite('assets/images/brick.png', scale=scale * (self.width / 892),
-                             center_x=self.x * scale, center_y=self.y * scale)
+                             center_x=pos_x * scale, center_y=pos_y * scale)
         self.sprite.width = scale * self.width
         self.sprite.height = scale * self.height
         self.sprite.color = self.color

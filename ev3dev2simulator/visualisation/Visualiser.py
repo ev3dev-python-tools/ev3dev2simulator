@@ -59,7 +59,7 @@ class Visualiser(arcade.Window):
         self.falling_msg = sim_settings['screen_settings']['falling_message']
         self.restart_msg = sim_settings['screen_settings']['restart_message']
 
-        self.change_scale(self.screen_width, self.screen_height)
+        self.determine_scale(self.screen_width, self.screen_height)
         if debug:
             print('starting simulation with scaling', self.scale)
             print('arcade version: ', arcade.version.VERSION)
@@ -89,16 +89,20 @@ class Visualiser(arcade.Window):
     def msg_x(self):
         return (self.screen_width - self.side_bar_width) / 2
 
-    def change_scale(self, new_screen_width, new_screen_height):
-        x_scale = (new_screen_width - self.side_bar_width) / self.world_state.board_width
-        y_scale = new_screen_height / self.world_state.board_height
-        if x_scale <= y_scale:
-            scale = x_scale
+    def determine_scale(self, new_screen_width, new_screen_height):
+        width_scale = (new_screen_width - self.side_bar_width) / self.world_state.board_width
+        height_scale = new_screen_height / self.world_state.board_height
+        if width_scale <= height_scale:
+            scale = width_scale
         else:
-            scale = y_scale
+            scale = height_scale
         self.screen_height = int(scale * self.world_state.board_height)
         self.screen_width = self.side_bar_width + int(scale * self.world_state.board_width)
         self.scale = scale
+
+    def change_scale(self, new_screen_width, new_screen_height):
+        self.determine_scale(new_screen_width, new_screen_height)
+        self.world_state.rescale(self.scale)
 
     def setup_sidebar(self):
         self.sidebar = Sidebar(self.screen_width - self.side_bar_width, self.screen_height - 70,
@@ -304,20 +308,23 @@ class Visualiser(arcade.Window):
         # Instead of a one-to-one mapping, stretch/squash window to match the
         # constants. This does NOT respect aspect ratio. You'd need to
         # do a bit of math for that.
-        self.set_viewport(0, self.screen_width, 0, self.screen_height)
-
         # HACK for macOS: without this hack fullscreen on the second screen is shifted downwards in the y direction
         #     By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
         if platform.system().lower() == "darwin":
             self.maximize()
 
+        width, height = self.get_size()
+        self.change_scale(width, height)
+
     def on_resize(self, width, height):
         """ This method is automatically called when the window is resized. """
 
         # Call the parent. Failing to do this will mess up the coordinates, and default to 0,0 at the center and the
         # edges being -1 to 1.
-        super().on_resize(self.screen_width, self.screen_height)
+        self.change_scale(width, height)
+        self.setup_sidebar()
+        super().on_resize(width, height)
 
     def on_draw(self):
         """

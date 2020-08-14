@@ -84,8 +84,21 @@ class WorldState:
             self.space.add(obstacle.body)
             self.space.add(obstacle.shape)
 
-    def setup_visuals(self, scale):
+    def rescale(self, new_scale):
+        for robot in self.robots:
+            robot.shapes = []
+        for obstacle in self.obstacles:
+            obstacle.shape = None
+        self.space.remove(self.space.shapes)
+        self.space.remove(self.space.bodies)
 
+        for robot in self.robots:
+            robot.sprite_list = arcade.SpriteList()
+        self.sprite_list = arcade.SpriteList()
+        self.setup_pymunk_shapes(new_scale)
+        self.setup_visuals(new_scale)
+
+    def setup_visuals(self, scale):
         for obstacle in self.static_obstacles:
             obstacle.create_shape(scale)
 

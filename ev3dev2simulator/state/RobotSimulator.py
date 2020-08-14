@@ -211,6 +211,8 @@ class RobotSimulator:
             self.robot.values[address] = sensor.get_latest_value()
 
     def _sync_physics_sprites(self):
+        self.robot.last_pos = self.robot.body.position
+        self.robot.last_angle = math.degrees(self.robot.body.angle)
         for part in self.robot.parts:
             rel = Vec2d(part.shape.center_of_gravity)
             x, y = rel.rotated(self.robot.body.angle) + self.robot.body.position
