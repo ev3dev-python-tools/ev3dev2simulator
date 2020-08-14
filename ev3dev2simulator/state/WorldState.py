@@ -19,7 +19,6 @@ class WorldState:
         self.sprite_list = arcade.SpriteList()
         self.obstacles = []
         self.static_obstacles = []
-        self.touch_obstacles = []
         self.falling_obstacles = []
         self.color_obstacles = []
 
@@ -51,7 +50,6 @@ class WorldState:
             elif value['type'] == 'rock':
                 rock = Rock.from_config(value)
                 self.obstacles.append(rock)
-                self.touch_obstacles.append(rock)
             elif value['type'] == 'border':
                 border = Border.from_config(self.board_width, self.board_height, value)
                 self.static_obstacles.append(border)
@@ -59,7 +57,6 @@ class WorldState:
             elif value['type'] == 'bottle':
                 bottle = Bottle.from_config(value)
                 self.obstacles.append(bottle)
-                self.touch_obstacles.append(bottle)
             else:
                 print("unknown obstacle type")
 
@@ -102,17 +99,13 @@ class WorldState:
         for obstacle in self.static_obstacles:
             obstacle.create_shape(scale)
 
-        touch_sprites = arcade.SpriteList()
-
         for obstacle in self.obstacles:
             obstacle.create_sprite(scale)
             self.sprite_list.append(obstacle.sprite)
-            touch_sprites.append(obstacle.sprite)
 
         for robot in self.robots:
             robot.setup_visuals(scale)
             robot.set_color_obstacles(self.color_obstacles)
-            robot.set_touch_obstacles(touch_sprites)
             robot.set_falling_obstacles(self.falling_obstacles)
 
     def set_object_at_position_as_selected(self, pos):

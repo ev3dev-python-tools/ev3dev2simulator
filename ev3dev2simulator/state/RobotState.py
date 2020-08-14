@@ -202,15 +202,6 @@ class RobotState:
             if part.get_ev3type() == 'color_sensor':
                 part.set_sensible_obstacles(obstacles)
 
-    def set_touch_obstacles(self, obstacles):
-        """
-        Set the obstacles which can be detected by the touch sensors of this robot.
-        :param obstacles: to be detected.
-        """
-        for part in self.sensors.values():
-            if part.get_ev3type() == 'touch_sensor':
-                part.set_sensible_obstacles(obstacles)
-
     def set_falling_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the wheel of this robot. This simulates
