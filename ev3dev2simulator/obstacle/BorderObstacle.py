@@ -1,4 +1,4 @@
-import arcade
+import arcade as _arcade
 
 from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
 
@@ -39,28 +39,28 @@ class BorderObstacle(ColorObstacle):
         border_long_width = screen_width - screen_edge_spacing * 2
         border_long_height = screen_height - screen_edge_spacing * 2
 
-        self.top_points = arcade.get_rectangle_points(screen_center_x,
-                                                      screen_height - screen_edge_spacing - (draw_depth / 2),
-                                                      border_long_width,
-                                                      draw_depth)
+        self.top_points = _arcade.get_rectangle_points(screen_center_x,
+                                                       screen_height - screen_edge_spacing - (draw_depth / 2),
+                                                       border_long_width,
+                                                       draw_depth)
 
-        self.right_points = arcade.get_rectangle_points(screen_width - screen_edge_spacing - (draw_depth / 2),
+        self.right_points = _arcade.get_rectangle_points(screen_width - screen_edge_spacing - (draw_depth / 2),
+                                                         screen_center_y,
+                                                         draw_depth,
+                                                         border_long_height)
+
+        self.bottom_points = _arcade.get_rectangle_points(screen_center_x,
+                                                          screen_edge_spacing + (draw_depth / 2),
+                                                          border_long_width,
+                                                          draw_depth)
+
+        self.left_points = _arcade.get_rectangle_points(screen_edge_spacing + (draw_depth / 2),
                                                         screen_center_y,
                                                         draw_depth,
                                                         border_long_height)
 
-        self.bottom_points = arcade.get_rectangle_points(screen_center_x,
-                                                         screen_edge_spacing + (draw_depth / 2),
-                                                         border_long_width,
-                                                         draw_depth)
-
-        self.left_points = arcade.get_rectangle_points(screen_edge_spacing + (draw_depth / 2),
-                                                       screen_center_y,
-                                                       draw_depth,
-                                                       border_long_height)
-
     def collided_with(self, x: float, y: float) -> bool:
         for side in [self.top_points, self.right_points, self.bottom_points, self.left_points]:
-            if arcade.is_point_in_polygon(x, y, side):
+            if _arcade.is_point_in_polygon(x, y, side):
                 return True
         return False

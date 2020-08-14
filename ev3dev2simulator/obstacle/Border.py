@@ -1,4 +1,4 @@
-import arcade
+import arcade as _arcade
 
 from ev3dev2simulator.obstacle.BorderObstacle import BorderObstacle
 from ev3dev2simulator.util.Util import to_color_code
@@ -9,7 +9,7 @@ class Border(BorderObstacle):
     The outer line surrounding the playing field.
     """
 
-    def __init__(self, board_width, board_height, color: arcade.Color, depth, edge_spacing):
+    def __init__(self, board_width, board_height, color: _arcade.Color, depth, edge_spacing):
         super(Border, self).__init__(board_width, board_height, to_color_code(color), depth, edge_spacing)
 
         # visualisation
@@ -28,7 +28,7 @@ class Border(BorderObstacle):
 
         return cls(board_width, board_height, color, depth, spacing)
 
-    def create_shape(self, scale) -> [arcade.Shape]:
+    def create_shape(self, scale) -> [_arcade.Shape]:
 
         self._calc_points(scale)
         """
@@ -38,5 +38,5 @@ class Border(BorderObstacle):
         colors = [self.color for _ in range(4)]
         self.shapes = []
         for side in [self.top_points, self.right_points, self.bottom_points, self.left_points]:
-            self.shapes.append(arcade.create_rectangles_filled_with_colors(side, colors))
+            self.shapes.append(_arcade.create_rectangles_filled_with_colors(side, colors))
         return self.shapes

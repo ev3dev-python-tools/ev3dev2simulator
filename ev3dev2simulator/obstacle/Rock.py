@@ -1,6 +1,6 @@
 import math
 
-import arcade
+import arcade as _arcade
 import pymunk
 from arcade import Sprite
 
@@ -14,7 +14,7 @@ class Rock:
                  y: int,
                  width: float,
                  height: float,
-                 color: arcade.Color,
+                 color: _arcade.Color,
                  angle: int,
                  movable: bool):
 

@@ -1,4 +1,4 @@
-import arcade
+import arcade as _arcade
 
 
 class Sidebar:
@@ -12,12 +12,12 @@ class Sidebar:
         self.text_size = 10
         self.text_spacing = 10
         self.left_text_padding = 10
-        self.text_color = arcade.color.WHITE
+        self.text_color = _arcade.color.WHITE
         self.robot_info = {}
 
         self.sprites_total_height = 0
 
-        self.sprites = arcade.SpriteList()
+        self.sprites = _arcade.SpriteList()
 
     def init_robot(self, name, sensors, bricks, side_bar_sprites):
         for sprite in side_bar_sprites:
@@ -44,14 +44,14 @@ class Sidebar:
         for sprite in self.sprites:
             sprite.draw()
         for robot_name, sensorDict in self.robot_info.items():
-            arcade.draw_text(robot_name, self.x + self.left_text_padding, self.y - height, self.text_color,
-                             self.text_size + 2, bold=True)
+            _arcade.draw_text(robot_name, self.x + self.left_text_padding, self.y - height, self.text_color,
+                              self.text_size + 2, bold=True)
             height += (self.text_size + self.text_spacing)
             for address, sensor in sensorDict.items():
                 value = f"{sensor['value']:.2f}" if isinstance(sensor['value'], float) else str(sensor['value'])
                 lines = value.count('\n')
                 height += (self.text_size * lines)
-                arcade.draw_text(f"{sensor['name']}: {value}", self.x + 2 * self.left_text_padding, self.y - height,
-                                 self.text_color, self.text_size)
+                _arcade.draw_text(f"{sensor['name']}: {value}", self.x + 2 * self.left_text_padding, self.y - height,
+                                  self.text_color, self.text_size)
                 height += (self.text_size + self.text_spacing)
             height += (self.text_size + self.text_spacing)

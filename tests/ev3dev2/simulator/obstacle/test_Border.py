@@ -1,5 +1,5 @@
 import unittest
-import arcade
+from arcade import Window
 
 from ev3dev2simulator.obstacle.Border import Border
 import ev3dev2simulator.config.config as conf
@@ -10,7 +10,7 @@ class BorderTest(unittest.TestCase):
     def test_create_border(self):
         if conf.production:
             return
-        arcade.Window(width=5, height=5)
+        Window(width=5, height=5)
         config = {
             'depth': 15,
             'color': '(255, 255, 255)',

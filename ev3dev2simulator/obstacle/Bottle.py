@@ -1,4 +1,4 @@
-import arcade
+import arcade as _arcade
 import pymunk
 from arcade import Sprite
 
@@ -12,7 +12,7 @@ class Bottle:
                  x: int,
                  y: int,
                  radius: float,
-                 color: arcade.Color):
+                 color: _arcade.Color):
 
         self.x = x
         self.y = y
@@ -28,7 +28,6 @@ class Bottle:
         self.shape = None
         self.new_pos_x = None
         self.new_pos_y = None
-
 
     @classmethod
     def from_config(cls, config):

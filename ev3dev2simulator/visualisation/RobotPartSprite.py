@@ -1,6 +1,7 @@
-import arcade
+import arcade as _arcade
 
-class RobotPartSprite(arcade.Sprite):
+
+class RobotPartSprite(_arcade.Sprite):
     """
     We need a Sprite and a Pymunk physics object. This class blends them
     together.
@@ -14,7 +15,7 @@ class RobotPartSprite(arcade.Sprite):
                  scale=1,):
         super().__init__()
         for texture in src_list:
-            texture = arcade.load_texture(texture)
+            texture = _arcade.load_texture(texture)
             self.append_texture(texture)
         self.set_texture(start_sprite)
 

@@ -1,6 +1,6 @@
 from math import radians
 
-import arcade
+import arcade as _arcade
 import pymunk
 from pymunk import Space
 
@@ -16,7 +16,7 @@ from ev3dev2simulator.obstacle.Rock import Rock
 
 class WorldState:
     def __init__(self, config):
-        self.sprite_list = arcade.SpriteList()
+        self.sprite_list = _arcade.SpriteList()
         self.obstacles = []
         self.static_obstacles = []
         self.falling_obstacles = []
@@ -90,8 +90,8 @@ class WorldState:
         self.space.remove(self.space.bodies)
 
         for robot in self.robots:
-            robot.sprite_list = arcade.SpriteList()
-        self.sprite_list = arcade.SpriteList()
+            robot.sprite_list = _arcade.SpriteList()
+        self.sprite_list = _arcade.SpriteList()
         self.setup_pymunk_shapes(new_scale)
         self.setup_visuals(new_scale)
 
