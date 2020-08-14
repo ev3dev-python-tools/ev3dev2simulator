@@ -1,6 +1,6 @@
 from math import radians
 
-import arcade
+import arcade as _arcade
 import pymunk
 from pymunk import Space
 
@@ -16,10 +16,9 @@ from ev3dev2simulator.obstacle.Rock import Rock
 
 class WorldState:
     def __init__(self, config):
-        self.sprite_list = arcade.SpriteList()
+        self.sprite_list = _arcade.SpriteList()
         self.obstacles = []
         self.static_obstacles = []
-        self.touch_obstacles = []
         self.falling_obstacles = []
         self.color_obstacles = []
 
@@ -51,7 +50,6 @@ class WorldState:
             elif value['type'] == 'rock':
                 rock = Rock.from_config(value)
                 self.obstacles.append(rock)
-                self.touch_obstacles.append(rock)
             elif value['type'] == 'border':
                 border = Border.from_config(self.board_width, self.board_height, value)
                 self.static_obstacles.append(border)
@@ -59,7 +57,6 @@ class WorldState:
             elif value['type'] == 'bottle':
                 bottle = Bottle.from_config(value)
                 self.obstacles.append(bottle)
-                self.touch_obstacles.append(bottle)
             else:
                 print("unknown obstacle type")
 
@@ -84,22 +81,31 @@ class WorldState:
             self.space.add(obstacle.body)
             self.space.add(obstacle.shape)
 
-    def setup_visuals(self, scale):
+    def rescale(self, new_scale):
+        for robot in self.robots:
+            robot.shapes = []
+        for obstacle in self.obstacles:
+            obstacle.shape = None
+        self.space.remove(self.space.shapes)
+        self.space.remove(self.space.bodies)
 
+        for robot in self.robots:
+            robot.sprite_list = _arcade.SpriteList()
+        self.sprite_list = _arcade.SpriteList()
+        self.setup_pymunk_shapes(new_scale)
+        self.setup_visuals(new_scale)
+
+    def setup_visuals(self, scale):
         for obstacle in self.static_obstacles:
             obstacle.create_shape(scale)
-
-        touch_sprites = arcade.SpriteList()
 
         for obstacle in self.obstacles:
             obstacle.create_sprite(scale)
             self.sprite_list.append(obstacle.sprite)
-            touch_sprites.append(obstacle.sprite)
 
         for robot in self.robots:
             robot.setup_visuals(scale)
             robot.set_color_obstacles(self.color_obstacles)
-            robot.set_touch_obstacles(touch_sprites)
             robot.set_falling_obstacles(self.falling_obstacles)
 
     def set_object_at_position_as_selected(self, pos):

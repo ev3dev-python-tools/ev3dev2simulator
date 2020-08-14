@@ -1,7 +1,7 @@
 import math
 from typing import Tuple
 
-import arcade
+import arcade as _arcade
 from arcade import PointList
 
 
@@ -88,7 +88,7 @@ def get_inch_multiplier() -> float:
     return 0.254
 
 
-def to_color_code(color: arcade.Color) -> int:
+def to_color_code(color: _arcade.Color) -> int:
     switcher = {
         (59, 60, 54): 1,  # Black
         (58, 166, 221): 2,  # Blue

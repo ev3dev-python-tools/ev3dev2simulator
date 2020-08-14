@@ -36,12 +36,8 @@ class TouchSensor(BodyPart):
         Check if this TouchSensor is touching a TouchObstacle.
         :return: boolean value representing the outcome.
         """
-        if self.sprite is None:
-            return False
-        if arcade.check_for_collision_with_list(self.sprite, self.sensible_obstacles):
-            return True
-
-        return self.get_default_value()
+        hits = self.shape.space.shape_query(self.shape)
+        return len(hits) > 0
 
     def get_default_value(self):
         return False

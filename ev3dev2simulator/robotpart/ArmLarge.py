@@ -39,6 +39,7 @@ class ArmLarge(Sprite):
         vis_conf = get_simulation_settings()
         self.init_texture(vis_conf['image_paths']['arm_large'], width, height)
         self.side_bar_ground.create_shape(x, y - 70, width, 10)
+        self.angle = 0
         self.rotate(20)
 
     def init_texture(self, src, width, height):

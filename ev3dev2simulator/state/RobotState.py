@@ -1,6 +1,6 @@
 import math
 
-import arcade
+import arcade as _arcade
 import pymunk
 from pymunk.vec2d import Vec2d
 
@@ -29,8 +29,8 @@ class RobotState:
     """
 
     def __init__(self, config):
-        self.sprite_list = arcade.SpriteList[RobotPartSprite]()
-        self.side_bar_sprites = arcade.SpriteList()
+        self.sprite_list = _arcade.SpriteList()
+        self.side_bar_sprites = _arcade.SpriteList()
 
         self.sensors = {}
         self.actuators = {}
@@ -50,6 +50,8 @@ class RobotState:
         self.y = float(config['center_y']) + 22.5
 
         self.wheel_distance = None
+        self.last_pos_x = None
+        self.last_pos_y = None
 
         try:
             self.orig_orientation = config['orientation']
@@ -107,6 +109,10 @@ class RobotState:
         self.parts.extend(self.bricks)
         self.parts.extend(filter(lambda act: act.get_ev3type() != 'motor', list(self.actuators.values())))
 
+    def set_last_pos(self, pos):
+        self.last_pos_x = pos.x * (1 / self.scale)
+        self.last_pos_y = pos.y * (1 / self.scale)
+
     def reset(self):
         self.values.clear()
         self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
@@ -117,11 +123,13 @@ class RobotState:
             obj.reset()
 
     def setup_pymunk_shapes(self, scale):
-        self.scale = scale
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
         self.body = pymunk.Body(20, moment)
-        self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
+        if self.last_pos_x and self.last_pos_y:
+            self.body.position = pymunk.Vec2d(self.last_pos_x * scale, self.last_pos_y * scale)
+        else:
+            self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
 
         for part in self.parts:
             part.setup_pymunk_shape(scale, self.body)
@@ -135,14 +143,17 @@ class RobotState:
         else:
             raise RuntimeError('Currently cannot have anything other than 2 wheels')
 
-        if self.orig_orientation != 0:
+        if hasattr(self, 'last_angle'):
+            self._rotate(math.radians(self.last_angle))
+        elif self.orig_orientation != 0:
             self._rotate(math.radians(self.orig_orientation))
+
+        self.scale = scale
 
     def setup_visuals(self, scale):
         for part in self.parts:
             part.setup_visuals(scale)
             self.sprite_list.append(part.sprite)
-
 
     def _move_position(self, distance: Vec2d):
         """
@@ -196,15 +207,6 @@ class RobotState:
             if part.get_ev3type() == 'color_sensor':
                 part.set_sensible_obstacles(obstacles)
 
-    def set_touch_obstacles(self, obstacles):
-        """
-        Set the obstacles which can be detected by the touch sensors of this robot.
-        :param obstacles: to be detected.
-        """
-        for part in self.sensors.values():
-            if part.get_ev3type() == 'touch_sensor':
-                part.set_sensible_obstacles(obstacles)
-
     def set_falling_obstacles(self, obstacles):
         """
         Set the obstacles which can be detected by the wheel of this robot. This simulates
@@ -240,7 +242,7 @@ class RobotState:
                 wheels.append(part)
         return wheels
 
-    def get_sprites(self) -> arcade.SpriteList[RobotPartSprite]:
+    def get_sprites(self) -> _arcade.SpriteList:
         return self.sprite_list
 
     def get_bricks(self):

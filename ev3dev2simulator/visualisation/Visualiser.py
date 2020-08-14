@@ -3,7 +3,7 @@ import os
 import time
 import tempfile
 
-import arcade
+import arcade as _arcade
 import pyglet
 
 from arcade.color import RED
@@ -14,7 +14,7 @@ from ev3dev2simulator.config.config import get_simulation_settings, debug
 
 
 def start():
-    arcade.run()
+    _arcade.run()
 
 
 def get_screens():
@@ -23,7 +23,7 @@ def get_screens():
     return screens
 
 
-class Visualiser(arcade.Window):
+class Visualiser(_arcade.Window):
     """
     Main simulator class.
     This class extends from arcade.Window and manages the updates and rendering of the simulator window.
@@ -59,17 +59,17 @@ class Visualiser(arcade.Window):
         self.falling_msg = sim_settings['screen_settings']['falling_message']
         self.restart_msg = sim_settings['screen_settings']['restart_message']
 
-        self.change_scale(self.screen_width, self.screen_height)
+        self.determine_scale(self.screen_width, self.screen_height)
         if debug:
             print('starting simulation with scaling', self.scale)
-            print('arcade version: ', arcade.version.VERSION)
+            print('arcade version: ', _arcade.version.VERSION)
 
         super(Visualiser, self).__init__(self.screen_width, self.screen_height, screen_title, update_rate=1 / 30,
                                          resizable=True)
 
         icon1 = pyglet.image.load(r'assets/images/body.png')
         self.set_icon(icon1)
-        arcade.set_background_color(eval(sim_settings['screen_settings']['background_color']))
+        _arcade.set_background_color(eval(sim_settings['screen_settings']['background_color']))
 
         self.msg_counter = 0
 
@@ -89,16 +89,20 @@ class Visualiser(arcade.Window):
     def msg_x(self):
         return (self.screen_width - self.side_bar_width) / 2
 
-    def change_scale(self, new_screen_width, new_screen_height):
-        x_scale = (new_screen_width - self.side_bar_width) / self.world_state.board_width
-        y_scale = new_screen_height / self.world_state.board_height
-        if x_scale <= y_scale:
-            scale = x_scale
+    def determine_scale(self, new_screen_width, new_screen_height):
+        width_scale = (new_screen_width - self.side_bar_width) / self.world_state.board_width
+        height_scale = new_screen_height / self.world_state.board_height
+        if width_scale <= height_scale:
+            scale = width_scale
         else:
-            scale = y_scale
+            scale = height_scale
         self.screen_height = int(scale * self.world_state.board_height)
         self.screen_width = self.side_bar_width + int(scale * self.world_state.board_width)
         self.scale = scale
+
+    def change_scale(self, new_screen_width, new_screen_height):
+        self.determine_scale(new_screen_width, new_screen_height)
+        self.world_state.rescale(self.scale)
 
     def setup_sidebar(self):
         self.sidebar = Sidebar(self.screen_width - self.side_bar_width, self.screen_height - 70,
@@ -222,11 +226,11 @@ class Visualiser(arcade.Window):
         """Called whenever a key is pressed. """
 
         # Quit the simulator
-        if key == arcade.key.Q:
+        if key == _arcade.key.Q:
             self.on_close()
 
         # Toggle fullscreen between screens (only works at fullscreen mode)
-        elif key == arcade.key.T:
+        elif key == _arcade.key.T:
             # User hits T. When at fullscreen, then switch screen used for fullscreen.
             if len(get_screens()) == 0:
                 return
@@ -239,14 +243,14 @@ class Visualiser(arcade.Window):
 
         # Maximize window
         # note: is toggle on macOS, but not on windows
-        elif key == arcade.key.M:
+        elif key == _arcade.key.M:
             self.maximize()
 
         # Toggle between Fullscreen and window
         #   keeps viewport coordinates the same   STRETCHED (FULLSCREEN)
         #   Instead of a one-to-one mapping to screen size, we use stretch/squash window to match the constants.
         #   src: http://arcade.academy/examples/full_screen_example.html
-        elif key == arcade.key.F:
+        elif key == _arcade.key.F:
             self.update_current_screen()
             self._set_full_screen(not self.fullscreen)
 
@@ -304,27 +308,30 @@ class Visualiser(arcade.Window):
         # Instead of a one-to-one mapping, stretch/squash window to match the
         # constants. This does NOT respect aspect ratio. You'd need to
         # do a bit of math for that.
-        self.set_viewport(0, self.screen_width, 0, self.screen_height)
-
         # HACK for macOS: without this hack fullscreen on the second screen is shifted downwards in the y direction
         #     By also calling the maximize function te position the fullscreen in second screen is corrected!)
         import platform
         if platform.system().lower() == "darwin":
             self.maximize()
 
+        width, height = self.get_size()
+        self.change_scale(width, height)
+
     def on_resize(self, width, height):
         """ This method is automatically called when the window is resized. """
 
         # Call the parent. Failing to do this will mess up the coordinates, and default to 0,0 at the center and the
         # edges being -1 to 1.
-        super().on_resize(self.screen_width, self.screen_height)
+        self.change_scale(width, height)
+        self.setup_sidebar()
+        super().on_resize(width, height)
 
     def on_draw(self):
         """
         Render the simulation.
         """
 
-        arcade.start_render()
+        _arcade.start_render()
 
         for obstacleList in self.world_state.static_obstacles:
             for shape in obstacleList.get_shapes():
@@ -355,12 +362,12 @@ class Visualiser(arcade.Window):
         if self.msg_counter > 0:
             self.msg_counter -= 1
 
-            arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - 100, arcade.color.RADICAL_RED,
-                             14,
-                             anchor_x="center")
-            arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - 130, arcade.color.RADICAL_RED,
-                             14,
-                             anchor_x="center")
+            _arcade.draw_text(self.falling_msg, self.msg_x, self.screen_height - 100, _arcade.color.RADICAL_RED,
+                              14,
+                              anchor_x="center")
+            _arcade.draw_text(self.restart_msg, self.msg_x, self.screen_height - 130, _arcade.color.RADICAL_RED,
+                              14,
+                              anchor_x="center")
 
     def update(self, delta_time):
         """
@@ -377,7 +384,7 @@ class Visualiser(arcade.Window):
         self.world_state.unselect_object()
 
     def on_mouse_drag(self, x: float, y: float, dx: float, dy: float, buttons: int, modifiers: int):
-        if buttons == arcade.MOUSE_BUTTON_LEFT:
+        if buttons == _arcade.MOUSE_BUTTON_LEFT:
             self.world_state.move_selected_object(dx, dy)
-        if buttons == arcade.MOUSE_BUTTON_RIGHT:
+        if buttons == _arcade.MOUSE_BUTTON_RIGHT:
             self.world_state.rotate_selected_object(dy)

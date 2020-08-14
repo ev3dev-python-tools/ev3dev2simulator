@@ -1,4 +1,4 @@
-import arcade
+import arcade as _arcade
 
 from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
 from ev3dev2simulator.util.Util import to_color_code
@@ -14,7 +14,7 @@ class Board(ColorObstacle):
                  y: float,
                  width: int,
                  height: int,
-                 color: arcade.Color):
+                 color: _arcade.Color):
         super(Board, self).__init__(to_color_code(color))
         self.x = x
         self.y = y
@@ -34,18 +34,18 @@ class Board(ColorObstacle):
         self.points = self._create_points(scale)
         self.shape = self._create_shape()
 
-    def _create_points(self, scale) -> arcade.PointList:
+    def _create_points(self, scale) -> _arcade.PointList:
         """
         Create a list of points representing this rock in 2D space.
         :return: a PointList object.
         """
-        return arcade.get_rectangle_points(self.x * scale,
-                                           self.y * scale,
-                                           self.width * scale,
-                                           self.height * scale,
-                                           self.angle)
+        return _arcade.get_rectangle_points(self.x * scale,
+                                            self.y * scale,
+                                            self.width * scale,
+                                            self.height * scale,
+                                            self.angle)
 
-    def _create_shape(self) -> arcade.Shape:
+    def _create_shape(self) -> _arcade.Shape:
         """
         Create a shape representing the rectangle of this rock.
         :return: a Arcade shape object.
@@ -56,7 +56,7 @@ class Board(ColorObstacle):
         for i in range(4):
             colors.append(self.color)
 
-        return arcade.create_rectangles_filled_with_colors(self.points, colors)
+        return _arcade.create_rectangles_filled_with_colors(self.points, colors)
 
     def collided_with(self, x: float, y: float) -> bool:
         """
@@ -66,4 +66,4 @@ class Board(ColorObstacle):
         :return: True if collision detected.
         """
 
-        return arcade.is_point_in_polygon(x, y, self.points)
+        return _arcade.is_point_in_polygon(x, y, self.points)

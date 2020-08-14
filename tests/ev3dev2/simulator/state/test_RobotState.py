@@ -187,10 +187,9 @@ class TestRobotState(unittest.TestCase):
         lake_mock = MagicMock()
 
         state.set_color_obstacles([color_obstacle_mock])
-        state.set_touch_obstacles([rock_mock])
         state.set_falling_obstacles([lake_mock])
 
-        self.assertEqual(state.sensors[(0, 'ev3-ports:in3')].sensible_obstacles, [rock_mock])
+        self.assertEqual(state.sensors[(0, 'ev3-ports:in3')].sensible_obstacles, [])
         self.assertEqual(state.sensors[(0, 'ev3-ports:in2')].sensible_obstacles, [color_obstacle_mock])
         self.assertEqual(state.sensors[(0, 'ev3-ports:in4')].sensible_obstacles, [lake_mock])
         self.assertEqual(state.actuators[(0, 'ev3-ports:outA')].sensible_obstacles, [lake_mock])
