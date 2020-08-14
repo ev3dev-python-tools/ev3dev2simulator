@@ -18,6 +18,8 @@ class Rock:
                  angle: int,
                  movable: bool):
 
+        self.new_pos_y = None
+        self.new_pos_x = None
         self.x = int(x)
         self.y = int(y)
         self.width = float(width)
@@ -36,7 +38,7 @@ class Rock:
 
     def get_pos(self):
         if hasattr(self, 'new_pos'):
-            return self.new_pos.x * (1/self.scale), self.new_pos.y * (1/self.scale)
+            return self.new_pos_x, self.new_pos_y
         return self.x, self.y
 
     @property
@@ -62,6 +64,10 @@ class Rock:
         self.shape.friction = friction
         self.body.angle = math.radians(self.cur_angle)
         self.scale = scale
+
+    def set_new_pos(self, pos):
+        self.new_pos_y = (1 / self.scale) * pos.y
+        self.new_pos_x = (1 / self.scale) * pos.x
 
     def create_sprite(self, scale):
         pos_x, pos_y = self.get_pos()
