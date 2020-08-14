@@ -43,7 +43,7 @@ class Bottle:
         return self.sprite
 
     def get_pos(self):
-        if hasattr(self, 'new_pos'):
+        if self.new_pos_x and self.new_pos_y:
             return self.new_pos_x, self.new_pos_y
         return self.x, self.y
 

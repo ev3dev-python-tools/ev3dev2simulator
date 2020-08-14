@@ -126,7 +126,7 @@ class RobotState:
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
         self.body = pymunk.Body(20, moment)
-        if hasattr(self, 'last_pos'):
+        if self.last_pos_x and self.last_pos_y:
             self.body.position = pymunk.Vec2d(self.last_pos_x * scale, self.last_pos_y * scale)
         else:
             self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
