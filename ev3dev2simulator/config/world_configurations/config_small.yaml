@@ -1,6 +1,6 @@
 board_height: 841
 board_width: 1189
-board_color: (235, 235, 235)
+board_color: 235, 235, 235
 robots:
   - name: robot0
     center_x: 250
@@ -10,14 +10,14 @@ robots:
 obstacles:
   - name: 'border'
     depth: 30
-    color: (59, 60, 54)
+    color: 59, 60, 54
     outer_spacing: 23
     type: 'border'
 
   - name: 'lake_blue'
     border_width: 29
     inner_radius: 38
-    color: (58, 166, 221)
+    color: 58, 166, 221
     x: 500
     y: 170
     hole: False
@@ -26,7 +26,7 @@ obstacles:
   - name: 'lake_yellow'
     border_width: 29
     inner_radius: 38
-    color: (252, 227, 3)
+    color: 252, 227, 3
     x: 250
     y: 600
     hole: False
@@ -35,7 +35,7 @@ obstacles:
   - name: 'lake_red'
     border_width: 29
     inner_radius: 38
-    color: (201, 45, 57)
+    color: 201, 45, 57
     x: 850
     y: 500
     hole: False
@@ -45,5 +45,5 @@ obstacles:
     x: 1000
     y: 300
     radius: 60
-    color: (85, 107, 47)
+    color: 85, 107, 47
     type: 'bottle'

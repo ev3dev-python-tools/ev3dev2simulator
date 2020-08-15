@@ -14,9 +14,9 @@ class Config:
     def __init__(self, world_config_file_name, orig_path=None):
         self.orig_path = orig_path
         self.rel_world_config_path = None
-        self.world_config = self._load_world_config(world_config_file_name)
-        ConfigChecker.check_world_config(self.world_config)
-        self.world_config = self.world_config.data
+        world_config_yaml = self._load_world_config(world_config_file_name)
+        ConfigChecker.check_world_config(world_config_yaml)
+        self.world_config = world_config_yaml.data
         settings_schema = ConfigChecker.get_settings_schema()
         self.simulation_settings = self._load_yaml_file('', 'simulation_settings', None, settings_schema)
 
@@ -37,7 +37,9 @@ class Config:
         if self.rel_world_config_path:
             path = os.path.join(path, self.rel_world_config_path)
         robot_schema = ConfigChecker.get_robot_schema()
-        return self._load_yaml_file('robot_configurations', file_name, path, robot_schema)
+        robot_config_yaml = self._load_yaml_file('robot_configurations', file_name, path, robot_schema)
+        ConfigChecker.check_robot_config(robot_config_yaml)
+        return robot_config_yaml.data
 
     @staticmethod
     def _load_yaml_file(prefix: str, file_url: str, orig_path: str = None, schema=None) -> object:
