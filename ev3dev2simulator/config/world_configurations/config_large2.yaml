@@ -12,54 +12,54 @@ robots:
 
 board_height: 1273
 board_width: 1273
-board_color: (59, 60, 54)
+board_color: 59, 60, 54
 obstacles:
-  border:
+  - name: 'border'
     depth: 30
-    color: (255, 255, 255)
+    color: 255, 255, 255
     outer_spacing: 23
     type: 'border'
 
-  lake_blue:
+  - name:  'lake_blue'
     border_width: 29
     inner_radius: 38
-    color: (58, 166, 221)
+    color: 58, 166, 221
     x: 137
     y: 922
     type: 'lake'
 
-  lake_green:
+  - name: 'lake_green'
     border_width: 29
     inner_radius: 38
-    color: (252, 227, 3)
+    color: 252, 227, 3
     x: 1052
     y: 567
     type: 'lake'
 
-  lake_red:
+  - name: 'lake_red'
     border_width: 29
     inner_radius: 38
-    color: (201, 45, 57)
+    color: 201, 45, 57
     x: 397
     y: 232
     type: 'lake'
 
-  rock1:
+  - name: 'rock1'
     x: 825
     y: 1050
     width: 150
     height: 60
-    color: (169, 169, 169)
+    color: 169, 169, 169
     angle: 10
     type: 'rock'
     movable: False
 
-  rock2:
+  - name: 'rock2'
     x: 975
     y: 275
     width: 300
     height: 90
-    color: (169, 169, 169)
+    color: 169, 169, 169
     angle: 130
     type: 'rock'
     movable: True

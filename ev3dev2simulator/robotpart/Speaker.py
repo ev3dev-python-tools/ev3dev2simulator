@@ -20,7 +20,7 @@ class Speaker(BodyPart):
         }
 
         dims = get_simulation_settings()['body_part_sizes']['speaker']
-        super(Speaker, self).__init__(config, robot, dims['width'], dims['height'], 'speaker')
+        super(Speaker, self).__init__(config, robot, int(dims['width']), int(dims['height']), 'speaker')
 
     def setup_visuals(self, scale):
         vis_conf = get_simulation_settings()

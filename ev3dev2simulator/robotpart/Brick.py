@@ -9,7 +9,7 @@ class Brick(BodyPart):
 
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['body']
-        super().__init__(config, robot, dims['width'], dims['height'], 'brick')
+        super().__init__(config, robot, int(dims['width']), int(dims['height']), 'brick')
 
     def setup_visuals(self, scale):
         vis_conf = get_simulation_settings()

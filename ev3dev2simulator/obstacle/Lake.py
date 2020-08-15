@@ -52,15 +52,15 @@ class Lake(ColorObstacle):
 
     @classmethod
     def from_config(cls, config):
-        border_width = config['border_width']
-        inner_radius = config['inner_radius']
+        border_width = int(config['border_width'])
+        inner_radius = int(config['inner_radius'])
         outer_radius = inner_radius + border_width
 
-        x = config['x']
-        y = config['y']
-        has_hole = bool(config['hole']) if 'hole' in config else True
+        x = int(config['x'])
+        y = int(config['y'])
+        has_hole = config['hole'] if 'hole' in config else True
 
-        color = eval(config['color'])
+        color = tuple(config['color'])
 
         return cls(x, y, outer_radius, inner_radius, color, border_width, has_hole)
 

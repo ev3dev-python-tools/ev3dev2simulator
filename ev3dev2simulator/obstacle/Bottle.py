@@ -34,7 +34,7 @@ class Bottle:
         x = int(config['x'])
         y = int(config['y'])
         radius = int(config['radius'])
-        color = eval(config['color'])
+        color = config['color']
 
         return cls(x, y, radius, color)
 

@@ -54,7 +54,7 @@ class RobotState:
         self.last_pos_y = None
 
         try:
-            self.orig_orientation = config['orientation']
+            self.orig_orientation = int(config['orientation'])
         except KeyError:
             self.orig_orientation = 0
 
@@ -68,10 +68,10 @@ class RobotState:
                 brick = Brick(part, self)
                 self.bricks.append(brick)
                 self.led_colors[(brick.brick, 'led0')] = 1
-                self.actuators[(brick.brick, 'led0')] = Led((part['brick']), self, 'left',
+                self.actuators[(brick.brick, 'led0')] = Led(part['brick'], self, 'left',
                                                             part['x_offset'], part['y_offset'])
                 self.led_colors[(brick.brick, 'led1')] = 1
-                self.actuators[(brick.brick, 'led1')] = Led((part['brick']), self, 'right',
+                self.actuators[(brick.brick, 'led1')] = Led(part['brick'], self, 'right',
                                                             part['x_offset'], part['y_offset'])
 
                 self.actuators[(brick.brick, 'speaker')] = Speaker(int(part['brick']), self, 0, 0)

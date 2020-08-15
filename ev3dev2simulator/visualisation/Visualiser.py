@@ -46,9 +46,9 @@ class Visualiser(_arcade.Window):
         sim_settings = get_simulation_settings()
 
         self.scale = None
-        self.screen_width = int(sim_settings['screen_settings']['screen_width'])
-        self.screen_height = int(sim_settings['screen_settings']['screen_height'])
-        self.side_bar_width = int(sim_settings['screen_settings']['side_bar_width'])
+        self.screen_width = sim_settings['screen_settings']['screen_width']
+        self.screen_height = sim_settings['screen_settings']['screen_height']
+        self.side_bar_width = sim_settings['screen_settings']['side_bar_width']
 
         from ev3dev2.version import __version__ as api_version
         from ev3dev2simulator.version import __version__ as sim_version
@@ -69,7 +69,7 @@ class Visualiser(_arcade.Window):
 
         icon1 = pyglet.image.load(r'assets/images/body.png')
         self.set_icon(icon1)
-        _arcade.set_background_color(eval(sim_settings['screen_settings']['background_color']))
+        _arcade.set_background_color(sim_settings['screen_settings']['background_color'])
 
         self.msg_counter = 0
 

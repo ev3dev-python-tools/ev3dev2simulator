@@ -24,7 +24,7 @@ class ServerSockets(threading.Thread):
         to manage it. Multiple connections can be established at the same time.
         """
 
-        port = get_simulation_settings()['exec_settings']['socket_port']
+        port = int(get_simulation_settings()['exec_settings']['socket_port'])
 
         for robot_sim in self.word_simulator.robot_simulators:
             for brick in robot_sim.robot.get_bricks():

@@ -27,9 +27,9 @@ class MessageProcessor:
 
         self.brick_id = brick_id
 
-        self.distance_coasting_sub = cfg['motor_settings']['distance_coasting_subtraction']
-        self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
-        self.frames_per_second = cfg['exec_settings']['frames_per_second']
+        self.distance_coasting_sub = float(cfg['motor_settings']['distance_coasting_subtraction'])
+        self.degree_coasting_sub = float(cfg['motor_settings']['degree_coasting_subtraction'])
+        self.frames_per_second = int(cfg['exec_settings']['frames_per_second'])
 
         self.robot_sim = robot_sim
         self.command_processor = MotorCommandProcessor()

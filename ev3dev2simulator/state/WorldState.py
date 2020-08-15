@@ -15,6 +15,9 @@ from ev3dev2simulator.obstacle.Rock import Rock
 
 
 class WorldState:
+    """
+    Contains the objects, the robots and the surrounding space of the 'world'
+    """
     def __init__(self, config):
         self.sprite_list = _arcade.SpriteList()
         self.obstacles = []
@@ -26,9 +29,9 @@ class WorldState:
         self.space = Space()
         self.space.damping = 0.1
 
-        self.board_width = int(config['board_width'])
-        self.board_height = int(config['board_height'])
-        board_color = eval(config['board_color'])
+        self.board_width = config['board_width']
+        self.board_height = config['board_height']
+        board_color = tuple(config['board_color'])
 
         board = Board(self.board_width / 2, self.board_height / 2, self.board_width, self.board_height, board_color)
         self.static_obstacles.append(board)
@@ -40,22 +43,22 @@ class WorldState:
         self.static_obstacles.append(edge)
         self.falling_obstacles.append(edge)
 
-        for key, value in config['obstacles'].items():
-            if value['type'] == 'lake':
-                lake = Lake.from_config(value)
+        for obstacle in config['obstacles']:
+            if obstacle['type'] == 'lake':
+                lake = Lake.from_config(obstacle)
                 self.static_obstacles.append(lake)
                 if lake.hole is not None:
                     self.falling_obstacles.append(lake.hole)
                 self.color_obstacles.append(lake)
-            elif value['type'] == 'rock':
-                rock = Rock.from_config(value)
+            elif obstacle['type'] == 'rock':
+                rock = Rock.from_config(obstacle)
                 self.obstacles.append(rock)
-            elif value['type'] == 'border':
-                border = Border.from_config(self.board_width, self.board_height, value)
+            elif obstacle['type'] == 'border':
+                border = Border.from_config(self.board_width, self.board_height, obstacle)
                 self.static_obstacles.append(border)
                 self.color_obstacles.append(border)
-            elif value['type'] == 'bottle':
-                bottle = Bottle.from_config(value)
+            elif obstacle['type'] == 'bottle':
+                bottle = Bottle.from_config(obstacle)
                 self.obstacles.append(bottle)
             else:
                 print("unknown obstacle type")
