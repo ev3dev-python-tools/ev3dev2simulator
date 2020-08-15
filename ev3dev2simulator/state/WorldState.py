@@ -29,9 +29,9 @@ class WorldState:
         self.space = Space()
         self.space.damping = 0.1
 
-        self.board_width = int(config['board_width'])
-        self.board_height = int(config['board_height'])
-        board_color = eval(config['board_color'])
+        self.board_width = config['board_width']
+        self.board_height = config['board_height']
+        board_color = tuple(config['board_color'])
 
         board = Board(self.board_width / 2, self.board_height / 2, self.board_width, self.board_height, board_color)
         self.static_obstacles.append(board)

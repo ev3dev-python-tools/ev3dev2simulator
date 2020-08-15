@@ -58,9 +58,9 @@ class Lake(ColorObstacle):
 
         x = int(config['x'])
         y = int(config['y'])
-        has_hole = config['hole'] == 'True' if 'hole' in config else True
+        has_hole = config['hole'] if 'hole' in config else True
 
-        color = eval(config['color'])
+        color = tuple(config['color'])
 
         return cls(x, y, outer_radius, inner_radius, color, border_width, has_hole)
 

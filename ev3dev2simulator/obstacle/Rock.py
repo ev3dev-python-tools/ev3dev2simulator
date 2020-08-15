@@ -89,7 +89,7 @@ class Rock:
         y = config['y']
         width = config['width']
         height = config['height']
-        color = eval(config['color'])
+        color = tuple(config['color'])
         angle = config['angle']
         movable = True if 'movable' not in config else config['movable']
 

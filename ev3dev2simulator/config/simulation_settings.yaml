@@ -1,7 +1,7 @@
 #This file contains settings that should sparely be changed. The world configuration can be done in the folder world_config
 
 screen_settings:
-  background_color: (100, 100, 150)
+  background_color: 100, 100, 150
   edge_spacing: 23
   screen_height: 800
   screen_width: 1100

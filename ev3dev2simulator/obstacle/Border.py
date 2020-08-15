@@ -22,7 +22,7 @@ class Border(BorderObstacle):
     @classmethod
     def from_config(cls, board_width, board_height, config):
 
-        color = eval(config['color'])
+        color = tuple(config['color'])
         depth = int(config['depth'])
         spacing = int(config['outer_spacing'])
 

@@ -3,7 +3,7 @@ from os import listdir
 from os.path import isfile, join
 import os
 from ev3dev2simulator.config.ConfigChecker import ConfigChecker
-from strictyaml import load, YAMLError
+from strictyaml import load
 
 
 class Config:
@@ -17,13 +17,15 @@ class Config:
         self.world_config = self._load_world_config(world_config_file_name)
         ConfigChecker.check_world_config(self.world_config)
         self.world_config = self.world_config.data
-        self.simulation_settings = self._load_yaml_file('', 'simulation_settings')
+        settings_schema = ConfigChecker.get_settings_schema()
+        self.simulation_settings = self._load_yaml_file('', 'simulation_settings', None, settings_schema)
 
     def _load_world_config(self, file_name: str):
         file_name = 'config_large' if file_name is None else file_name
         if os.path.dirname(file_name) != '':
             self.rel_world_config_path = os.path.dirname(file_name)
-        return self._load_yaml_file('world_configurations', file_name, self.orig_path)
+        world_schema = ConfigChecker.get_world_schema()
+        return self._load_yaml_file('world_configurations', file_name, self.orig_path, world_schema)
 
     def load_robot_config(self, file_name: str):
         """
@@ -53,8 +55,6 @@ class Config:
                 return load(stream.read(), schema, path)
         except FileNotFoundError:
             raise FileNotFoundError(f'The configuration {path} could not be found')
-        except YAMLError:
-            raise RuntimeError('there are errors in the yaml file')
 
     @staticmethod
     def get_project_root() -> str:
