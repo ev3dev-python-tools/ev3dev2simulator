@@ -1,4 +1,4 @@
-from strictyaml import YAMLError, Map, Str, Int, Float, CommaSeparated, Seq, Any, Optional, Bool
+from strictyaml import Map, Str, Int, Float, CommaSeparated, Seq, Regex, Optional, Bool
 
 
 class ConfigChecker:
@@ -23,9 +23,29 @@ class ConfigChecker:
     @staticmethod
     def get_robot_schema():
         """
-        Getter for world schema
-        @return: schema that is used to verify the world yaml
+        Getter for robot schema
+        @return: schema that is used to verify the robot yaml
         """
+        return Map({
+            'parts': Seq(ConfigChecker.get_robot_part_schema())
+        })
+
+    @staticmethod
+    def get_robot_part_schema():
+        """
+        Getter for robot schema
+        @return: schema that is used to verify the robot yaml
+        """
+        return Map({
+            'name': Str(),
+            'type': Str(),
+            'brick': Int(),
+            'x_offset': Float(),
+            'y_offset': Float(),
+            Optional('port'): Regex('ev3-ports:(in[1-4]|out[A-D])'),
+            Optional('side'): Regex('left|right|rear'),
+            Optional('direction'): Regex('bottom|front'),
+        })
 
     @staticmethod
     def get_world_schema():
@@ -41,7 +61,7 @@ class ConfigChecker:
                     'center_y': Int(),
                     'orientation': Int(),
                     Optional('type'): Str(),
-                    Optional('parts'): Seq(Any())
+                    Optional('parts'): Seq(ConfigChecker.get_robot_part_schema())
                 })
             ),
             'board_height': Int(),

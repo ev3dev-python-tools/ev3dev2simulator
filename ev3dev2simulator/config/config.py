@@ -36,7 +36,8 @@ class Config:
         path = self.orig_path
         if self.rel_world_config_path:
             path = os.path.join(path, self.rel_world_config_path)
-        return self._load_yaml_file('robot_configurations', file_name, path)
+        robot_schema = ConfigChecker.get_robot_schema()
+        return self._load_yaml_file('robot_configurations', file_name, path, robot_schema)
 
     @staticmethod
     def _load_yaml_file(prefix: str, file_url: str, orig_path: str = None, schema=None) -> object:
