@@ -55,7 +55,7 @@ class Visualiser(_arcade.Window):
         screen_title = sim_settings['screen_settings'][
                            'screen_title'] + f'          version: {sim_version}      ev3dev2 api: {api_version}'
 
-        self.frames_per_second = sim_settings['exec_settings']['frames_per_second']
+        self.frames_per_second = int(sim_settings['exec_settings']['frames_per_second'])
         self.falling_msg = sim_settings['screen_settings']['falling_message']
         self.restart_msg = sim_settings['screen_settings']['restart_message']
 

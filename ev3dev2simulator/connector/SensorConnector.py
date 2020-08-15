@@ -21,7 +21,7 @@ class SensorConnector:
         self.client_socket = get_client_socket()
 
         self.wait_time = 0.008
-        self.frame_time = 1 / get_simulation_settings()['exec_settings']['frames_per_second']
+        self.frame_time = 1 / int(get_simulation_settings()['exec_settings']['frames_per_second'])
         self.last_request_time = 0
 
         self.value_cache = None

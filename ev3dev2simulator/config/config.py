@@ -1,8 +1,9 @@
 from pathlib import Path
 from os import listdir
 from os.path import isfile, join
-import yaml
 import os
+from ev3dev2simulator.config.ConfigChecker import ConfigChecker
+from strictyaml import load, YAMLError
 
 
 class Config:
@@ -10,10 +11,12 @@ class Config:
     Class containing simulation configuration data.
     """
 
-    def __init__(self, world_config_file_name, orig_path = None):
+    def __init__(self, world_config_file_name, orig_path=None):
         self.orig_path = orig_path
         self.rel_world_config_path = None
         self.world_config = self._load_world_config(world_config_file_name)
+        ConfigChecker.check_world_config(self.world_config)
+        self.world_config = self.world_config.data
         self.simulation_settings = self._load_yaml_file('', 'simulation_settings')
 
     def _load_world_config(self, file_name: str):
@@ -34,25 +37,24 @@ class Config:
         return self._load_yaml_file('robot_configurations', file_name, path)
 
     @staticmethod
-    def _load_yaml_file(prefix:str, file_url: str, orig_path: str = None) -> object:
+    def _load_yaml_file(prefix: str, file_url: str, orig_path: str = None, schema=None) -> object:
         """
         Load config data from the correct config yaml file. The file to load from depends on the simulation type.
         :return: the config data.
         """
-        mypath = f'{Config.get_project_root()}/{prefix}/'
-        globalFiles = [f.replace('.yaml', '') for f in listdir(mypath) if isfile(join(mypath, f))]
-        if file_url not in globalFiles:
+        my_path = f'{Config.get_project_root()}/{prefix}/'
+        global_files = [f.replace('.yaml', '') for f in listdir(my_path) if isfile(join(my_path, f))]
+        if file_url not in global_files:
             path = f'{orig_path}/{file_url}'
         else:
             path = f'{Config.get_project_root()}/{prefix}/{file_url}.yaml'
         try:
-            with open(path, 'r') as stream:
-                return yaml.safe_load(stream)
+            with open(path) as stream:
+                return load(stream.read(), schema, path)
         except FileNotFoundError:
             raise FileNotFoundError(f'The configuration {path} could not be found')
-        except yaml.YAMLError:
+        except YAMLError:
             raise RuntimeError('there are errors in the yaml file')
-
 
     @staticmethod
     def get_project_root() -> str:
@@ -69,7 +71,7 @@ production = True
 _config = None
 
 
-def load_config(world_config_file_name, orig_path = None):
+def load_config(world_config_file_name, orig_path=None):
     global _config
 
     if world_config_file_name == 'small':
@@ -81,8 +83,10 @@ def load_config(world_config_file_name, orig_path = None):
 
     return _config
 
+
 def get_robot_config(file_name):
     return _config.load_robot_config(file_name)
+
 
 def get_world_config():
     return _config.world_config
@@ -91,4 +95,4 @@ def get_world_config():
 def get_simulation_settings():
     if not _config:  # clients might need configuration as well, but do not need world settings
         load_config(None)
-    return _config.simulation_settings
+    return _config.simulation_settings.data

@@ -16,7 +16,7 @@ class Led(BodyPart):
         }
 
         dims = get_simulation_settings()['body_part_sizes']['led']
-        super().__init__(config, robot, dims['width'], dims['height'], 'led', offset_x, - 32.5)
+        super().__init__(config, robot, int(dims['width']), int(dims['height']), 'led', offset_x, - 32.5)
         self.old_texture_index = 1
 
     def setup_visuals(self, scale):

@@ -14,11 +14,11 @@ class MotorCommandProcessor:
     def __init__(self):
         cfg = get_simulation_settings()
 
-        self.distance_coasting_sub = cfg['motor_settings']['distance_coasting_subtraction']
-        self.degree_coasting_sub = cfg['motor_settings']['degree_coasting_subtraction']
+        self.distance_coasting_sub = float(cfg['motor_settings']['distance_coasting_subtraction'])
+        self.degree_coasting_sub = float(cfg['motor_settings']['degree_coasting_subtraction'])
 
-        self.frames_per_second = cfg['exec_settings']['frames_per_second']
-        self.wheel_circumference = cfg['wheel_settings']['circumference']
+        self.frames_per_second = int(cfg['exec_settings']['frames_per_second'])
+        self.wheel_circumference = float(cfg['wheel_settings']['circumference'])
 
     def process_drive_command_degrees(self, command: RotateCommand) -> Tuple[float, int, int, float]:
         """

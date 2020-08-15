@@ -9,7 +9,7 @@ class Wheel(BodyPart):
 
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['wheel']
-        super().__init__(config, robot, dims['width'], dims['height'], 'motor',
+        super().__init__(config, robot, int(dims['width']), int(dims['height']), 'motor',
                          driver_name='lego-ev3-l-motor')
 
     def setup_visuals(self, scale):

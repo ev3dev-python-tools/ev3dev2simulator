@@ -16,7 +16,7 @@ Simulator for an EV3 robot; a program using the ev3dev2 API can run both on the 
 For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
 """,
     url="https://github.com/ev3dev-python-tools/ev3dev2simulator",
-    author="Harco Kuppens",
+    author="Harco Kuppens, Sam Jansen, Niels Okker",
     author_email="h.kuppens@cs.ru.nl",
     license="MIT",
     classifiers=[
@@ -48,8 +48,8 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
     platforms=["Windows", "macOS", "Linux"],
     python_requires=">=3.6",
     install_requires=['ev3devlogging', 'arcade==2.4.1', 'pypiwin32; platform_system=="Windows"',
-                      'pyobjc;sys.platform=="darwin"', 'pyyaml', 'pymunk==5.6.0',
-                      'simpleaudio==1.0.4', 'pyttsx3==2.7', 'numpy', 'pyglet'],
+                      'pyobjc;sys.platform=="darwin"', 'pymunk==5.6.0',
+                      'simpleaudio==1.0.4', 'pyttsx3==2.7', 'numpy', 'pyglet', 'strictyaml'],
     py_modules=["bluetooth"],
     packages=find_packages(exclude=['tests', 'tests.*', '*.tests.*', ]),
     package_data={

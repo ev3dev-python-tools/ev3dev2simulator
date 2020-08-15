@@ -10,7 +10,7 @@ class Edge(BorderObstacle):
 
     def __init__(self, width, height):
         vis_config = get_simulation_settings()
-        depth = vis_config['screen_settings']['edge_spacing']
+        depth = int(vis_config['screen_settings']['edge_spacing'])
         edge_spacing = 0
         super(Edge, self).__init__(width, height, 1, depth, edge_spacing)
 

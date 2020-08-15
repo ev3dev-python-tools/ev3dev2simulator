@@ -15,7 +15,7 @@ class ClientSocket:
 
     def __init__(self):
         load_config(None)
-        port = get_simulation_settings()['exec_settings']['socket_port']
+        port = int(get_simulation_settings()['exec_settings']['socket_port'])
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect(('localhost', port))
@@ -50,7 +50,7 @@ class ClientSocket:
         obj_dict = message.serialize()
 
         jsn = json.dumps(obj_dict)
-        jsn = jsn.ljust(get_simulation_settings()['exec_settings']['message_size'], '#')
+        jsn = jsn.ljust(int(get_simulation_settings()['exec_settings']['message_size']), '#')
 
         return str.encode(jsn)
 

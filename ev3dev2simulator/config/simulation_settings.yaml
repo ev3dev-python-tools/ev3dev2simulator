@@ -77,4 +77,4 @@ motor_settings:
   degree_coasting_subtraction: 1.5
 
 wheel_settings:
-    circumference: 175.92918860
+  circumference: 175.92918860

@@ -9,7 +9,7 @@ class Arm(BodyPart):
     """
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['arm']
-        super(Arm, self).__init__(config, robot, dims['width'], dims['height'], 'arm', driver_name='lego-ev3-m-motor')
+        super(Arm, self).__init__(config, robot, int(dims['width']), int(dims['height']), 'arm', driver_name='lego-ev3-m-motor')
         self.side_bar_arm = ArmLarge()
 
     def setup_visuals(self, scale):

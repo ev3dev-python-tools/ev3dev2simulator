@@ -22,7 +22,7 @@ class ClientSocketHandler(threading.Thread):
         self.is_connected = False
         self.brick_name = brick_name
         self.robot_sim = robot_sim
-        self.message_size = get_simulation_settings()['exec_settings']['message_size']
+        self.message_size = int(get_simulation_settings()['exec_settings']['message_size'])
 
     def run(self):
         """
