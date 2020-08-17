@@ -1,5 +1,9 @@
+"""
+Module containing the class Edge, a class that describes the outer edge of the playground.
+"""
+
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.obstacle.BorderObstacle import BorderObstacle
+from ev3dev2simulator.obstacle.border_obstacle import BorderObstacle
 
 
 class Edge(BorderObstacle):
@@ -15,8 +19,14 @@ class Edge(BorderObstacle):
         super(Edge, self).__init__(width, height, 1, depth, edge_spacing)
 
     def create_shape(self, scale):
+        """
+        Creates the shape of the edge.
+        """
         self._calc_points(scale)
 
     @staticmethod
     def get_shapes():
+        """
+        Since the edge does not have a shape, but is only used for checking if the robot is out of the field, returns []
+        """
         return []

@@ -1,8 +1,13 @@
+"""
+Module lake containing the class Lake, an obstacle on the playground.
+"""
+
 import arcade
 from arcade import Shape, PointList, create_line_strip, create_ellipse_filled
 
-from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
-from ev3dev2simulator.obstacle.Hole import Hole
+from ev3dev2simulator.obstacle.color_obstacle import ColorObstacle
+from ev3dev2simulator.obstacle.hole import Hole
+from ev3dev2simulator.util.point import Point
 from ev3dev2simulator.util.util import get_circle_points, distance_between_points, to_color_code
 
 
@@ -13,8 +18,7 @@ class Lake(ColorObstacle):
     """
 
     def __init__(self,
-                 x: int,
-                 y: int,
+                 pos: Point,
                  outer_radius: float,
                  inner_radius: float,
                  color: arcade.Color,
@@ -22,8 +26,8 @@ class Lake(ColorObstacle):
                  has_hole: bool):
         super(Lake, self).__init__(to_color_code(color))
 
-        self.x = x
-        self.y = y
+        self.x = pos.x
+        self.y = pos.y
         self.border_width = border_width
 
         self.inner_radius = inner_radius
@@ -40,9 +44,15 @@ class Lake(ColorObstacle):
         self.scale = None
 
     def get_shapes(self):
+        """
+        Returns the lake shape.
+        """
         return [self.shape]
 
     def create_shape(self, scale):
+        """
+        Creates the shape of lake.
+        """
         self.scale = scale
         self.center_x = self.x * scale
         self.center_y = self.y * scale
@@ -52,17 +62,19 @@ class Lake(ColorObstacle):
 
     @classmethod
     def from_config(cls, config):
-        border_width = int(config['border_width'])
-        inner_radius = int(config['inner_radius'])
+        """
+        Creates a lakes based on the given config.
+        """
+        border_width = config['border_width']
+        inner_radius = config['inner_radius']
         outer_radius = inner_radius + border_width
 
-        x = int(config['x'])
-        y = int(config['y'])
+        pos = Point(config['x'], config['y'])
         has_hole = config['hole'] if 'hole' in config else True
 
         color = tuple(config['color'])
 
-        return cls(x, y, outer_radius, inner_radius, color, border_width, has_hole)
+        return cls(pos, outer_radius, inner_radius, color, border_width, has_hole)
 
     def _create_points(self, scale) -> PointList:
         """
@@ -88,12 +100,17 @@ class Lake(ColorObstacle):
                                      self.outer_radius * scale, self.outer_radius * scale, self.color)
 
     def _create_hole(self):
+        """
+        Create hole object in lake that is used for detection that the robot is stuck.
+        """
         return Hole(self.x, self.y, self.inner_radius)
 
     def collided_with(self, x: float, y: float) -> bool:
+        """
+        Check if the lake overlaps with a robot.
+        """
         distance = distance_between_points(self.center_x, self.center_y, x, y)
         if self.hole is not None:
             return (self.inner_radius * self.scale) < distance <\
                    ((self.outer_radius + (self.border_width/2)) * self.scale)
-        else:
-            return distance < (self.outer_radius * self.scale)
+        return distance < (self.outer_radius * self.scale)

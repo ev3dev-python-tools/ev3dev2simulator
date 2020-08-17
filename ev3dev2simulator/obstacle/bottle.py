@@ -1,6 +1,12 @@
+"""
+The module bottle contains the class Bottle, that represents a wine bottle.
+"""
+
 import arcade as _arcade
 import pymunk
 from arcade import Sprite
+
+from ev3dev2simulator.util.point import Point
 
 
 class Bottle:
@@ -9,13 +15,12 @@ class Bottle:
     """
 
     def __init__(self,
-                 x: int,
-                 y: int,
+                 pos: Point,
                  radius: float,
                  color: _arcade.Color):
 
-        self.x = x
-        self.y = y
+        self.x = pos.x
+        self.y = pos.y
         self.radius = radius
 
         # visualisation
@@ -31,26 +36,40 @@ class Bottle:
 
     @classmethod
     def from_config(cls, config):
-        x = int(config['x'])
-        y = int(config['y'])
-        radius = int(config['radius'])
+        """
+        Creates a bottle object from a config dictionary.
+        """
+        pos = Point(config['x'], config['y'])
+        radius = config['radius']
         color = config['color']
 
-        return cls(x, y, radius, color)
+        return cls(pos, radius, color)
 
     def get_sprite(self):
+        """
+        Returns the bottle sprite.
+        """
         return self.sprite
 
     def get_pos(self):
+        """
+        Returns the current position of the bottle.
+        """
         if self.new_pos_x and self.new_pos_y:
             return self.new_pos_x, self.new_pos_y
         return self.x, self.y
 
     def set_new_pos(self, pos):
+        """
+        Sets the current position of the bottle.
+        """
         self.new_pos_x = (1 / self.scale) * pos.x
         self.new_pos_y = (1 / self.scale) * pos.y
 
     def create_shape(self, scale):
+        """
+        Creates the bottle shape.
+        """
         radius = scale * self.radius
         mass = 5
         friction = 0.2
@@ -65,11 +84,17 @@ class Bottle:
         self.scale = scale
 
     def create_sprite(self, scale):
+        """
+        Create the sprite, the visuals of the bottle.
+        """
         pos_x, pos_y = self.get_pos()
         self.sprite = Sprite('assets/images/bottle.png', scale=scale * 2 * (self.radius / 948),
                              center_x=pos_x * scale, center_y=pos_y * scale)
 
     def reset(self):
+        """
+        Resets the position and velocity of the bottle.
+        """
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
         self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)

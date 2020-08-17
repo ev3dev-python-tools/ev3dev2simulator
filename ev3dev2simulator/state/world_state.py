@@ -8,14 +8,14 @@ import arcade as _arcade
 import pymunk
 from pymunk import Space
 
-from ev3dev2simulator.obstacle.Board import Board
+from ev3dev2simulator.obstacle.board import Board
 from ev3dev2simulator.state.robot_state import RobotState
 
-from ev3dev2simulator.obstacle.Border import Border
-from ev3dev2simulator.obstacle.Bottle import Bottle
-from ev3dev2simulator.obstacle.Edge import Edge
-from ev3dev2simulator.obstacle.Lake import Lake
-from ev3dev2simulator.obstacle.Rock import Rock
+from ev3dev2simulator.obstacle.border import Border
+from ev3dev2simulator.obstacle.bottle import Bottle
+from ev3dev2simulator.obstacle.edge import Edge
+from ev3dev2simulator.obstacle.lake import Lake
+from ev3dev2simulator.obstacle.rock import Rock
 
 
 class WorldState:

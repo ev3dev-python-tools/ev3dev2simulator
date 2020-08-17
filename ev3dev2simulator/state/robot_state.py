@@ -9,7 +9,7 @@ import arcade as _arcade
 import pymunk
 from pymunk.vec2d import Vec2d
 
-from ev3dev2simulator.obstacle import ColorObstacle
+from ev3dev2simulator.obstacle import color_obstacle
 from ev3dev2simulator.robotpart import body_part
 from ev3dev2simulator.robotpart.arm import Arm
 from ev3dev2simulator.robotpart.brick import Brick
@@ -242,7 +242,7 @@ class RobotState:
         """
         self.actuators[address].set_color_texture(color)
 
-    def set_color_obstacles(self, obstacles: [ColorObstacle]):
+    def set_color_obstacles(self, obstacles: [color_obstacle]):
         """
         Set the obstacles which can be detected by the color sensors of this robot.
         :param obstacles: to be detected.

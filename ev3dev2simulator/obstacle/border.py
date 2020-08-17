@@ -1,6 +1,10 @@
+"""
+The module border contains the class Border. A class representing the colored border around the playing field.
+"""
+
 import arcade as _arcade
 
-from ev3dev2simulator.obstacle.BorderObstacle import BorderObstacle
+from ev3dev2simulator.obstacle.border_obstacle import BorderObstacle
 from ev3dev2simulator.util.util import to_color_code
 
 
@@ -17,24 +21,28 @@ class Border(BorderObstacle):
         self.shapes = None
 
     def get_shapes(self):
+        """
+        Returns the border shape.
+        """
         return self.shapes
 
     @classmethod
     def from_config(cls, board_width, board_height, config):
-
+        """
+        Create a border from config.
+        """
         color = tuple(config['color'])
-        depth = int(config['depth'])
-        spacing = int(config['outer_spacing'])
+        depth = config['depth']
+        spacing = config['outer_spacing']
 
         return cls(board_width, board_height, color, depth, spacing)
 
     def create_shape(self, scale) -> [_arcade.Shape]:
-
-        self._calc_points(scale)
         """
         Create a list of shapes representing the four lines that make up this border.
         :return: a list of Arcade shapes.
         """
+        self._calc_points(scale)
         colors = [self.color for _ in range(4)]
         self.shapes = []
         for side in [self.top_points, self.right_points, self.bottom_points, self.left_points]:

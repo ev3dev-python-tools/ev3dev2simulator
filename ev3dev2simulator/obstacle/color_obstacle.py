@@ -1,3 +1,8 @@
+"""
+module color_obstacle containing the abstract class ColorObstacle.
+"""
+
+
 class ColorObstacle:
     """
     This class provides basic functionality for obstacles which can be interacted with using color sensing.
@@ -14,4 +19,8 @@ class ColorObstacle:
         :return: True if collision detected.
         """
 
-        pass
+    def get_color_code(self):
+        """
+        Returns the saved color code
+        """
+        return self.color_code

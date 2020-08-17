@@ -1,3 +1,8 @@
+"""
+Module containing the class Hole, used to detect robots driving into lakes.
+"""
+
+
 import arcade
 from arcade import PointList
 
@@ -21,6 +26,9 @@ class Hole:
         self.points = None
 
     def create_shape(self, scale):
+        """
+        Creates the shape of the hole.
+        """
         self.points = self._create_points(scale)
 
     def _create_points(self, scale) -> PointList:

@@ -1,6 +1,11 @@
+"""
+The border_obstacle module contains the class BorderObstacle
+It is a class representing any obstacle acting as a square border.
+"""
+
 import arcade as _arcade
 
-from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
+from ev3dev2simulator.obstacle.color_obstacle import ColorObstacle
 
 
 class BorderObstacle(ColorObstacle):

@@ -1,7 +1,7 @@
 import unittest
 from arcade import Window
 
-from ev3dev2simulator.obstacle.Border import Border
+from ev3dev2simulator.obstacle.border import Border
 import ev3dev2simulator.config.config as conf
 
 

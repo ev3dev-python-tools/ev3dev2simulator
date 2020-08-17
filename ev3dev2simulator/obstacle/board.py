@@ -1,12 +1,17 @@
+"""
+The module board contains the class Board, the background of the playing field.
+"""
+
+
 import arcade as _arcade
 
-from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
+from ev3dev2simulator.obstacle.color_obstacle import ColorObstacle
 from ev3dev2simulator.util.util import to_color_code
 
 
 class Board(ColorObstacle):
     """
-    This class represents a 'rock'. Rocks are rectangles.
+    This class represents a 'Board'. The background of the playing field.
     """
 
     def __init__(self,
@@ -28,9 +33,15 @@ class Board(ColorObstacle):
         self.shape = None
 
     def get_shapes(self):
+        """
+        Returns the border shape.
+        """
         return [self.shape]
 
     def create_shape(self, scale):
+        """
+        Creates the shape of the border.
+        """
         self.points = self._create_points(scale)
         self.shape = self._create_shape()
 
@@ -53,7 +64,7 @@ class Board(ColorObstacle):
 
         colors = []
 
-        for i in range(4):
+        for _ in range(4):
             colors.append(self.color)
 
         return _arcade.create_rectangles_filled_with_colors(self.points, colors)
