@@ -7,6 +7,7 @@ import time
 import tempfile
 import sys
 import platform
+from pyglet import clock
 
 
 class InstanceChecker:
@@ -49,7 +50,6 @@ class InstanceChecker:
                   and that instance detects an instance is already running. It then triggers the
                   activation for the other instance and terminates itself.
         """
-        from pyglet import clock
 
         def callback(_):
             file = open(self.pid_file, 'r')

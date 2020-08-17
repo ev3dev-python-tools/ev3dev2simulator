@@ -8,11 +8,12 @@ import arcade as _arcade
 import pymunk
 from arcade import Sprite
 
+from ev3dev2simulator.obstacle.movable_object import MovableObject
 from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.util.point import Point
 
 
-class Rock:
+class Rock(MovableObject):
     """
     This class represents a 'rock'. Rocks are rectangles.
     """
@@ -22,33 +23,12 @@ class Rock:
                  color: _arcade.Color,
                  angle: int,
                  movable: bool):
-
-        self.new_pos_y = None
-        self.new_pos_x = None
+        super().__init__(pos, color)
+        self.movable = movable
         self.new_angle = None
-        self.x = pos.x
-        self.y = pos.y
         self.width = dims.width
         self.height = dims.height
         self.angle = angle
-
-        # visualisation
-        self.color = color
-        self.sprite = None
-        self.scale = None
-
-        # physics
-        self.body = None
-        self.shape = None
-        self.movable = movable
-
-    def get_pos(self):
-        """
-        Returns the current position of the rock.
-        """
-        if self.new_pos_x and self.new_pos_y:
-            return self.new_pos_x, self.new_pos_y
-        return self.x, self.y
 
     @property
     def cur_angle(self):
@@ -80,13 +60,6 @@ class Rock:
         self.body.angle = math.radians(self.cur_angle)
         self.scale = scale
 
-    def set_new_pos(self, pos):
-        """
-        Setter that sets the latest position of the rock.
-        """
-        self.new_pos_y = (1 / self.scale) * pos.y
-        self.new_pos_x = (1 / self.scale) * pos.x
-
     def create_sprite(self, scale):
         """
         Create the sprite of the rock based on the scale.
@@ -97,15 +70,6 @@ class Rock:
         self.sprite.width = scale * self.width
         self.sprite.height = scale * self.height
         self.sprite.color = self.color
-
-    def reset(self):
-        """
-        Resets the position and the speed of the rock.
-        """
-        self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
-        self.body.angle = math.radians(self.angle)
-        self.body.velocity = (0, 0)
-        self.body.angular_velocity = 0
 
     @classmethod
     def from_config(cls, config):
