@@ -23,12 +23,11 @@ class Rock(MovableObject):
                  color: _arcade.Color,
                  angle: int,
                  movable: bool):
-        super().__init__(pos, color)
+        super().__init__(pos, angle, color)
         self.movable = movable
         self.new_angle = None
         self.width = dims.width
         self.height = dims.height
-        self.angle = angle
 
     @property
     def cur_angle(self):

@@ -321,9 +321,9 @@ class Visualiser(_arcade.Window):
     def windows_activate(self):
         """brings window to the foreground on windows machines"""
         # noinspection PyProtectedMember
-        # pylint: disable=wrong-import-position
+        # pylint: disable=import-outside-toplevel
         from pyglet.libs.win32 import _user32
         from pyglet.libs.win32.constants import SW_SHOWMINIMIZED, SW_SHOWNORMAL
         _user32.ShowWindow(self._hwnd, SW_SHOWMINIMIZED)
         _user32.ShowWindow(self._hwnd, SW_SHOWNORMAL)
-        # pylint: enable=wrong-import-position
+        # pylint: enable=import-outside-toplevel

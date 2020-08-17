@@ -15,10 +15,12 @@ class MovableObject:
     """
     def __init__(self,
                  pos: Point,
+                 angle: int,
                  color: _arcade.Color):
 
         self.x = pos.x
         self.y = pos.y
+        self.angle = angle
 
         # visualisation
         self.color = color

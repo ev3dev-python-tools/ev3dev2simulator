@@ -11,7 +11,7 @@ import os
 def main():
     """The main routine."""
     orig_path = os.getcwd()
-    # pylint: disable=wrong-import-position
+    # pylint: disable=import-outside-toplevel
     try:
         from ev3dev2simulator.simulator import simmain
     except ImportError:
@@ -26,7 +26,7 @@ def main():
         sys.path.insert(0, ev3dev2simulator_dir)
         # import main from ev3dev2simulator package
         from ev3dev2simulator.simulator import main as simmain
-    # pylint: enable=wrong-import-position
+    # pylint: enable=import-outside-toplevel
     sys.exit(simmain(orig_path))
 
 

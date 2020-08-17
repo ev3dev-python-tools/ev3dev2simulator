@@ -18,7 +18,7 @@ class Bottle(MovableObject):
                  pos: Point,
                  radius: float,
                  color: _arcade.Color):
-        super().__init__(pos, color)
+        super().__init__(pos, color, 0)
 
         self.radius = radius
 
@@ -57,4 +57,3 @@ class Bottle(MovableObject):
         pos_x, pos_y = self.get_pos()
         self.sprite = Sprite('assets/images/bottle.png', scale=scale * 2 * (self.radius / 948),
                              center_x=pos_x * scale, center_y=pos_y * scale)
-
