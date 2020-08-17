@@ -14,8 +14,8 @@ load_config(None)
 class SensorConnectorTest(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.DeviceMockPatcher = patch('ev3dev2simulator.connector.DeviceConnector.get_client_socket')
-        self.get_client_socketPatcher = patch('ev3dev2simulator.connector.SensorConnector.get_client_socket')
+        self.DeviceMockPatcher = patch('ev3dev2simulator.connector.device_connector.get_client_socket')
+        self.get_client_socketPatcher = patch('ev3dev2simulator.connector.sensor_connector.get_client_socket')
 
         self.get_device_client_socketMock = self.DeviceMockPatcher.start()
         self.get_client_socketMock = self.get_client_socketPatcher.start()

@@ -44,7 +44,7 @@ class TestClientSocket(unittest.TestCase):
         command = RotateCommand('test_port', 500.0, 100.0, 'hold')
         sock.send_command(command)
 
-        ser = sock._serialize(command)
+        ser = sock.serialize(command)
         unpadded = (b'{"type": "RotateCommand", "address": "test_port", "speed": 500.0, "distance": 100.0, '
                     b'"stop_action": "hold"}')
 
@@ -52,7 +52,7 @@ class TestClientSocket(unittest.TestCase):
         self.assertEqual(ser, expected)
 
         ser = b'{"value": 15}'
-        deser = sock._deserialize(ser)
+        deser = sock.deserialize(ser)
         self.assertEqual(deser, 15)
 
         sock.client.send(str.encode('close_test_server'))

@@ -18,7 +18,7 @@ class Bottle(MovableObject):
                  pos: Point,
                  radius: float,
                  color: _arcade.Color):
-        super().__init__(pos, color, 0)
+        super().__init__(pos, 0, color)
 
         self.radius = radius
 

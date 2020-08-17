@@ -11,8 +11,8 @@ load_config(None)
 class TestDeviceConnector(unittest.TestCase):
 
     def test_give_existing_port(self):
-        with patch('ev3dev2simulator.connector.DeviceConnector.get_client_socket') as Device_get_client_socketMock:
-            with patch('ev3dev2simulator.connector.SensorConnector.get_client_socket') as get_client_socketMock:
+        with patch('ev3dev2simulator.connector.device_connector.get_client_socket') as Device_get_client_socketMock:
+            with patch('ev3dev2simulator.connector.sensor_connector.get_client_socket') as get_client_socketMock:
                 mock_instance = MagicMock()
                 Device_get_client_socketMock.return_value = mock_instance
                 mock_instance.send_command.return_value = 'ev3-ports:in3'
@@ -21,8 +21,8 @@ class TestDeviceConnector(unittest.TestCase):
                 self.assertEqual(us.address, 'ev3-ports:in3')
 
     def test_give_non_existing_port(self):
-        with patch('ev3dev2simulator.connector.DeviceConnector.get_client_socket') as Device_get_client_socketMock:
-            with patch('ev3dev2simulator.connector.SensorConnector.get_client_socket') as get_client_socketMock:
+        with patch('ev3dev2simulator.connector.device_connector.get_client_socket') as Device_get_client_socketMock:
+            with patch('ev3dev2simulator.connector.sensor_connector.get_client_socket') as get_client_socketMock:
                 mock_instance = MagicMock()
                 Device_get_client_socketMock.return_value = mock_instance
                 mock_instance.send_command.return_value = 'dev_not_connected'
@@ -30,8 +30,8 @@ class TestDeviceConnector(unittest.TestCase):
                 self.assertRaises(DeviceNotFound, UltrasonicSensor, ev3.INPUT_1)
 
     def test_determine_connected_port(self):
-        with patch('ev3dev2simulator.connector.DeviceConnector.get_client_socket') as Device_get_client_socketMock:
-            with patch('ev3dev2simulator.connector.SensorConnector.get_client_socket') as get_client_socketMock:
+        with patch('ev3dev2simulator.connector.device_connector.get_client_socket') as Device_get_client_socketMock:
+            with patch('ev3dev2simulator.connector.sensor_connector.get_client_socket') as get_client_socketMock:
                 mock_instance = MagicMock()
                 Device_get_client_socketMock.return_value = mock_instance
                 mock_instance.send_command.return_value = 'ev3-ports:in1'
@@ -41,8 +41,8 @@ class TestDeviceConnector(unittest.TestCase):
                 self.assertEqual(us.connector.address, 'ev3-ports:in1')
 
     def test_determine_disconnected_port(self):
-        with patch('ev3dev2simulator.connector.DeviceConnector.get_client_socket') as Device_get_client_socketMock:
-            with patch('ev3dev2simulator.connector.SensorConnector.get_client_socket') as get_client_socketMock:
+        with patch('ev3dev2simulator.connector.device_connector.get_client_socket') as Device_get_client_socketMock:
+            with patch('ev3dev2simulator.connector.sensor_connector.get_client_socket') as get_client_socketMock:
                 mock_instance = MagicMock()
                 Device_get_client_socketMock.return_value = mock_instance
                 mock_instance.send_command.return_value = 'dev_not_connected'
