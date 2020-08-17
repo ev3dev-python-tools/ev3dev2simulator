@@ -31,7 +31,7 @@ jobs:
           pip install pylint
           pylint ev3dev2simulator
       - name: Test with unittest
-        uses: GabrielBB/xvfb-action@v1.2
+        uses: GabrielBB/xvfb-action@v1.0
         with:
           run: |
             python -m unittest discover .
