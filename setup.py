@@ -1,9 +1,4 @@
 from setuptools import setup, find_packages
-import os.path
-import sys
-
-from ev3dev2simulator.version import __version__ as simversion
-
 from ev3dev2simulator.version import __version__ as simversion
 
 setup(
@@ -58,7 +53,8 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
         ]},
     entry_points={
         'console_scripts': [
-            'ev3dev2simulator = ev3dev2simulator.__main__:main'
+            'ev3dev2simulator = ev3dev2simulator.__main__:main',
+            'create_ev3dev2simulator_package = scripts.create_package:main'
         ]
-    },
+    }
 )
