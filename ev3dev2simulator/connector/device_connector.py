@@ -1,6 +1,10 @@
+"""
+The module device_connector contains the class DeviceConnector, as class used to check the config.
+"""
+
 import ev3dev2
-from ev3dev2simulator.connection.ClientSocket import get_client_socket
-from ev3dev2simulator.connection.message.ConfigRequest import ConfigRequest
+from ev3dev2simulator.connection.client_socket import get_client_socket
+from ev3dev2simulator.connection.message.config_request import ConfigRequest
 
 
 class DeviceConnector:
@@ -27,3 +31,9 @@ class DeviceConnector:
                 f'Could not find device of type(s) '
                 f'{kwargs.get("driver_name")} {f"on port {self.address}" if self.address else ""}')
         return new_port
+
+    def get_class_name(self):
+        """
+        Returns the class name of the connector.
+        """
+        return self.class_name

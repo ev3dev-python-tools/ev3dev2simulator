@@ -6,8 +6,8 @@ parsing messages into jobs for a robot simulator.
 from typing import Tuple
 
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
-from ev3dev2simulator.connection.message.StopCommand import StopCommand
+from ev3dev2simulator.connection.message.rotate_command import RotateCommand
+from ev3dev2simulator.connection.message.stop_command import StopCommand
 
 
 class MotorCommandProcessor:

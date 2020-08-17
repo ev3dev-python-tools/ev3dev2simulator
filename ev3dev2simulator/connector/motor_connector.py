@@ -1,6 +1,6 @@
-from ev3dev2simulator.connection.ClientSocket import get_client_socket
-from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
-from ev3dev2simulator.connection.message.StopCommand import StopCommand
+from ev3dev2simulator.connection.client_socket import get_client_socket
+from ev3dev2simulator.connection.message.rotate_command import RotateCommand
+from ev3dev2simulator.connection.message.stop_command import StopCommand
 
 FOREVER_MOCK_SECONDS = 45
 

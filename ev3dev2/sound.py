@@ -25,7 +25,7 @@
 
 import sys
 
-from ev3dev2simulator.connector.SoundConnector import SoundConnector
+from ev3dev2simulator.connector.sound_connector import SoundConnector
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')

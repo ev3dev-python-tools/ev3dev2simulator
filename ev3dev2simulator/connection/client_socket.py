@@ -1,10 +1,16 @@
+"""
+Singleton module client_sockets contains the class ClientSocket and the function get_client_socket to get the instance.
+"""
+
 import json
 import socket
 import time
+import sys
 from typing import Any, Optional
-
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
-from ev3dev2simulator.connection.message.Command import Command
+from ev3dev2simulator.connection.message.command import Command
+
+THIS = sys.modules[__name__]
 
 
 class ClientSocket:
@@ -29,7 +35,7 @@ class ClientSocket:
         :param wait_for_response: set to True if you expect a result and want to wait for it blocking.
         """
 
-        jsn = self._serialize(command)
+        jsn = self.serialize(command)
         self.client.send(jsn)
 
         if wait_for_response:
@@ -37,10 +43,11 @@ class ClientSocket:
                 data = self.client.recv(32)
 
                 if data:
-                    return self._deserialize(data)
+                    return self.deserialize(data)
+        return None
 
     @staticmethod
-    def _serialize(message: Any) -> bytes:
+    def serialize(message: Any) -> bytes:
         """
         Serialize the given message so it can be send via a stream channel.
         :param message: to be serialized.
@@ -55,7 +62,7 @@ class ClientSocket:
         return str.encode(jsn)
 
     @staticmethod
-    def _deserialize(data: bytes) -> Any:
+    def deserialize(data: bytes) -> Any:
         """
         Deserialize the given data.
         :param data: to be deserialized.
@@ -68,11 +75,13 @@ class ClientSocket:
         return obj_dict['value']
 
 
-client_socket = None
+THIS.CLIENT_SOCKET = None
 
 
 def get_client_socket() -> ClientSocket:
-    global client_socket
-    if not client_socket:
-        client_socket = ClientSocket()
-    return client_socket
+    """
+    Functionality to make clientSocket a singleton. Creates a client if it does not exists and returns it either way.
+    """
+    if not THIS.CLIENT_SOCKET:
+        THIS.CLIENT_SOCKET = ClientSocket()
+    return THIS.CLIENT_SOCKET

@@ -1,6 +1,12 @@
-from ev3dev2simulator.connection.message.Command import Command
+"""
+The module sound_command contains the dataclass SoundCommand.
+"""
+from dataclasses import dataclass
+
+from ev3dev2simulator.connection.message.command import Command
 
 
+@dataclass
 class SoundCommand(Command):
     """
     Command send from the ev3dev2 mock to the simulator telling the robot to display the supplied message.

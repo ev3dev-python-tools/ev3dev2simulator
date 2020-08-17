@@ -1,6 +1,13 @@
-from ev3dev2simulator.connection.message.Command import Command
+"""
+The led_command module contains the dataclass LedCommand.
+"""
+
+from dataclasses import dataclass
+
+from ev3dev2simulator.connection.message.command import Command
 
 
+@dataclass
 class LedCommand(Command):
     """
     Command send from the ev3dev2 mock to the simulator telling the robot to display the supplied message.
@@ -11,6 +18,9 @@ class LedCommand(Command):
         self.brightness = brightness
 
     def get_led_id(self):
+        """
+        Returns the id of led.
+        """
         return self.address.split(':')[0]
 
     def serialize(self) -> dict:

@@ -1,3 +1,7 @@
+"""
+The config_checker module contains the class ConfigChecker. This class is ued to check the configs given to the sim.
+"""
+
 from strictyaml import Map, Str, Int, Float, CommaSeparated, Seq, Regex, Optional, Bool
 
 
@@ -9,7 +13,7 @@ class ConfigChecker:
     @staticmethod
     def check_world_config(world_config: object):
         """
-        Checks for inconsistensies in world configurations
+        Checks for inconsistencies in world configurations
         """
         for robot in world_config['robots']:
             ConfigChecker.check_robot_config(robot)
@@ -17,14 +21,14 @@ class ConfigChecker:
     @staticmethod
     def check_robot_config(robot_config: object):
         """
-        Checks for inconsistensies in world configurations
+        Checks for inconsistencies in world configurations
         """
 
     @staticmethod
     def get_robot_schema():
         """
         Getter for robot schema
-        @return: schema that is used to verify the robot yaml
+        :return: schema that is used to verify the robot yaml
         """
         return Map({
             'parts': Seq(ConfigChecker.get_robot_part_schema())
@@ -34,7 +38,7 @@ class ConfigChecker:
     def get_robot_part_schema():
         """
         Getter for robot schema
-        @return: schema that is used to verify the robot yaml
+        :return: schema that is used to verify the robot yaml
         """
         return Map({
             'name': Str(),
@@ -51,7 +55,7 @@ class ConfigChecker:
     def get_world_schema():
         """
         Getter for world schema
-        @return: schema that is used to verify the world yaml
+        :return: schema that is used to verify the world yaml
         """
         return Map({
             'robots': Seq(
@@ -92,7 +96,7 @@ class ConfigChecker:
     def get_settings_schema():
         """
         Getter for settings schema
-        @return: schema that is used to verify the settings yaml
+        :return: schema that is used to verify the settings yaml
         """
         return Map({
             'screen_settings': Map({

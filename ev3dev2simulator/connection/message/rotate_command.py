@@ -1,6 +1,12 @@
-from ev3dev2simulator.connection.message.MotorCommand import MotorCommand
+"""
+The module rotate_command contains the dataclass RotateCommand.
+"""
+from dataclasses import dataclass
+
+from ev3dev2simulator.connection.message.motor_command import MotorCommand
 
 
+@dataclass
 class RotateCommand(MotorCommand):
     """
     Command send from the ev3dev2 mock to the simulator telling the motor with the supplied address to rotate.

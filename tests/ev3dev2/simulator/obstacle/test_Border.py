@@ -8,7 +8,7 @@ import ev3dev2simulator.config.config as conf
 class BorderTest(unittest.TestCase):
 
     def test_create_border(self):
-        if conf.production:
+        if conf.PRODUCTION:
             return
         Window(width=5, height=5)
         config = {

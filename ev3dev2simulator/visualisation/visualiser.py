@@ -16,7 +16,7 @@ from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.util.instance_checker import InstanceChecker
 from ev3dev2simulator.util.point import Point
 from ev3dev2simulator.visualisation.sidebar import Sidebar
-from ev3dev2simulator.config.config import get_simulation_settings, debug
+from ev3dev2simulator.config.config import get_simulation_settings, DEBUG
 
 
 class Visualiser(_arcade.Window):
@@ -48,7 +48,7 @@ class Visualiser(_arcade.Window):
         screen_info = screen_title + f'          version: {sim_version}      ev3dev2 api: {api_version}'
 
         scale = self.determine_scale(self.size.width, self.size.height)
-        if debug:
+        if DEBUG:
             print('starting simulation with scaling', scale)
             print('arcade version: ', _arcade.version.VERSION)
 
@@ -134,7 +134,7 @@ class Visualiser(_arcade.Window):
         for robot in self.world_state.get_robots():
             robot.get_sprites().draw()
 
-            if debug:
+            if DEBUG:
                 for sprite in robot.get_sprites():
                     sprite.draw_hit_box(color=RED, line_thickness=5)
                     if robot.debug_shapes is not None:

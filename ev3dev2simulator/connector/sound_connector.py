@@ -1,17 +1,26 @@
+"""
+The module sound_connector contains the classes SimpleAudioError and SoundConnector.
+"""
+
+
 import textwrap
 from time import sleep
 from typing import Any, Optional
 import threading
-
-from ev3dev2simulator.connection.ClientSocket import get_client_socket
-from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
-# noinspection PyProtectedMember
-from simpleaudio._simpleaudio import SimpleaudioError
+import wave
 
 import simpleaudio as sa
 import pyttsx3 as tts
 import numpy as np
-import wave
+
+from ev3dev2simulator.connection.client_socket import get_client_socket
+from ev3dev2simulator.connection.message.sound_command import SoundCommand
+
+
+class SimpleaudioError(Exception):
+    """
+    Class representing an error thrown by SimpleAudio
+    """
 
 
 class SoundConnector:
@@ -41,9 +50,9 @@ class SoundConnector:
             duration = tone.get('duration', 200) / 1000.0  # defaults to 200 ms which is the default of beep
             delay = tone.get('delay', 100)  # defaults to 100 ms which is the default of beep
 
-            fs = 44100
-            t = np.linspace(0, duration, int(duration * fs), False)
-            note = np.sin(frequency * t * 2 * np.pi)
+            sampling_frequency = 44100
+            time_samples = np.linspace(0, duration, int(duration * sampling_frequency), False)
+            note = np.sin(frequency * time_samples * 2 * np.pi)
 
             audio = note * (2 ** 15 - 1) / np.max(np.abs(note))
             audio = audio.astype(np.int16)
@@ -54,7 +63,7 @@ class SoundConnector:
             if self.play_actual_sound:
                 try:
                     # Start playback
-                    play_obj = sa.play_buffer(audio, 1, 2, fs)
+                    play_obj = sa.play_buffer(audio, 1, 2, sampling_frequency)
                     play_obj.wait_done()
                 except SimpleaudioError:
                     print("An error occurred when trying to play a file. Ignoring to keep simulation running")
@@ -141,7 +150,7 @@ class SoundConnector:
             x.join()
 
     # noinspection PyUnusedLocal
-    def _tts(self, text, espeak_opts, desired_volume: int) -> None:
+    def _tts(self, text, _espeak_opts, desired_volume: int) -> None:
         duration = (len(text.split()) / 200) * 60  # based on 200 words per minute as described in the tts docs
 
         command = SoundCommand(f'Saying: ``{text}``', duration, 'speak')
@@ -153,14 +162,14 @@ class SoundConnector:
                 engine.setProperty('volume', desired_volume / 100.0)
                 engine.say(text)
                 engine.runAndWait()
-            except OSError as e:
+            except OSError as error:
                 print(textwrap.dedent('''
                                         Warning, speak could not be executed. Speak makes use of the pyttsx3 library. This requires:
                                         - Windows users to install pypiwin32, installed by: pip install pypiwin32
                                         - Linux users to install espeak, installed by: sudo apt-get install espeak
                                         - Mac users do not need to install any additional software.
                                         '''))
-                print('original exception', e)
-            except RuntimeError as e:
+                print('original exception', error)
+            except RuntimeError as error:
                 print("Warning: 'speak' called before last text-to-speech was handled")
-                print(e)
+                print(error)

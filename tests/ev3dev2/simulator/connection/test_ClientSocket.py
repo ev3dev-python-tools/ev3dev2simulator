@@ -4,7 +4,7 @@ import unittest
 
 
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
-from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
+from ev3dev2simulator.connection.message.rotate_command import RotateCommand
 
 
 class TestClientSocket(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestClientSocket(unittest.TestCase):
         server_thread.start()
 
         msg_length = get_simulation_settings()['exec_settings']['message_size']
-        from ev3dev2simulator.connection.ClientSocket import get_client_socket
+        from ev3dev2simulator.connection.client_socket import get_client_socket
         sock = get_client_socket()
 
         command = RotateCommand('test_port', 500.0, 100.0, 'hold')

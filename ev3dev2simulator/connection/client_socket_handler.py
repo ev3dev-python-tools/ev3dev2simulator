@@ -1,9 +1,13 @@
+"""
+The client_socket_handler is used to communicate with a client opened by robot code.
+"""
+
 import socket
 import threading
 from time import sleep
 
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.connection.MessageHandler import MessageHandler
+from ev3dev2simulator.connection.message_handler import MessageHandler
 from ev3dev2simulator.state.message_processor import MessageProcessor
 from ev3dev2simulator.state import robot_simulator
 

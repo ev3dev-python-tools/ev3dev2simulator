@@ -11,7 +11,7 @@ from arcade import Point, create_line
 from arcade.color import RED
 from pymunk import Space
 
-from ev3dev2simulator.config.config import get_simulation_settings, debug
+from ev3dev2simulator.config.config import get_simulation_settings, DEBUG
 from ev3dev2simulator.robotpart.body_part import BodyPart
 from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.util.util import distance_between_points
@@ -74,7 +74,7 @@ class UltrasonicSensor(BodyPart):
         :return: a floating point value representing the distance if object is viewable, else None.
         """
         x, y = self._calc_ray_cast_point(base_x, base_y)
-        if debug:
+        if DEBUG:
             line = create_line(x, y, base_x, base_y, RED, 5)
             self.robot.debug_shapes.append(line)
         query = space.segment_query_first((base_x, base_y), (x, y), 1, self.shape.filter)

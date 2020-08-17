@@ -3,10 +3,10 @@ import unittest
 
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.state.message_processor import MessageProcessor
-from ev3dev2simulator.connection.message.DataRequest import DataRequest
-from ev3dev2simulator.connection.message.LedCommand import LedCommand
-from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
-from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
+from ev3dev2simulator.connection.message.data_request import DataRequest
+from ev3dev2simulator.connection.message.led_command import LedCommand
+from ev3dev2simulator.connection.message.rotate_command import RotateCommand
+from ev3dev2simulator.connection.message.sound_command import SoundCommand
 
 from tests.ev3dev2.simulator.connection.test_ServerSocket import create_robot_sim
 

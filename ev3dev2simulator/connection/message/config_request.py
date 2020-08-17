@@ -1,6 +1,13 @@
-from ev3dev2simulator.connection.message.Command import Command
+"""
+The config_request module contains the class ConfigRequest.
+"""
+
+from dataclasses import dataclass
+
+from ev3dev2simulator.connection.message.command import Command
 
 
+@dataclass
 class ConfigRequest(Command):
     """
     ConfigRequest objects are used to request the config of a sensor to determine its port.

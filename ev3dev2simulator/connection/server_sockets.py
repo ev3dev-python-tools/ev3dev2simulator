@@ -1,9 +1,14 @@
+"""
+The server_sockets module contains the class ServerSockets, responsible for handling all sockets of the simulator.
+"""
+
+
 import socket
 import threading
 import time
 
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
+from ev3dev2simulator.connection.client_socket_handler import ClientSocketHandler
 from ev3dev2simulator.state.world_simulator import WorldSimulator
 
 
@@ -45,6 +50,9 @@ class ServerSockets(threading.Thread):
         print('Closing server')
 
     def handle_sockets(self, server):
+        """
+        Checks if sockets are connected and find first socket that is not connected.
+        """
         while True:
             for (robot_name, brick_name), sock in self.brick_sockets.items():
                 if not sock.is_connected:
@@ -53,10 +61,13 @@ class ServerSockets(threading.Thread):
             time.sleep(.1)
 
     def wait_for_brick_to_connect(self, robot_name, brick_name, sock, server):
+        """
+        Wait for a specific brick to connect.
+        """
         print(f'Please connect brick "{brick_name}" from robot "{robot_name}"')
         while True:
             try:
-                (client, address) = server.accept()
+                (client, _) = server.accept()
                 self.first_connected = True
                 print(
                     f'Connection from \"{brick_name}\" from robot \"{robot_name}\" '
@@ -80,5 +91,3 @@ class ServerSockets(threading.Thread):
         :return: boolean indicating that all sockets are disconnected
         """
         return all(map(lambda brick_socket: not brick_socket.is_connected, sockets))
-
-

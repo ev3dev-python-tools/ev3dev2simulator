@@ -1,9 +1,13 @@
+"""
+The module sensor_connector contains the class SensorConnector.
+"""
+
 import time
 from typing import Any
 
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.connection.ClientSocket import get_client_socket
-from ev3dev2simulator.connection.message.DataRequest import DataRequest
+from ev3dev2simulator.connection.client_socket import get_client_socket
+from ev3dev2simulator.connection.message.data_request import DataRequest
 
 
 class SensorConnector:
@@ -42,14 +46,14 @@ class SensorConnector:
 
         if delta > self.frame_time or self.delta_sum > self.frame_time:
             self.delta_sum = 0
-            self.value_cache = self._get_value()
+            self.value_cache = self.send_command()
 
         else:
             time.sleep(self.wait_time)
 
         return int(self.value_cache)
 
-    def _get_value(self) -> Any:
+    def send_command(self) -> Any:
         """
         Get data of the simulated sensor at the given address.
         :return: the value in any form of the sensor.

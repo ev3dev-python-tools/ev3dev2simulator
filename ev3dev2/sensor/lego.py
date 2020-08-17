@@ -26,7 +26,7 @@ import time
 
 from ev3dev2.button import ButtonBase
 from ev3dev2.sensor import Sensor
-from ev3dev2simulator.connector.SensorConnector import SensorConnector
+from ev3dev2simulator.connector.sensor_connector import SensorConnector
 from ev3dev2simulator.util.util import get_cm_multiplier, get_inch_multiplier
 
 

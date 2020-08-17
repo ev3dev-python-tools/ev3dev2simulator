@@ -16,7 +16,7 @@ from ev3dev2.motor import OUTPUT_A, OUTPUT_D, MoveDifferential, MoveTank, SpeedP
 from ev3dev2._platform.ev3 import INPUT_1, INPUT_2, INPUT_3, INPUT_4
 
 from ev3dev2simulator import __main__
-import ev3dev2simulator.connection.ClientSocket as cs
+import ev3dev2simulator.connection.client_socket as cs
 
 
 class TestConfig(unittest.TestCase):

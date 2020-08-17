@@ -23,7 +23,7 @@ from ev3dev2simulator.robotpart.wheel import Wheel
 from ev3dev2simulator.util.point import Point
 
 from ev3dev2simulator.util.util import calc_differential_steering_angle_x_y
-from ev3dev2simulator.config.config import debug, get_robot_config
+from ev3dev2simulator.config.config import DEBUG, get_robot_config
 
 
 class RobotState:
@@ -47,7 +47,7 @@ class RobotState:
         self.body = None
         self.scale = None
 
-        if debug:
+        if DEBUG:
             self.debug_shapes = []
 
         self.wheel_distance = None
