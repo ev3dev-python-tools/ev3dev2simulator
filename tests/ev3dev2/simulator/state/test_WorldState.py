@@ -1,7 +1,7 @@
 import unittest
 
 from ev3dev2simulator.config.config import load_config
-from ev3dev2simulator.state.WorldState import WorldState
+from ev3dev2simulator.state.world_state import WorldState
 
 load_config(None)
 

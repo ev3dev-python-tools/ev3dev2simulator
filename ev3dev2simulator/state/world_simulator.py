@@ -1,11 +1,18 @@
+"""
+The world simulator module contains the WoldSimulator class which simulates the world
+"""
 import math
 
-from ev3dev2simulator.state.RobotSimulator import RobotSimulator
-from ev3dev2simulator.state.WorldState import WorldState
+from ev3dev2simulator.state.robot_simulator import RobotSimulator
+from ev3dev2simulator.state.world_state import WorldState
 from ev3dev2simulator.config.config import get_simulation_settings
 
 
 class WorldSimulator:
+    """
+    The world simulator contains the robot simulators and also simulates all other objects.
+    It handles the space, the physics of all objects in the world.
+    """
     def __init__(self, world_state: WorldState):
         self.world_state = world_state
         self.robot_simulators = []
@@ -19,11 +26,17 @@ class WorldSimulator:
         self.space_step_size = float(get_simulation_settings()['exec_settings']['frames_per_second'])
 
     def request_reset(self):
+        """
+        Used to request a reset, which will be handled in the update function
+        """
         self.should_reset = True
         for robot_sim in self.robot_simulators:
             robot_sim.should_reset = True
 
     def update(self):
+        """
+        Resets the model of the world.
+        """
         if self.should_reset:
             self.world_state.reset()
             self.should_reset = False

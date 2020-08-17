@@ -4,7 +4,7 @@ import time
 
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.ClientSocketHandler import ClientSocketHandler
-from ev3dev2simulator.state.WorldSimulator import WorldSimulator
+from ev3dev2simulator.state.world_simulator import WorldSimulator
 
 
 class ServerSockets(threading.Thread):

@@ -1,3 +1,7 @@
+"""
+The arm_large module contains the class ArmLarge that simulated the arms as seen from above.
+"""
+
 import math
 
 from arcade import Sprite
@@ -9,7 +13,7 @@ from ev3dev2simulator.obstacle.ArmFloor import ArmFloor
 
 class ArmLarge(Sprite):
     """
-    Class representing the body of the simulated robotpart.
+    Class representing the arm as seen from above in the sidebar.
     """
 
     def __init__(self):
@@ -24,14 +28,23 @@ class ArmLarge(Sprite):
         self.sweep_length = 229 / 4
 
     def reset(self):
+        """
+        Reset the orientation of the arm.
+        """
         self.angle = 20
         self.rotate(0)
 
     def draw(self):
+        """
+        Draws the ground of the arm and the arm itself.
+        """
         self.side_bar_ground.shape.draw()
         super(ArmLarge, self).draw()
 
     def setup_visuals(self, x, y, width, height):
+        """
+        Setup the visuals of the robot arm and add a bottom border to it.
+        """
         self.center_x = x
         self.center_y = y
         self.rotate_x = x
@@ -43,6 +56,9 @@ class ArmLarge(Sprite):
         self.rotate(20)
 
     def init_texture(self, src, width, height):
+        """
+        Initialize the texture base on the give source and dimensions.
+        """
         texture = arcade.load_texture(src)
 
         self.textures.append(texture)

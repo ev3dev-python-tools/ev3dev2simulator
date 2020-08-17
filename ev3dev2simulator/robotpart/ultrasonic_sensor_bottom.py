@@ -1,21 +1,32 @@
+"""
+The ultrasonic_sensor_top module contains the class UltrasonicSensorBottom class.
+It represents an ultrasonic sensor that aims to the ground.
+"""
+
+
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.robotpart.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.body_part import BodyPart
+from ev3dev2simulator.util.dimensions import Dimensions
 
 
 class UltrasonicSensorBottom(BodyPart):
     """
-    Class representing an UltrasonicSensor of the simulated robotpart mounted towards the ground.
+    Class representing an UltrasonicSensor of the simulated robot mounted towards the ground.
     """
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['ultrasonic_sensor_bottom']
-        super(UltrasonicSensorBottom, self).__init__(config, robot, int(dims['width']), int(dims['height']), 'ultrasonic_sensor',
-                                                     driver_name='lego-ev3-us')
+        super(UltrasonicSensorBottom, self).__init__(config, robot, Dimensions(dims['width'], dims['height']),
+                                                     'ultrasonic_sensor', driver_name='lego-ev3-us')
 
     def setup_visuals(self, scale):
         img_cfg = get_simulation_settings()['image_paths']
         self.init_sprite(img_cfg['ultrasonic_sensor_bottom'], scale)
 
     def get_latest_value(self):
+        """
+        Gets the current distance to the ground (a fixed value) or
+        the max distance measured if there is a hole in the ground.
+        """
         return self.distance()
 
     def distance(self) -> float:
@@ -23,8 +34,8 @@ class UltrasonicSensorBottom(BodyPart):
         Get the distance in pixels between this ultrasonic sensor and an the ground.
         :return: a floating point value representing the distance.
         """
-        for o in self.sensible_obstacles:
-            if o.collided_with(self.sprite.center_x, self.sprite.center_y):
+        for obstacle in self.sensible_obstacles:
+            if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
                 return self.get_default_value()
         return 20
 

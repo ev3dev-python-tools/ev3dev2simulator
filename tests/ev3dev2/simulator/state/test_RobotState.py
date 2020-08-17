@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.config.config import load_config
-from ev3dev2simulator.state.RobotState import RobotState
+from ev3dev2simulator.state.robot_state import RobotState
 
 load_config(None)
 
@@ -198,13 +198,12 @@ class TestRobotState(unittest.TestCase):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
 
-        self.assertEqual(len(state.get_shapes()), 4 + 1 + 2 + 1)
         self.assertEqual(state.get_sensor((0, 'ev3-ports:in4')).get_ev3type(), 'ultrasonic_sensor')
-        self.assertEqual(state.get_bricks()[0].name, 'brick-left')
         self.assertEqual(len(state.get_sensors()), 1)
         self.assertEqual(state.get_anchor().name, 'brick-left')
         del state.bricks[0]
         self.assertEqual(state.get_anchor(), None)
+
 
 if __name__ == '__main__':
     unittest.main()

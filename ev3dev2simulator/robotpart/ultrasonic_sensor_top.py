@@ -1,3 +1,9 @@
+"""
+The ultrasonic_sensor_top module contains the class UltrasonicSensor class.
+It represents an ultrasonic sensor on top of a robot that aims in front of the robot.
+"""
+
+
 import math
 from typing import Optional
 
@@ -6,7 +12,8 @@ from arcade.color import RED
 from pymunk import Space
 
 from ev3dev2simulator.config.config import get_simulation_settings, debug
-from ev3dev2simulator.robotpart.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.body_part import BodyPart
+from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.util.util import distance_between_points
 
 
@@ -16,8 +23,8 @@ class UltrasonicSensor(BodyPart):
     """
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['ultrasonic_sensor_top']
-        super(UltrasonicSensor, self).__init__(config, robot, int(dims['width']), int(dims['height']), 'ultrasonic_sensor',
-                                               driver_name='lego-ev3-us')
+        super(UltrasonicSensor, self).__init__(config, robot, Dimensions(dims['width'], dims['height']),
+                                               'ultrasonic_sensor', driver_name='lego-ev3-us')
         self.sensor_half_height = 22.5
 
     def setup_visuals(self, scale):
@@ -25,6 +32,9 @@ class UltrasonicSensor(BodyPart):
         self.init_sprite(img_cfg['ultrasonic_sensor_top'], scale)
 
     def get_latest_value(self):
+        """
+        Gets the current distance to the next obstacle in front.
+        """
         return self.distance(self.shape.space)
 
     def distance(self, space: Space) -> float:
@@ -70,8 +80,7 @@ class UltrasonicSensor(BodyPart):
         query = space.segment_query_first((base_x, base_y), (x, y), 1, self.shape.filter)
         if query:
             return -self.sensor_half_height + distance_between_points(base_x, base_y, query.point.x, query.point.y)
-        else:
-            return None
+        return None
 
     def _calc_ray_cast_point(self, from_x: float, from_y: float) -> Point:
         """

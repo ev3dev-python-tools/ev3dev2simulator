@@ -1,11 +1,17 @@
+"""
+The message_processor module contains the class MessageProcessor.
+This class takes the commands given and converts them into jobs the robot simulator understands.
+"""
+
+
 from typing import Any, Tuple
 # noinspection PyProtectedMember
 from ev3dev2._platform.ev3 import LEDS
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.message.ConfigRequest import ConfigRequest
-from ev3dev2simulator.state.MotorCommandProcessor import MotorCommandProcessor
+from ev3dev2simulator.state.motor_command_processor import MotorCommandProcessor
 from ev3dev2simulator.connection.message import RotateCommand, StopCommand, SoundCommand, DataRequest, LedCommand
-from ev3dev2simulator.state import RobotSimulator
+from ev3dev2simulator.state import robot_simulator
 
 LED_COLORS = dict()
 LED_COLORS[(1, 1)] = 0  # Amber
@@ -22,7 +28,7 @@ class MessageProcessor:
     them to the RobotState.
     """
 
-    def __init__(self, brick_id: int, robot_sim: RobotSimulator):
+    def __init__(self, brick_id: int, robot_sim: robot_simulator):
         cfg = get_simulation_settings()
 
         self.brick_id = brick_id
@@ -50,7 +56,7 @@ class MessageProcessor:
 
         self.robot_sim.clear_actuator_jobs(full_address)
 
-        for i in range(frames):
+        for _ in range(frames):
             self.robot_sim.put_actuator_job(full_address, spf)
 
         self._process_coast(coast_frames, spf, motor)
@@ -67,8 +73,7 @@ class MessageProcessor:
         if motor.ev3type == 'arm':
             dpf, frames, coast_frames, run_time = self.command_processor.process_drive_command_degrees(command)
             return -dpf, frames, coast_frames, run_time
-        else:
-            return self.command_processor.process_drive_command_distance(command)
+        return self.command_processor.process_drive_command_distance(command)
 
     def process_stop_command(self, command: StopCommand) -> float:
         """
@@ -100,8 +105,7 @@ class MessageProcessor:
         if motor.ev3type == 'arm':
             dpf, frames, run_time = self.command_processor.process_stop_command_degrees(command)
             return -dpf, frames, run_time
-        else:
-            return self.command_processor.process_stop_command_distance(command)
+        return self.command_processor.process_stop_command_distance(command)
 
     def _process_coast(self, frames, ppf, motor):
         """
@@ -114,7 +118,7 @@ class MessageProcessor:
         coasting_sub = self.degree_coasting_sub if motor.ev3type == 'arm' else self.distance_coasting_sub
         og_ppf = ppf
 
-        for i in range(frames):
+        for _ in range(frames):
             if og_ppf > 0:
                 ppf = max(ppf - coasting_sub, 0)
             else:

@@ -4,8 +4,8 @@ from time import sleep
 
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.MessageHandler import MessageHandler
-from ev3dev2simulator.state.MessageProcessor import MessageProcessor
-from ev3dev2simulator.state import RobotSimulator
+from ev3dev2simulator.state.message_processor import MessageProcessor
+from ev3dev2simulator.state import robot_simulator
 
 
 class ClientSocketHandler(threading.Thread):
@@ -13,7 +13,7 @@ class ClientSocketHandler(threading.Thread):
     Class responsible for managing a socket connection from the ev3dev2 mock processes.
     """
 
-    def __init__(self, robot_sim: RobotSimulator, brick_id: int, brick_name: str):
+    def __init__(self, robot_sim: robot_simulator, brick_id: int, brick_name: str):
         threading.Thread.__init__(self)
         self.message_handler = MessageHandler(MessageProcessor(brick_id, robot_sim))
         self.client = None

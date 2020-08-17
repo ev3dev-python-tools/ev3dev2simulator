@@ -1,3 +1,8 @@
+"""
+The robot_simulator module contains the RobotSimulator class which handles how the robot behaves.
+"""
+
+
 import math
 import threading
 from queue import Queue, Empty
@@ -5,7 +10,7 @@ from typing import Any
 # noinspection PyProtectedMember
 from pymunk import Vec2d
 
-from ev3dev2simulator.state.RobotState import RobotState
+from ev3dev2simulator.state.robot_state import RobotState
 
 
 class RobotSimulator:
@@ -35,14 +40,16 @@ class RobotSimulator:
             self.load_sensor(sensor)
 
     def update(self):
+        """
+        processes the actuators and sensors of the robot and syncs the sprites to the physics.
+        """
         if self.should_reset:
             self.reset()
 
         else:
             self._process_actuators()
-            self._process_LEDs()
+            self._process_leds()
             self._process_sensors()
-            self.robot.is_stuck = self._check_fall()
             self._sync_physics_sprites()
 
         self.release_locks()
@@ -75,11 +82,17 @@ class RobotSimulator:
         return motor_jobs
 
     def clear_actuator_jobs(self, address: (int, str)):
+        """
+        Clears all current jobs of the robot
+        """
         self.motor_lock.acquire()
         self.actuator_queues[address] = Queue()
         self.motor_lock.release()
 
     def set_led_color(self, brick_id, led_id, color):
+        """
+        Since responds directly to a command, this function directly sets the led to the state of robot
+        """
         self.robot.led_colors[(brick_id, led_id)] = color
 
     def reset_queues_of_brick(self, brick_id: int):
@@ -87,7 +100,7 @@ class RobotSimulator:
         Reset queues if bricks disconnect.
         :param brick_id: identifier of brick you want to reset the queues of.
         """
-        for key, actuator_queue in self.actuator_queues.items():
+        for key in self.actuator_queues:
             if key[0] == brick_id:
                 self.clear_actuator_jobs(key)
 
@@ -96,7 +109,7 @@ class RobotSimulator:
         Reset the data of this State
         :return:
         """
-        for key, actuator_queue in self.actuator_queues.items():
+        for key in self.actuator_queues:
             self.clear_actuator_jobs(key)
 
         self.robot.reset()
@@ -142,7 +155,7 @@ class RobotSimulator:
         devices = {**self.robot.sensors, **self.robot.actuators}
         if class_name is not None and class_name == 'leds':
             return 'leds_addr'
-        elif class_name is not None and not 'driver_name' in kwargs and class_name == 'tacho-motor':
+        if class_name is not None and 'driver_name' not in kwargs and class_name == 'tacho-motor':
             kwargs['driver_name'] = 'lego-ev3-m-motor'
         if kwargs.get('driver_name') is not None:
             driver_names_pre = kwargs.get('driver_name')
@@ -187,20 +200,9 @@ class RobotSimulator:
         if left_ppf is not None or right_ppf is not None:
             self.robot.execute_movement(left_ppf, right_ppf)
 
-    def _process_LEDs(self):
+    def _process_leds(self):
         for address, led_color in self.robot.led_colors.items():
             self.robot.set_led_color(address, led_color)
-
-    def _check_fall(self) -> bool:
-        """
-        Check if the robot has fallen of the playing field or is stuck in the
-        middle of a lake. If so display a message on the screen.
-        """
-        wheels = self.robot.get_wheels()
-        for wheel in wheels:
-            if wheel.is_falling():
-                return True
-        return False
 
     def _process_sensors(self):
         """

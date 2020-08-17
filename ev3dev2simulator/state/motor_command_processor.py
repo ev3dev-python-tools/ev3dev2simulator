@@ -1,3 +1,8 @@
+"""
+The motor_command_processor module contains the MotorCommandProcessor class which helps the MessageProcessor with
+parsing messages into jobs for a robot simulator.
+"""
+
 from typing import Tuple
 
 from ev3dev2simulator.config.config import get_simulation_settings

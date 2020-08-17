@@ -1,5 +1,11 @@
+"""
+The color_sensor module contains the class ColorSensor class which represents an ev3dev light sensor.
+"""
+
+
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.robotpart.BodyPart import BodyPart
+from ev3dev2simulator.robotpart.body_part import BodyPart
+from ev3dev2simulator.util.dimensions import Dimensions
 
 COLORS = dict()
 COLORS[0] = 0  # set black for no color
@@ -13,12 +19,13 @@ COLORS[6] = 4
 
 class ColorSensor(BodyPart):
     """
-    Class representing a ColorSensor of the simulated robotpart.
+    Class representing a ColorSensor of the simulated robot.
     """
 
     def __init__(self, config, robot):
         dims = get_simulation_settings()['body_part_sizes']['color_sensor']
-        super().__init__(config, robot, int(dims['width']), int(dims['height']), 'color_sensor', driver_name='lego-ev3-color')
+        super().__init__(config, robot, Dimensions(dims['width'], dims['height']),
+                         'color_sensor', driver_name='lego-ev3-color')
         self.old_texture_index = 0
 
     def setup_visuals(self, scale):
@@ -27,6 +34,9 @@ class ColorSensor(BodyPart):
         self.init_sprite_with_list(src_list, scale)
 
     def get_latest_value(self):
+        """
+        Return the current color sensor below the color sensor.
+        """
         latest_data = self.get_sensed_color()
         self.set_color_texture(latest_data)
         return latest_data
@@ -37,9 +47,9 @@ class ColorSensor(BodyPart):
         :return: integer value representing the color.
         """
 
-        for o in self.sensible_obstacles:
-            if o.collided_with(self.sprite.center_x, self.sprite.center_y):
-                return o.color_code
+        for obstacle in self.sensible_obstacles:
+            if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
+                return obstacle.color_code
 
         return self.get_default_value()
 
@@ -51,6 +61,9 @@ class ColorSensor(BodyPart):
         return 0
 
     def set_color_texture(self, color):
+        """
+        Set the color texture of the center of the color sensor.
+        """
         converted = COLORS[color]
         if self.old_texture_index != converted:
             self.old_texture_index = converted

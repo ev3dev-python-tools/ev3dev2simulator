@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ev3dev2simulator.config.config import load_config
-from ev3dev2simulator.state.WorldSimulator import WorldSimulator
+from ev3dev2simulator.state.world_simulator import WorldSimulator
 
 load_config(None)
 

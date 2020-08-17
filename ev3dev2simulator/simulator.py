@@ -10,8 +10,8 @@ import os
 from ev3dev2simulator.config.config import load_config, get_world_config
 from ev3dev2simulator.visualisation.visualiser import Visualiser
 from ev3dev2simulator.connection.ServerSockets import ServerSockets
-from ev3dev2simulator.state.WorldSimulator import WorldSimulator
-from ev3dev2simulator.state.WorldState import WorldState
+from ev3dev2simulator.state.world_simulator import WorldSimulator
+from ev3dev2simulator.state.world_state import WorldState
 
 
 def parse_args(args):

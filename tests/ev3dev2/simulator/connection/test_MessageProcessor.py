@@ -2,7 +2,7 @@ import threading
 import unittest
 
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
-from ev3dev2simulator.state.MessageProcessor import MessageProcessor
+from ev3dev2simulator.state.message_processor import MessageProcessor
 from ev3dev2simulator.connection.message.DataRequest import DataRequest
 from ev3dev2simulator.connection.message.LedCommand import LedCommand
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand

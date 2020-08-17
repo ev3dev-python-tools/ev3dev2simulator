@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from pymunk import Space
 
 from ev3dev2simulator.config.config import load_config
-from ev3dev2simulator.robotpart.UltrasonicSensorTop import UltrasonicSensor
+from ev3dev2simulator.robotpart.ultrasonic_sensor_top import UltrasonicSensor
 
 load_config(None)
 

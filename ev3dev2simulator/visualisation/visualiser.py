@@ -11,7 +11,7 @@ import pyglet
 
 from arcade.color import RED
 
-from ev3dev2simulator.state import WorldState
+from ev3dev2simulator.state import world_state
 from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.util.instance_checker import InstanceChecker
 from ev3dev2simulator.util.point import Point
@@ -25,7 +25,7 @@ class Visualiser(_arcade.Window):
     This class extends from arcade.Window and manages the updates and rendering of the simulator window.
     """
 
-    def __init__(self, update_world_cb, world_state: WorldState, show_fullscreen: bool,
+    def __init__(self, update_world_cb, world_state: world_state, show_fullscreen: bool,
                  show_maximized: bool, use_second_screen_to_show_simulator: bool):
 
         instance_checker = InstanceChecker(self)
@@ -142,7 +142,7 @@ class Visualiser(_arcade.Window):
                             shape.draw()
                     robot.debug_shapes.clear()
 
-            if robot.is_stuck and self.msg_counter <= 0:
+            if robot.is_falling() and self.msg_counter <= 0:
                 self.msg_counter = get_simulation_settings()['exec_settings']['frames_per_second'] * 3
 
         for robot in self.world_state.get_robots():

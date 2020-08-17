@@ -3,7 +3,7 @@ from logging import warning
 from typing import Any
 
 from ev3dev2simulator.connection.message.ConfigRequest import ConfigRequest
-from ev3dev2simulator.state import MessageProcessor
+from ev3dev2simulator.state import message_processor
 from ev3dev2simulator.connection.message.DataRequest import DataRequest
 from ev3dev2simulator.connection.message.LedCommand import LedCommand
 from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
@@ -13,7 +13,7 @@ from ev3dev2simulator.connection.message.StopCommand import StopCommand
 
 class MessageHandler:
 
-    def __init__(self, message_processor: MessageProcessor):
+    def __init__(self, message_processor: message_processor):
         self.message_processor = message_processor
 
     def process(self, data: bytes) -> bytes:

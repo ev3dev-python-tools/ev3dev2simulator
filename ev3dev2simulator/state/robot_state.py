@@ -1,3 +1,8 @@
+"""
+The robot state contains the RobotState class that handles the state of robot.
+This class can be seen as a snapshot of the robot at some point in time.
+"""
+
 import math
 
 import arcade as _arcade
@@ -5,19 +10,21 @@ import pymunk
 from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.obstacle import ColorObstacle
-from ev3dev2simulator.robotpart import BodyPart
-from ev3dev2simulator.robotpart.Arm import Arm
-from ev3dev2simulator.robotpart.Brick import Brick
-from ev3dev2simulator.robotpart.ColorSensor import ColorSensor
-from ev3dev2simulator.robotpart.Led import Led
-from ev3dev2simulator.robotpart.Speaker import Speaker
-from ev3dev2simulator.robotpart.TouchSensor import TouchSensor
-from ev3dev2simulator.robotpart.UltrasonicSensorBottom import UltrasonicSensorBottom
-from ev3dev2simulator.robotpart.UltrasonicSensorTop import UltrasonicSensor
-from ev3dev2simulator.robotpart.Wheel import Wheel
+from ev3dev2simulator.robotpart import body_part
+from ev3dev2simulator.robotpart.arm import Arm
+from ev3dev2simulator.robotpart.brick import Brick
+from ev3dev2simulator.robotpart.color_sensor import ColorSensor
+from ev3dev2simulator.robotpart.led import Led
+from ev3dev2simulator.robotpart.speaker import Speaker
+from ev3dev2simulator.robotpart.touch_sensor import TouchSensor
+from ev3dev2simulator.robotpart.ultrasonic_sensor_bottom import UltrasonicSensorBottom
+from ev3dev2simulator.robotpart.ultrasonic_sensor_top import UltrasonicSensor
+from ev3dev2simulator.robotpart.wheel import Wheel
+from ev3dev2simulator.util.point import Point
 
 from ev3dev2simulator.util.util import calc_differential_steering_angle_x_y
 from ev3dev2simulator.config.config import debug, get_robot_config
+
 
 class RobotState:
     """
@@ -35,31 +42,39 @@ class RobotState:
         self.led_colors = {}
         self.bricks = []
         self.sounds = {}
+        self.config = config
 
         self.body = None
-        self.shapes = []
         self.scale = None
 
         if debug:
             self.debug_shapes = []
 
-        self.x = float(config['center_x'])
-        self.y = float(config['center_y']) + 22.5
-
         self.wheel_distance = None
-        self.last_pos_x = None
-        self.last_pos_y = None
-
-        try:
-            self.orig_orientation = int(config['orientation'])
-        except KeyError:
-            self.orig_orientation = 0
+        self.last_pos = None
+        self.last_angle = None
 
         self.name = config['name']
-        self.is_stuck = False
 
         parts = get_robot_config(config['type'])['parts'] if 'type' in config else config['parts']
+        self.parts = []
+        self.add_parts(parts)
 
+    def is_falling(self):
+        """
+        Check if the robot has fallen of the playing field or is stuck in the
+        middle of a lake. If so display a message on the screen.
+        """
+        wheels = self.get_wheels()
+        for wheel in wheels:
+            if wheel.is_falling():
+                return True
+        return False
+
+    def add_parts(self, parts):
+        """
+        Adds the parts from the configuration to the robot.
+        """
         for part in parts:
             if part['type'] == 'brick':
                 brick = Brick(part, self)
@@ -100,37 +115,62 @@ class RobotState:
             else:
                 print("Unknown robot part in config")
 
-        self.parts = []
         self.parts.extend(list(self.get_wheels()))
         self.parts.extend(list(self.sensors.values()))
         self.parts.extend(self.bricks)
         self.parts.extend(filter(lambda act: act.get_ev3type() != 'motor', list(self.actuators.values())))
 
     def set_last_pos(self, pos):
-        self.last_pos_x = pos.x * (1 / self.scale)
-        self.last_pos_y = pos.y * (1 / self.scale)
+        """
+        Updates the last pos as the given position multiplied by the inverse of the scale.
+        """
+        self.last_pos = Point(pos.x * (1 / self.scale), pos.y * (1 / self.scale))
+
+    def _get_orig_orientation(self):
+        """
+        Get the orientation of the robot as specified in the robot configuration file
+        """
+        try:
+            return int(self.config['orientation'])
+        except KeyError:
+            return 0
+
+    def _get_orig_position(self) -> Point:
+        """
+        Get the position of the robot as specified in the robot configuration file
+        """
+        return Point(float(self.config['center_x']), float(self.config['center_y']) + 22.5)
 
     def reset(self):
+        """
+        Resets the robot to its original position, and resets the all measurements.
+        """
         self.values.clear()
-        self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
-        self.body.angle = math.radians(self.orig_orientation)
+        orig_pos = self._get_orig_position()
+        self.body.position = pymunk.Vec2d(orig_pos.x * self.scale, orig_pos.y * self.scale)
+        self.body.angle = math.radians(self._get_orig_orientation())
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
         for obj in self.side_bar_sprites:
             obj.reset()
 
     def setup_pymunk_shapes(self, scale):
+        """
+        Creates the body of the robot and adds the shapes of all robot parts.
+        """
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
         self.body = pymunk.Body(20, moment)
-        if self.last_pos_x and self.last_pos_y:
-            self.body.position = pymunk.Vec2d(self.last_pos_x * scale, self.last_pos_y * scale)
+        if self.last_pos:
+            self.body.position = pymunk.Vec2d(self.last_pos.x * scale, self.last_pos.y * scale)
         else:
-            self.body.position = pymunk.Vec2d(self.x * scale, self.y * scale)
+            orig_pos = self._get_orig_position()
+            self.body.position = pymunk.Vec2d(orig_pos.x * scale, orig_pos.y * scale)
 
+        shapes = []
         for part in self.parts:
             part.setup_pymunk_shape(scale, self.body)
-            self.shapes.append(part.shape)
+            shapes.append(part.shape)
 
         wheels = self.get_wheels()
         if len(wheels) == 2:
@@ -140,14 +180,18 @@ class RobotState:
         else:
             raise RuntimeError('Currently cannot have anything other than 2 wheels')
 
-        if hasattr(self, 'last_angle'):
+        if self.last_angle:
             self._rotate(math.radians(self.last_angle))
-        elif self.orig_orientation != 0:
-            self._rotate(math.radians(self.orig_orientation))
+        elif self._get_orig_orientation() != 0:
+            self._rotate(math.radians(self._get_orig_orientation()))
 
         self.scale = scale
+        return shapes
 
     def setup_visuals(self, scale):
+        """
+        Creates the sprite list based on all the parts of the robot.
+        """
         for part in self.parts:
             part.setup_visuals(scale)
             self.sprite_list.append(part.sprite)
@@ -193,6 +237,9 @@ class RobotState:
         self.actuators[address].rotate_arm(dfp)
 
     def set_led_color(self, address, color):
+        """
+        Sets the led texture of the led behind address to color
+        """
         self.actuators[address].set_color_texture(color)
 
     def set_color_obstacles(self, obstacles: [ColorObstacle]):
@@ -217,22 +264,34 @@ class RobotState:
             if isinstance(part, UltrasonicSensorBottom):
                 part.set_sensible_obstacles(obstacles)
 
-    def get_shapes(self):
-        return self.shapes
-
     def get_sensor(self, address):
+        """
+        Gets the sensor based on its ev3dev address.
+        """
         return self.sensors.get(address)
 
     def get_actuators(self):
+        """
+         Gets all actuators of the robot in a list.
+         """
         return self.actuators.values()
 
     def get_actuator(self, address):
+        """
+         Gets an actuator based on its ev3dev address.
+         """
         return self.actuators[address]
 
     def get_value(self, address):
+        """
+         Gets value of a sensor based on the ev3dev address of the sensor.
+         """
         return self.values[address]
 
     def get_wheels(self):
+        """
+        Gets all wheels of the robot.
+        """
         wheels = []
         for part in self.actuators.values():
             if part.get_ev3type() == 'motor':
@@ -240,15 +299,27 @@ class RobotState:
         return wheels
 
     def get_sprites(self) -> _arcade.SpriteList:
+        """
+        Gets the sprite list that has all robot part sprites in it.
+        """
         return self.sprite_list
 
     def get_bricks(self):
+        """
+        Gets the bricks of the robot
+        """
         return self.bricks
 
-    def get_sensors(self) -> [BodyPart]:
+    def get_sensors(self) -> [body_part]:
+        """
+        Gets all sensors of the robot.
+        """
         return self.sensors.values()
 
-    def get_anchor(self) -> BodyPart:
+    def get_anchor(self) -> body_part:
+        """
+        Get the anchor of the robot, which is the first brick connected.
+        """
         if len(self.bricks) != 0:
             return self.bricks[0]
         return None
