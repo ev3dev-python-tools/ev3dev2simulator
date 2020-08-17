@@ -11,12 +11,14 @@ import pyglet
 
 from arcade.color import RED
 
-from ev3dev2simulator.state import world_state
+from ev3dev2simulator.state.world_state import WorldState
 from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.util.instance_checker import InstanceChecker
 from ev3dev2simulator.util.point import Point
 from ev3dev2simulator.visualisation.sidebar import Sidebar
 from ev3dev2simulator.config.config import get_simulation_settings, DEBUG
+from ev3dev2simulator.version import __version__ as sim_version
+from ev3dev2.version import __version__ as api_version
 
 
 class Visualiser(_arcade.Window):
@@ -25,7 +27,7 @@ class Visualiser(_arcade.Window):
     This class extends from arcade.Window and manages the updates and rendering of the simulator window.
     """
 
-    def __init__(self, update_world_cb, world_state: world_state, show_fullscreen: bool,
+    def __init__(self, update_world_cb, world_state: WorldState, show_fullscreen: bool,
                  show_maximized: bool, use_second_screen_to_show_simulator: bool):
 
         instance_checker = InstanceChecker(self)
@@ -42,8 +44,6 @@ class Visualiser(_arcade.Window):
 
         self.msg_counter = 0
 
-        from ev3dev2.version import __version__ as api_version
-        from ev3dev2simulator.version import __version__ as sim_version
         screen_title = get_simulation_settings()['screen_settings']['screen_title']
         screen_info = screen_title + f'          version: {sim_version}      ev3dev2 api: {api_version}'
 

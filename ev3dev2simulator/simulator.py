@@ -12,6 +12,8 @@ from ev3dev2simulator.visualisation.visualiser import Visualiser
 from ev3dev2simulator.connection.server_sockets import ServerSockets
 from ev3dev2simulator.state.world_simulator import WorldSimulator
 from ev3dev2simulator.state.world_state import WorldState
+from ev3dev2simulator import version as sim_version
+from ev3dev2 import version as api_version
 
 
 def parse_args(args):
@@ -48,8 +50,6 @@ def main(orig_path):
     args = vars(parse_args(sys.argv[1:]))
 
     if args['version']:
-        from ev3dev2 import version as api_version
-        from ev3dev2simulator import version as sim_version
         print("version ev3dev2           : " + api_version.__version__)
         print("version ev3dev2simulator  : " + sim_version.__version__)
         sys.exit(0)
