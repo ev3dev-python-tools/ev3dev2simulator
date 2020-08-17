@@ -4,7 +4,7 @@ import unittest
 from io import StringIO
 from contextlib import contextmanager
 
-import ev3dev2simulator.Simulator as Simulator
+import ev3dev2simulator.simulator as Simulator
 from unittest.mock import patch, Mock, MagicMock
 
 

@@ -1,3 +1,7 @@
+"""
+Module containing various utility function, mostly concerning mathematical 2D calculations.
+"""
+
 import math
 from typing import Tuple
 
@@ -36,36 +40,37 @@ def get_circle_points(center_x: float,
     return points
 
 
-def distance_between_points(x1: float, y1: float, x2: float, y2: float) -> float:
+def distance_between_points(x_of_point1: float, y_of_point1: float, x_of_point2: float, y_of_point2: float) -> float:
     """
     Calculate the distance between two points in 2D space.
-    :param x1: coordinate of point 1
-    :param y1: coordinate of point 1
-    :param x2: coordinate of point 2
-    :param y2: coordinate of point 2
+    :param x_of_point1: coordinate of point 1
+    :param y_of_point1: coordinate of point 1
+    :param x_of_point2: coordinate of point 2
+    :param y_of_point2: coordinate of point 2
     :return: a floating point value representing the distance.
     """
 
-    return math.hypot(x2 - x1, y2 - y1)
+    return math.hypot(x_of_point2 - x_of_point1, y_of_point2 - y_of_point1)
 
 
-def calc_differential_steering_angle_x_y(b: int, dl: float, dr: float, o: float) -> Tuple[float, float, float]:
+def calc_differential_steering_angle_x_y(wheel_space: int, left_displacement: float,
+                                         right_displacement: float, orientation: float) -> Tuple[float, float, float]:
     """
     Calculate the next orientation, x and y values of a two-wheel
     propelled object based on the differential steering principle.
 
-    :param b: the distance between the two wheels.
-    :param dl: linear displacement of the left motor in pixels.
-    :param dr: linear displacement of the right motor in pixels.
-    :param o: current orientation of the object in radians.
+    :param wheel_space: the distance between the two wheels.
+    :param left_displacement: linear displacement of the left motor in pixels.
+    :param right_displacement: linear displacement of the right motor in pixels.
+    :param orientation: current orientation of the object in radians.
     :return: the new orientation in degrees and the new x and y values in pixels.
     """
 
-    dc = (dr + dl) / 2
-    diff_angle = (dr - dl) / b
+    center_displacement = (right_displacement + left_displacement) / 2
+    diff_angle = (right_displacement - left_displacement) / wheel_space
 
-    diff_x = dc * math.cos(diff_angle + o)
-    diff_y = dc * math.sin(diff_angle + o)
+    diff_x = center_displacement * math.cos(diff_angle + orientation)
+    diff_y = center_displacement * math.sin(diff_angle + orientation)
 
     return diff_angle, diff_x, diff_y
 
@@ -89,6 +94,9 @@ def get_inch_multiplier() -> float:
 
 
 def to_color_code(color: _arcade.Color) -> int:
+    """
+    Convert rgb tuple to ev3dev color
+    """
     switcher = {
         (59, 60, 54): 1,  # Black
         (58, 166, 221): 2,  # Blue

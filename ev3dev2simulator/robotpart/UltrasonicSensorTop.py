@@ -7,7 +7,7 @@ from pymunk import Space
 
 from ev3dev2simulator.config.config import get_simulation_settings, debug
 from ev3dev2simulator.robotpart.BodyPart import BodyPart
-from ev3dev2simulator.util.Util import distance_between_points
+from ev3dev2simulator.util.util import distance_between_points
 
 
 class UltrasonicSensor(BodyPart):

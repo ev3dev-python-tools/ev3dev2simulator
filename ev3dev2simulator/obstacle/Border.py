@@ -1,7 +1,7 @@
 import arcade as _arcade
 
 from ev3dev2simulator.obstacle.BorderObstacle import BorderObstacle
-from ev3dev2simulator.util.Util import to_color_code
+from ev3dev2simulator.util.util import to_color_code
 
 
 class Border(BorderObstacle):

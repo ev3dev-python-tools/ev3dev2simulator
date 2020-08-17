@@ -1,7 +1,7 @@
 import arcade
 from arcade import PointList
 
-from ev3dev2simulator.util.Util import get_circle_points
+from ev3dev2simulator.util.util import get_circle_points
 
 
 class Hole:

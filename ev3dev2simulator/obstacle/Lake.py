@@ -3,7 +3,7 @@ from arcade import Shape, PointList, create_line_strip, create_ellipse_filled
 
 from ev3dev2simulator.obstacle.ColorObstacle import ColorObstacle
 from ev3dev2simulator.obstacle.Hole import Hole
-from ev3dev2simulator.util.Util import get_circle_points, distance_between_points, to_color_code
+from ev3dev2simulator.util.util import get_circle_points, distance_between_points, to_color_code
 
 
 class Lake(ColorObstacle):

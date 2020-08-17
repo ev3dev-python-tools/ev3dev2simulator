@@ -16,11 +16,8 @@ from ev3dev2simulator.robotpart.UltrasonicSensorBottom import UltrasonicSensorBo
 from ev3dev2simulator.robotpart.UltrasonicSensorTop import UltrasonicSensor
 from ev3dev2simulator.robotpart.Wheel import Wheel
 
-from ev3dev2simulator.util.Util import calc_differential_steering_angle_x_y
+from ev3dev2simulator.util.util import calc_differential_steering_angle_x_y
 from ev3dev2simulator.config.config import debug, get_robot_config
-
-from ev3dev2simulator.visualisation.RobotPartSprite import RobotPartSprite
-
 
 class RobotState:
     """

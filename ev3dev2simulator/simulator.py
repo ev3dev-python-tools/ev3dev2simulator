@@ -1,15 +1,14 @@
+"""
+Main module of the ev3dev2simulator. Starts the server thread listening for incoming connections and
+starts the simulator itself. The simulator and server threads are started based on the arguments given.
+"""
+
 import argparse
 import sys
 import os
 
-if __name__ == '__main__':
-    orig_path = os.getcwd()
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    os.chdir(script_dir)
-
 from ev3dev2simulator.config.config import load_config, get_world_config
-from ev3dev2simulator.state import WorldState
-from ev3dev2simulator.visualisation.Visualiser import Visualiser, start
+from ev3dev2simulator.visualisation.visualiser import Visualiser
 from ev3dev2simulator.connection.ServerSockets import ServerSockets
 from ev3dev2simulator.state.WorldSimulator import WorldSimulator
 from ev3dev2simulator.state.WorldState import WorldState
@@ -65,15 +64,18 @@ def main(orig_path):
 
     world_simulator = WorldSimulator(world_state)
 
-    Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
-               use_second_screen_to_show_simulator)
+    visualiser = Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
+                            use_second_screen_to_show_simulator)
 
     server_thread = ServerSockets(world_simulator)
     server_thread.setDaemon(True)
     server_thread.start()
 
-    start()
+    visualiser.run()
 
 
 if __name__ == '__main__':
-    main(orig_path)
+    _ORIG_PATH = os.getcwd()
+    SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(SCRIPT_DIR)
+    main(_ORIG_PATH)

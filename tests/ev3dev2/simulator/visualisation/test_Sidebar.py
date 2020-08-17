@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ev3dev2simulator.state.RobotState import RobotState
-from ev3dev2simulator.visualisation.Sidebar import Sidebar
+from ev3dev2simulator.visualisation.sidebar import Sidebar
 from tests.ev3dev2.simulator.state.test_RobotState import TestRobotState
 
 class MyTestCase(unittest.TestCase):

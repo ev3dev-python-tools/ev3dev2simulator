@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 from pathlib import Path
 import ev3dev2simulator.config.config as conf
-from ev3dev2simulator.visualisation.Visualiser import Visualiser
+from ev3dev2simulator.visualisation.visualiser import Visualiser
 
 conf.load_config(None)
 

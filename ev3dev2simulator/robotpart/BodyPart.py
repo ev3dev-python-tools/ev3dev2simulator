@@ -1,6 +1,6 @@
 import pymunk
 
-from ev3dev2simulator.visualisation.RobotPartSprite import RobotPartSprite
+from ev3dev2simulator.visualisation.robot_part_sprite import RobotPartSprite
 
 # Default friction used for sprites, unless otherwise specified
 DEFAULT_FRICTION = 0.2
@@ -60,7 +60,7 @@ class BodyPart:
         self.shape.mass = DEFAULT_MASS
 
     def init_sprite_with_list(self, src_list, scale, start_sprite=0):
-        self.sprite = RobotPartSprite(src_list, start_sprite, self.width_mm, self.height_mm, scale=scale)
+        self.sprite = RobotPartSprite(src_list, start_sprite, self.width_mm, scale=scale)
 
     def init_sprite(self, src, scale):
         self.init_sprite_with_list([src], scale)
