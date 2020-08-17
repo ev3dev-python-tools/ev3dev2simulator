@@ -1,3 +1,7 @@
+"""
+the module motor_connector contains the class MotorConnector.
+"""
+
 from ev3dev2simulator.connection.client_socket import get_client_socket
 from ev3dev2simulator.connection.message.rotate_command import RotateCommand
 from ev3dev2simulator.connection.message.stop_command import StopCommand

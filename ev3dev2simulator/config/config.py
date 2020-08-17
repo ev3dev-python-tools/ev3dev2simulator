@@ -92,7 +92,7 @@ def load_config(world_config_file_name, orig_path=None):
     elif world_config_file_name == 'large':
         world_config_file_name = 'config_large'
 
-    _config = Config(world_config_file_name, orig_path)
+    THIS.CONFIG = Config(world_config_file_name, orig_path)
 
     return THIS.CONFIG
 

@@ -13,6 +13,10 @@ class StopCommand(MotorCommand):
     This command also includes the current speed of the motor in degrees per second and a stop action, determining
     how the motor should stop. This can be 'hold', 'break' or 'coast'.
     """
+    # NOTE: error with pylint
+    # pylint: disable=useless-super-delegation
+    def __init__(self, address, speed, stop_action):
+        super().__init__(address, speed, stop_action)
 
     def serialize(self) -> dict:
         return {

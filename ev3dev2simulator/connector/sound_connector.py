@@ -9,9 +9,9 @@ from typing import Any, Optional
 import threading
 import wave
 
-import simpleaudio as sa
 import pyttsx3 as tts
 import numpy as np
+import simpleaudio as sa
 
 from ev3dev2simulator.connection.client_socket import get_client_socket
 from ev3dev2simulator.connection.message.sound_command import SoundCommand
