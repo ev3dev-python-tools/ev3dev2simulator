@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock
 
-from ev3dev2simulator.state.RobotSimulator import RobotSimulator
-from ev3dev2simulator.state.RobotState import RobotState
+from ev3dev2simulator.state.robot_simulator import RobotSimulator
+from ev3dev2simulator.state.robot_state import RobotState
 from tests.ev3dev2.simulator.state.test_RobotState import TestRobotState
 
 

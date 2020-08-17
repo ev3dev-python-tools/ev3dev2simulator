@@ -1,7 +1,7 @@
 import socket
 
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.connection.ClientSocket import get_client_socket
+from ev3dev2simulator.connection.client_socket import get_client_socket
 
 RFCOMM = 0
 

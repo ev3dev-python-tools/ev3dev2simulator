@@ -1,12 +1,19 @@
+"""
+Main file of the ev3dev2simulator. Used when the ev3dev2simulator module is run.
+The main goal of the main function is to change the working directory to the simulator source code directory.
+This helps with loading all the assets used in visualisation.
+"""
+
 import sys
 import os
 
-# noinspection PyUnusedLocal
-def main(args=None):
+
+def main():
     """The main routine."""
     orig_path = os.getcwd()
+    # pylint: disable=import-outside-toplevel
     try:
-        from ev3dev2simulator.Simulator import simmain
+        from ev3dev2simulator.simulator import simmain
     except ImportError:
         # below HACK not needed if ev3dev2simulator installed on PYTHONPATH
         # note: run as 'python3 <path-to-package-dir>'
@@ -18,8 +25,8 @@ def main(args=None):
         ev3dev2simulator_dir = os.path.dirname(script_dir)
         sys.path.insert(0, ev3dev2simulator_dir)
         # import main from ev3dev2simulator package
-        from ev3dev2simulator.Simulator import main as simmain
-
+        from ev3dev2simulator.simulator import main as simmain
+    # pylint: enable=import-outside-toplevel
     sys.exit(simmain(orig_path))
 
 

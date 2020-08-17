@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 from pymunk.vec2d import Vec2d
 
 from ev3dev2simulator.config.config import load_config
-from ev3dev2simulator.state.RobotState import RobotState
+from ev3dev2simulator.state.robot_state import RobotState
 
 load_config(None)
 
@@ -62,7 +62,7 @@ class TestRobotState(unittest.TestCase):
                 }
 
     def test_load_robot_config(self):
-        with patch('ev3dev2simulator.state.RobotState.get_robot_config') as get_robot_config_mock:
+        with patch('ev3dev2simulator.state.robot_state.get_robot_config') as get_robot_config_mock:
             get_robot_config_mock.return_value = {
                 'parts': [
                     {
@@ -92,7 +92,6 @@ class TestRobotState(unittest.TestCase):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
         self.assertEqual(state.wheel_distance, 120)
-        self.assertEqual(len(state.shapes), 4 + 1 + 2 + 1)  # 4 sensors/actuators + 1 brick + 2 leds + 1 speaker
         self.assertEqual(state.body.angle, pi)
 
         config_with_one_wheel = self.default_config().copy()
@@ -110,8 +109,8 @@ class TestRobotState(unittest.TestCase):
         for arm in state.side_bar_sprites:
             arm.rotate_x = 0  # this is set in setup visuals
             arm.rotate_y = 0  # this is set in setup visuals
-        x = state.x * state.scale
-        y = state.y * state.scale
+        x = state._get_orig_position().x * state.scale
+        y = state._get_orig_position().y * state.scale
         state.body.position = Vec2d(5, 5)  # 5 per sec
         state._move_position(Vec2d(5, 5))
         self.assertEqual(state.body.position, Vec2d(5, 5))
@@ -144,7 +143,7 @@ class TestRobotState(unittest.TestCase):
             'port': 'ev3-ports:outB'
         })
 
-        with patch('ev3dev2simulator.robotpart.Arm.ArmLarge') as ArmLargeMock:
+        with patch('ev3dev2simulator.robotpart.arm.ArmLarge') as ArmLargeMock:
             arm_instance = ArmLargeMock.return_value
             state = RobotState(self.default_config())
             state.setup_pymunk_shapes(1)
@@ -198,13 +197,12 @@ class TestRobotState(unittest.TestCase):
         state = RobotState(self.default_config())
         state.setup_pymunk_shapes(1)
 
-        self.assertEqual(len(state.get_shapes()), 4 + 1 + 2 + 1)
         self.assertEqual(state.get_sensor((0, 'ev3-ports:in4')).get_ev3type(), 'ultrasonic_sensor')
-        self.assertEqual(state.get_bricks()[0].name, 'brick-left')
         self.assertEqual(len(state.get_sensors()), 1)
         self.assertEqual(state.get_anchor().name, 'brick-left')
         del state.bricks[0]
         self.assertEqual(state.get_anchor(), None)
+
 
 if __name__ == '__main__':
     unittest.main()

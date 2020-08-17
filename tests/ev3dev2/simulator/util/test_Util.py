@@ -1,7 +1,7 @@
 import unittest
 from math import hypot
 
-from ev3dev2simulator.util.Util import get_circle_points, calc_differential_steering_angle_x_y
+from ev3dev2simulator.util.util import get_circle_points, calc_differential_steering_angle_x_y
 
 
 class UtilTest(unittest.TestCase):

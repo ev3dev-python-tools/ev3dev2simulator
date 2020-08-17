@@ -1,9 +1,9 @@
 import unittest
 
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
-from ev3dev2simulator.state.MotorCommandProcessor import MotorCommandProcessor
-from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
-from ev3dev2simulator.connection.message.StopCommand import StopCommand
+from ev3dev2simulator.state.motor_command_processor import MotorCommandProcessor
+from ev3dev2simulator.connection.message.rotate_command import RotateCommand
+from ev3dev2simulator.connection.message.stop_command import StopCommand
 
 # wheel_circumference = 135.7168
 wheel_circumference = 175.92918860

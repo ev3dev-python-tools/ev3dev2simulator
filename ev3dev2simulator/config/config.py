@@ -1,9 +1,18 @@
-from pathlib import Path
+"""
+The module config contains all configuration file handling. Most of it is handled by the Config class.
+"""
+
+import os
+import sys
 from os import listdir
 from os.path import isfile, join
-import os
-from ev3dev2simulator.config.ConfigChecker import ConfigChecker
+from pathlib import Path
+
 from strictyaml import load
+
+from ev3dev2simulator.config.config_checker import ConfigChecker
+
+THIS = sys.modules[__name__]
 
 
 class Config:
@@ -69,33 +78,43 @@ class Config:
         return str(path)
 
 
-debug = False
-production = True
-_config = None
+DEBUG = False
+PRODUCTION = True
+THIS.CONFIG = None
 
 
 def load_config(world_config_file_name, orig_path=None):
-    global _config
-
+    """
+    Loads the world config.
+    """
     if world_config_file_name == 'small':
         world_config_file_name = 'config_small'
     elif world_config_file_name == 'large':
         world_config_file_name = 'config_large'
 
-    _config = Config(world_config_file_name, orig_path)
+    THIS.CONFIG = Config(world_config_file_name, orig_path)
 
-    return _config
+    return THIS.CONFIG
 
 
 def get_robot_config(file_name):
-    return _config.load_robot_config(file_name)
+    """
+    Gets robots config by name.
+    """
+    return THIS.CONFIG.load_robot_config(file_name)
 
 
 def get_world_config():
-    return _config.world_config
+    """
+    Get the current world config
+    """
+    return THIS.CONFIG.world_config
 
 
 def get_simulation_settings():
-    if not _config:  # clients might need configuration as well, but do not need world settings
+    """
+    Singleton function creating a configuration if it does not exist, and return the instance of the config class.
+    """
+    if not THIS.CONFIG:  # clients might need configuration as well, but do not need world settings
         load_config(None)
-    return _config.simulation_settings.data
+    return THIS.CONFIG.simulation_settings.data

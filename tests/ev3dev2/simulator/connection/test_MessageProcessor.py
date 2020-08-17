@@ -2,15 +2,16 @@ import threading
 import unittest
 
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
-from ev3dev2simulator.state.MessageProcessor import MessageProcessor
-from ev3dev2simulator.connection.message.DataRequest import DataRequest
-from ev3dev2simulator.connection.message.LedCommand import LedCommand
-from ev3dev2simulator.connection.message.RotateCommand import RotateCommand
-from ev3dev2simulator.connection.message.SoundCommand import SoundCommand
+from ev3dev2simulator.state.message_processor import MessageProcessor
+from ev3dev2simulator.connection.message.data_request import DataRequest
+from ev3dev2simulator.connection.message.led_command import LedCommand
+from ev3dev2simulator.connection.message.rotate_command import RotateCommand
+from ev3dev2simulator.connection.message.sound_command import SoundCommand
 
 from tests.ev3dev2.simulator.connection.test_ServerSocket import create_robot_sim
 
 wheel_circumference = 175.92918860
+
 
 class MessageProcessorTest(unittest.TestCase):
 
@@ -105,7 +106,7 @@ class MessageProcessorTest(unittest.TestCase):
         message_processor = MessageProcessor(0, robot_sim)
         message_processor.process_rotate_command(RotateCommand('ev3-ports:outA', 80, 200, 'coast'))
 
-        frames_check = (200/80) * 30  # (1000/100) * 30 # distance * fps
+        frames_check = (200 / 80) * 30  # (1000/100) * 30 # distance * fps
         distance_in_mm = 200 / 360 * wheel_circumference
         dpf = distance_in_mm / frames_check
 

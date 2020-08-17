@@ -25,7 +25,7 @@
 import re
 import sys
 
-from ev3dev2simulator.connector.DeviceConnector import DeviceConnector
+from ev3dev2simulator.connector.device_connector import DeviceConnector
 
 
 def is_micropython():

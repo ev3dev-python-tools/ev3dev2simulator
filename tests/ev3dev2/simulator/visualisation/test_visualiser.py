@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 from pathlib import Path
 import ev3dev2simulator.config.config as conf
-from ev3dev2simulator.visualisation.Visualiser import Visualiser
+from ev3dev2simulator.visualisation.visualiser import Visualiser
 
 conf.load_config(None)
 
@@ -17,7 +17,7 @@ class TestVisualiser(unittest.TestCase):
         os.chdir(path)
 
     def test_constructor(self):
-        if conf.production:
+        if conf.PRODUCTION:
             return
 
         world_state_mock = MagicMock()
@@ -27,7 +27,7 @@ class TestVisualiser(unittest.TestCase):
         vis = Visualiser(lambda: None, world_state_mock, False, False, False)
 
     def test_update_current_screen(self):
-        if conf.production:
+        if conf.PRODUCTION:
             return
 
         world_state_mock = MagicMock()

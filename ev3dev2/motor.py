@@ -26,7 +26,7 @@ import math
 from collections import OrderedDict
 
 from ev3dev2 import Device
-from ev3dev2simulator.connector.MotorConnector import MotorConnector
+from ev3dev2simulator.connector.motor_connector import MotorConnector
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')

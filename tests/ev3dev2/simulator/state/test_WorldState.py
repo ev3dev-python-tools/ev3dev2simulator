@@ -1,7 +1,7 @@
 import unittest
 
 from ev3dev2simulator.config.config import load_config
-from ev3dev2simulator.state.WorldState import WorldState
+from ev3dev2simulator.state.world_state import WorldState
 
 load_config(None)
 
@@ -9,9 +9,9 @@ class TestWorldState(unittest.TestCase):
 
     def default_config(self):
         return {
-            'board_height': '1273',
-            'board_width': '1273',
-            'board_color': '(59, 60, 54)',
+            'board_height': 1273,
+            'board_width': 1273,
+            'board_color': [59, 60, 54],
             'robots': [{
                 'center_x': 0,
                 'center_y': 0,
@@ -21,59 +21,62 @@ class TestWorldState(unittest.TestCase):
                     {
                         'name': 'brick-left',
                         'type': 'brick',
-                        'brick': '0',
-                        'x_offset': '-39',
-                        'y_offset': '-22.5'
+                        'brick': 0,
+                        'x_offset': -39,
+                        'y_offset': -22.5
                     },
                     {
                         'name': 'motor-left',
                         'type': 'motor',
-                        'x_offset': '-60',
-                        'y_offset': '0.01',
-                        'brick': '0',
+                        'x_offset': -60,
+                        'y_offset': 0.01,
+                        'brick': 0,
                         'port': 'ev3-ports:outA'
                     },
                     {
                         'name': 'motor-right',
                         'type': 'motor',
-                        'x_offset': '60',
-                        'y_offset': '0.01',
-                        'brick': '0',
+                        'x_offset': 60,
+                        'y_offset': 0.01,
+                        'brick': 0,
                         'port': 'ev3-ports:outD'
                     },
                 ]}
             ],
-            'obstacles': {
-                'rock1': {
-                    'x': '825',
-                    'y': '1050',
-                    'width': '150',
-                    'height': '60',
-                    'color': '(169, 169, 169)',
-                    'angle': '10',
+            'obstacles': [
+                {
+                    'name': 'rock1',
+                    'x': 825,
+                    'y': 1050,
+                    'width': 150,
+                    'height': 60,
+                    'color': [169, 169, 169],
+                    'angle': 10,
                     'type': 'rock'
                 },
-                'lake_red': {
-                    'border_width': '29',
-                    'inner_radius': '38',
-                    'color': '(201, 45, 57)',
-                    'x': '397',
-                    'y': '232',
+                {
+                    'name': 'lake_red',
+                    'border_width': 29,
+                    'inner_radius': 38,
+                    'color': [201, 45, 57],
+                    'x': 397,
+                    'y': 232,
                     'type': 'lake'
                 },
-                'bottle': {
-                    'x': '1000',
-                    'y': '300',
-                    'radius': '60',
-                    'color': '(85, 107, 47)',
+                {
+                    'name': 'bottle',
+                    'x': 1000,
+                    'y': 300,
+                    'radius': 60,
+                    'color': [85, 107, 47],
                     'type': 'bottle'
                 }
-            }
+            ]
         }
 
     def test_constructor(self):
         config = self.default_config()
-        config['obstacles']['test'] = {'type': 'invalid_type'}
+        config['obstacles'].append({'type': 'invalid_type'})
         world_state = WorldState(config)
         self.assertEqual(len(world_state.get_robots()), 1)
         self.assertEqual(len(world_state.obstacles), 2)
