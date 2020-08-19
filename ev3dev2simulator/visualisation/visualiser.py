@@ -223,12 +223,15 @@ class Visualiser(_arcade.Window):
 
         # get current_screen_index
         current_screen_index = 1 if use_second_screen_to_show_simulator else 0
-        screens = _arcade.get_screens()
+        screens = self.get_screens()
         # for screen in screens: print(screen)
         num_screens = len(screens)
         if num_screens == 1:
             current_screen_index = 0
         self.current_screen_index = current_screen_index
+
+        display = pyglet.canvas.get_display()
+        screens = display.get_screens()
 
         # change screen to show simulator
         # HACK override default screen function to change it.
@@ -239,6 +242,7 @@ class Visualiser(_arcade.Window):
             return screens[self.current_screen_index]
 
         display = pyglet.canvas.get_display()
+
         display.get_default_screen = get_default_screen
 
         # note:
@@ -267,7 +271,7 @@ class Visualiser(_arcade.Window):
         self.current_screen_index = (self.current_screen_index + 1) % 2
 
         # override hidden screen parameter in window
-        screens = _arcade.get_screens()
+        screens = self.get_screens()
         self._screen = screens[self.current_screen_index]
 
     def update_current_screen(self):
@@ -275,7 +279,7 @@ class Visualiser(_arcade.Window):
             current screen for displaying in fullscreen!!
         """
 
-        screens = _arcade.get_screens()
+        screens = self.get_screens()
         if len(screens) == 1:
             return
 
@@ -327,3 +331,13 @@ class Visualiser(_arcade.Window):
         _user32.ShowWindow(self._hwnd, SW_SHOWMINIMIZED)
         _user32.ShowWindow(self._hwnd, SW_SHOWNORMAL)
         # pylint: enable=import-outside-toplevel
+
+    @staticmethod
+    def get_screens():
+        """
+        Gets the current screens
+        @return: the current screens
+        """
+        display = pyglet.canvas.get_display()
+        screens = display.get_screens()
+        return screens
