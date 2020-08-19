@@ -52,7 +52,6 @@ class Visualiser(_arcade.Window):
             print('starting simulation with scaling', scale)
             print('arcade version: ', _arcade.version.VERSION)
 
-        print(self.current_screen_index)
         super(Visualiser, self).__init__(self.size.width, self.size.height, screen_info, update_rate=1 / 30,
                                          fullscreen=show_fullscreen,
                                          resizable=True, screen=_arcade.get_screens()[self.current_screen_index])
