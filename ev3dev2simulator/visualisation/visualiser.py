@@ -52,8 +52,10 @@ class Visualiser(_arcade.Window):
             print('starting simulation with scaling', scale)
             print('arcade version: ', _arcade.version.VERSION)
 
+        print(self.current_screen_index)
         super(Visualiser, self).__init__(self.size.width, self.size.height, screen_info, update_rate=1 / 30,
-                                         fullscreen=show_fullscreen, resizable=True)
+                                         fullscreen=show_fullscreen,
+                                         resizable=True, screen=_arcade.get_screens()[self.current_screen_index])
 
         icon1 = pyglet.image.load(r'assets/images/body.png')
         self.set_icon(icon1)
@@ -62,9 +64,6 @@ class Visualiser(_arcade.Window):
         self.sidebar = self._setup_sidebar()
         self.world_state.setup_pymunk_shapes(scale)
         self.world_state.setup_visuals(scale)
-
-        if show_fullscreen:
-            self.toggle_screen_used_for_fullscreen()
 
         if show_maximized:
             self.maximize()
@@ -223,7 +222,7 @@ class Visualiser(_arcade.Window):
 
         # get current_screen_index
         screens = _arcade.get_screens()
-        self.current_screen_index = 1 if use_second_screen_to_show_simulator and len(screens) == 1 else 0
+        self.current_screen_index = 1 if use_second_screen_to_show_simulator and len(screens) > 1 else 0
 
         # change screen to show simulator
         # HACK override default screen function to change it.
