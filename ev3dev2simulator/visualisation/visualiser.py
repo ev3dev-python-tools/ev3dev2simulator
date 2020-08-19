@@ -53,7 +53,7 @@ class Visualiser(_arcade.Window):
             print('arcade version: ', _arcade.version.VERSION)
 
         super(Visualiser, self).__init__(self.size.width, self.size.height, screen_info, update_rate=1 / 30,
-                                         resizable=True)
+                                         fullscreen=show_fullscreen, resizable=True)
 
         icon1 = pyglet.image.load(r'assets/images/body.png')
         self.set_icon(icon1)
@@ -222,16 +222,8 @@ class Visualiser(_arcade.Window):
         """
 
         # get current_screen_index
-        current_screen_index = 1 if use_second_screen_to_show_simulator else 0
-        screens = self.get_screens()
-        # for screen in screens: print(screen)
-        num_screens = len(screens)
-        if num_screens == 1:
-            current_screen_index = 0
-        self.current_screen_index = current_screen_index
-
-        display = pyglet.canvas.get_display()
-        screens = display.get_screens()
+        screens = _arcade.get_screens()
+        self.current_screen_index = 1 if use_second_screen_to_show_simulator and len(screens) == 1 else 0
 
         # change screen to show simulator
         # HACK override default screen function to change it.
@@ -271,7 +263,7 @@ class Visualiser(_arcade.Window):
         self.current_screen_index = (self.current_screen_index + 1) % 2
 
         # override hidden screen parameter in window
-        screens = self.get_screens()
+        screens = _arcade.get_screens()
         self._screen = screens[self.current_screen_index]
 
     def update_current_screen(self):
@@ -279,7 +271,7 @@ class Visualiser(_arcade.Window):
             current screen for displaying in fullscreen!!
         """
 
-        screens = self.get_screens()
+        screens = _arcade.get_screens()
         if len(screens) == 1:
             return
 
@@ -331,13 +323,3 @@ class Visualiser(_arcade.Window):
         _user32.ShowWindow(self._hwnd, SW_SHOWMINIMIZED)
         _user32.ShowWindow(self._hwnd, SW_SHOWNORMAL)
         # pylint: enable=import-outside-toplevel
-
-    @staticmethod
-    def get_screens():
-        """
-        Gets the current screens
-        @return: the current screens
-        """
-        display = pyglet.canvas.get_display()
-        screens = display.get_screens()
-        return screens
