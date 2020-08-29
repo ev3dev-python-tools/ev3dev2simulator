@@ -8,7 +8,6 @@ screen_settings:
   side_bar_width: 250
   screen_title: 'Lego ev3dev2 simulator'
   falling_message: 'Robot has dipped a wheel off the map.'
-  restart_message: 'Please restart the mission.'
 
 image_paths:
   arm: 'assets/images/arm.png'

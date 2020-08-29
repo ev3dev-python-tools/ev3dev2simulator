@@ -106,8 +106,7 @@ class ConfigChecker:
                 'screen_width': Int(),
                 'side_bar_width': Int(),
                 'screen_title': Str(),
-                'falling_message': Str(),
-                'restart_message': Str()
+                'falling_message': Str()
             }),
             'image_paths': Map({
                 'arm': Str(),

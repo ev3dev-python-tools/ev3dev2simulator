@@ -151,8 +151,6 @@ class Visualiser(_arcade.Window):
             self.msg_counter -= 1
             _arcade.draw_text(get_simulation_settings()['screen_settings']['falling_message'], self._msg_x,
                               self.size.height - 100, _arcade.color.RADICAL_RED, 14, anchor_x="center")
-            _arcade.draw_text(get_simulation_settings()['screen_settings']['restart_message'], self._msg_x,
-                              self.size.height - 130, _arcade.color.RADICAL_RED, 14, anchor_x="center")
 
     def update(self, delta_time):
         """
