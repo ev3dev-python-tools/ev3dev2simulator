@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - key T toggles fullscreen view between the two screens (if not at fullscreen, nothing happens)
 
 
-## [1.3.1] - 2020-02-07
+## 1.3.1 - 2020-02-07
 
  ### Added
  - added building of wheels and uploading them to the pypi server
@@ -132,8 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.0...HEAD
 [2.0.0]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.3.2...v2.0.0
-[1.3.2]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.3.1...v1.3.2
-[1.3.1]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.3.0...v1.3.1
+[1.3.2]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.3.0...v1.3.2
 [1.3.0]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.1.1...v1.2.0
