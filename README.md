@@ -16,24 +16,7 @@ The thonny-ev3dev plugin for the Thonny IDE comes with the ev3dev2simulator.
 For more info about the thonny-ev3dev plugin see: https://github.com/ev3dev-python-tools/thonny-ev3dev/wiki <br>
 For more info about Thonny: http://thonny.org
 
-## Single instance
-
-The ev3dev2simulator enforces that only one instance of the simulator can be run.
-
-When a simulator is running, and you  then startup a new simulator window:
- * the new simulator sees that another simulator is already running and exits
- * the already simulator's window is raised so that it becomes visible again.
-
-## Key bindings
-
-When you press the key:
-* q : Quit the simulator
-* m : Maximize simulator window
-* f : Show simulator fullscreen (toggle)
-* t : Toggle screen on which to show simulator in fullscreen mode. 
-
-
-## Installation
+## Getting started
 
    Install with pip
    
@@ -43,103 +26,6 @@ When you press the key:
    
       ev3dev2simulator
 
-## Command line options 
+## Using the simulator
 
-
-    
-    $ ev3dev2simulator -h
-    usage: ev3dev2simulator [-h] [-s WINDOW_SCALING] [-t {small,large}]
-                            [-x ROBOT_POSITION_X] [-y ROBOT_POSITION_Y]
-                            [-o ROBOT_ORIENTATION] [-c {left,right}] [-2] [-f]
-                            [-m]
-    .
-    optional arguments:
-      -h, --help            show this help message and exit
-      -s WINDOW_SCALING, --window_scaling WINDOW_SCALING
-                            Scaling of the screen, default is 0.65
-      -t {small,large}, --simulation_type {small,large}
-                            Type of the simulation (small or large). Default is
-                            small
-      -x ROBOT_POSITION_X, --robot_position_x ROBOT_POSITION_X
-                            Starting position x-coordinate of the robot, default
-                            is 200
-      -y ROBOT_POSITION_Y, --robot_position_y ROBOT_POSITION_Y
-                            Starting position y-coordinate of the robot, default
-                            is 300
-      -o ROBOT_ORIENTATION, --robot_orientation ROBOT_ORIENTATION
-                            Starting orientation the robot, default is 0
-      -c {left,right}, --connection_order_first {left,right}
-                            Side of the first brick to connect to the simulator,
-                            default is 'left'
-      -2, --show-on-second-monitor
-                            Show simulator window on second monitor instead,
-                            default is first monitor
-      -f, --fullscreen      Show simulator fullscreen
-      -m, --maximized       Show simulator maximized
-
-
-## Features not yet supported
-
-The simulator does not yet support the full ev3dev2 API. When looking at the ev3dev2  API's source files,  the below listed functions, classes, or specific class methods  are not yet supported. 
-
-We list what is NO supported, so the rest is supported. Meaning:
-* if only a specific python file is listed, then that whole file is not supported. Python files not listed ARE fully supported.
-* if within a python file a specific class/function is listed, then that class/function is not supported but all other class/functions in that file ARE supported.
-* if specific for a class a set of methods are listed, those methods are not supported, but the class itself and the other methods in the class ARE supported.
-
-### The current not supported listing is:
-
-button.py <br/>
-console.py 
-
-control/init.py<br/>
-control/GyroBalance.py <br/>
-control/rc\_tank.py<br/>
-control//webserver.py
-
-display.py <br/>
- 
-motor.py
-
-* class ActuonixL1250Motor
-* class ActuonixL12100Motor
-* class DcMotor
-* class ServoMotor
-* class MoveJoystick
-  
-port.py <br/>
-power.py 
-
-sensor/init.py
-
-* def list\_sensors
-* class Sensor
-
-  * def bin\_data()
-  
-* class I2cSensor  
-
-sensor/lego.py
-
-* class ColorSensor
-
-  * def ambient\_light\_intensity()
-
-  
-* class UltrasonicSensor
-
-  * def other\_sensor\_present()
-  
-* class GyroSensor
-* class InfraredSensor
-* class SoundSensor
-* class LightSensor 
-
-sound.py 
-
-  * def get\_command\_processes()
-  * Class Sound
-  
-    * def get\_volume()
-    * def set\_volume()
-    * def get\_channel()
+The user guide of the simulator can be found on the [wiki](https://github.com/ev3dev-python-tools/ev3dev2simulator/wiki).
