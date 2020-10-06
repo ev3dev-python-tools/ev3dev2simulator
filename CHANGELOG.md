@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2020-10-06
+
+### Added 
+- Added physics to simulate collision between all objects, including robots
+- Added support for simulating multiple robots
+- Added support for playings sounds from the simulator
+- Added configuration of the robot(s) and the simulated environment before simulation by means of a configuration file
+- Added support for drag-and-dropping robots and obstacles during simulation
+- Added support for scaling the playing field
+- Added checks on ports used by the robot on startup
+- Added two types of rocks (light and heavy)
+- Added sidebar with robot information
+
+### Changed
+- Changed architecture to support millimeters instead of pixels
+- Changed the architecture to allow multiple robots in a single simulation environment.
+- Changed behaviour of distance sensor (it now picks the shortest distance of the two beams)
+- Removed the dependency of the behaviour of the robot on the usage of sprites. It now uses physics. 
+
+### Fixed
+- Fixed bug with drawing circles that prevented updating Arcade
+
+
 ## [1.3.2] - 2020-02-28
 
 ### Added 
