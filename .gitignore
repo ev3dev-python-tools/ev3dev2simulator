@@ -7,3 +7,5 @@ __pycache__/
 *.sw?
 /dist/
 *.egg-info/
+*.pyc
+.vscode/*

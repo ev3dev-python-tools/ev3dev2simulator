@@ -1,0 +1,37 @@
+name: ev3dev CI for 3 operating systems
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include: 
+        - os: macos-latest
+          OS_DEPENDENCY: ''
+        - os: ubuntu-latest
+          OS_DEPENDENCY: sudo apt update; sudo apt-get install libasound2-dev espeak freeglut3-dev
+        - os: windows-latest
+          OS_DEPENDENCY: ''
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          ${{matrix.OS_DEPENDENCY}}
+          python -m pip install --upgrade pip
+          pip install .
+      - name: Lint with pylint
+        run: |
+          pip install pylint
+          pylint ev3dev2simulator
+      - name: Test with unittest
+        uses: GabrielBB/xvfb-action@v1.0
+        with:
+          run: |
+            python -m unittest discover .

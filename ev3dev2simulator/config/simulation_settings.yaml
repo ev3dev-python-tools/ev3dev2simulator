@@ -1,0 +1,79 @@
+#This file contains settings that should sparely be changed. The world configuration can be done in the folder world_config
+
+screen_settings:
+  background_color: 100, 100, 150
+  edge_spacing: 23
+  screen_height: 800
+  screen_width: 1100
+  side_bar_width: 250
+  screen_title: 'Lego ev3dev2 simulator'
+  falling_message: 'Robot has dipped a wheel off the map.'
+
+image_paths:
+  arm: 'assets/images/arm.png'
+  arm_large: 'assets/images/arm_large.png'
+  body: 'assets/images/body.png'
+  color_sensor_black: 'assets/images/color_sensor_black.png'
+  color_sensor_blue: 'assets/images/color_sensor_blue.png'
+  color_sensor_green: 'assets/images/color_sensor_green.png'
+  color_sensor_red: 'assets/images/color_sensor_red.png'
+  color_sensor_white: 'assets/images/color_sensor_white.png'
+  color_sensor_yellow: 'assets/images/color_sensor_yellow.png'
+  led_amber: 'assets/images/led_amber.png'
+  led_black: 'assets/images/led_black.png'
+  led_green: 'assets/images/led_green.png'
+  led_orange: 'assets/images/led_orange.png'
+  led_red: 'assets/images/led_red.png'
+  led_yellow: 'assets/images/led_yellow.png'
+  touch_sensor_left: 'assets/images/touch_sensor_left.png'
+  touch_sensor_rear: 'assets/images/touch_sensor_rear.png'
+  touch_sensor_right: 'assets/images/touch_sensor_right.png'
+  ultrasonic_sensor_top: 'assets/images/ultrasonic_sensor_top.png'
+  ultrasonic_sensor_bottom: 'assets/images/ultrasonic_sensor_bottom.png'
+  wheel: 'assets/images/wheel.png'
+
+# sizes in mm
+body_part_sizes:
+  body:
+    width: 72
+    height: 110 # https://www.brickowl.com/catalog/lego-ev3-programable-brick-95646
+  arm:
+    height: 72 # 9 lego units
+    width: 8 # 1 lego unit
+  led:
+    width: 8
+    height: 8
+  color_sensor:
+    width: 25
+    height: 25
+  speaker:
+    width: 5
+    height: 5
+  touch_sensor_bar:
+    width: 72 # 9 lego units
+    height: 40  # 5 lego unit
+  touch_sensor_bar_rear:
+    width: 120  # 15 lego unit?
+    height: 8 # 1 lego units
+  ultrasonic_sensor_bottom:
+    width: 55 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+    height: 25 # approx
+  ultrasonic_sensor_top:
+    width: 55 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+    height: 45
+  wheel:
+    width: 28 # https://www.brickshop.nl/lego/lego-mindstorms-ev3/lego-45504-ev3-ultrasonic-sensor.html?f_theme=11
+    height: 55
+
+exec_settings:
+  frames_per_second: 30
+  socket_port: 6840
+  bluetooth_port: 6841
+  message_size: 256
+
+motor_settings:
+  distance_coasting_subtraction: 0.7
+  degree_coasting_subtraction: 1.5
+
+wheel_settings:
+  circumference: 175.92918860

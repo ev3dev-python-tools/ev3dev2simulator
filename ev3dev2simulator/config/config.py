@@ -1,6 +1,18 @@
+"""
+The module config contains all configuration file handling. Most of it is handled by the Config class.
+"""
+
+import os
+import sys
+from os import listdir
+from os.path import isfile, join
 from pathlib import Path
 
-import yaml
+from strictyaml import load
+
+from ev3dev2simulator.config.config_checker import ConfigChecker
+
+THIS = sys.modules[__name__]
 
 
 class Config:
@@ -8,129 +20,101 @@ class Config:
     Class containing simulation configuration data.
     """
 
+    def __init__(self, world_config_file_name, orig_path=None):
+        self.orig_path = orig_path
+        self.rel_world_config_path = None
+        world_config_yaml = self._load_world_config(world_config_file_name)
+        ConfigChecker.check_world_config(world_config_yaml)
+        self.world_config = world_config_yaml.data
+        settings_schema = ConfigChecker.get_settings_schema()
+        self.simulation_settings = self._load_yaml_file('', 'simulation_settings', None, settings_schema)
 
-    def __init__(self):
-        self.scale = None
-        self.sim_type = None
-        self.data = None
+    def _load_world_config(self, file_name: str):
+        file_name = 'config_large' if file_name is None else file_name
+        if os.path.dirname(file_name) != '':
+            self.rel_world_config_path = os.path.dirname(file_name)
+        world_schema = ConfigChecker.get_world_schema()
+        return self._load_yaml_file('world_configurations', file_name, self.orig_path, world_schema)
 
-
-    def get_data(self):
+    def load_robot_config(self, file_name: str):
         """
-        Get configuration data. Initialize if data has not been initialized yet.
-        :return: a data structure representing the configuration data.
+        Loads a robot config.
+        @param file_name: the file that contains the robot configuration.
+        @return: dictionary with all the parts.
         """
+        path = self.orig_path
+        if self.rel_world_config_path:
+            path = os.path.join(path, self.rel_world_config_path)
+        robot_schema = ConfigChecker.get_robot_schema()
+        robot_config_yaml = self._load_yaml_file('robot_configurations', file_name, path, robot_schema)
+        ConfigChecker.check_robot_config(robot_config_yaml)
+        return robot_config_yaml.data
 
-        if self.data is None:
-            self.data = self._load_data()
-
-        return self.data
-
-
-    def get_scale(self) -> float:
-        """
-        Get scaling variable. Initialize if variable has not been initialized yet.
-        :return: a floating point number representing the scaling multiplier.
-        """
-
-        if self.scale is None:
-            self.scale = self._load_scale()
-
-        return self.scale
-
-
-    def get_sim_type(self) -> str:
-        """
-        Get simulation type variable. Initialize if variable has not been initialized yet.
-        :return: a string representing the simulation type.
-        """
-
-        if self.sim_type is None:
-            self.sim_type = self._load_sim_type()
-
-        return self.sim_type
-
-
-    def is_large_sim_type(self):
-        return self.get_sim_type() == 'large'
-
-
-    def _load_data(self):
+    @staticmethod
+    def _load_yaml_file(prefix: str, file_url: str, orig_path: str = None, schema=None) -> object:
         """
         Load config data from the correct config yaml file. The file to load from depends on the simulation type.
         :return: the config data.
         """
+        my_path = f'{Config.get_project_root()}/{prefix}/'
+        global_files = [f.replace('.yaml', '') for f in listdir(my_path) if isfile(join(my_path, f))]
+        if file_url not in global_files:
+            path = f'{orig_path}/{file_url}'
+        else:
+            path = f'{Config.get_project_root()}/{prefix}/{file_url}.yaml'
+        try:
+            with open(path) as stream:
+                return load(stream.read(), schema, path)
+        except FileNotFoundError:
+            raise FileNotFoundError(f'The configuration {path} could not be found')
 
-        file = 'config_large' if self.is_large_sim_type() else 'config_small'
-        path = self.get_project_root() + '/' + file + '.yaml'
-
-        with open(path, 'r') as stream:
-            try:
-                return yaml.safe_load(stream)
-            except yaml.YAMLError as exc:
-                print(exc)
-
-
-    def _load_scale(self):
-        """
-        Load scale multiplier data from the scale_config.txt file.
-        :return: a floating point number representing the scaling multiplier.
-        """
-
-        path = self.get_project_root() + '/scale_config.txt'
-
-        with open(path, 'r') as stream:
-            return float(stream.read(4))
-
-
-    def _load_sim_type(self):
-        """
-        Load scale multiplier data from the type_config.txt file.
-        :return: a string representing the simulation type.
-        """
-
-        path = self.get_project_root() + '/type_config.txt'
-
-        with open(path, 'r') as stream:
-            return stream.read(5)
-
-
-    def write_scale(self, value: float):
-        """
-        Write the scaling multiplier to scale_config.txt
-        :param value: a floating point number representing the scaling multiplier.
-        """
-
-        path = self.get_project_root() + '/scale_config.txt'
-
-        with open(path, 'w') as stream:
-            return stream.write(str(value))
-
-
-    def write_sim_type(self, value: str):
-        """
-        Write the simulation type to type_config.txt
-        :param value: a string representing the simulation type.
-        """
-
-        path = self.get_project_root() + '/type_config.txt'
-
-        with open(path, 'w') as stream:
-            return stream.write(value)
-
-
-    def get_project_root(self) -> str:
+    @staticmethod
+    def get_project_root() -> str:
         """
         Get the absolute path to project root folder.
         :return: a string representing the path.
         """
-
         path = Path(__file__).parent
         return str(path)
 
 
-config = Config()
+DEBUG = False
+PRODUCTION = True
+THIS.CONFIG = None
 
 
-def get_config() -> Config:
-    return config
+def load_config(world_config_file_name, orig_path=None):
+    """
+    Loads the world config.
+    """
+    if world_config_file_name == 'small':
+        world_config_file_name = 'config_small'
+    elif world_config_file_name == 'large':
+        world_config_file_name = 'config_large'
+
+    THIS.CONFIG = Config(world_config_file_name, orig_path)
+
+    return THIS.CONFIG
+
+
+def get_robot_config(file_name):
+    """
+    Gets robots config by name.
+    """
+    return THIS.CONFIG.load_robot_config(file_name)
+
+
+def get_world_config():
+    """
+    Get the current world config
+    """
+    return THIS.CONFIG.world_config
+
+
+def get_simulation_settings():
+    """
+    Singleton function creating a configuration if it does not exist, and return the instance of the config class.
+    """
+    if not THIS.CONFIG:  # clients might need configuration as well, but do not need world settings
+        load_config(None)
+    return THIS.CONFIG.simulation_settings.data

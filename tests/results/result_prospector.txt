@@ -1,0 +1,234 @@
+Messages
+========
+
+ev3dev2simulator\Simulator.py
+  Line: 9
+    pylint: wrong-import-position / Import "from ev3dev2simulator.config.config import load_config, get_world_config" should be placed at the top of the module
+  Line: 10
+    pylint: wrong-import-position / Import "from ev3dev2simulator.state import WorldState" should be placed at the top of the module
+  Line: 11
+    pylint: wrong-import-position / Import "from ev3dev2simulator.visualisation.Visualiser import Visualiser, start" should be placed at the top of the module
+  Line: 12
+    pylint: wrong-import-position / Import "from ev3dev2simulator.connection.ServerSockets import ServerSockets" should be placed at the top of the module
+  Line: 13
+    pylint: wrong-import-position / Import "from ev3dev2simulator.state.WorldSimulator import WorldSimulator" should be placed at the top of the module
+  Line: 14
+    pylint: reimported / Reimport 'WorldState' (imported line 10)
+    pylint: wrong-import-position / Import "from ev3dev2simulator.state.WorldState import WorldState" should be placed at the top of the module
+    pyflakes: F811 / redefinition of unused 'WorldState' from line 10 (col 1)
+  Line: 51
+    pylint: import-outside-toplevel / Import outside toplevel (ev3dev2) (col 8)
+  Line: 52
+    pylint: import-outside-toplevel / Import outside toplevel (ev3dev2simulator) (col 8)
+
+ev3dev2simulator\__main__.py
+  Line: 5
+    pylint: unused-argument / Unused argument 'args' (col 9)
+  Line: 9
+    pylint: import-outside-toplevel / Import outside toplevel (ev3dev2simulator.Simulator) (col 8)
+  Line: 13
+    pylint: import-outside-toplevel / Import outside toplevel (os) (col 8)
+  Line: 22
+    pylint: import-outside-toplevel / Import outside toplevel (ev3dev2simulator.Simulator) (col 8)
+
+ev3dev2simulator\config\config.py
+  Line: 30
+    pylint: unused-variable / Unused variable 'er' (col 8)
+
+ev3dev2simulator\connection\ClientSocket.py
+  Line: 25
+    pylint: inconsistent-return-statements / Either all return statements in a function should return an expression, or none of them should. (col 4)
+
+ev3dev2simulator\connection\MessageHandler.py
+  Line: 19
+    pylint: inconsistent-return-statements / Either all return statements in a function should return an expression, or none of them should. (col 4)
+  Line: 32
+    pylint: no-else-return / Unnecessary "elif" after "return" (col 8)
+  Line: 74
+    pylint: useless-return / Useless return at end of function or method (col 4)
+  Line: 85
+    pylint: useless-return / Useless return at end of function or method (col 4)
+
+ev3dev2simulator\connection\ServerSockets.py
+  Line: 72
+    pylint: unused-variable / Unused variable 'address' (col 37)
+  Line: 83
+    pylint: no-else-break / Unnecessary "else" after "break" (col 16)
+  Line: 98
+    pylint: trailing-newlines / Trailing newlines
+
+ev3dev2simulator\connection\message\Command.py
+  Line: 14
+    pylint: unnecessary-pass / Unnecessary pass statement (col 8)
+
+ev3dev2simulator\connection\message\MotorCommand.py
+  Line: 17
+    pylint: trailing-newlines / Trailing newlines
+
+ev3dev2simulator\connection\message\StopCommand.py
+  Line: 11
+    pylint: useless-super-delegation / Useless super delegation in method '__init__' (col 4)
+
+ev3dev2simulator\connector\SoundConnector.py
+  Line: 144
+    pylint: unused-argument / Unused argument 'espeak_opts' (col 25)
+
+ev3dev2simulator\obstacle\Board.py
+  Line: 12
+    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
+  Line: 56
+    pylint: unused-variable / Unused variable 'i' (col 12)
+
+ev3dev2simulator\obstacle\Border.py
+  Line: 12
+    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
+  Line: 25
+    pylint: eval-used / Use of eval (col 16)
+  Line: 34
+    pylint: pointless-string-statement / String statement has no effect (col 8)
+
+ev3dev2simulator\obstacle\BorderObstacle.py
+  Line: 11
+    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
+
+ev3dev2simulator\obstacle\Bottle.py
+  Line: 36
+    pylint: eval-used / Use of eval (col 16)
+
+ev3dev2simulator\obstacle\ColorObstacle.py
+  Line: 17
+    pylint: unnecessary-pass / Unnecessary pass statement (col 8)
+
+ev3dev2simulator\obstacle\Lake.py
+  Line: 15
+    pylint: too-many-arguments / Too many arguments (8/5) (col 4)
+  Line: 63
+    pylint: eval-used / Use of eval (col 16)
+  Line: 82
+    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
+  Line: 96
+    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
+
+ev3dev2simulator\obstacle\Rock.py
+  Line: 12
+    pylint: too-many-arguments / Too many arguments (7/5) (col 4)
+  Line: 68
+    pylint: eval-used / Use of eval (col 16)
+
+ev3dev2simulator\robot\Arm.py
+  Line: 15
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\robot\BodyPart.py
+  Line: 17
+    pylint: too-many-arguments / Too many arguments (9/5) (col 4)
+  Line: 48
+    pylint: unnecessary-pass / Unnecessary pass statement (col 8)
+
+ev3dev2simulator\robot\Brick.py
+  Line: 14
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\robot\ColorSensor.py
+  Line: 24
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\robot\Led.py
+  Line: 9
+    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
+  Line: 22
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\robot\Speaker.py
+  Line: 25
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\robot\TouchSensor.py
+  Line: 21
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\robot\UltrasonicSensorBottom.py
+  Line: 14
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\robot\UltrasonicSensorTop.py
+  Line: 23
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+  Line: 65
+    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
+
+ev3dev2simulator\robot\Wheel.py
+  Line: 15
+    pylint: arguments-differ / Parameters differ from overridden 'setup_visuals' method (col 4)
+
+ev3dev2simulator\state\MessageProcessor.py
+  Line: 53
+    pylint: unused-variable / Unused variable 'i' (col 12)
+  Line: 67
+    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
+  Line: 100
+    pylint: no-else-return / Unnecessary "else" after "return" (col 8)
+  Line: 117
+    pylint: unused-variable / Unused variable 'i' (col 12)
+
+ev3dev2simulator\state\RobotSimulator.py
+  Line: 90
+    pylint: unused-variable / Unused variable 'actuator_queue' (col 17)
+
+ev3dev2simulator\state\WorldState.py
+  Line: 30
+    pylint: eval-used / Use of eval (col 22)
+  Line: 42
+    pylint: unused-variable / Unused variable 'key' (col 12)
+
+ev3dev2simulator\visualisation\RobotPartSprite.py
+  Line: 9
+    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
+  Line: 13
+    pylint: unused-argument / Unused argument 'height_mm' (col 17)
+
+ev3dev2simulator\visualisation\Sidebar.py
+  Line: 50
+    pylint: unused-variable / Unused variable 'address' (col 16)
+
+ev3dev2simulator\visualisation\Visualiser.py
+  Line: 32
+    pylint: too-many-arguments / Too many arguments (6/5) (col 4)
+  Line: 53
+    pylint: import-outside-toplevel / Import outside toplevel (ev3dev2.version) (col 8)
+  Line: 54
+    pylint: import-outside-toplevel / Import outside toplevel (ev3dev2simulator.version) (col 8)
+  Line: 72
+    pylint: eval-used / Use of eval (col 36)
+  Line: 188
+    pylint: import-outside-toplevel / Import outside toplevel (pyglet) (col 8)
+  Line: 203
+    pylint: import-outside-toplevel / Import outside toplevel (platform) (col 16)
+  Line: 213
+    pylint: import-outside-toplevel / Import outside toplevel (pyglet.libs.win32) (col 8)
+  Line: 214
+    pylint: import-outside-toplevel / Import outside toplevel (pyglet.libs.win32.constants) (col 8)
+  Line: 221
+    pylint: arguments-differ / Parameters differ from overridden 'on_key_press' method (col 4)
+  Line: 264
+    pylint: too-many-locals / Too many local variables (16/15) (col 4)
+  Line: 290
+    pylint: chained-comparison / Simplify chained comparison between the operands (col 38)
+  Line: 291
+    pylint: chained-comparison / Simplify chained comparison between the operands (col 39)
+  Line: 311
+    pylint: import-outside-toplevel / Import outside toplevel (platform) (col 8)
+
+
+
+Check Information
+=================
+         Started: 2020-04-23 21:33:12.380931
+        Finished: 2020-04-23 21:33:37.571920
+      Time Taken: 25.19 seconds
+       Formatter: grouped
+        Profiles: default, no_doc_warnings, no_test_warnings, strictness_medium, strictness_high, strictness_veryhigh, no_member_warnings
+      Strictness: None
+  Libraries Used:
+       Tools Run: dodgy, mccabe, pep8, profile-validator, pyflakes, pylint
+  Messages Found: 77

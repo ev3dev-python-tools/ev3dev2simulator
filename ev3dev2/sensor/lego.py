@@ -26,8 +26,8 @@ import time
 
 from ev3dev2.button import ButtonBase
 from ev3dev2.sensor import Sensor
-from ev3dev2simulator.connector.SensorConnector import SensorConnector
-from ev3dev2simulator.util.Util import get_cm_multiplier, get_inch_multiplier
+from ev3dev2simulator.connector.sensor_connector import SensorConnector
+from ev3dev2simulator.util.util import get_cm_multiplier, get_inch_multiplier
 
 
 class TouchSensor(Sensor):
@@ -43,10 +43,10 @@ class TouchSensor(Sensor):
     MODES = (MODE_TOUCH,)
 
 
-    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(TouchSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-touch', 'lego-nxt-touch'], **kwargs)
 
-        self.connector = SensorConnector(address)
+        self.connector = SensorConnector(self.address)
 
 
     @property
@@ -124,7 +124,7 @@ class TouchSensor(Sensor):
         if you need to divide to get the actual value.
         """
 
-        return self.is_pressed()
+        return self.is_pressed
 
 
 class ColorSensor(Sensor):
@@ -196,7 +196,7 @@ class ColorSensor(Sensor):
     )
 
 
-    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(ColorSensor, self).__init__(address, name_pattern, name_exact, driver_name='lego-ev3-color', **kwargs)
 
         # See calibrate_white() for more details
@@ -204,7 +204,7 @@ class ColorSensor(Sensor):
         self.green_max = 300
         self.blue_max = 300
 
-        self.connector = SensorConnector(address)
+        self.connector = SensorConnector(self.address)
 
 
     @property
@@ -212,8 +212,8 @@ class ColorSensor(Sensor):
         """
         Reflected light intensity as a percentage (0 to 100). Light on sensor is red.
         """
-
-        pass
+        self._ensure_mode(self.MODE_COL_REFLECT)
+        return self.value(0)
 
 
     @property
@@ -240,7 +240,7 @@ class ColorSensor(Sensor):
         """
 
         self._ensure_mode(self.MODE_COL_COLOR)
-        return self.connector.get_value()
+        return self.value(0)
 
 
     @property
@@ -249,7 +249,7 @@ class ColorSensor(Sensor):
         Returns NoColor, Black, Blue, etc
         """
 
-        return self.COLORS[self.connector.get_value()]
+        return self.COLORS[self.color]
 
 
     @property
@@ -262,8 +262,8 @@ class ColorSensor(Sensor):
         pointing the color sensor at a well lit sheet of white paper will return
         values in the 250-400 range.
         """
-
-        pass
+        self._ensure_mode(self.MODE_RGB_RAW)
+        return self.value(0), self.value(1), self.value(2)
 
 
     def calibrate_white(self):
@@ -285,8 +285,7 @@ class ColorSensor(Sensor):
         - the amount of light in the room
         - shadows that the robot casts on the sensor
         """
-
-        pass
+        (self.red_max, self.green_max, self.blue_max) = self.raw
 
 
     @property
@@ -294,8 +293,11 @@ class ColorSensor(Sensor):
         """
         Same as raw() but RGB values are scaled to 0-255
         """
+        (red, green, blue) = self.raw
 
-        pass
+        return (min(int((red * 255) / self.red_max), 255),
+                min(int((green * 255) / self.green_max), 255),
+                min(int((blue * 255) / self.blue_max), 255))
 
 
     @property
@@ -303,8 +305,47 @@ class ColorSensor(Sensor):
         """
         Return colors in Lab color space
         """
+        RGB = [0, 0, 0]
+        XYZ = [0, 0, 0]
 
-        pass
+        for (num, value) in enumerate(self.rgb):
+            if value > 0.04045:
+                value = pow(((value + 0.055) / 1.055), 2.4)
+            else:
+                value = value / 12.92
+
+            RGB[num] = value * 100.0
+
+        # http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+        # sRGB
+        # 0.4124564  0.3575761  0.1804375
+        # 0.2126729  0.7151522  0.0721750
+        # 0.0193339  0.1191920  0.9503041
+        X = (RGB[0] * 0.4124564) + (RGB[1] * 0.3575761) + (RGB[2] * 0.1804375)
+        Y = (RGB[0] * 0.2126729) + (RGB[1] * 0.7151522) + (RGB[2] * 0.0721750)
+        Z = (RGB[0] * 0.0193339) + (RGB[1] * 0.1191920) + (RGB[2] * 0.9503041)
+
+        XYZ[0] = X / 95.047   # ref_X =  95.047
+        XYZ[1] = Y / 100.0    # ref_Y = 100.000
+        XYZ[2] = Z / 108.883  # ref_Z = 108.883
+
+        for (num, value) in enumerate(XYZ):
+            if value > 0.008856:
+                value = pow(value, (1.0 / 3.0))
+            else:
+                value = (7.787 * value) + (16 / 116.0)
+
+            XYZ[num] = value
+
+        L = (116.0 * XYZ[1]) - 16
+        a = 500.0 * (XYZ[0] - XYZ[1])
+        b = 200.0 * (XYZ[1] - XYZ[2])
+
+        L = round(L, 4)
+        a = round(a, 4)
+        b = round(b, 4)
+
+        return (L, a, b)
 
 
     @property
@@ -315,8 +356,29 @@ class ColorSensor(Sensor):
         S: color saturation ("purity")
         V: color brightness
         """
+        (r, g, b) = self.rgb
+        maxc = max(r, g, b)
+        minc = min(r, g, b)
+        v = maxc
 
-        pass
+        if minc == maxc:
+            return 0.0, 0.0, v
+
+        s = (maxc-minc) / maxc
+        rc = (maxc-r) / (maxc-minc)
+        gc = (maxc-g) / (maxc-minc)
+        bc = (maxc-b) / (maxc-minc)
+
+        if r == maxc:
+            h = bc-gc
+        elif g == maxc:
+            h = 2.0+rc-bc
+        else:
+            h = 4.0+gc-rc
+
+        h = (h/6.0) % 1.0
+
+        return (h, s, v)
 
 
     @property
@@ -327,35 +389,66 @@ class ColorSensor(Sensor):
         L: color lightness
         S: color saturation
         """
+        """
+        HLS: Hue, Luminance, Saturation
+        H: position in the spectrum
+        L: color lightness
+        S: color saturation
+        """
+        (r, g, b) = self.rgb
+        maxc = max(r, g, b)
+        minc = min(r, g, b)
+        l = (minc+maxc)/2.0
 
-        pass
+        if minc == maxc:
+            return 0.0, l, 0.0
 
+        if l <= 0.5:
+            s = (maxc-minc) / (maxc+minc)
+        else:
+            if 2.0-maxc-minc == 0:
+                s = 0
+            else:
+                s = (maxc-minc) / (2.0-maxc-minc)
+
+        rc = (maxc-r) / (maxc-minc)
+        gc = (maxc-g) / (maxc-minc)
+        bc = (maxc-b) / (maxc-minc)
+
+        if r == maxc:
+            h = bc-gc
+        elif g == maxc:
+            h = 2.0+rc-bc
+        else:
+            h = 4.0+gc-rc
+
+        h = (h/6.0) % 1.0
+
+        return (h, l, s)
 
     @property
     def red(self):
         """
         Red component of the detected color, in the range 0-1020.
         """
-
-        pass
-
+        self._ensure_mode(self.MODE_RGB_RAW)
+        return self.value(0)
 
     @property
     def green(self):
         """
         Green component of the detected color, in the range 0-1020.
         """
-
-        pass
-
+        self._ensure_mode(self.MODE_RGB_RAW)
+        return self.value(1)
 
     @property
     def blue(self):
         """
         Blue component of the detected color, in the range 0-1020.
         """
-
-        pass
+        self._ensure_mode(self.MODE_RGB_RAW)
+        return self.value(2)
 
 
     def value(self, n=0):
@@ -365,8 +458,29 @@ class ColorSensor(Sensor):
         an error. The values are fixed point numbers, so check decimals to see
         if you need to divide to get the actual value.
         """
+        color_to_rgb = [
+            (0, 0, 0),  # 0: No color
+            (0, 0, 0),  # 1: Black
+            (0, 0, 255),  # 2: Blue
+            (0, 255, 0),  # 3: Green
+            (255, 255, 0),  # 4: Yellow
+            (255, 0, 0),  # 5: Red
+            (255, 255, 255),  # 6: White
+            (165, 42, 42)  # 7: Brown
+        ]
 
-        return self.color()
+        if self.mode == self.MODE_COL_COLOR:
+            return self.connector.get_value()
+        elif self.mode == self.MODE_RGB_RAW:
+            return color_to_rgb[self.connector.get_value()][n]
+        elif self.mode == self.MODE_COL_REFLECT:
+            total_light = sum(color_to_rgb[self.connector.get_value()])
+            return total_light / (255 * 3) * 100  # percentage of light
+
+        else:
+            print(f'Mode {self.mode} not supported')
+            return None
+
 
 
 class UltrasonicSensor(Sensor):
@@ -401,10 +515,10 @@ class UltrasonicSensor(Sensor):
     )
 
 
-    def __init__(self, address, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
+    def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
         super(UltrasonicSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-us', 'lego-nxt-us'], **kwargs)
 
-        self.connector = SensorConnector(address)
+        self.connector = SensorConnector(self.address)
         self.mode = self.MODE_US_DIST_CM
 
 
@@ -959,10 +1073,10 @@ class LightSensor(Sensor):
     @property
     def reflected_light_intensity(self):
         """
-        A measurement of the reflected light intensity, as a percentage.
+        Reflected light intensity as a percentage (0 to 100). Light on sensor is red.
         """
-
-        pass
+        self._ensure_mode(self.MODE_COL_REFLECT)
+        return self.value(0)
 
 
     @property

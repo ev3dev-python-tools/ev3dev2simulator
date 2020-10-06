@@ -28,7 +28,7 @@ from time import sleep
 
 from ev3dev2 import Device
 from ev3dev2._platform.ev3 import LEDS, LED_GROUPS, LED_COLORS, LED_DEFAULT_COLOR
-from ev3dev2simulator.connector.LedConnector import LedConnector
+from ev3dev2simulator.connector.led_connector import LedConnector
 from ev3dev2.stopwatch import StopWatch
 
 

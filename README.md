@@ -98,7 +98,6 @@ control/rc\_tank.py<br/>
 control//webserver.py
 
 display.py <br/>
-led.py 
  
 motor.py
 
@@ -107,12 +106,6 @@ motor.py
 * class DcMotor
 * class ServoMotor
 * class MoveJoystick
-* class LineFollowErrorLostLine
-* class LineFollowErrorTooFast
-* class MoveJoystick
-* class MoveTank
-
-  * def follow\_line()  
   
 port.py <br/>
 power.py 
@@ -130,17 +123,8 @@ sensor/lego.py
 
 * class ColorSensor
 
-  * def reflected\_light\_intensity()
   * def ambient\_light\_intensity()
-  * def raw()
-  * def calibrate\_white()
-  * def rgb()
-  * def fab()
-  * def hsv()
-  * def hls()
-  * def red()
-  * def green()
-  * def blue()
+
   
 * class UltrasonicSensor
 
@@ -156,14 +140,6 @@ sound.py
   * def get\_command\_processes()
   * Class Sound
   
-    * def beep()
-    * def tone()
-    * def play\_tone()
-    * def play\_note()
-    * def play()
-    * def play\_file()
     * def get\_volume()
     * def set\_volume()
-    * def play\_song()
-    * def beep\_args()
     * def get\_channel()
