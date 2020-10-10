@@ -133,9 +133,11 @@ class WorldState:
         Based on the position given, select the object that is closest (with a maximum of 15) and set as selected.
         """
         max_distance = 15
-        poly = self.space.point_query_nearest(pos, max_distance, pymunk.ShapeFilter()).shape
-        if hasattr(poly, 'body'):
-            self.selected_object = poly.body
+        queried_object = self.space.point_query_nearest(pos, max_distance, pymunk.ShapeFilter())
+        if queried_object is not None:
+            poly = queried_object.shape
+            if hasattr(poly, 'body'):
+                self.selected_object = poly.body
 
     def move_selected_object(self, delta_x, delta_y):
         """
@@ -148,7 +150,8 @@ class WorldState:
         """
         Rotate the selected object with the given angle.
         """
-        self.selected_object.angle += radians(delta_angle)
+        if self.selected_object is not None:
+            self.selected_object.angle += radians(delta_angle)
 
     def unselect_object(self):
         """
