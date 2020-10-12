@@ -102,5 +102,23 @@ class TestWorldState(unittest.TestCase):
         self.assertEqual(bottle.body.position, (500, 150))
 
 
+    def test_set_object_at_position_as_selected(self):
+        world_state = WorldState(self.default_config())
+        world_state.setup_pymunk_shapes(0.5)
+        self.assertEqual(len(world_state.space.bodies), 3)  # 1 robot + 1 bottle + 1 rock
+        bottle = world_state.obstacles[1]
+        self.assertEqual(bottle.body.position, (500, 150))
+
+        world_state.set_object_at_position_as_selected((500, 150))
+        self.assertEqual(world_state.selected_object, bottle.body)
+        world_state.unselect_object()
+        self.assertEqual(world_state.selected_object, None)
+        world_state.set_object_at_position_as_selected((25000, 25000))  # this should not exist
+        self.assertEqual(world_state.selected_object, None)
+
+
+
+
+
 if __name__ == '__main__':
     unittest.main()
