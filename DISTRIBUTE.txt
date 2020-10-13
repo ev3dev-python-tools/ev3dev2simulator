@@ -1,0 +1,41 @@
+
+Distribute simulator on pypi
+=============================
+
+build wheel distribution file
+-----------------------------
+
+Build a .whl file in subdir pypi/ with the command:
+
+      python3 setup.py bdist_wheel -d pypi
+
+To test the .whl file you can install it with:
+   
+       PATH_TO_MY_WHL=pypi/ev3dev2simulator-2.0.0-py3-none-any.whl
+       pip3 install $PATH_TO_MY_WHL
+
+upload to pypi
+--------------
+
+Credentials and URLs for test and official repos are set in ~/.pypirc.
+
+Test upload
+
+      python3 -m twine upload --repository testpypi  $PATH_TO_MY_WHL
+                                           ^^^^
+
+  watch result at :
+
+      https://test.pypi.org/project/ev3dev2simulator/
+
+Official upload
+
+      src: https://packaging.python.org/guides/migrating-to-pypi-org/
+
+      python3 -m twine upload --repository pypi $PATH_TO_MY_WHL
+                                           ^^^^
+
+   watch result at :
+
+      https://pypi.org/project/ev3dev2simulator/
+
