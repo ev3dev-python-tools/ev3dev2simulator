@@ -96,6 +96,8 @@ class Led(Device):
     @brightness.setter
     def brightness(self, value):
         self._brightness = value
+        self.connector.enable(self._brightness)
+
 
 
     @property
@@ -195,7 +197,6 @@ class Led(Device):
     @brightness_pct.setter
     def brightness_pct(self, value):
         self.brightness = value * self.max_brightness
-        self.connector.enable(self.brightness)
 
 
 class Leds(object):

@@ -3,7 +3,6 @@ The message_processor module contains the class MessageProcessor.
 This class takes the commands given and converts them into jobs the robot simulator understands.
 """
 
-
 from typing import Any, Tuple
 # noinspection PyProtectedMember
 from ev3dev2._platform.ev3 import LEDS
@@ -135,10 +134,28 @@ class MessageProcessor:
         led_id = command.get_led_id()
 
         color_tuple = (self.led_cache[led_id + ':red:brick-status'], self.led_cache[led_id + ':green:brick-status'])
-        color = LED_COLORS.get(color_tuple)
-
+        color = self._red_green_to_color(color_tuple)
         if color is not None:
             self.robot_sim.set_led_color(self.brick_id, led_id, color)
+
+    @staticmethod
+    def _red_green_to_color(color_tuple):
+        if len(color_tuple) != 2:
+            return None
+        if color_tuple[0] is None:
+            color_tuple = (0, color_tuple[1])
+        if color_tuple[1] is None:
+            color_tuple = (color_tuple[0], 0)
+
+        color = LED_COLORS.get(color_tuple)
+        diff = 2
+        if color is None:
+            for key, value in LED_COLORS.items():
+                new_diff = abs(color_tuple[0] - key[0]) + abs(color_tuple[1] - key[1])
+                if new_diff < diff:
+                    color = value
+                    diff = new_diff
+        return color
 
     def process_sound_command(self, command: sound_command):
         """

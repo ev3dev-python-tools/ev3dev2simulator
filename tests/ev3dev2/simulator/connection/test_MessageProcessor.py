@@ -170,6 +170,39 @@ class MessageProcessorTest(unittest.TestCase):
         self.assertEqual(robot_sim.robot.led_colors[(0, 'led0')], 0)
         self.assertEqual(robot_sim.robot.led_colors[(0, 'led1')], 4)
 
+        #  Between colors
+
+        command5 = LedCommand('led0:red:brick-status', 0.5)
+        command6 = LedCommand('led0:green:brick-status', 0.3)
+
+        message_processor.process_led_command(command5)
+        message_processor.process_led_command(command6)
+
+        self.assertEqual(robot_sim.robot.led_colors[(0, 'led0')], 4)
+        self.assertEqual(robot_sim.robot.led_colors[(0, 'led1')], 4)
+
+        #  Invalid colors
+
+        command5 = LedCommand('led0:red:brick-status', None)
+        command6 = LedCommand('led0:green:brick-status', None)
+
+        message_processor.process_led_command(command5)
+        message_processor.process_led_command(command6)
+
+        self.assertEqual(robot_sim.robot.led_colors[(0, 'led0')], 1)
+        self.assertEqual(robot_sim.robot.led_colors[(0, 'led1')], 4)
+
+        #  Turn off
+
+        command5 = LedCommand('led1:red:brick-status', 0)
+        command6 = LedCommand('led1:green:brick-status', 0)
+
+        message_processor.process_led_command(command5)
+        message_processor.process_led_command(command6)
+
+        self.assertEqual(robot_sim.robot.led_colors[(0, 'led0')], 1)
+        self.assertEqual(robot_sim.robot.led_colors[(0, 'led1')], 1)
+
     def test_process_data_request(self):
         robot_sim = create_robot_sim()
         robot_sim.robot.values[(1, 'ev3-ports:in4')] = 10
