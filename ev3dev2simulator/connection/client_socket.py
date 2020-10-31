@@ -4,6 +4,7 @@ Singleton module client_sockets contains the class ClientSocket and the function
 
 import json
 import socket
+import threading
 import time
 import sys
 from typing import Any, Optional
@@ -25,6 +26,7 @@ class ClientSocket:
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect(('localhost', port))
+        self.lock = threading.Lock()
 
         time.sleep(1)
 
@@ -34,17 +36,19 @@ class ClientSocket:
         :param command: to send.
         :param wait_for_response: set to True if you expect a result and want to wait for it blocking.
         """
-
+        self.lock.acquire()
         jsn = self.serialize(command)
         self.client.send(jsn)
 
+        des = None
         if wait_for_response:
             while True:
                 data = self.client.recv(32)
-
                 if data:
-                    return self.deserialize(data)
-        return None
+                    des = self.deserialize(data)
+                    break
+        self.lock.release()
+        return des
 
     @staticmethod
     def serialize(message: Any) -> bytes:
