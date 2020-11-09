@@ -25,6 +25,9 @@ class ClientSocket:
         port = int(get_simulation_settings()['exec_settings']['socket_port'])
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        self.client.settimeout(0.1)
+
         self.client.connect(('localhost', port))
         self.lock = threading.Lock()
 
@@ -38,16 +41,15 @@ class ClientSocket:
         """
         self.lock.acquire()
         jsn = self.serialize(command)
-        self.client.send(jsn)
 
-        des = None
-        if wait_for_response:
-            while True:
+        try:
+            self.client.send(jsn)
+            des = None
+            if wait_for_response:
                 data = self.client.recv(32)
-                if data:
-                    des = self.deserialize(data)
-                    break
-        self.lock.release()
+                des = self.deserialize(data)
+        finally:
+            self.lock.release()
         return des
 
     @staticmethod
