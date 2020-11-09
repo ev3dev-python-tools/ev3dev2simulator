@@ -42,9 +42,9 @@ class ClientSocket:
         self.lock.acquire()
         jsn = self.serialize(command)
 
+        des = None
         try:
             self.client.send(jsn)
-            des = None
             if wait_for_response:
                 data = self.client.recv(32)
                 des = self.deserialize(data)
