@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.3] - 2020-11-11
+
+### Fixed
+- Fix for threading issue #39
+
 ## [2.0.2] - 2020-10-29
 
 ### Fixed
@@ -140,7 +145,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First version ready for use
 
 
-[unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.2...HEAD
+[unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.3...HEAD
+[2.0.3]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.2...v2.0.2
 [2.0.2]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v1.3.2...v2.0.0
