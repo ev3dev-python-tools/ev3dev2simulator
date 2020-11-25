@@ -1,8 +1,8 @@
 robots:
   - name: robot0
-    center_x: 400
-    center_y: 350
-    orientation: -34
+    center_x: 180
+    center_y: 200
+    orientation: 0
     type: 'large_robot'
 
 board_height: 1273
@@ -44,7 +44,7 @@ obstacles:
     y: 1050
     width: 150
     height: 120
-    color: 169, 169, 169
+    color: 139, 139, 139
     angle: 10
     type: 'rock'
     movable: False
@@ -54,7 +54,7 @@ obstacles:
     y: 275
     width: 200
     height: 90
-    color: 169, 169, 169
+    color: 179, 179, 179
     angle: 130
     type: 'rock'
     movable: True
