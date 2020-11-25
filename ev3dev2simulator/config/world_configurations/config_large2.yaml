@@ -49,7 +49,7 @@ obstacles:
     y: 1050
     width: 150
     height: 60
-    color: 169, 169, 169
+    color: 139, 139, 139
     angle: 10
     type: 'rock'
     movable: False
@@ -59,7 +59,7 @@ obstacles:
     y: 275
     width: 300
     height: 90
-    color: 169, 169, 169
+    color: 179, 179, 179
     angle: 130
     type: 'rock'
     movable: True
