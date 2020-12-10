@@ -40,7 +40,7 @@ class UltrasonicSensorBottom(BodyPart):
             if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
                 if isinstance(obstacle, Hole):
                     return obstacle.depth
-                elif isinstance(obstacle, Board):
+                if isinstance(obstacle, Board):
                     return 20
                 return self.get_default_value()
         return self.get_default_value()
