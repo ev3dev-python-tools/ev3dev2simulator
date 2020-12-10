@@ -39,8 +39,7 @@ class UltrasonicSensorBottom(BodyPart):
             if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
                 if isinstance(obstacle, Hole):
                     return obstacle.depth
-                else:
-                    return self.get_default_value()
+                return self.get_default_value()
         return 20
 
     def get_default_value(self):

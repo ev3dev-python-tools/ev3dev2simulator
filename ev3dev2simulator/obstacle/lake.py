@@ -23,8 +23,8 @@ class Lake(ColorObstacle):
                  inner_radius: float,
                  color: arcade.Color,
                  border_width: int,
-                 has_hole: bool,
-                 depth: float):
+                 hole_config: (bool, int)
+                 ):
         super(Lake, self).__init__(to_color_code(color))
 
         self.x = pos.x
@@ -33,8 +33,10 @@ class Lake(ColorObstacle):
 
         self.inner_radius = inner_radius
         self.hole = None
+        has_hole = hole_config[0]
         if has_hole:
-            self.hole = self._create_hole(depth)
+            hole_depth = hole_config[1]
+            self.hole = self._create_hole(hole_depth)
         self.outer_radius = outer_radius
 
         # visualisation
@@ -76,7 +78,7 @@ class Lake(ColorObstacle):
 
         color = tuple(config['color'])
 
-        return cls(pos, outer_radius, inner_radius, color, border_width, has_hole, depth)
+        return cls(pos, outer_radius, inner_radius, color, border_width, (has_hole, depth))
 
     def _create_points(self, scale) -> PointList:
         """
