@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+##  [2.0.5] - 2020-12-10
+
+### Added
+- Added specific depths to obstacles. The sensor measures the depth of underlying object. Previously, everything was assumed to be very shallow and specific obstacles had the maximum depth. Now, the depth of holes of the lakes can be configured (default 800mm). The board, the playing field of the robots, gets the value of 20mm depth. When no obstacle is sensed the sensor gets the maximal value of 2550.  
+
 ## [2.0.4] - 2020-11-25
 
 ### Added
@@ -153,7 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First version ready for use
 
 
-[unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.4...HEAD
+[unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.5...HEAD
+[2.0.5]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.1...v2.0.2
