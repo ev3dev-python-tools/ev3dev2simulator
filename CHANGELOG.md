@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ##  [2.0.5] - 2020-12-10
 
 ### Added
-- Added specific depths to obstacles. The sensor measures the depth of underlying object. Previously, everything was assumed to be very shallow and specific obstacles had the maximum depth. Now, the depth of holes of the lakes can be configured (default 800mm). The board, the playing field of the robots, gets the value of 20mm depth. When no obstacle is sensed the sensor gets the maximal value of 2550.  
+- Added configuration of the depth of lake objects. The ultrasonic sensor pointed to the bottom measures the depth to the underlying object. Previously, everything was assumed to be very shallow and specific obstacles had the maximum depth. Now, the depth of the lakes can be configured (default 800mm).  The board, the playing field of the robots, is not configurable and gets the default value of 20mm depth. When no lake  nor a playfield is sensed the sensor gets the maximal value of 2550.  Finally, the border of the lake is assumed at board depth, and therefore gets the same depth as the board.
 
 ## [2.0.4] - 2020-11-25
 
