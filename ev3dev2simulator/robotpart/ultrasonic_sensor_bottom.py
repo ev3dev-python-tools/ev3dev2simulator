@@ -8,6 +8,7 @@ from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.robotpart.body_part import BodyPart
 from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.obstacle.hole import Hole
+from ev3dev2simulator.obstacle.board import Board
 
 
 class UltrasonicSensorBottom(BodyPart):
@@ -39,8 +40,10 @@ class UltrasonicSensorBottom(BodyPart):
             if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
                 if isinstance(obstacle, Hole):
                     return obstacle.depth
+                elif isinstance(obstacle, Board):
+                    return 20
                 return self.get_default_value()
-        return 20
+        return self.get_default_value()
 
     def get_default_value(self):
         """

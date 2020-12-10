@@ -3,6 +3,7 @@ The wheel module contains the class Wheel which represents a wheel of an ev3dev2
 """
 
 from ev3dev2simulator.config.config import get_simulation_settings
+from ev3dev2simulator.obstacle.board import Board
 from ev3dev2simulator.robotpart.body_part import BodyPart
 from ev3dev2simulator.util.dimensions import Dimensions
 
@@ -28,9 +29,11 @@ class Wheel(BodyPart):
         """
         for obstacle in self.sensible_obstacles:
             if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
+                if isinstance(obstacle, Board):
+                    return False
                 return True
 
         return self.get_default_value()
 
     def get_default_value(self):
-        return False
+        return True
