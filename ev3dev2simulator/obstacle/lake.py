@@ -23,7 +23,8 @@ class Lake(ColorObstacle):
                  inner_radius: float,
                  color: arcade.Color,
                  border_width: int,
-                 has_hole: bool):
+                 hole_config: (bool, int)
+                 ):
         super(Lake, self).__init__(to_color_code(color))
 
         self.x = pos.x
@@ -32,8 +33,10 @@ class Lake(ColorObstacle):
 
         self.inner_radius = inner_radius
         self.hole = None
+        has_hole = hole_config[0]
         if has_hole:
-            self.hole = self._create_hole()
+            hole_depth = hole_config[1]
+            self.hole = self._create_hole(hole_depth)
         self.outer_radius = outer_radius
 
         # visualisation
@@ -71,10 +74,11 @@ class Lake(ColorObstacle):
 
         pos = Point(config['x'], config['y'])
         has_hole = config['hole'] if 'hole' in config else True
+        depth = config['depth'] if 'depth' in config else 800
 
         color = tuple(config['color'])
 
-        return cls(pos, outer_radius, inner_radius, color, border_width, has_hole)
+        return cls(pos, outer_radius, inner_radius, color, border_width, (has_hole, depth))
 
     def _create_points(self, scale) -> PointList:
         """
@@ -99,11 +103,11 @@ class Lake(ColorObstacle):
         return create_ellipse_filled(self.center_x, self.center_y,
                                      self.outer_radius * scale, self.outer_radius * scale, self.color)
 
-    def _create_hole(self):
+    def _create_hole(self, depth):
         """
         Create hole object in lake that is used for detection that the robot is stuck.
         """
-        return Hole(self.x, self.y, self.inner_radius)
+        return Hole(self.x, self.y, self.inner_radius, depth)
 
     def collided_with(self, x: float, y: float) -> bool:
         """

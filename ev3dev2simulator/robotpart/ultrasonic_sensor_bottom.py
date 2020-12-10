@@ -7,6 +7,8 @@ It represents an ultrasonic sensor that aims to the ground.
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.robotpart.body_part import BodyPart
 from ev3dev2simulator.util.dimensions import Dimensions
+from ev3dev2simulator.obstacle.hole import Hole
+from ev3dev2simulator.obstacle.board import Board
 
 
 class UltrasonicSensorBottom(BodyPart):
@@ -36,8 +38,12 @@ class UltrasonicSensorBottom(BodyPart):
         """
         for obstacle in self.sensible_obstacles:
             if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
+                if isinstance(obstacle, Hole):
+                    return obstacle.depth
+                if isinstance(obstacle, Board):
+                    return 20
                 return self.get_default_value()
-        return 20
+        return self.get_default_value()
 
     def get_default_value(self):
         """

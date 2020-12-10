@@ -17,10 +17,12 @@ class Hole:
     def __init__(self,
                  x: int,
                  y: int,
-                 radius: float):
+                 radius: float,
+                 depth: float):
         self.x = x
         self.y = y
         self.radius = radius
+        self.depth = depth
 
         # visualisation
         self.points = None

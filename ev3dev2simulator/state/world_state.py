@@ -67,6 +67,7 @@ class WorldState:
             else:
                 print("unknown obstacle type")
 
+        self.falling_obstacles.append(board)
         self.color_obstacles.append(board)
 
         self.selected_object = None
