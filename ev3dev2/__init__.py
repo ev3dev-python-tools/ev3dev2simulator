@@ -24,6 +24,23 @@
 # -----------------------------------------------------------------------------
 import re
 import sys
+import os
+import io
+import fnmatch
+import re
+import stat
+import errno
+from os.path import abspath
+
+try:
+    # if we are in a released build, there will be an auto-generated "version"
+    # module
+    from .version import __version__
+except ImportError:
+    __version__ = "<unknown>"
+
+if sys.version_info < (3, 4):
+    raise SystemError('Must be using Python 3.4 or higher')
 
 from ev3dev2simulator.connector.device_connector import DeviceConnector
 
@@ -31,6 +48,13 @@ from ev3dev2simulator.connector.device_connector import DeviceConnector
 def is_micropython():
     return sys.implementation.name == "micropython"
 
+
+def chain_exception(exception, cause):
+    if is_micropython():
+        raise exception
+    else:
+        raise exception from cause
+    
 
 def get_current_platform():
     """
@@ -67,8 +91,21 @@ def library_load_warning_message(library_name, dependent_class):
     pass
 
 
+
 class DeviceNotFound(Exception):
     pass
+
+
+class DeviceNotDefined(Exception):
+    pass
+
+
+class ThreadNotRunning(Exception):
+    pass
+
+
+# -----------------------------------------------------------------------------
+# Define the base class from which all other ev3dev classes are defined.
 
 
 class Device(object):
@@ -123,7 +160,6 @@ class Device(object):
             return "%s(%s)" % (self.__class__.__name__, self.kwargs.get('address'))
         else:
             return self.__class__.__name__
-
 
     def __repr__(self):
         return self.__str__()

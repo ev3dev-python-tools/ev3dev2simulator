@@ -52,10 +52,7 @@ class Led(Device):
         'connector',
     ]
 
-
-    def __init__(self,
-                 name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False,
-                 desc=None, **kwargs):
+    def __init__(self, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, desc=None, **kwargs):
         self.desc = desc
         super(Led, self).__init__(self.SYSTEM_CLASS_NAME, name_pattern, name_exact, **kwargs)
         self._max_brightness = 1
@@ -87,7 +84,7 @@ class Led(Device):
     @property
     def brightness(self):
         """
-        Sets the brightness level. Possible values are from 0 to `max_brightness`.
+        Sets the brightness level. Possible values are from 0 to ``max_brightness``.
         """
 
         return self._brightness
@@ -115,17 +112,17 @@ class Led(Device):
         Sets the LED trigger. A trigger is a kernel based source of LED events.
         Triggers can either be simple or complex. A simple trigger isn't
         configurable and is designed to slot into existing subsystems with
-        minimal additional code. Examples are the `ide-disk` and `nand-disk`
+        minimal additional code. Examples are the ``ide-disk`` and ``nand-disk``
         triggers.
 
         Complex triggers whilst available to all LEDs have LED specific
-        parameters and work on a per LED basis. The `timer` trigger is an example.
-        The `timer` trigger will periodically change the LED brightness between
-        0 and the current brightness setting. The `on` and `off` time can
-        be specified via `delay_{on,off}` attributes in milliseconds.
+        parameters and work on a per LED basis. The ``timer`` trigger is an example.
+        The ``timer`` trigger will periodically change the LED brightness between
+        0 and the current brightness setting. The ``on`` and ``off`` time can
+        be specified via ``delay_{on,off}`` attributes in milliseconds.
         You can change the brightness value of a LED independently of the timer
         trigger. However, if you set the brightness value to 0 it will
-        also disable the `timer` trigger.
+        also disable the ``timer`` trigger.
         """
 
         pass
@@ -139,9 +136,9 @@ class Led(Device):
     @property
     def delay_on(self):
         """
-        The `timer` trigger will periodically change the LED brightness between
-        0 and the current brightness setting. The `on` time can
-        be specified via `delay_on` attribute in milliseconds.
+        The ``timer`` trigger will periodically change the LED brightness between
+        0 and the current brightness setting. The ``on`` time can
+        be specified via ``delay_on`` attribute in milliseconds.
         """
 
         pass
@@ -161,9 +158,9 @@ class Led(Device):
     @property
     def delay_off(self):
         """
-        The `timer` trigger will periodically change the LED brightness between
-        0 and the current brightness setting. The `off` time can
-        be specified via `delay_off` attribute in milliseconds.
+        The ``timer`` trigger will periodically change the LED brightness between
+        0 and the current brightness setting. The ``off`` time can
+        be specified via ``delay_off`` attribute in milliseconds.
         """
 
         # Workaround for ev3dev/ev3dev#225.
@@ -177,6 +174,13 @@ class Led(Device):
 
     @delay_off.setter
     def delay_off(self, value):
+        """
+        Workaround for ev3dev/ev3dev#225.
+        ``delay_on`` and ``delay_off`` attributes are created when trigger is set
+        to ``timer``, and destroyed when it is set to anything else.
+        This means the file cache may become outdated, and we may have to
+        reopen the file.
+        """
         # Workaround for ev3dev/ev3dev#225.
         # 'delay_on' and 'delay_off' attributes are created when trigger is set
         # to 'timer', and destroyed when it is set to anything else.
@@ -184,7 +188,6 @@ class Led(Device):
         # reopen the file.
 
         pass
-
 
     @property
     def brightness_pct(self):
@@ -200,7 +203,6 @@ class Led(Device):
 
 
 class Leds(object):
-
     def __init__(self):
         self.leds = OrderedDict()
         self.led_groups = OrderedDict()
@@ -289,6 +291,8 @@ class Leds(object):
         if not self.leds:
             return
 
+        self.animate_stop()
+
         for led in self.leds.values():
             led.brightness = 0
 
@@ -318,8 +322,14 @@ class Leds(object):
             while self.animate_thread_id:
                 pass
 
-
-    def animate_police_lights(self, color1, color2, group1='LEFT', group2='RIGHT', sleeptime=0.5, duration=5, block=True):
+    def animate_police_lights(self,
+                              color1,
+                              color2,
+                              group1='LEFT',
+                              group2='RIGHT',
+                              sleeptime=0.5,
+                              duration=5,
+                              block=True):
         """
         Cycle the ``group1`` and ``group2`` LEDs between ``color1`` and ``color2``
         to give the effect of police lights.  Alternate the ``group1`` and ``group2``
@@ -335,12 +345,10 @@ class Leds(object):
             leds = Leds()
             leds.animate_police_lights('RED', 'GREEN', sleeptime=0.75, duration=10)
         """
-
-
         def _animate_police_lights():
             self.all_off()
             even = True
-            duration_ms = duration * 1000
+            duration_ms = duration * 1000 if duration is not None else None
             stopwatch = StopWatch()
             stopwatch.start()
 
@@ -352,7 +360,7 @@ class Leds(object):
                     self.set_color(group1, color2)
                     self.set_color(group2, color1)
 
-                if self.animate_thread_stop or stopwatch.value_ms >= duration_ms:
+                if self.animate_thread_stop or stopwatch.is_elapsed_ms(duration_ms):
                     break
 
                 even = not even
@@ -384,11 +392,9 @@ class Leds(object):
             leds = Leds()
             leds.animate_flash('AMBER', sleeptime=0.75, duration=10)
         """
-
-
         def _animate_flash():
             even = True
-            duration_ms = duration * 1000
+            duration_ms = duration * 1000 if duration is not None else None
             stopwatch = StopWatch()
             stopwatch.start()
 
@@ -399,7 +405,7 @@ class Leds(object):
                 else:
                     self.all_off()
 
-                if self.animate_thread_stop or stopwatch.value_ms >= duration_ms:
+                if self.animate_thread_stop or stopwatch.is_elapsed_ms(duration_ms):
                     break
 
                 even = not even
@@ -437,7 +443,7 @@ class Leds(object):
         def _animate_cycle():
             index = 0
             max_index = len(colors)
-            duration_ms = duration * 1000
+            duration_ms = duration * 1000 if duration is not None else None
             stopwatch = StopWatch()
             stopwatch.start()
 
@@ -450,7 +456,7 @@ class Leds(object):
                 if index == max_index:
                     index = 0
 
-                if self.animate_thread_stop or stopwatch.value_ms >= duration_ms:
+                if self.animate_thread_stop or stopwatch.is_elapsed_ms(duration_ms):
                     break
 
                 sleep(sleeptime)
@@ -481,8 +487,6 @@ class Leds(object):
             leds = Leds()
             leds.animate_rainbow()
         """
-
-
         def _animate_rainbow():
             # state 0: (LEFT,RIGHT) from (0,0) to (1,0)...RED
             # state 1: (LEFT,RIGHT) from (1,0) to (1,1)...AMBER
@@ -494,7 +498,7 @@ class Leds(object):
             MIN_VALUE = 0
             MAX_VALUE = 1
             self.all_off()
-            duration_ms = duration * 1000
+            duration_ms = duration * 1000 if duration is not None else None
             stopwatch = StopWatch()
             stopwatch.start()
 
@@ -529,7 +533,7 @@ class Leds(object):
                 elif state == 3 and right_value == MIN_VALUE:
                     state = 0
 
-                if self.animate_thread_stop or stopwatch.value_ms >= duration_ms:
+                if self.animate_thread_stop or stopwatch.is_elapsed_ms(duration_ms):
                     break
 
                 sleep(sleeptime)
