@@ -128,7 +128,8 @@ class SoundTest(unittest.TestCase):
 
         fn_name, args, kwargs = self.clientSocketMock.mock_calls[2]
         self.assertDictEqual(args[0].serialize(),
-                             {'type': 'SoundCommand', 'duration': (0.8 / 4) * 2 / 3,  # a triplet
+                             {'type': 'SoundCommand',
+                              'duration': 0.1333333333333333, # ~= (0.8 / 4) * 2 / 3, a triplet
                               'message': 'Playing note with frequency: 523',
                               'soundType': 'note'})
 

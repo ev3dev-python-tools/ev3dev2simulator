@@ -213,11 +213,11 @@ class Sound(object):
             def beep_args(frequency=None, duration=None, delay=None):
                 args = {}
                 if frequency is not None:
-                    args += '-f %s ' % frequency
+                    args['frequency'] = frequency
                 if duration is not None:
-                    args += '-l %s ' % duration
+                    args['duration'] = duration
                 if delay is not None:
-                    args += '-D %s ' % delay
+                    args['delay'] = delay
 
                 return args
 
@@ -464,7 +464,9 @@ class Sound(object):
                 sleep(duration_ms / 1000 + delay)
             else:
                 freq = self._NOTE_FREQUENCIES[note.upper()]
-                self.beep('-f %d -l %d -D %d' % (freq, duration_ms, delay_ms))
+                self.beep([{ 'frequency': freq,
+                             'duration': duration_ms,
+                             'delay': delay_ms }])
 
     #: Note frequencies.
     #:
