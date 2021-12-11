@@ -22,12 +22,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # -----------------------------------------------------------------------------
+
+import sys
+import logging
 import time
 
 from ev3dev2.button import ButtonBase
 from ev3dev2.sensor import Sensor
 from ev3dev2simulator.connector.sensor_connector import SensorConnector
 from ev3dev2simulator.util.util import get_cm_multiplier, get_inch_multiplier
+
+if sys.version_info < (3, 4):
+    raise SystemError('Must be using Python 3.4 or higher')
+
+log = logging.getLogger(__name__)
 
 
 class TouchSensor(Sensor):
@@ -40,11 +48,15 @@ class TouchSensor(Sensor):
 
     #: Button state
     MODE_TOUCH = 'TOUCH'
-    MODES = (MODE_TOUCH,)
+    MODES = (MODE_TOUCH, )
 
 
     def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
-        super(TouchSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-touch', 'lego-nxt-touch'], **kwargs)
+        super(TouchSensor, self).__init__(address,
+                                          name_pattern,
+                                          name_exact,
+                                          driver_name=['lego-ev3-touch', 'lego-nxt-touch'],
+                                          **kwargs)
 
         self.connector = SensorConnector(self.address)
 
@@ -176,13 +188,7 @@ class ColorSensor(Sensor):
     #: Brown color.
     COLOR_BROWN = 7
 
-    MODES = (
-        MODE_COL_REFLECT,
-        MODE_COL_AMBIENT,
-        MODE_COL_COLOR,
-        MODE_REF_RAW,
-        MODE_RGB_RAW
-    )
+    MODES = (MODE_COL_REFLECT, MODE_COL_AMBIENT, MODE_COL_COLOR, MODE_REF_RAW, MODE_RGB_RAW)
 
     COLORS = (
         'NoColor',
@@ -295,9 +301,8 @@ class ColorSensor(Sensor):
         """
         (red, green, blue) = self.raw
 
-        return (min(int((red * 255) / self.red_max), 255),
-                min(int((green * 255) / self.green_max), 255),
-                min(int((blue * 255) / self.blue_max), 255))
+        return (min(int((red * 255) / self.red_max), 255), min(int((green * 255) / self.green_max),
+                                                               255), min(int((blue * 255) / self.blue_max), 255))
 
 
     @property
@@ -325,8 +330,8 @@ class ColorSensor(Sensor):
         Y = (RGB[0] * 0.2126729) + (RGB[1] * 0.7151522) + (RGB[2] * 0.0721750)
         Z = (RGB[0] * 0.0193339) + (RGB[1] * 0.1191920) + (RGB[2] * 0.9503041)
 
-        XYZ[0] = X / 95.047   # ref_X =  95.047
-        XYZ[1] = Y / 100.0    # ref_Y = 100.000
+        XYZ[0] = X / 95.047  # ref_X =  95.047
+        XYZ[1] = Y / 100.0  # ref_Y = 100.000
         XYZ[2] = Z / 108.883  # ref_Z = 108.883
 
         for (num, value) in enumerate(XYZ):
@@ -364,19 +369,19 @@ class ColorSensor(Sensor):
         if minc == maxc:
             return 0.0, 0.0, v
 
-        s = (maxc-minc) / maxc
-        rc = (maxc-r) / (maxc-minc)
-        gc = (maxc-g) / (maxc-minc)
-        bc = (maxc-b) / (maxc-minc)
+        s = (maxc - minc) / maxc
+        rc = (maxc - r) / (maxc - minc)
+        gc = (maxc - g) / (maxc - minc)
+        bc = (maxc - b) / (maxc - minc)
 
         if r == maxc:
-            h = bc-gc
+            h = bc - gc
         elif g == maxc:
-            h = 2.0+rc-bc
+            h = 2.0 + rc - bc
         else:
-            h = 4.0+gc-rc
+            h = 4.0 + gc - rc
 
-        h = (h/6.0) % 1.0
+        h = (h / 6.0) % 1.0
 
         return (h, s, v)
 
@@ -389,42 +394,36 @@ class ColorSensor(Sensor):
         L: color lightness
         S: color saturation
         """
-        """
-        HLS: Hue, Luminance, Saturation
-        H: position in the spectrum
-        L: color lightness
-        S: color saturation
-        """
-        (r, g, b) = self.rgb
-        maxc = max(r, g, b)
-        minc = min(r, g, b)
-        l = (minc+maxc)/2.0
+        (red, green, blue) = self.rgb
+        maxc = max(red, green, blue)
+        minc = min(red, green, blue)
+        luminance = (minc + maxc) / 2.0
 
         if minc == maxc:
-            return 0.0, l, 0.0
+            return 0.0, luminance, 0.0
 
-        if l <= 0.5:
-            s = (maxc-minc) / (maxc+minc)
+        if luminance <= 0.5:
+            saturation = (maxc - minc) / (maxc + minc)
         else:
-            if 2.0-maxc-minc == 0:
-                s = 0
+            if 2.0 - maxc - minc == 0:
+                saturation = 0
             else:
-                s = (maxc-minc) / (2.0-maxc-minc)
+                saturation = (maxc - minc) / (2.0 - maxc - minc)
 
-        rc = (maxc-r) / (maxc-minc)
-        gc = (maxc-g) / (maxc-minc)
-        bc = (maxc-b) / (maxc-minc)
+        rc = (maxc - red) / (maxc - minc)
+        gc = (maxc - green) / (maxc - minc)
+        bc = (maxc - blue) / (maxc - minc)
 
-        if r == maxc:
-            h = bc-gc
-        elif g == maxc:
-            h = 2.0+rc-bc
+        if red == maxc:
+            hue = bc - gc
+        elif green == maxc:
+            hue = 2.0 + rc - bc
         else:
-            h = 4.0+gc-rc
+            hue = 4.0 + gc - rc
 
-        h = (h/6.0) % 1.0
+        hue = (hue / 6.0) % 1.0
 
-        return (h, l, s)
+        return (hue, luminance, saturation)
 
     @property
     def red(self):
@@ -516,7 +515,11 @@ class UltrasonicSensor(Sensor):
 
 
     def __init__(self, address=None, name_pattern=SYSTEM_DEVICE_NAME_CONVENTION, name_exact=False, **kwargs):
-        super(UltrasonicSensor, self).__init__(address, name_pattern, name_exact, driver_name=['lego-ev3-us', 'lego-nxt-us'], **kwargs)
+        super(UltrasonicSensor, self).__init__(address,
+                                               name_pattern,
+                                               name_exact,
+                                               driver_name=['lego-ev3-us', 'lego-nxt-us'],
+                                               **kwargs)
 
         self.connector = SensorConnector(self.address)
         self.mode = self.MODE_US_DIST_CM
@@ -743,6 +746,12 @@ class GyroSensor(Sensor):
         pass
 
 
+    def calibrate(self):
+        """
+        The robot should be perfectly still when you call this
+        """
+        pass
+    
     def reset(self):
         """Resets the angle to 0.
 
@@ -768,6 +777,19 @@ class GyroSensor(Sensor):
 
         pass
 
+    def circle_angle(self):
+        """
+        As the gryo rotates clockwise the angle increases, it will increase
+        by 360 for each full rotation. As the gyro rotates counter-clockwise
+        the gyro angle will decrease.
+
+        The angles on a circle have the opposite behavior though, they start
+        at 0 and increase as you move counter-clockwise around the circle.
+
+        Convert the gyro angle to the angle on a circle. We consider the initial
+        position of the gyro to be at 90 degrees on the cirlce.
+        """
+        pass
 
 class InfraredSensor(Sensor, ButtonBase):
     """
@@ -792,13 +814,7 @@ class InfraredSensor(Sensor, ButtonBase):
     #: Calibration ???
     MODE_IR_CAL = 'IR-CAL'
 
-    MODES = (
-        MODE_IR_PROX,
-        MODE_IR_SEEK,
-        MODE_IR_REMOTE,
-        MODE_IR_REM_A,
-        MODE_IR_CAL
-    )
+    MODES = (MODE_IR_PROX, MODE_IR_SEEK, MODE_IR_REMOTE, MODE_IR_REM_A, MODE_IR_CAL)
 
     # The following are all of the various combinations of button presses for
     # the remote control.  The key/index is the number that will be written in

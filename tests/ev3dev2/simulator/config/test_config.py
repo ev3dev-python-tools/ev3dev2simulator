@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from ruamel.yaml.scanner import ScannerError
+from strictyaml.ruamel.scanner import ScannerError
 
 import ev3dev2simulator.config.config as config
 

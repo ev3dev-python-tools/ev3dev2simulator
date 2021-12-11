@@ -24,6 +24,10 @@
 # -----------------------------------------------------------------------------
 
 from ev3dev2 import Device
+import sys
+
+if sys.version_info < (3, 4):
+    raise SystemError('Must be using Python 3.4 or higher')
 
 
 class Sensor(Device):
@@ -35,20 +39,8 @@ class Sensor(Device):
     SYSTEM_CLASS_NAME = 'lego-sensor'
     SYSTEM_DEVICE_NAME_CONVENTION = 'sensor*'
     __slots__ = [
-        '_address',
-        '_command',
-        '_commands',
-        '_decimals',
-        '_driver_name',
-        '_mode',
-        '_modes',
-        '_num_values',
-        '_units',
-        '_value',
-        '_bin_data_format',
-        '_bin_data_size',
-        '_bin_data',
-        '_mode_scale'
+        '_address', '_command', '_commands', '_decimals', '_driver_name', '_mode', '_modes', '_num_values', '_units',
+        '_value', '_bin_data_format', '_bin_data_size', '_bin_data', '_mode_scale'
     ]
 
 
@@ -91,8 +83,8 @@ class Sensor(Device):
     @property
     def address(self):
         """
-        Returns the name of the port that the sensor is connected to, e.g. `ev3:in1`.
-        I2C sensors also include the I2C address (decimal), e.g. `ev3:in1:i2c8`.
+        Returns the name of the port that the sensor is connected to, e.g. ``ev3:in1``.
+        I2C sensors also include the I2C address (decimal), e.g. ``ev3:in1:i2c8``.
         """
         self._address, value = self.get_attr_string(self._address, 'address')
         return value
@@ -124,7 +116,7 @@ class Sensor(Device):
     @property
     def decimals(self):
         """
-        Returns the number of decimal places for the values in the `value<N>`
+        Returns the number of decimal places for the values in the ``value<N>``
         attributes of the current mode.
         """
 
@@ -144,7 +136,7 @@ class Sensor(Device):
     @property
     def mode(self):
         """
-        Returns the current mode. Writing one of the values returned by `modes`
+        Returns the current mode. Writing one of the values returned by ``modes``
         sets the sensor to that mode.
         """
 
@@ -168,7 +160,7 @@ class Sensor(Device):
     @property
     def num_values(self):
         """
-        Returns the number of `value<N>` attributes that will return a valid value
+        Returns the number of ``value<N>`` attributes that will return a valid value
         for the current mode.
         """
 
@@ -200,16 +192,16 @@ class Sensor(Device):
     @property
     def bin_data_format(self):
         """
-        Returns the format of the values in `bin_data` for the current mode.
+        Returns the format of the values in ``bin_data`` for the current mode.
         Possible values are:
 
-        - `u8`: Unsigned 8-bit integer (byte)
-        - `s8`: Signed 8-bit integer (sbyte)
-        - `u16`: Unsigned 16-bit integer (ushort)
-        - `s16`: Signed 16-bit integer (short)
-        - `s16_be`: Signed 16-bit integer, big endian
-        - `s32`: Signed 32-bit integer (int)
-        - `float`: IEEE 754 32-bit floating point (float)
+        - ``u8``: Unsigned 8-bit integer (byte)
+        - ``s8``: Signed 8-bit integer (sbyte)
+        - ``u16``: Unsigned 16-bit integer (ushort)
+        - ``s16``: Signed 16-bit integer (short)
+        - ``s16_be``: Signed 16-bit integer, big endian
+        - ``s32``: Signed 32-bit integer (int)
+        - ``float``: IEEE 754 32-bit floating point (float)
         """
 
         return self._bin_data_format
@@ -217,11 +209,11 @@ class Sensor(Device):
 
     def bin_data(self, fmt=None):
         """
-        Returns the unscaled raw values in the `value<N>` attributes as raw byte
-        array. Use `bin_data_format`, `num_values` and the individual sensor
+        Returns the unscaled raw values in the ``value<N>`` attributes as raw byte
+        array. Use ``bin_data_format``, ``num_values`` and the individual sensor
         documentation to determine how to interpret the data.
 
-        Use `fmt` to unpack the raw bytes into a struct.
+        Use ``fmt`` to unpack the raw bytes into a struct.
 
         Example::
 

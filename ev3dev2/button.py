@@ -24,14 +24,14 @@
 # -----------------------------------------------------------------------------
 
 import sys
-
+from ev3dev2.stopwatch import StopWatch
 from ev3dev2 import is_micropython, library_load_warning_message
 from ev3dev2._platform.ev3 import BUTTONS_FILENAME, EVDEV_DEVICE_NAME
+from logging import getLogger
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
 
-from logging import getLogger
 
 log = getLogger(__name__)
 
@@ -41,7 +41,6 @@ class MissingButton(Exception):
 
 
 class ButtonCommon(object):
-
     def __str__(self):
         return self.__class__.__name__
 
@@ -49,8 +48,8 @@ class ButtonCommon(object):
     @staticmethod
     def on_change(changed_buttons):
         """
-        This handler is called by `process()` whenever state of any button has
-        changed since last `process()` call. `changed_buttons` is a list of
+        This handler is called by ``process()`` whenever state of any button has
+        changed since last ``process()`` call. ``changed_buttons`` is a list of
         tuples of changed button names and their states.
         """
 
@@ -72,7 +71,7 @@ class ButtonCommon(object):
 
     def check_buttons(self, buttons=[]):
         """
-        Check if currently pressed buttons exactly match the given list.
+        Check if currently pressed buttons exactly match the given list ``buttons``.
         """
 
         pass
@@ -84,7 +83,7 @@ class ButtonCommon(object):
 
     def wait_for_pressed(self, buttons, timeout_ms=None):
         """
-        Wait for the button to be pressed down.
+        Wait for ``buttons`` to be pressed down.
         """
 
         pass
@@ -92,7 +91,7 @@ class ButtonCommon(object):
 
     def wait_for_released(self, buttons, timeout_ms=None):
         """
-        Wait for the button to be released.
+        Wait for ``buttons`` to be released.
         """
 
         pass
@@ -100,8 +99,8 @@ class ButtonCommon(object):
 
     def wait_for_bump(self, buttons, timeout_ms=None):
         """
-        Wait for the button to be pressed down and then released.
-        Both actions must happen within timeout_ms.
+        Wait for ``buttons`` to be pressed down and then released.
+        Both actions must happen within ``timeout_ms``.
         """
 
         pass
@@ -109,7 +108,7 @@ class ButtonCommon(object):
 
     def process(self, new_state=None):
         """
-        Check for currenly pressed buttons. If the new state differs from the
+        Check for currenly pressed buttons. If the ``new_state`` differs from the
         old state, call the appropriate button event handlers (on_up, on_down, etc).
         """
 
@@ -117,9 +116,10 @@ class ButtonCommon(object):
 
 
 class EV3ButtonCommon(object):
-    # These handlers are called by `ButtonCommon.process()` whenever the
+
+    # These handlers are called by ButtonCommon.process() whenever the
     # state of 'up', 'down', etc buttons have changed since last
-    # `ButtonCommon.process()` call
+    # ButtonCommon.process() call
     on_up = None
     on_down = None
     on_left = None
@@ -131,7 +131,7 @@ class EV3ButtonCommon(object):
     @property
     def up(self):
         """
-        Check if 'up' button is pressed.
+        Check if ``up`` button is pressed.
         """
 
         pass
@@ -140,7 +140,7 @@ class EV3ButtonCommon(object):
     @property
     def down(self):
         """
-        Check if 'down' button is pressed.
+        Check if ``down`` button is pressed.
         """
 
         pass
@@ -149,7 +149,7 @@ class EV3ButtonCommon(object):
     @property
     def left(self):
         """
-        Check if 'left' button is pressed.
+        Check if ``left`` button is pressed.
         """
 
         pass
@@ -158,7 +158,7 @@ class EV3ButtonCommon(object):
     @property
     def right(self):
         """
-        Check if 'right' button is pressed.
+        Check if ``right`` button is pressed.
         """
 
         pass
@@ -167,7 +167,7 @@ class EV3ButtonCommon(object):
     @property
     def enter(self):
         """
-        Check if 'enter' button is pressed.
+        Check if ``enter`` button is pressed.
         """
 
         pass
@@ -176,14 +176,14 @@ class EV3ButtonCommon(object):
     @property
     def backspace(self):
         """
-        Check if 'backspace' button is pressed.
+        Check if ``backspace`` button is pressed.
         """
 
         pass
 
 
 # micropython implementation
-if is_micropython():
+if is_micropython():  # noqa: C901
 
     try:
         # This is a linux-specific module.
@@ -194,13 +194,9 @@ if is_micropython():
         log.warning(library_load_warning_message("fcntl", "Button"))
 
 
-    # if platform not in ("ev3", "fake"):
-    #     raise Exception("micropython button support has not been implemented for '%s'" % platform)
-
     def _test_bit(buf, index):
 
         pass
-
 
     class ButtonBase(ButtonCommon):
         pass
@@ -260,6 +256,7 @@ if is_micropython():
         def _wait(self, wait_for_button_press, wait_for_button_release, timeout_ms):
             pass
 
+
 # python3 implementation
 else:
     import array
@@ -280,7 +277,6 @@ else:
     except ImportError:
         log.warning(library_load_warning_message("evdev", "Button"))
 
-
     class ButtonBase(ButtonCommon):
         """
         Abstract button interface.
@@ -299,7 +295,6 @@ else:
 
         def process_forever(self):
             pass
-
 
     class ButtonEVIO(ButtonBase):
         """
@@ -344,18 +339,35 @@ else:
         def _wait(self, wait_for_button_press, wait_for_button_release, timeout_ms):
             pass
 
-
     class Button(ButtonEVIO, EV3ButtonCommon):
         """
         EV3 Buttons
         """
 
         _buttons = {
-            'up': {'name': BUTTONS_FILENAME, 'value': 103},
-            'down': {'name': BUTTONS_FILENAME, 'value': 108},
-            'left': {'name': BUTTONS_FILENAME, 'value': 105},
-            'right': {'name': BUTTONS_FILENAME, 'value': 106},
-            'enter': {'name': BUTTONS_FILENAME, 'value': 28},
-            'backspace': {'name': BUTTONS_FILENAME, 'value': 14},
+            'up': {
+                'name': BUTTONS_FILENAME,
+                'value': 103
+            },
+            'down': {
+                'name': BUTTONS_FILENAME,
+                'value': 108
+            },
+            'left': {
+                'name': BUTTONS_FILENAME,
+                'value': 105
+            },
+            'right': {
+                'name': BUTTONS_FILENAME,
+                'value': 106
+            },
+            'enter': {
+                'name': BUTTONS_FILENAME,
+                'value': 28
+            },
+            'backspace': {
+                'name': BUTTONS_FILENAME,
+                'value': 14
+            },
         }
         evdev_device_name = EVDEV_DEVICE_NAME

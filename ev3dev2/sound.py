@@ -24,15 +24,15 @@
 # -----------------------------------------------------------------------------
 
 import sys
+import os
+import re
+from time import sleep
+from ev3dev2 import is_micropython
 
 from ev3dev2simulator.connector.sound_connector import SoundConnector
 
 if sys.version_info < (3, 4):
     raise SystemError('Must be using Python 3.4 or higher')
-
-from ev3dev2 import is_micropython
-import os
-import re
 
 if not is_micropython():
     import shlex
@@ -45,7 +45,7 @@ def _make_scales(notes):
     for note, freq in notes:
         freq = round(freq)
         for n in note.split('/'):
-            res[n] = freq
+            res[n.upper()] = freq
     return res
 
 
@@ -62,12 +62,19 @@ class Sound(object):
     """
     Support beep, play wav files, or convert text to speech.
     Examples::
+
+        from ev3dev2.sound import Sound
+
+        spkr = Sound()
+
         # Play 'bark.wav':
-        Sound.play_file('bark.wav')
+        spkr.play_file('bark.wav')
+
         # Introduce yourself:
-        Sound.speak('Hello, I am Robot')
+        spkr.speak('Hello, I am Robot')
+
         # Play a small song
-        Sound.play_song((
+        spkr.play_song((
             ('D4', 'e3'),
             ('D4', 'e3'),
             ('D4', 'e3'),
@@ -86,11 +93,7 @@ class Sound(object):
     PLAY_NO_WAIT_FOR_COMPLETE = 1  #: Start playing the sound but return immediately
     PLAY_LOOP = 2  #: Never return; start the sound immediately after it completes, until the program is killed
 
-    PLAY_TYPES = (
-        PLAY_WAIT_FOR_COMPLETE,
-        PLAY_NO_WAIT_FOR_COMPLETE,
-        PLAY_LOOP
-    )
+    PLAY_TYPES = (PLAY_WAIT_FOR_COMPLETE, PLAY_NO_WAIT_FOR_COMPLETE, PLAY_LOOP)
 
     def __init__(self):  # CHANGE: added setup of connector
         self.connector = SoundConnector()
@@ -118,7 +121,7 @@ class Sound(object):
             return None
 
         else:
-            with open(os.devnull, 'w') as n:
+            with open(os.devnull, 'w'):
 
                 if play_type == Sound.PLAY_WAIT_FOR_COMPLETE:
                     processes = get_command_processes(command)
@@ -146,7 +149,10 @@ class Sound(object):
         :param string args: Any additional arguments to be passed to ``beep`` (see the `beep man page`_ for details)
         :param play_type: The behavior of ``beep`` once playback has been initiated
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or  ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
-        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
+
+        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the
+            spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
+
         .. _`beep man page`: https://linux.die.net/man/1/beep
         .. _`linux beep music`: https://www.google.com/search?q=linux+beep+music
         """
@@ -181,17 +187,26 @@ class Sound(object):
                 ])
         Have also a look at :py:meth:`play_song` for a more musician-friendly way of doing, which uses
         the conventional notation for notes and durations.
-        :param list[tuple(float,float,float)] tone_sequence: The sequence of tones to play. The first number of each tuple is frequency in Hz, the second is duration in milliseconds, and the third is delay in milliseconds between this and the next tone in the sequence.
+
+        :param list[tuple(float,float,float)] tone_sequence: The sequence of tones to play. The first
+            number of each tuple is frequency in Hz, the second is duration in milliseconds, and the
+            third is delay in milliseconds between this and the next tone in the sequence.
+
         :param play_type: The behavior of ``tone`` once playback has been initiated
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
-        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
+
+        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the
+            spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
+
         .. rubric:: tone(frequency, duration)
         Play single tone of given frequency and duration.
         :param float frequency: The frequency of the tone in Hz
         :param float duration: The duration of the tone in milliseconds
         :param play_type: The behavior of ``tone`` once playback has been initiated
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_NO_WAIT_FOR_COMPLETE``
-        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
+
+        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the
+            spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
 
         def play_tone_sequence(tone_sequence):  # CHANGE: returns object list instead of string
@@ -215,8 +230,7 @@ class Sound(object):
         else:
             raise Exception("Unsupported number of parameters in Sound.tone(): expected 1 or 2, got " + str(len(args)))
 
-    def play_tone(self, frequency, duration, delay=0.0, volume=100,
-                  play_type=PLAY_WAIT_FOR_COMPLETE):
+    def play_tone(self, frequency, duration, delay=0.0, volume=100, play_type=PLAY_WAIT_FOR_COMPLETE):
         """ Play a single tone, specified by its frequency, duration, volume and final delay.
         :param int frequency: the tone frequency, in Hertz
         :param float duration: Tone duration, in seconds
@@ -224,7 +238,10 @@ class Sound(object):
         :param int volume: The play volume, in percent of maximum volume
         :param play_type: The behavior of ``play_tone`` once playback has been initiated
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
-        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the PID of the underlying beep command; ``None`` otherwise
+
+        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns
+            the PID of the underlying beep command; ``None`` otherwise
+
         :raises ValueError: if invalid parameter
         """
         self._validate_play_type(play_type)
@@ -250,7 +267,10 @@ class Sound(object):
         :param int volume: The play volume, in percent of maximum volume
         :param play_type: The behavior of ``play_note`` once playback has been initiated
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
-        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the PID of the underlying beep command; ``None`` otherwise
+
+        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns
+            the PID of the underlying beep command; ``None`` otherwise
+
         :raises ValueError: is invalid parameter (note, duration,...)
         """
         self._validate_play_type(play_type)
@@ -272,7 +292,9 @@ class Sound(object):
         :param int volume: The play volume, in percent of maximum volume
         :param play_type: The behavior of ``play_file`` once playback has been initiated
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
-        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
+
+        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the
+            spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
         if not 0 < volume <= 100:
             raise ValueError('invalid volume (%s)' % volume)
@@ -295,7 +317,9 @@ class Sound(object):
         :param int volume: The play volume, in percent of maximum volume
         :param play_type: The behavior of ``speak`` once playback has been initiated
         :type play_type: ``Sound.PLAY_WAIT_FOR_COMPLETE``, ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` or ``Sound.PLAY_LOOP``
-        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
+
+        :return: When python3 is used and ``Sound.PLAY_NO_WAIT_FOR_COMPLETE`` is specified, returns the
+            spawn subprocess from ``subprocess.Popen``; ``None`` otherwise
         """
 
         self.connector.speak(text, espeak_opts, volume, play_type)
@@ -349,6 +373,8 @@ class Sound(object):
         value using music conventional notation instead of numerical values for frequency
         and duration.
         It supports symbolic notes (e.g. ``A4``, ``D#3``, ``Gb5``) and durations (e.g. ``q``, ``h``).
+        You can also specify rests by using ``R`` instead of note pitch.
+
         For an exhaustive list of accepted note symbols and values, have a look at the ``_NOTE_FREQUENCIES``
         and ``_NOTE_VALUES`` private dictionaries in the source code.
         The value can be suffixed by modifiers:
@@ -356,7 +382,8 @@ class Sound(object):
           (e.g. ``q/3`` for a triplet of eight note)
         - a *multiplier* introduced by ``*`` (e.g. ``*1.5`` is a dotted note).
         Shortcuts exist for common modifiers:
-        - ``3`` produces a triplet member note. For instance `e3` gives a triplet of eight notes,
+
+        - ``3`` produces a triplet member note. For instance ``e3`` gives a triplet of eight notes,
           i.e. 3 eight notes in the duration of a single quarter. You must ensure that 3 triplets
           notes are defined in sequence to match the count, otherwise the result will not be the
           expected one.
@@ -365,7 +392,9 @@ class Sound(object):
         Example::
             >>> # A long time ago in a galaxy far,
             >>> # far away...
-            >>> Sound.play_song((
+            >>> from ev3dev2.sound import Sound
+            >>> spkr = Sound()
+            >>> spkr.play_song((
             >>>     ('D4', 'e3'),      # intro anacrouse
             >>>     ('D4', 'e3'),
             >>>     ('D4', 'e3'),
@@ -403,39 +432,41 @@ class Sound(object):
         delay_ms = int(delay * 1000)
         meas_duration_ms = 60000 / tempo * 4  # we only support 4/4 bars, hence "* 4"
 
-        def beep_args(note, value):
-            """ Builds the arguments string for producing a beep matching
-            the requested note and value.
-            Args:
-                note (str): the note note and octave
-                value (str): the note value expression
-            Returns:
-                str: the arguments to be passed to the beep command
-            """
-            freq = self._NOTE_FREQUENCIES.get(note.upper(), self._NOTE_FREQUENCIES[note])
+        for (note, value) in song:
+            value = value.lower()
 
             if '/' in value:
                 base, factor = value.split('/')
-                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] / float(factor)
+                factor = float(factor)
+
             elif '*' in value:
                 base, factor = value.split('*')
-                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] * float(factor)
+                factor = float(factor)
+
             elif value.endswith('.'):
                 base = value[:-1]
-                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] * 1.5
+                factor = 1.5
+
             elif value.endswith('3'):
                 base = value[:-1]
-                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] * 2 / 3
+                factor = float(2 / 3)
+
             else:
-                duration_ms = meas_duration_ms * self._NOTE_VALUES[value]
+                base = value
+                factor = 1.0
 
-            return freq, duration_ms, delay_ms  # CHANGE does create string, but directly returns values
+            try:
+                duration_ms = meas_duration_ms * self._NOTE_VALUES[base] * factor
+            except KeyError:
+                raise ValueError('invalid note (%s)' % base)
 
-        try:
-            return self.tone([beep_args(note, value) for (note, value) in song], play_type=Sound.PLAY_WAIT_FOR_COMPLETE)
-            # CHANGE does not call beep, but the tone function
-        except KeyError as e:
-            raise ValueError('invalid note (%s)' % e)
+            if note == "R":
+                sleep(duration_ms / 1000 + delay)
+            else:
+                freq = self._NOTE_FREQUENCIES[note.upper()]
+                self.beep([{ 'frequency': freq,
+                             'duration': duration_ms,
+                             'delay': delay_ms }])
 
     #: Note frequencies.
     #:
@@ -551,8 +582,7 @@ class Sound(object):
         ('G#8/Ab8', 6644.88),
         ('A8', 7040.00),
         ('A#8/Bb8', 7458.62),
-        ('B8', 7902.13)
-    ))
+        ('B8', 7902.13)))
 
     #: Common note values.
     #:
