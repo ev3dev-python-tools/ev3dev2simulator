@@ -10,3 +10,7 @@ class Dimensions:
     def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
+
+    def __iter__(self):
+       newtuple=(self.width,self.height)
+       return newtuple.__iter__() 

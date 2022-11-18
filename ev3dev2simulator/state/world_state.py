@@ -88,8 +88,11 @@ class WorldState:
             robot_shapes = robot.setup_pymunk_shapes(scale)
             for shape in robot_shapes:
                 shape.filter = pymunk.ShapeFilter(group=idx+5)
+                if not shape.body in self.space.bodies:
+                   self.space.add(shape.body)
                 self.space.add(shape)
-            self.space.add(robot.body)
+            if not robot.body in self.space.bodies:
+               self.space.add(robot.body)
 
         for obstacle in self.obstacles:
             obstacle.create_shape(scale)

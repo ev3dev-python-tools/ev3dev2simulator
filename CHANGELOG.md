@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.0.5_new_arcade2.6.16] - 2022-11-18
+
+- updated to new arcade version 2.6.16 which depends on newer pyglet 2.0 version
+  TODO: good testing
 
 ##  [2.0.5] - 2020-12-10
 

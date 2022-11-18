@@ -39,7 +39,7 @@ class Visualiser(_arcade.Window):
         self.current_screen_index = None
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
-        self.size = Dimensions(get_simulation_settings()['screen_settings']['screen_width'],
+        self.mysize = Dimensions(get_simulation_settings()['screen_settings']['screen_width'],
                                get_simulation_settings()['screen_settings']['screen_height'])
 
         self.msg_counter = 0
@@ -47,12 +47,12 @@ class Visualiser(_arcade.Window):
         screen_title = get_simulation_settings()['screen_settings']['screen_title']
         screen_info = screen_title + f'          version: {sim_version}      ev3dev2 api: {api_version}'
 
-        scale = self.determine_scale(self.size.width, self.size.height)
+        scale = self.determine_scale(self.mysize.width, self.mysize.height)
         if DEBUG:
             print('starting simulation with scaling', scale)
             print('arcade version: ', _arcade.version.VERSION)
 
-        super(Visualiser, self).__init__(self.size.width, self.size.height, screen_info, update_rate=1 / 30,
+        super(Visualiser, self).__init__(self.mysize.width, self.mysize.height, screen_info, update_rate=1 / 30,
                                          fullscreen=show_fullscreen,
                                          resizable=True, screen=_arcade.get_screens()[self.current_screen_index])
 
@@ -77,7 +77,7 @@ class Visualiser(_arcade.Window):
     @property
     def _msg_x(self):
         sidebar_width = get_simulation_settings()['screen_settings']['side_bar_width']
-        return (self.size.width - sidebar_width) / 2
+        return (self.mysize.width - sidebar_width) / 2
 
     def determine_scale(self, new_screen_width, new_screen_height):
         """Determines the scale between board size and screen size in pixel per mm"""
@@ -88,8 +88,8 @@ class Visualiser(_arcade.Window):
             scale = width_scale
         else:
             scale = height_scale
-        self.size.height = int(scale * self.world_state.board_height)
-        self.size.width = sidebar_width + int(scale * self.world_state.board_width)
+        self.mysize.height = int(scale * self.world_state.board_height)
+        self.mysize.width = sidebar_width + int(scale * self.world_state.board_width)
         return scale
 
     def _change_scale(self, new_screen_width, new_screen_height):
@@ -98,8 +98,8 @@ class Visualiser(_arcade.Window):
 
     def _setup_sidebar(self):
         sidebar_width = get_simulation_settings()['screen_settings']['side_bar_width']
-        sidebar = Sidebar(Point(self.size.width - sidebar_width, self.size.height - 70),
-                          Dimensions(sidebar_width, self.size.height))
+        sidebar = Sidebar(Point(self.mysize.width - sidebar_width, self.mysize.height - 70),
+                          Dimensions(sidebar_width, self.mysize.height))
         for robot in self.world_state.get_robots():
             sidebar.init_robot(robot.name, robot.sensors, robot.bricks, robot.side_bar_sprites)
 
@@ -150,7 +150,7 @@ class Visualiser(_arcade.Window):
         if self.msg_counter > 0:
             self.msg_counter -= 1
             _arcade.draw_text(get_simulation_settings()['screen_settings']['falling_message'], self._msg_x,
-                              self.size.height - 100, _arcade.color.RADICAL_RED, 14, anchor_x="center")
+                              self.mysize.height - 100, _arcade.color.RADICAL_RED, 14, anchor_x="center")
 
     def update(self, delta_time):
         """
@@ -172,8 +172,10 @@ class Visualiser(_arcade.Window):
         if buttons == _arcade.MOUSE_BUTTON_RIGHT:
             self.world_state.rotate_selected_object(dy)
 
-    def on_close(self):
-        sys.exit(0)
+    #def on_close(self):
+        #sys.exit(0)
+        #quit()
+    #    sys.exit(9)
 
     def on_key_press(self, symbol: int, modifiers: int):
         """Called whenever a key is pressed. """
@@ -273,7 +275,7 @@ class Visualiser(_arcade.Window):
 
         top_left_x = self.get_location()[0]
         top_left_y = self.get_location()[1]
-        size = self.get_size()
+        mysize = self.get_size()
         win_width = size[0]
         win_height = size[1]
 

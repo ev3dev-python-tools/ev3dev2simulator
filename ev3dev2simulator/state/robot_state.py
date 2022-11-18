@@ -174,8 +174,8 @@ class RobotState:
 
         wheels = self.get_wheels()
         if len(wheels) == 2:
-            wheel_pos_left = Vec2d(wheels[0].shape.center_of_gravity)
-            wheel_pos_right = Vec2d(wheels[1].shape.center_of_gravity)
+            wheel_pos_left = Vec2d(*wheels[0].shape.center_of_gravity)
+            wheel_pos_right = Vec2d(*wheels[1].shape.center_of_gravity)
             self.wheel_distance = wheel_pos_left.get_distance(wheel_pos_right)
         else:
             raise RuntimeError('Currently cannot have anything other than 2 wheels')
