@@ -49,7 +49,7 @@ class MotorConnector:
     def set_distance(self, distance: float):
         """
         Set the distance to run of the motor belonging to the given address.
-        :param distance: in degrees.
+        :param distance: in degrees; 360 degrees causes a motor to go round once
         """
 
         self.distance = distance
@@ -127,6 +127,7 @@ class MotorConnector:
                                     self.distance,
                                     self.stop_action)
 
+        # return value of motor command is always a float representing the time the command takes to execute
         return self.client_socket.send_command(command, True)
 
     def stop(self) -> float:

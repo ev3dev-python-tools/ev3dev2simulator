@@ -58,9 +58,25 @@ class Sidebar:
         """
         draws the sidebar based on the information given by ``add_robot_info``
         """
-        height = self.sprites_total_height
+
         for sprite in self.sprites:
             sprite.draw()
+
+        height = self.sprites_total_height
+
+        shortcuts=["left mouse: move object/robot","right mouse: rotate object/robot","q : quit the simulator","m : maximize simulator window","f : show simulator fullscreen (toggle)",
+                   "t : toggle screen in fullscreen mode","    toggle only works at fullscreen mode",
+                   "w : reset world (not robots)","r : reset world and robots positions"]
+
+        _arcade.draw_text("interface", self.start.x + self.styling.left_text_padding, self.start.y - height,
+                          self.styling.text_color, self.styling.text_size + 2, bold=True)
+        for shortcut in shortcuts:
+            height += (self.styling.text_size + self.styling.text_spacing)
+            _arcade.draw_text(shortcut, self.start.x + 2 * self.styling.left_text_padding,
+                                  self.start.y - height, self.styling.text_color, self.styling.text_size)
+
+        height += (self.styling.text_size + self.styling.text_spacing)
+        height += (self.styling.text_size + self.styling.text_spacing)
         for robot_name, sensor_dict in self.robot_info.items():
             _arcade.draw_text(robot_name, self.start.x + self.styling.left_text_padding, self.start.y - height,
                               self.styling.text_color, self.styling.text_size + 2, bold=True)
@@ -73,3 +89,8 @@ class Sidebar:
                                   self.start.y - height, self.styling.text_color, self.styling.text_size)
                 height += (self.styling.text_size + self.styling.text_spacing)
             height += (self.styling.text_size + self.styling.text_spacing)
+
+
+
+
+

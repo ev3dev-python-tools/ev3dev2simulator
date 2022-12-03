@@ -101,14 +101,14 @@ class WorldState:
 
     def rescale(self, new_scale):
         """
-        On screen rescale, rescale all sprites.
+        On screen rescale, rescale all objects ( both sprite(visual) as pymunk body(physical) )
         """
         for robot in self.robots:
             robot.shapes = []
         for obstacle in self.obstacles:
             obstacle.shape = None
-        self.space.remove(self.space.shapes)
-        self.space.remove(self.space.bodies)
+        self.space.remove(*self.space.shapes)
+        self.space.remove(*self.space.bodies)
 
         for robot in self.robots:
             robot.sprite_list = _arcade.SpriteList()

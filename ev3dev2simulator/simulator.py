@@ -64,13 +64,14 @@ def main(orig_path):
 
     world_simulator = WorldSimulator(world_state)
 
-    visualiser = Visualiser(world_simulator.update, world_state, show_fullscreen, show_maximized,
+    visualiser = Visualiser(world_simulator, world_state, show_fullscreen, show_maximized,
                             use_second_screen_to_show_simulator)
 
     server_thread = ServerSockets(world_simulator)
-    server_thread.setDaemon(True)
+    server_thread.daemon = True
     server_thread.start()
 
+    visualiser.setup()
     visualiser.run()
 
 

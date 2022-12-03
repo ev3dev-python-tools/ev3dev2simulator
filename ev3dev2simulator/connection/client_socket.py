@@ -7,6 +7,7 @@ import socket
 import threading
 import time
 import sys
+from json import JSONDecodeError
 from typing import Any, Optional
 from ev3dev2simulator.config.config import get_simulation_settings, load_config
 from ev3dev2simulator.connection.message.command import Command
@@ -16,7 +17,7 @@ THIS = sys.modules[__name__]
 
 class ClientSocket:
     """
-    Class responsible for the establishing and maintaining the socket connection with the simulator.
+    Class responsible for the sending request from the emulated ev3dev2 API with the simulator using a socket connection.
     This connection is a TCP stream.
     """
 
@@ -28,7 +29,12 @@ class ClientSocket:
 
         self.client.settimeout(0.1)
 
-        self.client.connect(('localhost', port))
+        try:
+            self.client.connect(('localhost', port))
+        except:
+            print("EXIT(1): CANNOT CONNECT WITH SIMULATOR")
+            exit(1)
+
         self.lock = threading.Lock()
 
         time.sleep(1)
@@ -48,6 +54,9 @@ class ClientSocket:
             if wait_for_response:
                 data = self.client.recv(32)
                 des = self.deserialize(data)
+        except:
+            print("EXIT(1): SIMULATOR CONNECTION LOST")
+            exit(1)
         finally:
             self.lock.release()
         return des

@@ -60,6 +60,11 @@ class TestRobotSimulator(unittest.TestCase):
         port = sim.determine_port(0, kwargs, '')
         self.assertEqual(port, 'ev3-ports:in4')
 
+        # single class and address given but wrong driver_name given ('lego-ev3-touch' instead of 'lego-ev3-us')
+        kwargs = {'address': 'ev3-ports:in4', 'driver_name': 'lego-ev3-touch'}
+        port = sim.determine_port(0, kwargs, '')
+        self.assertEqual(port, 'dev_not_connected')
+
         # single class and None address given
         kwargs = {'address': None, 'driver_name': 'lego-ev3-us'}
         port = sim.determine_port(0, kwargs, '')

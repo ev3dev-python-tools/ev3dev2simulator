@@ -24,11 +24,11 @@ class MyTestCase(unittest.TestCase):
 
         sidebar = Sidebar(Point(100, 150), Dimensions(200, 300))
         sidebar_sprite_mock = MagicMock()
-        state.values[(0, 'ev3-ports:in4')] = 5
+        state.set_value((0, 'ev3-ports:in4'),5)
         state.sounds[(0, 'speaker')] = 'test_sound'
         sidebar.init_robot(state.name, state.sensors, state.bricks, [sidebar_sprite_mock])
 
-        sidebar.add_robot_info(state.name, state.values, state.sounds)
+        sidebar.add_robot_info(state.name, state.get_values(), state.sounds)
         self.assertEqual(sidebar.robot_info[state.name][(0, 'ev3-ports:in4')]['value'], 5)
         self.assertEqual(sidebar.robot_info[state.name][(0, 'speaker')]['value'], 'test_sound')
 

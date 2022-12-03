@@ -27,17 +27,17 @@ class RobotSimulator:
         self.queue_info = {}
 
         for actuator in self.robot.get_actuators():
+            # actuator is an instance of Arm, Led, Speaker, Wheel  (childs of RobotPart)
             if actuator.ev3type in ['arm', 'motor', 'speaker']:
-                self.queue_info[(actuator.brick, actuator.address)] = actuator
-                self.actuator_queues[(actuator.brick, actuator.address)] = Queue()
+                actuator_address = (actuator.brick, actuator.address)
+                # note: field actuator.address should really be called actuator.port
+                #       because real address of an actuator is brick_id and port
+                self.queue_info[actuator_address] = actuator
+                self.actuator_queues[actuator_address] = Queue()
 
         self.should_reset = False
-        self.locks = {}
 
         self.motor_lock = threading.Lock()
-
-        for sensor in self.robot.get_sensors():
-            self.load_sensor(sensor)
 
     def update(self):
         """
@@ -47,46 +47,53 @@ class RobotSimulator:
             self.reset()
 
         else:
-            self._process_actuators()
+            self._process_job_per_actuator()
             self._process_leds()
-            self._process_sensors()
+            self.robot.update_sensors()
             self._sync_physics_sprites()
 
-        self.release_locks()
-
-    def put_actuator_job(self, address: (int, str), job: float):
+    def put_actuator_job(self, actuator_address: (int, str), job: float):
         """
-        Add a new move job to the queue for the center motor.
-        :param address: Address of the actuator
+        Add a new job for actuator to its own queue.
+        For each unique actuator address there is a separate queue.
+        :param actuator_address: Address of the actuator (brick_id,device_port)
         :param job: to add.
         """
-        self.actuator_queues[address].put_nowait(job)
+        # actuator_queues is a dict with key an actuator_address, and as value a Queue
+        # put_nowait puts a value in the queue without blocking
+        self.actuator_queues[actuator_address].put_nowait(job)
 
     def next_actuator_jobs(self) -> any:
         """
-        Get the next move jobs for the left and right motor from the queues.
-        :return: a floating point numbers representing the job move distances.
+        Get for all actuators of the robot the next job from each actuator's own Queue.
+        Some actuators may have an empty Queue, then the actuator does nothing at the moment.
+
+        For example by using this function we can get the next move jobs for the left and right motor from the queues.
+        A move job in this case is just a floating point number representing the job's move distance.
+
+        :return:
+           list of job per each actuator of robot as :  List of (actuator_address, job) tuples, where job is None if actuator is inactive.
         """
 
         self.motor_lock.acquire()
 
         motor_jobs = []
-        for actuator, jobs in self.actuator_queues.items():
+        for actuator_address, jobs in self.actuator_queues.items():
             try:
                 job = jobs.get_nowait()
             except Empty:
                 job = None
-            motor_jobs.append((actuator, job))
+            motor_jobs.append((actuator_address, job))
 
         self.motor_lock.release()
         return motor_jobs
 
-    def clear_actuator_jobs(self, address: (int, str)):
+    def clear_actuator_jobs(self, actuator_address: (int, str)):
         """
-        Clears all current jobs of the robot
+        Clears all current jobs of an actuator at actuator_address on the robot
         """
         self.motor_lock.acquire()
-        self.actuator_queues[address] = Queue()
+        self.actuator_queues[actuator_address] = Queue()
         self.motor_lock.release()
 
     def set_led_color(self, brick_id, led_id, color):
@@ -100,9 +107,10 @@ class RobotSimulator:
         Reset queues if bricks disconnect.
         :param brick_id: identifier of brick you want to reset the queues of.
         """
-        for key in self.actuator_queues:
-            if key[0] == brick_id:
-                self.clear_actuator_jobs(key)
+        # actuator_address = (brick_id, device_port)
+        for actuator_address in self.actuator_queues:
+            if actuator_address[0] == brick_id:
+                self.clear_actuator_jobs(actuator_address)
 
     def reset(self):
         """
@@ -115,34 +123,8 @@ class RobotSimulator:
         self.robot.reset()
         self.should_reset = False
 
-    def load_sensor(self, sensor):
-        """
-        Load the given sensor adding its default value to this state.
-        Also create a lock for the given sensor.
-        :param sensor: to load.
-        """
-        address = (sensor.brick, sensor.address)
-        self.robot.values[address] = sensor.get_default_value()
-        self.locks[address] = threading.Lock()
-
-    def release_locks(self):
-        """
-        Release all the locked sensor locks. This re-allows for reading
-        the sensor values.
-        """
-        for lock in self.locks.values():
-            if lock.locked():
-                lock.release()
-
-    def get_value(self, address: (int, str)) -> Any:
-        """
-        Get the value of a sensor by its address. Blocks if the lock of
-        the requested sensor is not available.
-        :param address: of the sensor to get the value from.
-        :return: the value of the sensor.
-        """
-        self.locks[address].acquire()
-        return self.robot.values[address]
+    def get_value(self, sensor_address: (int, str)) -> Any:
+        return self.robot.get_value(sensor_address)
 
     def determine_port(self, brick_id: int, kwargs: dict, class_name: str):
         """
@@ -161,13 +143,19 @@ class RobotSimulator:
             driver_names_pre = kwargs.get('driver_name')
             driver_names = driver_names_pre if isinstance(driver_names_pre, list) else [driver_names_pre]
 
-            if kwargs.get('address') is not None:
-                device = devices.get((brick_id, kwargs.get('address')))
+            device_port = kwargs.get('address')
+            if device_port is not None:
+                device_address = (brick_id, device_port)
+                device = devices.get(device_address)
                 if device:
-                    if devices.get((brick_id, kwargs.get('address'))).driver_name in driver_names:
-                        return kwargs.get('address')
+                    if device.driver_name in driver_names:
+                        return device_port
+                    else:
+                        print('ERROR: device with classname',class_name,'and driver names', driver_names)
+                        print('       NOT FOUND on robot', self.robot.name, 'on brick' , brick_id, 'for device address',device_port)
+                        print('       Instead the port', device_port,  'on that brick has a device', "'" + device.driver_name + "'",'\n')
                 else:
-                    print('device not found on brick', brick_id, ' with address', kwargs.get('address'))
+                    print('ERROR: There is no device connected on port',device_port,'on brick', brick_id, 'of robot', self.robot.name)
             else:
                 found_devices = list(filter(lambda dev: dev.driver_name in driver_names, devices.values()))
                 if len(found_devices) == 1:
@@ -177,10 +165,10 @@ class RobotSimulator:
               f'address {kwargs.get("address")} of {self.robot.name}, brick {brick_id}')
         return 'dev_not_connected'
 
-    def _process_actuators(self):
+    def _process_job_per_actuator(self):
         """
-        Request the movement of the robot motors form the robot state and move
-        the robot accordingly. This is where the different motor jobs are combined to a single movement of the robot.
+        Request the movement of the robot motors from the robot state and move the robot accordingly.
+        This is where the different motor jobs are combined to a single movement of the robot.
         """
         job_per_actuator = self.next_actuator_jobs()
         left_ppf = right_ppf = None
@@ -204,13 +192,7 @@ class RobotSimulator:
         for address, led_color in self.robot.led_colors.items():
             self.robot.set_led_color(address, led_color)
 
-    def _process_sensors(self):
-        """
-        Process the data of the robot sensors by retrieving the data and putting it
-        in the robot state.
-        """
-        for address, sensor in self.robot.sensors.items():
-            self.robot.values[address] = sensor.get_latest_value()
+
 
     def _sync_physics_sprites(self):
         self.robot.set_last_pos(self.robot.body.position)

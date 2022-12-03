@@ -75,14 +75,16 @@ class MotorCommandProcessor:
         :param command: to process.
         :return: a Tuple with the processed values
         """
-        dpf = command.speed / self.frames_per_second
+
 
         if command.stop_action == 'coast':
+            dpf = command.speed / self.frames_per_second
             frames = self._coast_frames_required(dpf, self.degree_coasting_sub)
             run_time = self._to_seconds(frames)
 
             return dpf, frames, run_time
 
+        # else a direct stop
         return 0, 0, 0
 
     def process_stop_command_distance(self, command: StopCommand) -> Tuple[float, int, float]:
@@ -93,14 +95,16 @@ class MotorCommandProcessor:
         :param command: to process.
         :return: a Tuple with the processed values
         """
-        millimeters_per_frame = self._to_mm(command.speed) / self.frames_per_second
+
 
         if command.stop_action == 'coast':
+            millimeters_per_frame = self._to_mm(command.speed) / self.frames_per_second
             frames = self._coast_frames_required(millimeters_per_frame, self.distance_coasting_sub)
             run_time = self._to_seconds(frames)
 
             return millimeters_per_frame, frames, run_time
 
+        # else a direct stop
         return 0, 1, 0
 
     def _frames_required(self, speed: float, distance: float) -> int:
@@ -130,7 +134,7 @@ class MotorCommandProcessor:
         """
         Calculate the number of millimeters required per frame to rotate a motor a distance within frames.
         :param frames: available.
-        :param distance: in degrees.
+        :param distance: in degrees; 360 degrees causes a motor to go round once
         :return: an floating point number representing the number of millimeters per frame.
         """
         distance = self._to_mm(distance)

@@ -7,10 +7,16 @@ from typing import Any, Tuple
 # noinspection PyProtectedMember
 from ev3dev2._platform.ev3 import LEDS
 from ev3dev2simulator.config.config import get_simulation_settings
-from ev3dev2simulator.connection.message.config_request import ConfigRequest
 from ev3dev2simulator.state.motor_command_processor import MotorCommandProcessor
-from ev3dev2simulator.connection.message import rotate_command, stop_command, sound_command, data_request, led_command
-from ev3dev2simulator.state import robot_simulator
+from ev3dev2simulator.state.robot_simulator import RobotSimulator
+
+from ev3dev2simulator.connection.message.config_request import ConfigRequest
+from ev3dev2simulator.connection.message.rotate_command import RotateCommand
+from ev3dev2simulator.connection.message.stop_command import StopCommand
+from ev3dev2simulator.connection.message.sound_command import SoundCommand
+from ev3dev2simulator.connection.message.led_command import LedCommand
+from ev3dev2simulator.connection.message.data_request import DataRequest
+
 
 LED_COLORS = dict()
 LED_COLORS[(1, 1)] = 0  # Amber
@@ -27,7 +33,7 @@ class MessageProcessor:
     them to the RobotState.
     """
 
-    def __init__(self, brick_id: int, robot_sim: robot_simulator):
+    def __init__(self, brick_id: int, robot_sim: RobotSimulator):
         cfg = get_simulation_settings()
 
         self.brick_id = brick_id
@@ -37,10 +43,10 @@ class MessageProcessor:
         self.frames_per_second = int(cfg['exec_settings']['frames_per_second'])
 
         self.robot_sim = robot_sim
-        self.command_processor = MotorCommandProcessor()
+        self.motor_command_processor = MotorCommandProcessor()
         self.led_cache = {k: None for k in LEDS.values()}
 
-    def process_rotate_command(self, command: rotate_command) -> float:
+    def process_rotate_command(self, command: RotateCommand) -> float:
         """
         Process the given RotateCommand by creating the appropriate motor jobs in the RobotState.
         The type of jobs created  depends on the motor called.
@@ -61,7 +67,7 @@ class MessageProcessor:
         self._process_coast(coast_frames, spf, motor)
         return run_time
 
-    def _process_rotate_command_values(self, command: rotate_command, motor: any) -> Tuple[float, int, int, float]:
+    def _process_rotate_command_values(self, command: RotateCommand, motor: any) -> Tuple[float, int, int, float]:
         """
         Process the given command into the correct movement values.
         :param command: to process.
@@ -70,11 +76,11 @@ class MessageProcessor:
         """
 
         if motor.ev3type == 'arm':
-            dpf, frames, coast_frames, run_time = self.command_processor.process_drive_command_degrees(command)
+            dpf, frames, coast_frames, run_time = self.motor_command_processor.process_drive_command_degrees(command)
             return -dpf, frames, coast_frames, run_time
-        return self.command_processor.process_drive_command_distance(command)
+        return self.motor_command_processor.process_drive_command_distance(command)
 
-    def process_stop_command(self, command: stop_command) -> float:
+    def process_stop_command(self, command: StopCommand) -> float:
         """
         Process the given stop command by clearing the current motor job queue
         and creating motor coast jobs in the RobotState. The type of jobs created
@@ -93,7 +99,7 @@ class MessageProcessor:
         self._process_coast(frames, spf, motor)
         return run_time
 
-    def _process_stop_command_values(self, command: stop_command, motor: any) -> Tuple[float, int, float]:
+    def _process_stop_command_values(self, command: StopCommand, motor: any) -> Tuple[float, int, float]:
         """
         Process the given command into the correct movement values.
         :param command: to process.
@@ -102,9 +108,9 @@ class MessageProcessor:
         """
 
         if motor.ev3type == 'arm':
-            dpf, frames, run_time = self.command_processor.process_stop_command_degrees(command)
+            dpf, frames, run_time = self.motor_command_processor.process_stop_command_degrees(command)
             return -dpf, frames, run_time
-        return self.command_processor.process_stop_command_distance(command)
+        return self.motor_command_processor.process_stop_command_distance(command)
 
     def _process_coast(self, frames, ppf, motor):
         """
@@ -124,7 +130,7 @@ class MessageProcessor:
                 ppf = min(ppf + coasting_sub, 0)
             self.robot_sim.put_actuator_job(self._to_full_address(motor.address), ppf)
 
-    def process_led_command(self, command: led_command):
+    def process_led_command(self, command: LedCommand):
         """
         Process the given sound command by creating a sound job with a message which can be put on the simulator screen.
         :param command: to process.
@@ -157,9 +163,14 @@ class MessageProcessor:
                     diff = new_diff
         return color
 
-    def process_sound_command(self, command: sound_command):
+    def process_sound_command(self, command: SoundCommand):
         """
-        Process the given sound command by creating a sound job with a message which can be put on the simulator screen.
+        Process the given sound command by creating a sound job with a message. This job is handled
+        by putting a message on the simulator screen.
+
+        The modified ev3dev2 API does play the sound on the client side. The simulator itself does not play
+        any sounds.
+
         :param command: to process.
         """
         frames = int(round(self.frames_per_second * command.duration))
@@ -168,7 +179,7 @@ class MessageProcessor:
         for i in range(frames):
             self.robot_sim.put_actuator_job(self._to_full_address('speaker'), message)
 
-    def process_data_request(self, request: data_request) -> Any:
+    def process_data_request(self, request: DataRequest) -> Any:
         """
         Process the given data request by retrieving the requested value from the RobotState and returning this.
         :param request: to process.

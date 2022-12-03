@@ -35,6 +35,8 @@ class MessageHandler:
         obj_dict = json.loads(jsn)
 
         tpe = obj_dict['type']
+
+        # handling any Command requests
         if tpe == 'RotateCommand':
             return self._process_drive_command(obj_dict)
 
@@ -47,17 +49,15 @@ class MessageHandler:
         if tpe == 'LedCommand':
             return self._process_led_command(obj_dict)
 
-        return self.handle_request(tpe, obj_dict)
 
-    def handle_request(self, tpe, obj_dict):
-        """
-        Function handling any data or config requests.
-        """
+        # handling any data or config requests.
         if tpe == 'DataRequest':
             return self._process_data_request(obj_dict)
         if tpe == 'ConfigRequest':
             return self._process_config_request(obj_dict)
-        return warning(f'Unknown command type {tpe}')
+
+        warning(f'Unknown command type {tpe}')
+        return bytes()
 
     def _process_drive_command(self, command_dict: dict) -> Any:
         """

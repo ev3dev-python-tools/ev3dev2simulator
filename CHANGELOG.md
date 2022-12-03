@@ -6,10 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [2.0.5_new_arcade2.6.16] - 2022-11-18
+
+## [2.0.6] - 2022-11-30
 
 - updated to new arcade version 2.6.16 which depends on newer pyglet 2.0 version
-  TODO: good testing
+- support for new mac hardware with arm cpu
+- added key shortcuts in sidebar
+- added python3 version used on ev3dev OS on EV3 brick in window title.  
+  Makes clear that you shouldn't use newer python version features in your code when using the simulator.  
+  If you still do then your program may run on simulator, but not on the EV3 brick having an older python 
+  version which doesn't support these features.
+- improved sensor locking between writing simulator and reading clients
+- clearer client connection errors with simulator
+
 
 ##  [2.0.5] - 2020-12-10
 
@@ -162,7 +171,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First version ready for use
 
 
-[unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.5...HEAD
+[unreleased]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.6...HEAD
+[2.0.6]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/ev3dev-python-tools/ev3dev2simulator//compare/v2.0.2...v2.0.3

@@ -32,8 +32,3 @@ class DeviceConnector:
                 f'{kwargs.get("driver_name")} {f"on port {self.address}" if self.address else ""}')
         return new_port
 
-    def get_class_name(self):
-        """
-        Returns the class name of the connector.
-        """
-        return self.class_name

@@ -4,6 +4,7 @@ This class can be seen as a snapshot of the robot at some point in time.
 """
 
 import math
+import threading
 
 import arcade as _arcade
 import pymunk
@@ -37,8 +38,14 @@ class RobotState:
         self.side_bar_sprites = _arcade.SpriteList()
 
         self.sensors = {}
+        # every frame we show the new sensor values in window
+        # so we update sensor values in below field every frame.
+        # This field is written(and read) by simulator thread and read by ev3dev thread
+        # so the prevent corruption by two threads we have to protect access to this field with a mutex.
+        self._sensor_values = {}
+
         self.actuators = {}
-        self.values = {}
+
         self.led_colors = {}
         self.bricks = []
         self.sounds = {}
@@ -56,25 +63,23 @@ class RobotState:
 
         self.name = config['name']
 
-        parts = get_robot_config(config['type'])['parts'] if 'type' in config else config['parts']
+
         self.parts = []
-        self.add_parts(parts)
 
-    def is_falling(self):
-        """
-        Check if the robot has fallen of the playing field or is stuck in the
-        middle of a lake. If so display a message on the screen.
-        """
-        wheels = self.get_wheels()
-        for wheel in wheels:
-            if wheel.is_falling():
-                return True
-        return False
+        # when initializing robot next to self.parts also self.sensors and selfs.actuators are initialized
+        self._init_robot(config)
 
-    def add_parts(self, parts):
+
+        # per sensor a lock because simulator thread writes to it, and ev3dev client reads from it
+        self.sensor_locks = {}
+        self._init_sensors()
+
+
+    def _init_robot(self,config):
         """
         Adds the parts from the configuration to the robot.
         """
+        parts = get_robot_config(config['type'])['parts'] if 'type' in config else config['parts']
         for part in parts:
             if part['type'] == 'brick':
                 brick = Brick(part, self)
@@ -115,10 +120,43 @@ class RobotState:
             else:
                 print("Unknown robot part in config")
 
-        self.parts.extend(list(self.get_wheels()))
+        self.parts.extend(list(self.get_wheels()))  # actuators with ev3type() == 'motor'
         self.parts.extend(list(self.sensors.values()))
         self.parts.extend(self.bricks)
         self.parts.extend(filter(lambda act: act.get_ev3type() != 'motor', list(self.actuators.values())))
+
+
+
+    def _init_sensors(self):
+        """
+        Initialize each sensor with its default value.
+        Also create an unique lock per sensor sensor.
+        """
+        for sensor_address, sensor in self.sensors.items():
+            self._sensor_values[sensor_address] = sensor.get_default_value()
+            self.sensor_locks[sensor_address] = threading.Lock()
+
+    def update_sensors(self):
+        """
+        Process the data of the robot sensors by retrieving the data and putting it
+        in the robot state.
+        """
+        for address, sensor in self.sensors.items():
+            self.sensor_locks[address].acquire()
+            self._sensor_values[address] = sensor.get_latest_value()
+            self.sensor_locks[address].release()
+
+    def is_falling(self):
+        """
+        Check if the robot has fallen of the playing field or is stuck in the
+        middle of a lake. If so display a message on the screen.
+        """
+        wheels = self.get_wheels()
+        for wheel in wheels:
+            if wheel.is_falling():
+                return True
+        return False
+
 
     def set_last_pos(self, pos):
         """
@@ -151,6 +189,20 @@ class RobotState:
         self.body.angle = math.radians(self._get_orig_orientation())
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
+        for obj in self.side_bar_sprites:
+            obj.reset()
+
+    def reset_position(self):
+        """
+        Resets the robot to its original position, and resets the all measurements.
+        Does not reset speed.
+        """
+        #self.values.clear()
+        orig_pos = self._get_orig_position()
+        self.body.position = pymunk.Vec2d(orig_pos.x * self.scale, orig_pos.y * self.scale)
+        self.body.angle = math.radians(self._get_orig_orientation())
+        #self.body.velocity = (0, 0)
+        #self.body.angular_velocity = 0
         for obj in self.side_bar_sprites:
             obj.reset()
 
@@ -286,7 +338,33 @@ class RobotState:
         """
          Gets value of a sensor based on the ev3dev address of the sensor.
          """
-        return self.values[address]
+        self.sensor_locks[address].acquire()
+        value=self._sensor_values[address]
+        self.sensor_locks[address].release()
+        return value
+
+    def get_values(self):
+        """
+         Gets values of all sensors
+         """
+
+        # creates shallow copy which is fine because values in dict are copy values (no references as values)
+        # note: need to loop over dict keys so we can fetch each value with a mutex lock
+        values={}
+        for address in self._sensor_values.keys():
+            values[address] = self.get_value(address)
+            self.sensor_locks[address].acquire()
+            values[address] = self._sensor_values[address]
+            self.sensor_locks[address].release()
+        return values
+
+    def set_value(self, address, value):
+        """
+         Sets value of a sensor based on the ev3dev address of the sensor.
+         """
+        self.sensor_locks[address].acquire()
+        self._sensor_values[address] = value
+        self.sensor_locks[address].release()
 
     def get_wheels(self):
         """

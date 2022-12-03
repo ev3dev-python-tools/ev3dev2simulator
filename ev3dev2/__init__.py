@@ -113,8 +113,9 @@ class Device(object):
 
         self.kwargs = kwargs
         self._attr_cache = {}
-        self.connector = DeviceConnector(self.kwargs.get('address'), class_name)
-        self.kwargs['address'] = self.connector.request_device_config(kwargs)
+
+        connector = DeviceConnector(self.kwargs.get('address'), class_name)
+        self.kwargs['address'] = connector.request_device_config(kwargs)
 
 
 

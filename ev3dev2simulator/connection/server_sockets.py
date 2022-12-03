@@ -19,7 +19,7 @@ class ServerSockets(threading.Thread):
 
     def __init__(self, world_simulator: WorldSimulator):
         threading.Thread.__init__(self)
-        self.word_simulator = world_simulator
+        self.world_simulator = world_simulator
         self.brick_sockets = {}
         self.first_connected = False
 
@@ -31,17 +31,18 @@ class ServerSockets(threading.Thread):
 
         port = int(get_simulation_settings()['exec_settings']['socket_port'])
 
-        for robot_sim in self.word_simulator.robot_simulators:
+        # per brick create a socket and let it be dealt with by a ClientSocketHandler thread
+        for robot_sim in self.world_simulator.robot_simulators:
             for brick in robot_sim.robot.get_bricks():
                 sock = ClientSocketHandler(robot_sim, brick.brick, brick.name)
-                sock.setDaemon(True)
+                sock.daemon = True
                 sock.start()
                 self.brick_sockets[(robot_sim.robot.name, brick.name)] = sock
 
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(('localhost', port))
-        server.listen(5)
+        server.listen(5)  # allows 5 unaccepted connections before refusing new connections
         server.setblocking(False)
         server.settimeout(1)
 
@@ -79,7 +80,7 @@ class ServerSockets(threading.Thread):
                 pass
             if self.all_sockets_are_disconnected(self.brick_sockets.values()) and self.first_connected:
                 print('All bricks are disconnected. Resetting world.')
-                self.word_simulator.request_reset()
+                self.world_simulator.request_reset()
                 self.first_connected = False
                 return True  # should restart connection procedure
 

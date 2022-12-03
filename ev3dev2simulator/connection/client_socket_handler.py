@@ -9,15 +9,14 @@ from time import sleep
 from ev3dev2simulator.config.config import get_simulation_settings
 from ev3dev2simulator.connection.message_handler import MessageHandler
 from ev3dev2simulator.state.message_processor import MessageProcessor
-from ev3dev2simulator.state import robot_simulator
-
+from ev3dev2simulator.state.robot_simulator import RobotSimulator
 
 class ClientSocketHandler(threading.Thread):
     """
-    Class responsible for managing a socket connection from the ev3dev2 mock processes.
+    Class responsible for handling request from the emulated ev3dev2 API to the simulator using a socket connection.
     """
 
-    def __init__(self, robot_sim: robot_simulator, brick_id: int, brick_name: str):
+    def __init__(self, robot_sim: RobotSimulator, brick_id: int, brick_name: str):
         threading.Thread.__init__(self)
         self.message_handler = MessageHandler(MessageProcessor(brick_id, robot_sim))
         self.client = None
@@ -46,6 +45,7 @@ class ClientSocketHandler(threading.Thread):
                         self.is_connected = False
                 except socket.error:
                     self.is_connected = False
+                    # TODO: abstract simulator details here-> just call something as  self.robot_sim.disconnect(self.brick_id)
                     self.robot_sim.reset_queues_of_brick(self.brick_id)
                     print(f'Closing connection from \"{self.brick_name}\" (id: {self.brick_id}) from robot '
                           f'\"{self.robot_sim.robot.name}\"')

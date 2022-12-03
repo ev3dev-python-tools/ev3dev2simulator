@@ -11,6 +11,7 @@ import pyglet
 
 from arcade.color import RED
 
+from ev3dev2simulator.state.world_simulator import WorldSimulator
 from ev3dev2simulator.state.world_state import WorldState
 from ev3dev2simulator.util.dimensions import Dimensions
 from ev3dev2simulator.util.instance_checker import InstanceChecker
@@ -27,32 +28,55 @@ class Visualiser(_arcade.Window):
     This class extends from arcade.Window and manages the updates and rendering of the simulator window.
     """
 
-    def __init__(self, update_world_cb, world_state: WorldState, show_fullscreen: bool,
+    def __init__(self, world_sim: WorldSimulator, world_state: WorldState, show_fullscreen: bool,
                  show_maximized: bool, use_second_screen_to_show_simulator: bool):
+        """ setup window and member variables """
 
         instance_checker = InstanceChecker(self)
         instance_checker.check_for_unique_instance()
 
-        self.update_callback = update_world_cb
+        self.world_simulator = world_sim
+        self.update_callback_on_world_sim = world_sim.update
         self.world_state = world_state
 
         self.current_screen_index = None
         self.set_screen_to_display_simulator_at_startup(use_second_screen_to_show_simulator)
 
-        self.mysize = Dimensions(get_simulation_settings()['screen_settings']['screen_width'],
-                               get_simulation_settings()['screen_settings']['screen_height'])
-
+        # counter to display message robot is falling for 3 seconds (using msg_counter containing # frames for 3 seconds)
         self.msg_counter = 0
 
-        screen_title = get_simulation_settings()['screen_settings']['screen_title']
-        screen_info = screen_title + f'          version: {sim_version}      ev3dev2 api: {api_version}'
+        initial_width=get_simulation_settings()['screen_settings']['screen_width']
+        initial_height=get_simulation_settings()['screen_settings']['screen_height']
+        self.sidebar_width = get_simulation_settings()['screen_settings']['side_bar_width']
 
-        scale = self.determine_scale(self.mysize.width, self.mysize.height)
+        self.sidebar = None
+
+
+        # Dimensions of drawing area of board and sidebar together
+        #
+        # We keep fixed ratio between height width of board and then attach sidebar on right side
+        # So when only increasing in height will only add window height which will stay empty, but drawn baard
+        # stays same size. Only when we also change size of width the board becomes bigger.
+        # The dimensions can differ from window width and height.
+        self.dimensions = None # initially not set
+
+        # determining the scale to draw board so it can be fitted in window width and height
+        # It calculates self.dimensions of the board+sidebar together which is scaled with scale
+        self.scale = self.determine_scale(initial_width, initial_height,True)
+
+        # initially decrease window size to newly calculate drawing dimensions (later we do not)
+        (initial_width,initial_height)=(self.dimensions.width,self.dimensions.height)
+
         if DEBUG:
-            print('starting simulation with scaling', scale)
+            print('starting simulation with scaling', self.scale)
             print('arcade version: ', _arcade.version.VERSION)
 
-        super(Visualiser, self).__init__(self.mysize.width, self.mysize.height, screen_info, update_rate=1 / 30,
+
+
+        screen_title = get_simulation_settings()['screen_settings']['screen_title']
+        screen_info = screen_title + f' {sim_version}          ev3dev2 api: {api_version}         python on EV3: 3.5.3'
+
+        super(Visualiser, self).__init__(initial_width, initial_height, screen_info, update_rate=1 / 30,
                                          fullscreen=show_fullscreen,
                                          resizable=True, screen=_arcade.get_screens()[self.current_screen_index])
 
@@ -60,14 +84,17 @@ class Visualiser(_arcade.Window):
         self.set_icon(icon1)
         _arcade.set_background_color(get_simulation_settings()['screen_settings']['background_color'])
 
-        self.sidebar = self._setup_sidebar()
-        self.world_state.setup_pymunk_shapes(scale)
-        self.world_state.setup_visuals(scale)
-
         if show_maximized:
             self.maximize()
 
         instance_checker.check_for_activation()
+
+    def setup(self):
+
+        """Set up the simulation here."""
+        self.sidebar = self._setup_sidebar()
+        self.world_state.setup_pymunk_shapes(self.scale)
+        self.world_state.setup_visuals(self.scale)
 
     @staticmethod
     def run():
@@ -76,30 +103,47 @@ class Visualiser(_arcade.Window):
 
     @property
     def _msg_x(self):
-        sidebar_width = get_simulation_settings()['screen_settings']['side_bar_width']
-        return (self.mysize.width - sidebar_width) / 2
+        return (self.dimensions.width - self.sidebar_width) / 2
 
-    def determine_scale(self, new_screen_width, new_screen_height):
+    def determine_scale(self, new_screen_width, new_screen_height,init=False):
         """Determines the scale between board size and screen size in pixel per mm"""
-        sidebar_width = get_simulation_settings()['screen_settings']['side_bar_width']
-        width_scale = (new_screen_width - sidebar_width) / self.world_state.board_width
-        height_scale = new_screen_height / self.world_state.board_height
+
+        new_board_width = new_screen_width - self.sidebar_width
+        new_board_height = new_screen_height
+        width_scale = new_board_width / self.world_state.board_width
+        height_scale = new_board_height / self.world_state.board_height
+
+
         if width_scale <= height_scale:
             scale = width_scale
         else:
             scale = height_scale
-        self.mysize.height = int(scale * self.world_state.board_height)
-        self.mysize.width = sidebar_width + int(scale * self.world_state.board_width)
+        # Update dimensions of board+sidebar based on scale
+        # note: we keep fixed ratio between height and width of board and the attach sidebar
+        height = int(scale * self.world_state.board_height)
+        width = self.sidebar_width + int(scale * self.world_state.board_width)
+        self.dimensions = Dimensions(width,height)
+
+        ## Try to fix ratio
+        # if not init:
+        #     ratio=new_screen_width/new_screen_height
+        #     draw_ratio=self.dimensions.width/self.dimensions.height
+        #     percentage = abs(ratio - draw_ratio) / ratio
+        #
+        #     #print(percentage)
+        #     if (percentage > 0.05):
+        #         print("set size")
+        #         self.set_size(self.dimensions.width, self.dimensions.height)
         return scale
 
     def _change_scale(self, new_screen_width, new_screen_height):
-        scale = self.determine_scale(new_screen_width, new_screen_height)
-        self.world_state.rescale(scale)
+        self.scale = self.determine_scale(new_screen_width, new_screen_height)
+        self.world_state.rescale(self.scale)
 
     def _setup_sidebar(self):
-        sidebar_width = get_simulation_settings()['screen_settings']['side_bar_width']
-        sidebar = Sidebar(Point(self.mysize.width - sidebar_width, self.mysize.height - 70),
-                          Dimensions(sidebar_width, self.mysize.height))
+        """ Create Sidebar with its widgets attached (for ARM)"""
+        sidebar = Sidebar(Point(self.dimensions.width - self.sidebar_width, self.dimensions.height - 70),
+                          Dimensions(self.sidebar_width, self.dimensions.height))
         for robot in self.world_state.get_robots():
             sidebar.init_robot(robot.name, robot.sensors, robot.bricks, robot.side_bar_sprites)
 
@@ -110,6 +154,7 @@ class Visualiser(_arcade.Window):
 
         # Call the parent. Failing to do this will mess up the coordinates, and default to 0,0 at the center and the
         # edges being -1 to 1.
+
         self._change_scale(width, height)
         self.sidebar = self._setup_sidebar()
         super().on_resize(width, height)
@@ -119,7 +164,10 @@ class Visualiser(_arcade.Window):
         Render the simulation.
         """
 
-        _arcade.start_render()
+        # Clear the screen to the background color
+        self.clear()
+
+        #_arcade.start_render()
 
         for obstacle_list in self.world_state.static_obstacles:
             for shape in obstacle_list.get_shapes():
@@ -140,24 +188,27 @@ class Visualiser(_arcade.Window):
                             shape.draw()
                     robot.debug_shapes.clear()
 
+            # display message robot is falling for 3 seconds (using msg_counter containing # frames for 3 seconds)
             if robot.is_falling() and self.msg_counter <= 0:
                 self.msg_counter = get_simulation_settings()['exec_settings']['frames_per_second'] * 3
 
         for robot in self.world_state.get_robots():
-            self.sidebar.add_robot_info(robot.name, robot.values, robot.sounds)
+            self.sidebar.add_robot_info(robot.name, robot.get_values(), robot.sounds)
 
         self.sidebar.draw()
+
+        # display message robot is falling
         if self.msg_counter > 0:
             self.msg_counter -= 1
             _arcade.draw_text(get_simulation_settings()['screen_settings']['falling_message'], self._msg_x,
-                              self.mysize.height - 100, _arcade.color.RADICAL_RED, 14, anchor_x="center")
+                              self.dimensions.height - 100, _arcade.color.RADICAL_RED, 14, anchor_x="center")
 
     def update(self, delta_time):
         """
         All the logic to move the robot. Collision detection is also performed.
         Callback to WorldSimulator.update is called
         """
-        self.update_callback()
+        self.update_callback_on_world_sim()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         self.world_state.set_object_at_position_as_selected((x, y))
@@ -171,11 +222,6 @@ class Visualiser(_arcade.Window):
             self.world_state.move_selected_object(dx, dy)
         if buttons == _arcade.MOUSE_BUTTON_RIGHT:
             self.world_state.rotate_selected_object(dy)
-
-    #def on_close(self):
-        #sys.exit(0)
-        #quit()
-    #    sys.exit(9)
 
     def on_key_press(self, symbol: int, modifiers: int):
         """Called whenever a key is pressed. """
@@ -208,6 +254,17 @@ class Visualiser(_arcade.Window):
         elif symbol == _arcade.key.F:
             self.update_current_screen()
             self._set_full_screen(not self.fullscreen)
+
+        # Reset all obstacles and robots in the world to their original position.
+        # Robots keep their original measurements and speed, only position changed.
+        elif symbol == _arcade.key.R:
+            #self.world_simulator.request_reset()  crashes on new incoming data
+            self.world_simulator.request_reset_position()
+
+        # Reset all obstacles in the world (except robots)
+        elif symbol == _arcade.key.W:
+            self.world_state.reset()
+
 
     def set_screen_to_display_simulator_at_startup(self, use_second_screen_to_show_simulator):
         """ Set screen to use to display the simulator at startup. For windows this works only in fullscreen mode.
@@ -275,7 +332,7 @@ class Visualiser(_arcade.Window):
 
         top_left_x = self.get_location()[0]
         top_left_y = self.get_location()[1]
-        mysize = self.get_size()
+        size = self.get_size()
         win_width = size[0]
         win_height = size[1]
 

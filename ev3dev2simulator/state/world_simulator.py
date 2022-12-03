@@ -33,6 +33,15 @@ class WorldSimulator:
         for robot_sim in self.robot_simulators:
             robot_sim.should_reset = True
 
+    def request_reset_position(self):
+        """
+        Used to request a reset of world, which will be handled in the update function
+        Only reset position of robots. (not velocity)
+        """
+        self.should_reset = True
+        for robot_sim in self.robot_simulators:
+            robot_sim.robot.reset_position()
+
     def update(self):
         """
         Resets the model of the world.
