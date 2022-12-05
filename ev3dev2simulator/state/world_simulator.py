@@ -42,6 +42,14 @@ class WorldSimulator:
         for robot_sim in self.robot_simulators:
             robot_sim.robot.reset_position()
 
+    def request_reset_position_robot_only(self):
+        """
+        Only reset position of robots. (not velocity)
+        """
+        #self.should_reset = True
+        for robot_sim in self.robot_simulators:
+            robot_sim.robot.reset_position()
+
     def update(self):
         """
         Resets the model of the world.
@@ -50,8 +58,10 @@ class WorldSimulator:
             self.world_state.reset()
             self.should_reset = False
         else:
-            self.sync_physics_sprites()
+            # update pymunk physics in small step
             self.world_state.space.step(1.0 / self.space_step_size)
+            # sync new pymunk object coordinates with arcade sprites
+            self.sync_physics_sprites()
             for robot in self.robot_simulators:
                 robot.update()
 

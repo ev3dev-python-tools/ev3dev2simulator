@@ -50,7 +50,7 @@ class MovableObject:
 
     def reset(self):
         """
-        Resets the position and the speed of the rock.
+        Resets the position and the speed of the movable object.
         """
         self.body.position = pymunk.Vec2d(self.x * self.scale, self.y * self.scale)
         self.body.angle = math.radians(self.angle)

@@ -183,7 +183,7 @@ class RobotState:
         """
         Resets the robot to its original position, and resets the all measurements.
         """
-        self.values.clear()
+        self.clear_values()
         orig_pos = self._get_orig_position()
         self.body.position = pymunk.Vec2d(orig_pos.x * self.scale, orig_pos.y * self.scale)
         self.body.angle = math.radians(self._get_orig_orientation())
@@ -194,15 +194,16 @@ class RobotState:
 
     def reset_position(self):
         """
-        Resets the robot to its original position, and resets the all measurements.
-        Does not reset speed.
+        Resets the robot to its original position and angle ,but
+        does not reset its speed because the running robot program expects that speed still set.
+        Handy function to continue testing when robot drove off the map, to replace it back on the map.
         """
-        #self.values.clear()
+        #self.clear_values() # hangs simulator => sensor values will be update automatically anyway by program
         orig_pos = self._get_orig_position()
         self.body.position = pymunk.Vec2d(orig_pos.x * self.scale, orig_pos.y * self.scale)
         self.body.angle = math.radians(self._get_orig_orientation())
         #self.body.velocity = (0, 0)
-        #self.body.angular_velocity = 0
+        self.body.angular_velocity = 0
         for obj in self.side_bar_sprites:
             obj.reset()
 
@@ -210,6 +211,7 @@ class RobotState:
         """
         Creates the body of the robot and adds the shapes of all robot parts.
         """
+        self.scale = scale
         moment = pymunk.moment_for_box(20, (200 * scale, 300 * scale))
 
         self.body = pymunk.Body(20, moment)
@@ -237,7 +239,7 @@ class RobotState:
         elif self._get_orig_orientation() != 0:
             self._rotate(math.radians(self._get_orig_orientation()))
 
-        self.scale = scale
+
         return shapes
 
     def setup_visuals(self, scale):
@@ -365,6 +367,16 @@ class RobotState:
         self.sensor_locks[address].acquire()
         self._sensor_values[address] = value
         self.sensor_locks[address].release()
+
+    def clear_values(self):
+        """
+         Sets value of a sensor based on the ev3dev address of the sensor.
+         """
+        for address in self._sensor_values.keys():
+            self.sensor_locks[address].acquire()
+        self._sensor_values.clear()
+        for address in self._sensor_values.keys():
+            self.sensor_locks[address].release()
 
     def get_wheels(self):
         """

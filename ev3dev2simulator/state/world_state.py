@@ -24,6 +24,7 @@ class WorldState:
     """
     def __init__(self, config):
         self.sprite_list = _arcade.SpriteList()
+        # self.obstacles are movable obstacles
         self.obstacles = []
         self.static_obstacles = []
         self.falling_obstacles = []
@@ -77,6 +78,7 @@ class WorldState:
         Reset all obstacles in the world (except robots) to their original position.
         """
         for obstacle in self.obstacles:
+            # reset position and speed of obstacle
             obstacle.reset()
 
     def setup_pymunk_shapes(self, scale):
@@ -85,16 +87,18 @@ class WorldState:
         The robot get a shape filter so it does not interact with itself.
         """
         for idx, robot in enumerate(self.robots):
+            # setup robot's single body and its attached shapes (one for each part)
             robot_shapes = robot.setup_pymunk_shapes(scale)
+            # add robot body to space
+            self.space.add(robot.body)
+            # add robot's attached shapes (one for each part) to space
             for shape in robot_shapes:
                 shape.filter = pymunk.ShapeFilter(group=idx+5)
-                if not shape.body in self.space.bodies:
-                   self.space.add(shape.body)
                 self.space.add(shape)
-            if not robot.body in self.space.bodies:
-               self.space.add(robot.body)
 
+        # only for movable obstacles we add body and shape to space
         for obstacle in self.obstacles:
+            #  create body and shape for obstacel
             obstacle.create_shape(scale)
             self.space.add(obstacle.body)
             self.space.add(obstacle.shape)
@@ -103,6 +107,8 @@ class WorldState:
         """
         On screen rescale, rescale all objects ( both sprite(visual) as pymunk body(physical) )
         """
+
+        # remove all shapes and bodies
         for robot in self.robots:
             robot.shapes = []
         for obstacle in self.obstacles:
@@ -113,6 +119,7 @@ class WorldState:
         for robot in self.robots:
             robot.sprite_list = _arcade.SpriteList()
         self.sprite_list = _arcade.SpriteList()
+
         self.setup_pymunk_shapes(new_scale)
         self.setup_visuals(new_scale)
 

@@ -155,19 +155,22 @@ class Visualiser(_arcade.Window):
         # Call the parent. Failing to do this will mess up the coordinates, and default to 0,0 at the center and the
         # edges being -1 to 1.
 
+        # deletes all and setup again with new scale
         self._change_scale(width, height)
         self.sidebar = self._setup_sidebar()
+
+        # sync physics and sprites (normally done in on_update, but also needed here otherwise during resize robot will blink)
+        self.update_callback_on_world_sim()
+
         super().on_resize(width, height)
 
     def on_draw(self):
         """
         Render the simulation.
         """
-
         # Clear the screen to the background color
         self.clear()
-
-        #_arcade.start_render()
+        #_arcade.start_render()  # think old style
 
         for obstacle_list in self.world_state.static_obstacles:
             for shape in obstacle_list.get_shapes():
@@ -203,7 +206,7 @@ class Visualiser(_arcade.Window):
             _arcade.draw_text(get_simulation_settings()['screen_settings']['falling_message'], self._msg_x,
                               self.dimensions.height - 100, _arcade.color.RADICAL_RED, 14, anchor_x="center")
 
-    def update(self, delta_time):
+    def on_update(self, delta_time):
         """
         All the logic to move the robot. Collision detection is also performed.
         Callback to WorldSimulator.update is called
@@ -256,10 +259,16 @@ class Visualiser(_arcade.Window):
             self._set_full_screen(not self.fullscreen)
 
         # Reset all obstacles and robots in the world to their original position.
-        # Robots keep their original measurements and speed, only position changed.
+        # Robots keep their speed, only position and angle changed.
         elif symbol == _arcade.key.R:
             #self.world_simulator.request_reset()  crashes on new incoming data
             self.world_simulator.request_reset_position()
+
+        # Reset all robots in the world to their original position.
+        # Robots keep their speed, only position and angle changed.
+        elif symbol == _arcade.key.P:
+            #self.world_simulator.request_reset()  crashes on new incoming data
+            self.world_simulator.request_reset_position_robot_only()
 
         # Reset all obstacles in the world (except robots)
         elif symbol == _arcade.key.W:

@@ -64,9 +64,9 @@ class Sidebar:
 
         height = self.sprites_total_height
 
-        shortcuts=["left mouse: move object/robot","right mouse: rotate object/robot","q : quit the simulator","m : maximize simulator window","f : show simulator fullscreen (toggle)",
-                   "t : toggle screen in fullscreen mode","    toggle only works at fullscreen mode",
-                   "w : reset world (not robots)","r : reset world and robots positions"]
+        shortcuts=["left mouse: move object/robot","right mouse: rotate object/robot","q : Quit the simulator","m : Maximize simulator window","f : show simulator Fullscreen (toggle)",
+                   "t :Toggle screen in fullscreen mode","    toggle only works at fullscreen mode",
+                   "w : reset World (not robots)", "p : reset robots Positions","r : Reset world and robots positions"]
 
         _arcade.draw_text("interface", self.start.x + self.styling.left_text_padding, self.start.y - height,
                           self.styling.text_color, self.styling.text_size + 2, bold=True)
