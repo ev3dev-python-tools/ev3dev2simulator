@@ -35,6 +35,8 @@ class ClientSocket:
             print("EXIT(1): CANNOT CONNECT WITH SIMULATOR")
             exit(1)
 
+        # multiple sensors/actuators of brick in ev3dev2 API share this socket to communicate with simulator
+        # To prevent race conditions between them, they need to require a mutex.
         self.lock = threading.Lock()
 
         time.sleep(1)
@@ -55,8 +57,11 @@ class ClientSocket:
                 data = self.client.recv(32)
                 des = self.deserialize(data)
         except:
-            print("EXIT(1): SIMULATOR CONNECTION LOST")
-            exit(1)
+            import __main__
+            print("EXIT(1): SIMULATOR CONNECTION LOST ",__main__.__file__)
+            # exit and kill all threads
+            import os
+            os._exit(1)
         finally:
             self.lock.release()
         return des

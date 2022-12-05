@@ -52,17 +52,22 @@ class WorldSimulator:
 
     def update(self):
         """
-        Resets the model of the world.
+          update physical properties of all objects such as speed,position and angle
+          (does not draw, which is done in on_draw)
         """
         if self.should_reset:
+            # Resets the model of the world.
             self.world_state.reset()
             self.should_reset = False
         else:
             # update pymunk physics in small step
             self.world_state.space.step(1.0 / self.space_step_size)
-            # sync new pymunk object coordinates with arcade sprites
+            # sync new pymunk object coordinates with arcade sprites (for all world objects except robots)
             self.sync_physics_sprites()
             for robot in self.robot_simulators:
+                #  processes the actuators(from incoming ev3dev requests) and sensors of the robot,
+                #  update its physical properties such as position, speed and angle (used in pymunk physical calculation)
+                #  and after pymunk calculations syncs its physical objects locations with arcade's  sprites drawn on screen
                 robot.update()
 
     def sync_physics_sprites(self):

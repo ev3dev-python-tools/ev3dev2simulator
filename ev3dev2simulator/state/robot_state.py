@@ -279,6 +279,8 @@ class RobotState:
         diff_angle, diff_x, diff_y = calc_differential_steering_angle_x_y(self.wheel_distance,
                                                                           distance_left,
                                                                           distance_right, cur_angle)
+
+        # update physical properties of rover (its pymunk physical object used in physical simulation)
         self._rotate(diff_angle)
         self._move_position(Vec2d(diff_x, diff_y))
 

@@ -36,7 +36,6 @@ class Visualiser(_arcade.Window):
         instance_checker.check_for_unique_instance()
 
         self.world_simulator = world_sim
-        self.update_callback_on_world_sim = world_sim.update
         self.world_state = world_state
 
         self.current_screen_index = None
@@ -160,7 +159,7 @@ class Visualiser(_arcade.Window):
         self.sidebar = self._setup_sidebar()
 
         # sync physics and sprites (normally done in on_update, but also needed here otherwise during resize robot will blink)
-        self.update_callback_on_world_sim()
+        self.world_simulator.update()
 
         super().on_resize(width, height)
 
@@ -208,10 +207,10 @@ class Visualiser(_arcade.Window):
 
     def on_update(self, delta_time):
         """
-        All the logic to move the robot. Collision detection is also performed.
-        Callback to WorldSimulator.update is called
+          update physical properties of all objects such as speed,position and angle
+          (does not draw, which is done in on_draw)
         """
-        self.update_callback_on_world_sim()
+        self.world_simulator.update()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         self.world_state.set_object_at_position_as_selected((x, y))
