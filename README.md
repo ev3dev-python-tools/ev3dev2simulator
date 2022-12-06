@@ -17,6 +17,11 @@ For more info about the thonny-ev3dev plugin see: https://github.com/ev3dev-pyth
 For more info about Thonny: http://thonny.org
 
 ## Getting started
+   
+   The only prerequisites for the simulator are python 3.8.10 and pip. Installation instructions for Python can be found [here](https://docs.python.org/3/using/index.html). Simulating robot sound works out of the box for Windows and macOS users. Linux user need to install [espeak](http://espeak.sourceforge.net/).
+
+   First, for windows users it is strongly adviced to install **python 3.8.10**. For this python version the installation goes smoothly because there are precompiled binary wheels available for all dependencies. Newer versions of python will also work, but then you need a c build environment installed to build the c-code of the simpleaudio package. For macos and linux a c build environment is standard available and install with compiling c-code will not be a problem.  
+
 
    Install with pip
    
