@@ -18,11 +18,14 @@ For more info about Thonny: http://thonny.org
 
 ## Getting started
    
-   The only prerequisites for the simulator are python 3.8.10 and pip. Installation instructions for Python can be found [here](https://docs.python.org/3/using/index.html). Simulating robot sound works out of the box for Windows and macOS users. Linux user need to install [espeak](http://espeak.sourceforge.net/).
-
+   The only prerequisites for the simulator are python 3.8.10 and pip. Simulating robot sound works out of the box for Windows and macOS users. Linux user need to install [espeak](http://espeak.sourceforge.net/).
+   
    First, for windows users it is strongly adviced to install **python 3.8.10**. For this python version the installation goes smoothly because there are precompiled binary wheels available for all dependencies. Newer versions of python will also work, but then you need a c build environment installed to build the c-code of the simpleaudio package. For macos and linux a c build environment is standard available and install with compiling c-code will not be a problem.  
 
-
+   Install python3
+      
+      Download Python 3.8.10 from the Python website [here](https://www.python.org/downloads/). 
+      
    Install with pip
    
       pip install ev3dev2simulator
