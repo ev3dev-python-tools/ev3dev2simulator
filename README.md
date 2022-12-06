@@ -25,6 +25,7 @@ For more info about Thonny: http://thonny.org
    Install python3
       
       Download Python 3.8.10 from the Python website (https://www.python.org/downloads/). 
+      Note: 3.8.10 is the latest 3.8 versions with installers.
       
    Install with pip
    
