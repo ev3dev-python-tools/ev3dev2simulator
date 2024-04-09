@@ -53,8 +53,7 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
         ]},
     entry_points={
         'console_scripts': [
-            'ev3dev2simulator = ev3dev2simulator.__main__:main',
-            'create_ev3dev2simulator_package = scripts.create_package:main'
+            'ev3dev2simulator = ev3dev2simulator.__main__:main'
         ]
     }
 )
