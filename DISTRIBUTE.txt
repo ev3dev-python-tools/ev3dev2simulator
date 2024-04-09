@@ -7,11 +7,11 @@ build wheel distribution file
 
 Build a .whl file in subdir pypi/ with the command:
 
-      python3 setup.py bdist_wheel -d pypi
+      python3 -m build 
 
 To test the .whl file you can install it with:
    
-       PATH_TO_MY_WHL=pypi/ev3dev2simulator-2.0.0-py3-none-any.whl
+       PATH_TO_MY_WHL=dist/ev3dev2simulator-2.0.6-py3-none-any.whl
        pip3 install $PATH_TO_MY_WHL
 
 upload to pypi

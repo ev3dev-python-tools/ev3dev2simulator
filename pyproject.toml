@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+readme = "README.md"
+name = "ev3dev2simulator"
+dynamic = ["version"]
+authors = [
+  {name = "Harco Kuppens", email = "h.kuppens@cs.ru.nl"},
+  {name = "Sam Jansen"},
+  {name = "Niels Okker"}
+]
+license = {file = "LICENSE.txt"}
+description = "EV3 simulator for the ev3dev2 library"
+keywords = [
+    "IDE",
+    "education",
+    "programming",
+    "EV3",
+    "mindstorms",
+    "lego",
+]
+classifiers = [
+    "Environment :: MacOS X",
+    "Environment :: Win32 (MS Windows)",
+    "Environment :: X11 Applications",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Education",
+    "Topic :: Software Development",
+]
+requires-python = ">=3.7"
+
+dependencies = ['ev3devlogging', 'arcade==2.6.16', 
+                # for pyttsx3 we need platform specific file
+                'pypiwin32; platform_system=="Windows"',
+                'pyobjc;sys.platform=="darwin"', 
+                'simpleaudio==1.0.4', 'pyttsx3==2.7', 'numpy',
+                'strictyaml',
+                # need python 3.8 and pylint < 2.6 because otherwise
+                # problems linting https://github.com/pylint-dev/pylint/issues/6813 no-space-check was removed in 2.6
+                # other problems causing python 3.8 : https://github.com/zylon-ai/private-gpt/issues/884  https://github.com/pylint-dev/pylint/issues/3882
+                'pylint==2.5.3'
+                ]
+
+[project.scripts]
+ev3dev2simulator = "ev3dev2simulator.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/ev3dev-python-tools/ev3dev2simulator"
+
+[tool.setuptools.package-data]
+"ev3dev2simulator" = [
+     "config/*", "config/world_configurations/*", "config/robot_configurations/*", "assets/images/*"
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "ev3dev2simulator.version.__version__"}
