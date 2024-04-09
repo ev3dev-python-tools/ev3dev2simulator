@@ -44,7 +44,13 @@ For more info: https://github.com/ev3dev-python-tools/ev3dev2simulator
                       # for pyttsx3 we need platform specific file
                       'pypiwin32; platform_system=="Windows"',
                       'pyobjc;sys.platform=="darwin"', 
-                      'simpleaudio==1.0.4', 'pyttsx3==2.7', 'numpy', 'strictyaml'],
+                      'simpleaudio==1.0.4', 'pyttsx3==2.7', 'numpy',
+                      'strictyaml',
+                      # need python 3.8 and pylint < 2.6 because otherwise
+                      # problems linting https://github.com/pylint-dev/pylint/issues/6813 no-space-check was removed in 2.6
+                      # other problems causing python 3.8 : https://github.com/zylon-ai/private-gpt/issues/884  https://github.com/pylint-dev/pylint/issues/3882
+                      'pylint==2.5.3'
+                      ],
     py_modules=["bluetooth"],
     packages=find_packages(exclude=['tests', 'tests.*', '*.tests.*', ]),
     package_data={
