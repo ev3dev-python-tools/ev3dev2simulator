@@ -1,0 +1,39 @@
+TODO:
+
+- fix thonny-ev3dev with thonny4 
+    => NEED to update thonny-ev3dev plugin to work with thonny4 ( python 3.10)!!
+    
+    => note: works with any ev3dev2simulator because communicates with it over network sockets!!
+       THUS separate from ev3dev2simulator 
+       However in installation we want to include ev3dev2simulator !!
+
+- make installation of thonny with thonny-ev3dev plugin with ev3dev2simulator easy
+      
+      First idea: portable install 
+         So make portable install thonny4 => then choose right version because binary wheel packages 
+             `-> https://github.com/thonny/thonny/wiki/DeploymentOptions
+                  Since 3.2 Thonny will work in portable mode simply when being run from a removable drive. 
+                   In this mode it keeps (almost) all traces of its work (configuration files, logs) within its program directory.
+                   
+                   NB! Always pay attention to the installation target directory in "Tools => Manage packages" and "Tools => Manage
+                   plug-ins". Unless you are using a virtual backend, Thonny will install new packages to global user-site-packages even
+                   when running in portable mode.
+                   This will probably be changed in version 4.0 (#718). -> ?? check this
+                   
+          => don't need a portable install but a thonny with everything already installed in its installation package
+              -> later installs may in user site installed!
+              -> this way we can build binary wheels for python 3.10 ourselves (which are not provided on pypi)
+                 and install them in the thonny directory!
+                 => have working version without needed. visual c++ stuff!!
+       
+      Better idea:  make an Thonny installation with extra packages/plugins already added 
+                    (don't need to be portable, because fine if all traces of its work are installed in the user directory )   
+           
+           CREATE: install Thonny and add with pip packages to the python version installed within the Thonny directory
+             then zip the Thonny folder as  thonny-with-ev3dev.zip 
+           
+           INSTALLATION: just extract   thonny-with-ev3dev.zip  in your /Application dir
+                         and this then just works!
+               
+                         
+          

@@ -1,0 +1,845 @@
+TODO:       redesign simulator to use  pymunk.space objects  
+     => make code simpler and more logical by using only these object as domain model    
+      -> do step py step
+           1. integrate making Commands into messageHandler  => pass commands
+              direct to robotsim
+           2. integrate robot_sim/robot_state
+           3. integrate world_sim/world_state
+           3. replace own collision code by using pymunk collision code
+          .. 
+
+     split client API  from simulator => allow us to have multiple types of robots to connect
+
+docs:
+
+http://chipmunk-physics.net/release/ChipmunkLatest-Docs/ -> pymunk is wrapper => at chipmunk site everything better explained!
+  http://www.pymunk.org/en/latest/pymunk.html#pymunk.Space     
+    
+- simulator refactor => better domain modelling
+
+   * to fix
+   
+     - speak on mac 
+        => seems known problem on mac that does not block in thread => solution run speak in special command (then blocks)
+           -> get error : Warning: 'speak' called before last text-to-speech was handled
+              cause: it doesn't block, and on next call to speak it detects this!
+              
+     - speak in simulator, not in ev3dev2 api
+         => how does ev3dev2 api block??
+
+         in general request to sim should be handled quickly 
+
+
+         in general 
+           it is better to have client messages handled quickly keep message handling RESPONSIVE (like in interrupt handlers)
+             => MAIN REASON: client can deciced to do multithreading! We want to
+                             handle requests from multiple threads from client
+                             responsively => not that one thread does a client
+                             call which blocks, and then also blocks a client
+                             call from another thread 
+                            => with the polling solution below, then 
+                               the first thread blocks, but still the second
+                               thread can do calls!!
+                          Note: it can happen that a function in client api is
+                                 always blocking, then the client can decide to
+                                 do it in a separate thread so that it in the
+                                 meantime can still do other things!
+                  => THUS server must be always responsive for new client requests!
+                         So server should never block/takelong! These jobs
+                         should be handled in separate thread, and be polled for
+                         by client! => server is not stateless, but keeps state!
+                         (not possible in REST -> for these cases people deviate from rest)
+                           hmmm : we could define a resource url for brick X's
+                           polling variable  => resource can change in state
+
+                           stateless in REST means that server doesn't need to
+                           remember the session id of the specific client  
+                           and stores data on server for that specific session id
+                           But general (by any client) addresseble resources can 
+                           change state in REST!  => otherwise this API is of no
+                           use => nothing ever changes => resources must change!
+                            (eg. list of people, etc..)
+                      
+
+              -> knowing this we can alwasy expect client calls to handled quickly  
+              -> we also use it as a feature: if takes too long the client times out and thinks connection lost!
+           in general : do long running jobs in a separate thread => better managable
+
+         solution for expected blocking in client: polling with sleeps between polls 
+                client sends repeatingly poll request -> is_speaking() until it
+                    answers no (note: if simulator killed, then client cannot send
+                    anymore and will quit also)
+                 
+                `simulator starts speak command in thread (or separate program)
+                 setting is_speaking=True (per brick), afterwards set it to false
+                 simulator support a is_speaking polling command
+        
+
+  *  note: we use venv in projectdir in pycharm => better control which python and its pip packages
+
+  world setup -> gives us  ( robot id , brickid ) pairs
+  loop over pairs and end user has to connect clients in that order => each socket labeled with  ( robot id , brickid ) pair
+
+  about lock:
+     https://chipmunk-physics.net/forum/viewtopic.php?t=2338
+         Chipmunk doesn't have any global shared state. You can safely run separate Chipmunk spaces in different threads.
+         It's not thread safe however. If you want to access a single space from multiple threads, you'll need to use mutexes.
+     
+
+  API -> incoming socket data -> translated to Command (as send) ->  passed to right "robot object" with brick id as param 
+    "robot object" handles command 
+         * handle method  "locks world" (both arcade sprite objects as pymunk objects in space )
+                => lock need , because both   simulator doing drawing. and handling of incoming API request in parallel read/edit this "world"
+         * for sensor request: queries specific sensor in robot to get value 
+           note: each simulator on_update all sensors are updated  by simulator calling sensor.update() 
+                so sensor request only needs to call sensor.get_value() -> returns that value over socket
+         * for actuator request:
+              calls  specific actuator in robot to update its params eg. motor.set_speed(10,30). 10 is speed and 30 is duration      
+
+    simulator(rename visualisation class to this) on_update method 
+         calls world.update
+           which  calls update on each object in world
+            -> in base class a base update function is defined
+                 * syncs the newly calculate position and angle from the pymunk body to the arcade sprite (s)
+                   => for passive moveable objects!
+            -> however for robot this functions is overwritten 
+               see robot.update below
+ 
+  
+    we have 
+    
+       objects : 
+                 all have a sprite or multiple sprites to draw
+                 all have pymunk.body and one or more shapes attached to body
+                 -> in field body.simobject set reference to object class 
+                    because if we find shape, then we find object by  shape.body.simobject !!
+         we have objects:  
+           lake
+           brick
+           bottle
+           robot   
+              `-> has object_parts  -> a part has a arcade.sprite, and pymunk.shape , but not an pymunk body
+                     touch sensor                                      `-> one of robot's shapes!
+                     color sensor
+                     wheel 
+                       has motor 
+                     arm 
+                       has motor 
+                       
+              => robot has function which checks wheel in hole or off board
+                  -> takes center of wheel 
+                       found_shape= space.point_query_nearest(point,0,pymunk.ShapeFilter( categories=0b10, mask=0b10))
+                       
+                       see: 
+                         http://www.pymunk.org/en/latest/pymunk.html#pymunk.Space 
+                         http://www.pymunk.org/en/latest/pymunk.html#pymunk.ShapeFilter
+      
+             => robot has get_speed function
+                   which get_speed/get_pos per wheel to calculate forward and angular speed of rover!
+                   
+                 robot's update function 
+                     * syncs the newly calculate position and angle from the pymunk body to the arcade sprite (s) (as in base class for passive moveable objects!)
+                     * calls update on all sensors (see above)
+                     * calls get_speed function which it uses to update the velocity (Linear velocity) and angular_velocity  
+                       of the pymunk body   
+                       
+                     
+       
+       thus rename 
+         visualizer -> simulator
+         
+         world_state+world_simulator -> world  (represents world (collection of objects in world) -> setup's pymunk space )
+         robot_state+robot_simulator -> robot  (represents robot object in world)            
+                      
+        ev3dev2 API. -> updates robot object on call  -> uses space 
+        simulator -> updates world timestep based (using pymunk) -> uses space             
+           => so actually we only need to lock the robot(s)
+              NO: update world on timestep can change something outside robot on space, but still should protect space
+              => just lock world(which includes space)  
+
+            in robot              
+              robot.handleApiCommand
+                  lock world
+                  ..
+                  unlock world          
+                      
+           in world
+              world.update
+                lock world
+                ..
+                unlock world
+                
+                           
+                      
+     how do we make the rover object drive over the lake object  (both objects in space) 
+      
+         IDEA:
+                Shape has : 
+                  property sensor: bool
+                     A boolean value if this shape is a sensor or not.
+
+                     Sensors only call collision callbacks, and never generate real collisions.
+               
+               somewhere else it says: 
+                 Note #1: Shapes tagged as sensors (Shape.sensor == true) never generate collisions that get processed, so collisions between
+                 sensors shapes and other shapes will never call the post_solve() callback. They still generate begin(), and separate()
+                 callbacks, and the pre_solve() callback is also called every frame even though there is no collision response. Note #2:
+                 pre_solve() callbacks are called before the sleeping algorithm runs. If an object falls asleep, its post_solve() callback
+                 won’t be called until it’s re-awoken.
+                 
+                 
+                 so we could define lakes with shapes with sensor=true
+                 then bricks, bottles and rovers will physical not collide with them 
+                 but still give a collision callback!
+                    -> we can use this collision callback to detect when they overlap
+                    => better we just can use
+                        space.shape_query(shape)
+              
+               
+
+                      
+            However we need to detect if center of color sensor overlaps with lake.
+            Not whether the whole robot overlaps!
+             => for that we can better use 
+                  space.point_query_nearest(point,0,pymunk.ShapeFilter( categories=0b10, mask=0b10))
+                  
+              => sensor=True seems to disable  a  point_query_nearest  to that shape!  => we cannot use it to find the distance to lake
+          
+                 INSTEAD we use ShapeFilter giving each type an unique id, using masks to decide which object colide with which other one
+                 
+                     robot  0b000001 \
+                     rock   0b000010. | -> with mask set to 0b11111111 (default) => to collide with everything else (except object which do not allow collision such as lake/border/edge)
+                     bottle 0b000100 /
+                     lake   0b001000 \
+                     border 0b010000. | -> with simular mask. => rover can drive over it, but we can still collision detect with shape with same id to search for it in the space
+                     edge   0b100000./
+                     
+                     
+                     
+
+             experimental code in world_simulator.py
+              
+                    def update(self):
+                         """
+                           update physical properties of all objects such as speed,position and angle
+                           (does not draw, which is done in on_draw)
+                         """
+                         if self.should_reset:
+                             # Resets the model of the world.
+                             self.world_state.reset()
+                             self.should_reset = False
+                         else:
+                             # update pymunk physics in small step
+                             self.world_state.space.step(1.0 / self.space_step_size)
+                             # sync new pymunk object coordinates with arcade sprites (for all world objects except robots)
+                             self.sync_physics_sprites()
+                             for robot in self.robot_simulators:
+                                 #  processes the actuators(from incoming ev3dev requests) and sensors of the robot,
+                                 #  update its physical properties such as position, speed and angle (used in pymunk physical calculation)
+                                 #  and after pymunk calculations syncs its physical objects locations with arcade's  sprites drawn on screen
+                                 robot.update()
+
+                                 # EXPERIMENT : collision and  detect distance <= x (for 0 center on top)
+
+
+                                 # NOTE: we use bottle in our experiment because lake has no body and is not added to space! (must have body to add to space!)
+                                 #       so see bottle as our lake which we want to find collision with using pymunk instead of writing this code ourselves
+                                 # give each body its own categorie (all shapes in that body get the same category)
+                                 # to make a body overdriveable by the robot make that body only collide with itself (we can use copy of shape with category to find collision)
+                                 # for bottle: self.shape.filter = pymunk.ShapeFilter(categories=0b10,mask=0b10)     => id=2 and does not collide with anyone
+                                 # for robot: shape.filter = pymunk.ShapeFilter(group=idx + 5, categories=0b01)  => id =1  and collides with anyone who allows it (bottle doesn't allow)
+
+                                 body=robot.robot.body
+                                 if body != None:
+                                     shapes=body.shapes
+
+
+                                     # detect collision
+                                     # case 1: current shape overlaps with other shape => detect collision
+                                     ## robot's shape overlap bottle shape
+                                     for shape in shapes:
+
+                                         ##Note:
+                                         ##  bottle and rover are in different category and these catogories don't colide => rover can drive over bottle
+                                         ##  However need to TEMPORARY adapt shape's shape filter to make it temporary same category as bottle
+                                         ##  so that the method shape_query works.  The shape_query  honours the colide exclusion of shapes!
+                                         #   Without the TEMPORARY adapt, the rover will drive over bottle,but shape_query will ignore the shape overlap because they are colide excluded!
+                                         #   UPDATE: works without filter when we make bottle's shape.sensor=True
+                                         #           we can have robot's shapes and bottle's shapes in same category and let them collide in the mask
+                                         #           but because bottle's shape.sensor=True the bottle is excluded from effective collision, but collision is still detected
+                                         #           => means rover does not effective collide => drives over bottle!
+                                         #   UPDATE2: filter=True on bottle's shape disables it from detecting with space.point_query_nearest
+                                         #            so use filter=False and make a copy of shape and adapt's that filter
+                                         shape=shape.copy()
+                                         shape.filter=pymunk.ShapeFilter(mask=0b10)
+                                         hits = self.world_state.space.shape_query(shape) #excludes own robots shapes because the do not overlap!
+                                         if len(hits) > 0:
+                                            print("hits")
+
+
+                                     # detect distance <= x
+                                     # shape is with centre on top other shape!
+                                     # case 2: central position of current's shape hits other shape
+                                     # robot's central position has distance 0 from bottle shape  => central position must be inside bottle shape!
+                                     for shape in shapes:
+
+                                         # position = (0,0)
+                                         position=body.position
+                                         result = self.world_state.space.point_query_nearest(position,0,pymunk.ShapeFilter(mask=0b10)) # OK
+                                         #result = self.world_state.space.point_query_nearest(position, 0,pymunk.ShapeFilter(categories=0b10))  # NOTOK
+                                         #result = self.world_state.space.point_query_nearest(position, 0,pymunk.ShapeFilter(categories=0b10,mask=0b10)) # OK
+                                         #result = self.world_state.space.point_query_nearest(position, 0,pymunk.ShapeFilter()) #NOTOK
+                                         if result is not None:
+                                             print("result:", result.distance)
+
+
+                    
+
+
+                               
+     sensors
+       touch sensor 
+           def is_touching(self) -> bool:
+               """
+               Check if this TouchSensor is touching a TouchObstacle.
+               :return: boolean value representing the outcome.
+               """
+               hits = self.shape.space.shape_query(self.shape)
+               return len(hits) > 0
+ 
+      color sensor
+           
+            point= take center point of sensor
+            check point in other shapes in space   
+            
+            found_shape= space.point_query_nearest(point,0,pymunk.ShapeFilter( categories=0b10, mask=0b10))
+            
+            color = found_shape.body.simobject.color !! 
+            
+            => note: on initialization of sensor we give it world 
+                 => then sensor labels all 
+            
+            
+
+                   
+            
+      ultrasonic sensor top (measuring near objects)    
+      
+         -> uses   space.segment_query_first( 
+      
+        
+      ultrasonic sensor bottom (measuring depth)
+      
+        def distance(self) -> float:
+            """
+            Get the distance in pixels between this ultrasonic sensor and an the ground.
+            :return: a floating point value representing the distance.
+            """
+            for obstacle in self.sensible_obstacles:
+                if obstacle.collided_with(self.sprite.center_x, self.sprite.center_y):
+                    if isinstance(obstacle, Hole):
+                        return obstacle.depth
+                    if isinstance(obstacle, Board):
+                        return 20
+                    return self.get_default_value()
+            return self.get_default_value()
+           
+      => rewrite  
+              
+             point= take center point of sensor
+             check point in other shapes in space             
+
+            space.point_query_nearest(point,0,pymunk.ShapeFilter( categories=0b10, mask=0b10))
+            
+
+
+
+
+
+
+  * pymunk
+      body     ->A rigid body holds the physical properties of an object. (mass, position, rotation, velocity, etc.) 
+              It does not have a shape by itself.
+              Rigid bodies generally tend to have a 1:1 correlation to sprites in a game. You should structure 
+              your game so that you use the position and rotation of the rigid body for drawing your sprite.
+              -> body is used to calculate physical movement
+              -> sprite is use to visualize the body 
+       shape      By attaching shapes to bodies, you can define the a body’s shape. You can attach many shapes 
+              to a single body to define a complex shape, or none if it doesn’t require a shape.
+               -> shape is used in detecting collisions!!
+                  (you could have used the sprite, but with a simple poly shape calculations become
+                   simpler causing the simulation to perform better)
+
+
+        http://www.pymunk.org/en/latest/
+
+          import pymunk               # Import pymunk..
+
+          space = pymunk.Space()      # Create a Space which contain the simulation
+          space.gravity = 0,-981      # Set its gravity
+
+          body = pymunk.Body()        # Create a Body
+          body.position = 50,100      # Set the position of the body
+
+          poly = pymunk.Poly.create_box(body) # Create a box shape and attach to body
+          poly.mass = 10              # Set the mass on the shape
+          space.add(body, poly)       # Add both body and shape to the simulation
+
+          print_options = pymunk.SpaceDebugDrawOptions() # For easy printing
+
+          while True:                 # Infinite loop simulation
+              space.step(0.02)        # Step the simulation one step forward
+              space.debug_draw(print_options) # Print the state of the simulation
+  
+ 
+         => purely calculation, no visuals at all
+              -> space.step   
+            -> need to do visuals yourself with sprite in arcade  
+          
+ 
+currently :
+                   
+    obstacle/  module        => all world parts except robot
+       * ArmFloor
+       * Hole
+       -> MovableObject
+           * Bottle
+           * Rock
+       -> ColorObject  (self.color_code )
+              -> BorderObstacle 
+                     -> Edge  (The outer line surrounding the border. Used to detect if the robot if falling of the field)
+                     -> Border (The outer line surrounding the playing field.)
+
+               * Board (This class represents a 'Board'. The background of the playing field.)
+               * Lake -> contains Hole
+           
+    robotpart/ module 
+      -> BodyPart           
+            * Arm 
+                -> contains ArmLarge(Sprite)
+                              `-> contains ArmFloor       
+
+   
+ dependencies: 
+
+    $ python -mpipdeptree -p ev3dev2simulator |grep -v pyobjc
+    ev3dev2simulator==2.0.6
+      - arcade [required: ==2.6.16, installed: 2.6.16]
+        - pillow [required: ~=9.1.1, installed: 9.1.1]
+        - pyglet [required: ==2.0.dev23, installed: 2.0.dev23]
+        - pymunk [required: ~=6.2.1, installed: 6.2.1]
+          - cffi [required: >=1.15.0, installed: 1.15.1]
+            - pycparser [required: Any, installed: 2.21]
+        - pytiled-parser [required: ==2.2.0, installed: 2.2.0]
+          - attrs [required: >=18.2.0, installed: 22.1.0]
+          - typing-extensions [required: Any, installed: 4.4.0]
+      - ev3devlogging [required: Any, installed: 1.0.1]
+      - numpy [required: Any, installed: 1.23.5]
+      - pyttsx3 [required: ==2.7, installed: 2.7]
+      - simpleaudio [required: ==1.0.4, installed: 1.0.4]
+      - strictyaml [required: Any, installed: 1.6.2]
+        - python-dateutil [required: >=2.6.0, installed: 2.8.2]
+          - six [required: >=1.5, installed: 1.16.0]
+
+   
+   -> is pyobjc really needed, cannot find any imports in my ev3dev2simulator projects source code??
+       -> removed it and it works fine
+   
+      
+IMPROVEMENTS
+  => NEEDED to port thonny-ev3dev to thonny 4 !!     => portable thonny 3.26 still working!
+    => portable thonny is good idea because fixes versions!!
+    
+    => NOTE: we can also fix versions in python install -> but that may conflict with other packages
+     -> so portable install is best solution!!
+     
+     However if people have c/c++ devkit installed then building wheels not problem.
+     
+  
+
+   
+     client API -> simCommands  --->  handler   --> simCommands 
+                                       * receive/reponds
+                                       * serialiation in commands
+                                       * dispatch commands to simulator 
+       
+            simulator 
+              dispatch to right robot simulator  -> don't want handler to know this!  hmmmm, maybe he is the one
+                                                    who knows??
+                                   
+            robot simulator 
+              -> handle commands at right sensor / actuator                           
+                 => updates its params , or for sensor return it current value!
+                        ||
+                        \/ robot simulator has method 
+                              get_speed  
+                                 which uses data from both motors to
+                                 calculate its speed
+
+                             update method 
+                                  calls get_speed and translate the value 
+                                  to what arcade needs 
+
+      => remove special class MessageHandler -> integrate in simulator!
+
+
+visualizer  ==> Should really be called the Simulator => whole thing is coordinated from here!!
+   
+   init 
+     determine initial scale to get height width window
+     open window
+   
+   setup
+      setup objects 
+      
+   on_resize
+       -> see below ; basically we calculate a new scale and all sprites and objects must be recreated for this scale
+                     it keeps coordinate systems of physical world and drawing world in sync   =>  NOT NEEDED!! 
+         => actually this should only effect the drawing of the sprites!! => not for physical simulation
+            note: we need te remap physical coordinates 
+         
+         SIMPLER:   
+           just do rescaling when drawing using SpriteList
+            https://api.arcade.academy/en/latest/api/sprite_list.html
+              rescale(factor: float) → None[source]
+                Rescale all sprites in the list relative to the spritelists center.
+            => NO, we must set "scale" property on each sprite
+             -> just do this for each object
+               -> world.set_scale
+                     -> set scale on all its containing objects (sprites)
+                      -> for robot, the robot calls scale for its part sprites
+               => no need to redraw just update scale on all sprites!!          
+            
+           
+         => makes code simpler
+             -> resize : only adjust scale (in sprites) 
+             -> drawing then just draws with right scale!
+         
+         
+   on_update
+      update physical properties of all objects such as speed,position and angle
+      (does not draw, which is done in on_draw)
+   
+   on_draw
+      draw all sprites          
+
+
+TODO:
+  rename visualizer => simulator
+  
+  current simulator class should be called "World"
+    => consists of both world_simulator and world_state.   => separation makes no sense!! (in OO state and behavior combined)
+
+  better domain modelled code
+    
+     World 
+        contains all objects. (also rovers)
+        
+     Rover 
+        does contain all sensors/actuators
+         -> ev3dev2 api connects directly to rover sensor to fetch its value
+         -> ev3dev2 api connects directly to rover motor to change its behavior
+         
+        has method 
+         * get_speed => calculated based on rotation speed motors and wheel omtrek 
+            |                                 `-> use time in motor to determine when to stop active rotating and start coasting      
+            `-> real speed depends on physical calculation 
+          => this method used to set speed of pymunk object of rover 
+             in the units pymunk needs => calculates then new position robot 
+              -> can be same position because driving against wall -> effective speed is 0!     
+             this new position is then set as new sprite location!
+             
+         update method
+            -> just updates 
+                 speed of pymunk object      (taken into account next space step)
+                 sets new coordinates from pymunk object to sprite  (from previous space step calculation)
+                 
+            -> so each object contains
+                pymunk body  : for mass speed pos in phyicals calculation)
+                arcade sprite  : for drawing  => in case of robot this is a composition of parts. 
+                                              `-> one body (for mass speed pos) and many shapes  (for parts for collisions)
+             
+                 
+                 
+          DO NOT use current solution by calculation future movement steps 
+              in class MotorCommandProcessor  method process_drive_command_distance
+                  the movement of x mm per frame is calculated ( a speed  in mm/frametime) 
+                  
+                  and scheduled in a queue for future frames
+                   rescaled and applied as angle and velocity of body!
+                     def _process_job_per_actuator(self):    
+                      self.robot.execute_movement(left_ppf, right_ppf) 
+                         :param left_ppf: speed in pixels per second of the left motor.
+                         :param right_ppf: speed in pixels per second of the right motor.
+                         => get scaled 
+                         
+                            distance_left = left_ppf * self.scale if left_ppf is not None else 0
+                            distance_right = right_ppf * self.scale if right_ppf is not None else 0
+                         
+                            cur_angle = self.body.angle + math.radians(90)
+                            diff_angle, diff_x, diff_y = calc_differential_steering_angle_x_y(self.wheel_distance,
+                                                                                              distance_left,
+                                                                                              distance_right, cur_angle)
+                          
+                          => calculated diffs are used as to change angle (diff angle as increment) and velocity of body (diff_x, diff_y set as new speed)
+                           
+                           self._rotate(diff_angle)
+                                     self.body.angle += radians
+                                     
+                           self._move_position(Vec2d(diff_x, diff_y))     
+                                                                                             
+                                     self.body.velocity = distance * 30.0
+                                      
+              => instead just fetch speed from motor (coasting or not)
+                  -> then quickly do calculation to get object speed for pymunk object       
+                     and apply to self.body.velocity 
+                => no need to queue first per frame => in old code above still are doing  calc_differential_steering_angle_x_y per frame!!
+                   
+                     
+
+    on_draw
+         
+         just call draw on spritelists 
+           
+   
+
+
+visualizer 
+
+    init
+    
+        self.scale = self.determine_scale(initial_width, initial_height,True)
+        super(Visualiser, self).__init__(initial_width, initial_height, screen_info, update_rate=1 / 30,
+                                         fullscreen=show_fullscreen,
+                                         resizable=True, screen=_arcade.get_screens()[self.current_screen_index])
+         
+      
+    setup
+      -> setup pymunk objects
+      -> setup sprites
+
+       def setup(self):
+
+           """Set up the simulation here."""
+           print("setup")
+           self.sidebar = self._setup_sidebar()
+           self.world_state.setup_pymunk_shapes(self.scale)
+           self.world_state.setup_visuals(self.scale)
+       
+
+    on_resize
+      
+       def on_resize(self, width, height):
+           """ This method is automatically called when the window is resized. """
+
+           # Call the parent. Failing to do this will mess up the coordinates, and default to 0,0 at the center and the
+           # edges being -1 to 1.
+
+           self._change_scale(width, height)
+           self.sidebar = self._setup_sidebar()
+           super().on_resize(width, height)
+
+       def _change_scale(self, new_screen_width, new_screen_height):
+             self.scale = self.determine_scale(new_screen_width, new_screen_height)
+             self.world_state.rescale(self.scale)
+    
+    on_update
+        
+        def on_update(self, delta_time):
+            """
+            All the logic to move the robot. Collision detection is also performed.
+            Callback to WorldSimulator.update is called
+            """
+            print("on_update")
+            self.world_simulator.update()      
+                  `->  pymunk.space step 
+                   -> sync all pymunk objects with arcade sprites 
+                       for rovers also update its physical properties for pymunk  (from incoming ev3dev2 requests)         
+                
+    on_draw
+
+        def on_draw(self):
+            """
+            Render the simulation.
+            """
+            print("on_draw")
+            # Clear the screen to the background color
+            self.clear()
+            #_arcade.start_render()  # think old style
+
+            for obstacle_list in self.world_state.static_obstacles:
+                for shape in obstacle_list.get_shapes():
+                    if shape.line_width == 1:
+                        shape.draw()
+                    else:
+                        print(shape)
+            self.world_state.sprite_list.draw()
+
+            for robot in self.world_state.get_robots():
+                robot.get_sprites().draw()
+
+                if DEBUG:
+                    for sprite in robot.get_sprites():
+                        sprite.draw_hit_box(color=RED, line_thickness=5)
+                        if robot.debug_shapes is not None:
+                            for shape in robot.debug_shapes:
+                                shape.draw()
+                        robot.debug_shapes.clear()
+
+                # display message robot is falling for 3 seconds (using msg_counter containing # frames for 3 seconds)
+                if robot.is_falling() and self.msg_counter <= 0:
+                    self.msg_counter = get_simulation_settings()['exec_settings']['frames_per_second'] * 3
+
+            for robot in self.world_state.get_robots():
+                self.sidebar.add_robot_info(robot.name, robot.get_values(), robot.sounds)
+
+            self.sidebar.draw()
+
+            # display message robot is falling
+            if self.msg_counter > 0:
+                self.msg_counter -= 1
+                _arcade.draw_text(get_simulation_settings()['screen_settings']['falling_message'], self._msg_x,
+                                  self.dimensions.height - 100, _arcade.color.RADICAL_RED, 14, anchor_x="center")
+
+
+
+
+
+ 
+=> doesn't use the physics_engine of arcade -> nor the pymunk advanced physics engine
+     ./venv/lib/python3.10/site-packages/arcade/examples/pymunk_demo_top_down.py
+          PymunkPhysicsEngine
+              -> uses sprites (pymunk hidden)
+                    -> set mass on sprite 
+                    -> set friction and damping
+                    
+            --> on update 
+                  force = (PLAYER_MOVE_FORCE, 0)
+                  self.physics_engine.apply_force(self.player_sprite, force)
+                  
+                  
+   but uses pymunk directly 
+
+
+world_state 
+     
+     rescale
+        -> cleanup all. pymunk objects and arcade sprites
+        -> setup pymunk objects. \,-> same as in setup 
+        -> setup sprites         / 
+        
+
+    def rescale(self, new_scale):
+        """
+        On screen rescale, rescale all objects ( both sprite(visual) as pymunk body(physical) )
+        """
+        for robot in self.robots:
+            robot.shapes = []
+        for obstacle in self.obstacles:
+            obstacle.shape = None
+        self.space.remove(*self.space.shapes)
+        self.space.remove(*self.space.bodies)
+
+        for robot in self.robots:
+            robot.sprite_list = _arcade.SpriteList()
+        self.sprite_list = _arcade.SpriteList()
+        self.setup_pymunk_shapes(new_scale)
+        self.setup_visuals(new_scale)
+
+
+
+world_simulator 
+
+   update: 
+       -> syncs sprites with pymunk object
+
+    def update(self):
+        """
+        Resets the model of the world.
+        """
+        if self.should_reset:
+            self.world_state.reset()
+            self.should_reset = False
+        else:
+            # update pymunk physics in small step
+            self.world_state.space.step(1.0 / self.space_step_size)
+            # sync new pymunk object coordinates with arcade sprites
+            self.sync_physics_sprites()
+            for robot in self.robot_simulators:
+                robot.update()
+
+    def sync_physics_sprites(self):
+        """ Move sprites to where physics objects are """
+        for obstacle in self.world_state.obstacles:
+            obstacle.sprite.center_x = obstacle.body.position.x
+            obstacle.sprite.center_y = obstacle.body.position.y
+            obstacle.sprite.angle = math.degrees(obstacle.body.angle)
+            obstacle.set_new_pos(obstacle.body.position)
+            obstacle.new_angle = obstacle.sprite.angle
+
+
+robot_simulator
+
+    def update(self):
+        """
+        processes the actuators and sensors of the robot and syncs the sprites to the physics.
+        """
+        if self.should_reset:
+            self.reset()
+
+        else:
+            self._process_job_per_actuator()
+                  for robot does 
+                       def _move_position(self, distance: Vec2d):
+                           """
+                           Move all parts of this robot by the given distance vector.
+                           :param distance: to move
+                           """
+                           self.body.velocity = distance * 30.0
+
+                       def _rotate(self, radians: float):
+                           """
+                           Rotate all parts of this robot by the given angle in radians.
+                           :param radians to rotate
+                           """
+                           self.body.angle += radians
+                     
+                     
+                    world_state.__init__
+                        self.space = Space()
+                        self.space.damping = 0.1    => 
+                         
+
+                           
+            self._process_leds()
+            self.robot.update_sensors()
+            self._sync_physics_sprites()
+
+
+
+
+class MovableObject:
+    """
+    Super class for all object that should move when the robot pushed against it.
+    """
+    def __init__(self,
+                 pos: Point,
+                 angle: int,
+                 color: _arcade.Color):
+
+        self.x = pos.x
+        self.y = pos.y
+        self.angle = angle
+
+        # visualisation
+        self.color = color
+        self.sprite = None                        =>arcade  sprite
+        self.scale = None
+
+        # physics
+        self.body = None
+        self.shape = None                        -> pymunk body and shape
+        self.new_pos_x = None
+        self.new_pos_y = None   
+   
+
