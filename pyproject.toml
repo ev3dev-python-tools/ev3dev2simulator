@@ -37,7 +37,7 @@ classifiers = [
     "Topic :: Education",
     "Topic :: Software Development",
 ]
-requires-python = ">=3.7"
+requires-python = "3.8"
 
 dependencies = ['ev3devlogging', 'arcade==2.6.16', 
                 # for pyttsx3 we need platform specific file
@@ -50,7 +50,9 @@ dependencies = ['ev3devlogging',
                 # on windows we require python3.8 because simpleaudio does not
                 # have binary builds for newer python versions causing
                 # c-compilation on install which requires you to install c-sdk
-                # on windows which is cumbersome. -> so stick to 3.8
+                # on windows which is cumbersome. 
+                # note: linux/mac also had problems with simpleaudio for 3.13
+                # => KISS:  stick to python 3.8
                 'py3-tts',
                 # py3-tts improves older pyttsx3 and requires in its deps:
                 #  "comtypes; platform_system == 'Windows'",
