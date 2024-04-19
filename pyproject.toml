@@ -43,7 +43,24 @@ dependencies = ['ev3devlogging', 'arcade==2.6.16',
                 # for pyttsx3 we need platform specific file
                 'pypiwin32; platform_system=="Windows"',
                 'pyobjc;sys.platform=="darwin"', 
-                'simpleaudio==1.0.4', 'pyttsx3==2.7', 'numpy',
+                'simpleaudio==1.0.4', 'pyttsx3==2.7', 
+dependencies = ['ev3devlogging',
+                'arcade==2.6.16',
+                'simpleaudio==1.0.4',
+                # on windows we require python3.8 because simpleaudio does not
+                # have binary builds for newer python versions causing
+                # c-compilation on install which requires you to install c-sdk
+                # on windows which is cumbersome. -> so stick to 3.8
+                'py3-tts',
+                # py3-tts improves older pyttsx3 and requires in its deps:
+                #  "comtypes; platform_system == 'Windows'",
+                #  "pypiwin32; platform_system == 'Windows'",
+                #  "pywin32; platform_system == 'Windows'",
+                #  "pyobjc==9.0.1; platform_system == 'Darwin'",
+                # for python3.12 on darwin 9.0.1 we get error, fix: 
+                "pyobjc==9.2; platform_system == 'Darwin'",
+                # note: pyobjc 10 and higher also gives error
+                'numpy',
                 'strictyaml',
                 # need python 3.8 and pylint < 2.6 because otherwise
                 # problems linting https://github.com/pylint-dev/pylint/issues/6813 no-space-check was removed in 2.6
