@@ -39,11 +39,6 @@ classifiers = [
 ]
 requires-python = "3.8"
 
-dependencies = ['ev3devlogging', 'arcade==2.6.16', 
-                # for pyttsx3 we need platform specific file
-                'pypiwin32; platform_system=="Windows"',
-                'pyobjc;sys.platform=="darwin"', 
-                'simpleaudio==1.0.4', 'pyttsx3==2.7', 
 dependencies = ['ev3devlogging',
                 'arcade==2.6.16',
                 'simpleaudio==1.0.4',
