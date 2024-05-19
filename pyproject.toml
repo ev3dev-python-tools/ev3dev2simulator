@@ -41,7 +41,7 @@ classifiers = [
 
 dependencies = ['ev3devlogging',
                 'arcade==2.6.16',
-                'simpleaudio_patch',
+                'simpleaudio-patched',
                 # simpleaudio patched and wheels available for mac/windows till python 3.12             
                 'py3-tts',
                 # py3-tts improves older pyttsx3 and requires in its deps:
