@@ -18,22 +18,38 @@ For more info about Thonny: http://thonny.org
 
 ## Getting started
    
-   The only prerequisites for the simulator are python 3.8.10 and pip. Simulating robot sound works out of the box for Windows and macOS users. Linux user need to install [espeak](http://espeak.sourceforge.net/).
-   
-   First, for windows users it is strongly adviced to install **python 3.8.10**. For this python version the installation goes smoothly because there are precompiled binary wheels available for all dependencies. Newer versions of python will also work, but then you need a c build environment installed to build the c-code of the simpleaudio package. For macos and linux a c build environment is standard available and install with compiling c-code will not be a problem.  
+### Prerequisites needed only for Linux
 
-   Install python3
-      
-      Download Python 3.8.10 from the Python website (https://www.python.org/downloads/). 
-      Note: 3.8.10 is the latest 3.8 version with installers.
-      
-   Install with pip
+   
+For Macos and Windows you don't need any prerequisites,
+but for linux you do.
+
+The pyttsx3  python speech library  uses system libraries in its implementation. For Macos/Windows the used system 'speak' libraries are always available, but for linux you must sure these are installed with:
+
+     sudo apt update && sudo apt install espeak ffmpeg libespeak1
+
+For linux there are is no binary distribution available for simpleaudio.
+          The Python 3 and ALSA development packages are required for pip to build the extension.
+          For Debian variants (including Raspbian), this will usually get the job done:
+
+     sudo apt-get install -y python3-dev libasound2-dev
+
+
+### Installation
+
+Install with pip:
    
       pip install ev3dev2simulator
      
-   Then you can just run the simulator by running the executable:
+For Windows and Macos all binary dependencies are provided by wheels on pypi, however for Linux the binary extenssion for simpleaudio is compiled when installing.
+     
+Then you can just run the simulator by running the executable:
    
       ev3dev2simulator
+
+The simulator works on all python versions 3.8 till python 3.12.
+
+   
 
 ## Using the simulator
 
