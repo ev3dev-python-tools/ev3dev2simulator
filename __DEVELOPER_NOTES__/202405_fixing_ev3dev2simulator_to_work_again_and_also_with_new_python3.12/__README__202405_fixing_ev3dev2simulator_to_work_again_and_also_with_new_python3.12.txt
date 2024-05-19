@@ -1,9 +1,4 @@
 
-  update ev3dev2simulator pyproject.toml with fixes
-   => test them on mac/linux with my own testpypi!
-   mac/windows wheels upload to pypi  
-   
-
 
 ===================================================================================================================
 fixes at 2024-05-19 on ev3dev2simulator v2.0.6  so works again on all platforms with python 3.12
