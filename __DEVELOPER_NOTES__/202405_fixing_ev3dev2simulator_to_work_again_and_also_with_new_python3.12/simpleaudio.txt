@@ -1,0 +1,513 @@
+
+
+
+SUMMARY
+--------
+ 
+    problems found: 
+      1) simpleaudio broken on python 3.12 in general(for all platforms)
+      2) no wheels available for simpleaudio on macos/windows making install cumbersome because need c-compiler 
+        
+    solutions found:
+      1) patch from  https://github.com/cexen/py-simple-audio  solves problem with python 3.12
+      2) build wheels for simpleaudio on macos/windows in my own project
+           https://github.com/harcokuppens/py-simple-audio/
+        which is renamed to simpleaudio_patch to have a place on pypi for the wheels
+        
+        note: wheels are build using github actions workflow using cibuildwheel tool
+              for python 3.8-3.12 for mac(intel/arm) and windows(intel).
+              see: https://github.com/harcokuppens/py-simple-audio/blob/master/.github/workflows/wheels.yml
+              
+              Wheels for manylinux had problem with absolute path remaining in .so,
+              so for linux let pip install the wheel themselves when installing from source package.
+              note on linux we have to install dependencies:
+ 
+              https://simpleaudio.readthedocs.io/en/latest/installation.html#linux-dependencies
+              
+              The Python 3 and ALSA development packages are required for pip to build the extension. 
+              For Debian variants (including Raspbian), this will usually get the job done:
+                           
+                sudo apt-get install -y python3-dev libasound2-dev
+
+ 
+    thus solution is
+       forked project 'simpleaudio_patch' in https://github.com/harcokuppens/py-simple-audio/
+       in which patches are applied for python3.12 and wheels are build 
+       for macos/windows with github actions workflow 
+          https://github.com/harcokuppens/py-simple-audio/blob/master/.github/workflows/wheels.yml
+          
+                
+simpleaudio      
+============    
+ 
+https://github.com/hamiltron/py-simple-audio
+
+              
+
+
+test code:
+-----------
+
+    import simpleaudio.functionchecks as fc
+    fc.LeftRightCheck.run()
+
+
+operation system in tests:
+--------------------------
+
+    macos sonoma 14.3
+
+    windows  
+
+        Edition	Windows 11 Enterprise 
+        intel 64 bit  i5 cpu
+        Version	21H2
+        Installed on	‎27/‎06/‎2022
+        OS build	22000.2899
+        Experience	Windows Feature Experience Pack 1000.22003.1000.0
+
+    linux  x64 (intel i5)
+
+        harcok@cup:~$ cat /etc/lsb-release
+        DISTRIB_ID=Ubuntu
+        DISTRIB_RELEASE=22.04
+        DISTRIB_CODENAME=jammy
+        DISTRIB_DESCRIPTION="Ubuntu 22.04.2 LTS"
+
+
+  
+requirements:
+--------------
+
+   to install simpleaudio from source we need on linux to have installed:
+   
+     https://simpleaudio.readthedocs.io/en/latest/installation.html#linux-dependencies
+
+        sudo apt-get install -y python3-dev libasound2-dev
+  
+  
+
+   python 3.8 adviced by me for windows on ev3dev2simulator wiki:
+   
+    https://github.com/ev3dev-python-tools/ev3dev2simulator/wiki
+    for windows users it is strongly adviced to install python 3.8.10. For this python version the installation goes smoothly because
+    there are precompiled binary wheels available for all dependencies. Newer versions of python will also work, but then you need a c
+    build environment installed to build the c-code of the simpleaudio package. For macos and linux a c build environment is standard
+    available and install with compiling c-code will not be a problem. 
+     see: https://pypi.org/project/simpleaudio/1.0.4/#files
+   
+  
+             
+         
+in ev3dev2simulator only used at:  
+----------------------------------
+                                         
+        connector/sound_connector.py
+   
+               def beep(self, args, play_type: int) -> Optional[threading.Thread]:
+                   """
+                   Play a tone sequence and send a SoundCommand to the simulator for each tone.
+                   Based on the Linux Beep command, but with an object as input instead of string arguments
+
+                   :param object args: Any additional arguments as list of objects.
+                       Example: ``[{frequency: 440.0, duration: 200, delay: 100}]``
+   
+          ->       sa.play_buffer(audio, 1, 2, sampling_frequency)
+     
+               def play_file(self, wav_file: str, volume: int, play_type: int) -> None:
+                   """
+                   Play a wav file and send a SoundCommand to the simulator with the given file url. :param string wav_file: The
+     
+                 wave_read = wave.open(wav_file, 'rb')
+                 duration = wave_read.getnframes() / wave_read.getframerate()
+          ->     wave_obj = sa.WaveObject.from_wave_read(wave_read)
+                 wave_read.close()
+     
+                 play_obj = wave_obj.play()
+
+
+
+Testing simpleaudio
+======================
+
+
+PROBLEM 1: limited prebuild wheels availability  -> solution: must build and provide wheels myself
+---------------------------------------------
+
+      
+  prebuilds from https://pypi.org/project/simpleaudio/#files   
+  we can conclude:
+  
+   1) prebuilds are only used by windows!!
+   2) on mac: only intel prebuild no m1 prebuild       -> note: with prebuild we mean a python wheel!
+   
+          note: intel prebuild for python 3.8 is not used on m1 mac:
+             to demonstrate this we do in python3.8 venv on macos sonoma 14.3  with m1 pro:
+               pip cache purge 
+               pip install -v  simpleaudio
+                => you see it builds extension with gcc 
+                   it does not use 'simpleaudio-1.0.4-cp38-cp38-macosx_10_9_x86_64.whl' from https://pypi.org/project/simpleaudio/#files
+     
+   
+   3) no linux prebuilds! 
+       => pypi only allows prebuilds for manylinux; see:
+           /Users/harcok/Documents/help/programming/python/__BUILD_wheel_with_c_extension/manylinux.txt   
+       
+       
+                   
+ -> so we already need to build c-extension on linux and arm macs!
+    that seems to go pretty good... because
+      - on linux gcc is already by default installed
+      - most people on mac have homebrew installed which makes that xcode tools is installed! 
+    Only for windows it is a huge jump to install msvc!
+    So if we have only windows prebuilds then most installs should succeed!
+  
+  => starters may not have homebrew installed
+     starters do not use linux
+     
+  thus CONCLUSION:
+         
+          to be starters friendly build prebuilds for windows and mac 
+          and not for linux, because that is not used by starters
+    
+  Notes: 
+    1) linux users are advanced users and can manage building the c-extension requirements when needed
+       also there are to many different versions of linux. 
+       -> however python came with manylinux to try to build common wheels for all linux distributions
+          see  /Users/harcok/Documents/help/programming/python/__BUILD_wheel_with_c_extension/manylinux.txt 
+    2) There is also something to say to build for only arm macos and not for intel macos, because intel macs
+       are becoming less common: last intel macbook pro at 2021, macbook air at 2020,  and intel macs will be deprecated fully at ~2027,
+    3) to be safe we could add a link for instructions to install requirements for building c extensions on mac/linux(ubuntu)/windows 
+       where you say that you have to follow that instructions if you get pip complaining about xcode/clang on macos, gcc/Python.h on linux or 
+       msvc on windows.
+       See top section at: ./__BUILD_wheel_with_c_extension/requirements_to_build_c_extensions_for_Python.txt
+     
+
+ Problem: starter with m1 mac does not have any wheel, even not for python 3.8
+    => so we need to build wheels to make it starter friendly
+
+
+ Then if we going to provide wheels then 
+ also update ev3dev2simulator to switch to python version 3.12   
+ to be up to date again!                              
+                       
+
+
+
+test simpleaudio     for windows  3.8,  NOT 3.10,312   linux/mac 3.8 3.10,  NOT 3.12    (assumes: no wheels build on windows, but auto build wheels on mac and linux)
+----------------
+
+
+
+   
+windows:     required python 3.8.10   -> only for 3.8 binary build package available, for others must be build on install
+                                         however for  Microsoft Visual C++ must be installed for that !
+        test 3.8. OK  
+             3.10 and 3.12 at install already NOT OK -> install says:  Microsoft Visual C++ 14.0 or greater is required.
+             
+        
+        NOTE: to test on python 3.10 and 3.12 we needed to do some extra work 
+              because there are is only wheel for python 3.8 and not for 3.10 and 3.12
+              to build wheels for python >3.8 we need to compile the c-extension on 
+              installing with pip, for which we need a msvc compiler installed on windows:
+         
+                   When install a package needing a c-extension to be build the python installation of the package says:  
+                       Microsoft Visual C++ 14.0 or greater is required. 
+                                            `-> this version can change in future
+
+                      to install "Microsoft Visual C++" compiler for building python extensions on windows
+                       -> see  ~/doc/help/programming/python/__BUILD_wheel_with_c_extension/requirements_to_build_c_extensions_for_Python.txt
+  
+  
+          => then tests give
+                   3.8. OK
+                    3.10 OK
+                    3.12. plays sound but then error:
+
+linux:  newest python ok, but have 
+            
+            sudo apt-get install -y python3-dev libasound2-dev
+                    
+          note: when on system not having python3.8 as system python 
+                and you want python3.8 as python version then do: 
+            
+             first add deadsnakes ppa to make 3.8 available for apt-get    
+             
+              sudo add-apt-repository ppa:deadsnakes/ppa
+              sudo apt-get update
+              # see /Users/harcok/Documents/help/programming/python/__INSTALL__python_runtime/__INSTALL__python_runtime.txt
+              
+             then install:
+              
+              sudo apt-get install -y python3.8-full python3.8-dev 
+              sudo apt-get install libasound2-dev
+          
+       test 3.8. OK
+            3.10 OK
+            3.12. plays sound but then error:
+              
+              Segmentation fault (core dumped)
+              (.venv) harcok@cup:/tmp/python/12$ echo $?
+              139
+             
+            
+       note: installed from source package and c-extension compiled when installing,
+             because no wheels for linux     
+       
+mac:  only ok    with python3.8, and python3.10 ok    , not with python 3.12
+     
+    with newest python3.12 we get:
+    
+     $ mkdir /tmp/xx ; cd /tmp/xx
+     $ python3.12 -m venv .venv
+     $ source .venv/bin/activate  
+     
+     $ pip install --no-cache-dir simpleaudio
+     Collecting simpleaudio
+       Downloading simpleaudio-1.0.4.tar.gz (2.0 MB)
+          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 8.6 MB/s eta 0:00:00
+       Installing build dependencies ... done
+       Getting requirements to build wheel ... done
+       Installing backend dependencies ... done
+       Preparing metadata (pyproject.toml) ... done
+     Building wheels for collected packages: simpleaudio
+       Building wheel for simpleaudio (pyproject.toml) ... done
+       Created wheel for simpleaudio: filename=simpleaudio-1.0.4-cp312-cp312-macosx_10_9_universal2.whl size=2041991 sha256=0acba0653c49a4564c17e613db7157a09eb01b0806db819a6a34c136ee32b9bb
+       Stored in directory: /private/var/folders/_9/byr2smwd3_75r668jt4q442c0000gn/T/pip-ephem-wheel-cache-e_sidor6/wheels/1d/ad/93/be934a93f1ba8922256840f1cf0e59f8a21e2539985616b64f
+     Successfully built simpleaudio
+     Installing collected packages: simpleaudio
+     Successfully installed simpleaudio-1.0.4
+     
+     => build succesfull
+         
+         
+         note: installed from source package and c-extension compiled when installing,
+               because no wheels for mac M1 (only for intel for python 3.8)     
+         
+         
+         
+     $ python
+     Python 3.12.3 (v3.12.3:f6650f9ad7, Apr  9 2024, 08:18:47) [Clang 13.0.0 (clang-1300.0.29.30)] on darwin
+     Type "help", "copyright", "credits" or "license" for more information.
+     >>> import simpleaudio.functionchecks as fc
+     >>>
+     >>> fc.LeftRightCheck.run()
+
+     ================================================================================
+     -- LeftRightCheck --
+     Checks stereo playback by first playing a note in the left channel only,
+     then a different note in the right channel only.
+
+     Starting check in ...
+     3 ...
+     2 ...
+     1 ...
+     RUNNING CHECK ...
+     Segmentation fault: 11
+     
+    => played sound, but afterwards it crashes      -> problem also for windows with python 3.12?
+                                                         -> yes, see issue https://github.com/hamiltron/py-simple-audio/issues/72#issuecomment-1902610214 below
+                                                             problem is specific for change in python 3.12 which holds for all platforms
+      => TEST FAILED
+      
+      
+     => ok with python3.8 and python3.10
+  
+
+
+
+CONCLUSION:
+ 
+  PROBLEM2: with python3.12 on all platforms  
+
+
+
+two problems
+============
+
+ PROBLEM 1:  no wheels for windows >3.8 , no wheels at all for mac m1!  => starters cannot install! 
+ PROBLEM 2:  simpleaudio does not work on python 3.12 on all platforms
+
+
+
+IDEA: maybe use alternative package then  simpleaudio. -> conclusion: no good alternative!
+------------------------------------------------------------------------------------------
+
+
+
+  => maybe alternative package:
+      https://stackoverflow.com/questions/260738/play-audio-with-python
+        https://github.com/TaylorSMarks/playsound till 2021.  (simpleaudio till 2019)
+                                         `-> no  support for beep
+                                            for that you need other lib
+       also look at:
+             https://realpython.com/playing-and-recording-sound-python/
+
+ 
+ 
+  CONCLUSION: no real good alternatives doing wav and beep!         
+             
+    
+         
+         
+         
+SOLUTION
+=========
+ 
+"PROBLEM 1" we can fix by just building the wheels ourselves
+  
+found fix for "PROBLEM 2" online:
+      
+  https://github.com/hamiltron/py-simple-audio/issues/72#issuecomment-1902610214
+       => problem occurs with all os's because problem has to do with with PyMem_Free on python 3.12,
+          which is solved with replacing with PyMem_RawFree  !!
+       => this SOLUTION applied in https://github.com/cexen/py-simple-audio
+            -> now works on mac/windows with python3.12 without segmentation error
+
+
+thus SOLUTION: is twofold:
+       1)  patch simpleaudio so that problem for python 3.12 is solved
+            `-> from https://github.com/cexen/py-simple-audio
+       2)  just make wheels for all python versions for mac/windows/linux so that 
+           we can easily install it without needed to install a c-compiler and all dev librarires
+           
+     -> publish patched wheels on pypi under different name 'simpleaudio_patched'
+                                               `-> because no access on pypi for original name!
+  
+ 
+So fix I applied:
+
+   1) fork https://github.com/cexen/py-simple-audio 
+   2) rename project 'simpleaudio_patch' 
+      however module is still name 'simpleaudio'
+   3) build 'simpleaudio_patch' wheels for this project to ease install on all OS and python versions
+   4) in ev3dev2simulator change dependency from
+   
+         simpleaudio to simpleaudio_patch      
+    
+ 
+
+
+building wheels of simpleaudio_patch
+====================================
+
+first made my own workflow with help of chatgpt
+  https://github.com/harcokuppens/py-simple-audio/blob/master/.github/workflows/pythonpackage.yml
+later I discovered that python had already a tool for it  'cibuildwheel'
+which also uses the manylinux concept to build wheels for linux!
+  => see /Users/harcok/Documents/help/programming/python/__BUILD_wheel_with_c_extension/manylinux.txt
+
+cibuildwheel seems better then my workflow, because
+  1) designed specially for that, probabably they already solved problems already I did not think about it
+  2) support manylinux to also build wheels for linx
+  3) build separate wheels for intel and arm on mac, so on mac we have less to download then
+     the universal wheel (both intel and mac) I build in my workflow
+     
+ so create workflow using cibuildwheel
+ 
+   https://github.com/harcokuppens/py-simple-audio/blob/master/.github/workflows/wheels.yml    
+
+      wheels are build using github actions workflow using cibuildwheel tool
+      for python 3.8-3.12 for mac(intel/arm) and windows(intel).
+      Wheels for manylinux had problem with absolute path remaining in .so,
+      so for linux let pip install the wheel themselves when installing from source package.
+
+
+
+PROBLEM  absolute path in manylinux wheel for https://github.com/harcokuppens/py-simple-audio/  simpleaudio_patch package
+========     
+
+
+test code:
+
+        PYVERSION="3.12"
+        MY_PYPI_REPO_URL="https://www.cs.ru.nl/lab/downloads/pypi/simple/"                  => use my test repo to test my packages build with cibuildwheel
+        mkdir test
+        cd test/      
+        python$PYVERSION -m venv .venv
+        source .venv/bin/activate
+        pip install --index-url="$MY_PYPI_REPO_URL"  simpleaudio_patched      
+        python -c 'import simpleaudio.functionchecks as fc;fc.LeftRightCheck.run();'
+        deactivate      
+        cd ..
+        \rm -rf test
+            
+
+gives on my ubuntu 22 machine:
+
+    cannot find:       
+      /usr/lib64/alsa-lib/libasound_module_conf_pulse.so
+
+    my ubuntu 22 machine instead has: 
+      /usr/lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_pulse.so
+
+    
+    => could fix it by softlinking
+        /usr/lib64/alsa-lib/ to  /usr/lib/x86_64-linux-gnu/alsa-lib/
+       but cannot add this linking patch in the wheel!    
+
+
+investigating the problem:
+      
+
+    (.venv) harcok@cup:/tmp/test/.venv$ ldd ./lib/python3.12/site-packages/simpleaudio/_simpleaudio.cpython-312-x86_64-linux-gnu.so
+    	linux-vdso.so.1 (0x00007ffcd46e1000)
+    	libasound-2b1a7cda.so.2.0.0 => /tmp/test/.venv/./lib/python3.12/site-packages/simpleaudio/../simpleaudio_patched.libs/libasound-2b1a7cda.so.2.0.0 (0x00007f5befc00000)
+    	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f5beff8f000)
+    	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f5bef800000)
+    	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f5befb19000)
+    	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f5beff8a000)
+    	librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007f5beff83000)
+    	/lib64/ld-linux-x86-64.so.2 (0x00007f5beffb1000)
+
+    (.venv) harcok@cup:/tmp/test/.venv$ ldd ./lib/python3.12/site-packages/simpleaudio_patched.libs/libasound-2b1a7cda.so.2.0.0
+    	linux-vdso.so.1 (0x00007ffc005e5000)
+    	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007451a3b53000)
+    	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007451a3b4e000)
+    	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007451a3b49000)
+    	librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007451a3b44000)
+    	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007451a3400000)
+    	/lib64/ld-linux-x86-64.so.2 (0x00007451a3c4e000)
+      
+     ~~~> no 'libasound_module_pcm_pulse.so' mentioned ??
+ 
+       libasound-2b1a7cda.so.2.0.0  contains /usr/lib64/alsa-lib  and then /libasound_module_ctl_%s.so
+            ~~> somehow dynamically called from there with wrong path!!
+        
+            => so there it breaks!!
+        
+            -> maybe with newer version better??
+               see: https://github.com/pypa/manylinux?tab=readme-ov-file#docker-images
+                has "manylinux_2_24 (Debian 9 based) - EOL"
+                 which has like ubuntu apt installer
+                 -> probably uses then /usr/lib/x86_64-linux-gnu/alsa-lib/ instead  /usr/lib64/alsa-lib/
+                 => problem: if you choose  either then other breaks => no good solution possible!
+                   real problem is that absolute path in libasound-2b1a7cda.so.2.0.0  remains!!
+              
+                 => better to just stick to compile from source distribution on install,
+                    then better garantee that it will work on most linux systems!!
+                    Better then installing from wheel which then doesn't work of the path problem!  
+               
+      
+      
+     CONCLUSION:
+     
+        manylinux wheels are broken for simpleaudio_patched and we cannot fix them
+        because simpleaudio_patched uses some fancy dynamic usage of the alsa system with absolute paths
+        
+        however linux users are advances users and can pip easily build swheel from source themselves when
+        their is no wheel (gcc by default installed)
+        
+        KISS:    
+               SO just stick to mac/windows builds only! 
+               This al least saves  mac and windows both from installing a c-compiler. 
+                => better gaurantee it works!!
+           
+           
+
+ 
+ 
+ 
+ 
+      
+ 

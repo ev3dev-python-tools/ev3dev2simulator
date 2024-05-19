@@ -1,0 +1,287 @@
+
+SUMMARY:
+------- 
+    problems found: 
+      1) pyttsx3 build broken on macos sonoma
+         -> seems that the c library of the macos system has changed,
+            and that therefore c-call to a system library by pyttsx3 fails!!
+      2) py3-tts fixes pyttsx3 on macos, but still breaks on python 3.12
+       
+        
+    solutions found:
+      1) do not use pyobjc==10 , but switch to  pyobjc==9.0.1 
+         do this by switching to 
+            pyttsx3 -> py3-tts (requires pyobjc==9.0.1)
+         note: the current latest pyobjc version is v10.1 (maybe later versions will work again??)    
+           
+      2) for mac:  pyobjc==9.0.1    ->  pyobjc==9.2  
+           then no problems on python 3.12
+
+    thus the solution is simply to just adjust the requirements to: 
+      "py3-tts" 
+      "pyobjc==9.2; platform_system == 'Darwin'"
+      
+      
+    note: https://pypi.org/project/py3-tts/3.5/#files
+
+           py3_tts-3.5-py3-none-any.whl
+           
+          => a pure wheel, because py3-tts
+             use a third party python package (pyobjc on mac)
+             to interact with os's local libraries
+             
+             note: /Users/harcok/Documents/help/programming/python/__BINARY_DEPS__be_CAREFULL__/__README__LIST_BINARY_DEPS__.txt
+                  also shows pyttsx3/py3-tts is not a none-pure package
+             
+          => so we do not need to build wheels per platform,
+             but single universal pure wheel suffices!        
+          
+          
+          IMPORTANT: for mac/windows the used system 'speak' libraries are always available,
+            but for linux you must sure these are installed with:
+            
+              sudo apt update && sudo apt install espeak ffmpeg libespeak1
+              
+              
+                
+pyttsx3      
+=========    
+https://github.com/nateshmbhat/pyttsx3
+             
+
+test result:
+-------------
+
+   result: 
+   
+       windows: OK on 3.8, 3.10, and 3.12   
+       macos: 3.8,3.10 OK, an 3.12 OK if pyobjc==9.2
+       linux: 3.8,3.10,3.12 OK
+
+    if 
+       pyttsx3 -> py3-tts
+       and for mac:  pyobjc==9.0.1    ->  pyobjc==9.2
+
+
+
+
+test:
+-----
+
+    import pyttsx3
+    engine = pyttsx3.init()
+    engine.say("I will speak this text")
+    engine.runAndWait()
+    
+  
+operation system in tests:
+----------------------------
+
+    macos sonoma 14.3 (M1)
+
+    windows  
+
+        Edition	Windows 11 Enterprise 
+        intel 64 bit  i5 cpu
+        Version	21H2
+        Installed on	‎27/‎06/‎2022
+        OS build	22000.2899
+        Experience	Windows Feature Experience Pack 1000.22003.1000.0
+
+    linux  x64 (intel i5)
+
+        harcok@cup:~$ cat /etc/lsb-release
+        DISTRIB_ID=Ubuntu
+        DISTRIB_RELEASE=22.04
+        DISTRIB_CODENAME=jammy
+        DISTRIB_DESCRIPTION="Ubuntu 22.04.2 LTS"
+
+
+    
+
+sources
+
+     ./ev3dev2simulator/connector/sound_connector.py
+
+         def speak(self, text, espeak_opts, desired_volume: int, play_type: int) -> None:
+            """
+            Play a text-to-speech file and send a SoundCommand to the simulator with the said text.
+
+            Makes use of the pyttsx3 library.
+            - Windows users need to install pypiwin32, installed by: pip install pypiwin32
+            - Linux users need to install espeak, installed by: sudo apt-get install espeak
+            - Mac users do not need to install any additional software.
+
+         => just add that as dependency!!
+
+
+dependencies:
+
+     https://github.com/nateshmbhat/pyttsx3/blob/master/setup.py
+          # Ubuntu: sudo apt install espeak ffmpeg
+          install_requires = [
+              'comtypes; platform_system == "Windows"',
+              'pypiwin32; platform_system == "Windows"',
+              'pywin32; platform_system == "Windows"',
+              'pyobjc>=2.4; platform_system == "Darwin"'
+          ]
+     
+
+
+install docs 
+
+      only say that for linux:
+
+         sudo apt update && sudo apt install espeak ffmpeg libespeak1
+
+      macos an windows not mentioned!!
+
+
+
+testing gave 2 problems:
+--------------------------
+
+  1) macos sonoma problem:     
+  
+       pyttsx3 just fails building on macos sonoma
+  
+     https://stackoverflow.com/questions/77605608/pyttsx3-runtime-error-in-vscode-running-mac-os-sonoma
+   
+       -> seems that the c library of the macos system has changed,
+          and that therefore c-call to a system library by pyttsx3 fails!! 
+          
+       -> found that py3-tts fork of  pyttsx3 solves this problem:     
+            found later that problem was with pyobjc 10 or larger,
+            py3-tts fixes that by requiring pyobjc==9.0.1  (same fixed could be applied on pyttsx3)
+            
+            https://github.com/thevickypedia/py3-tts/blob/master/pyproject.toml
+   
+              dependencies = [
+                  "comtypes; platform_system == 'Windows'",
+                  "pypiwin32; platform_system == 'Windows'",
+                  "pywin32; platform_system == 'Windows'",
+                  "pyobjc==9.0.1; platform_system == 'Darwin'",              -> limits  pyobjc!
+                  "six"
+              ]
+              
+              note: pyttsx3 had dependencies (setup.py)
+         
+                  install_requires = [
+                      'comtypes; platform_system == "Windows"',
+                      'pypiwin32; platform_system == "Windows"',
+                      'pywin32; platform_system == "Windows"',
+                      'pyobjc>=2.4; platform_system == "Darwin"'        -> causes pyobjc 10  to be installed
+                  ]
+       
+            
+       -> advantage py3-tts over  pyttsx3 is that it also has more commits with improvements/bugfixes
+        
+    
+       THUS:
+             
+             pyttsx3 -> py3-tts
+
+        
+  2) python 3.12 problem on MACOS:   build failed
+       
+     => found later that for python 3.12 (not for 3.8 and 3.10)
+        it also has problem with pyobjc==9.0.1, but pyobjc==9.2 fixes it! -> py3-tts  guys probably didn't yet test on newest python 3.12
+        --> so must be very carefully with using newest python -> package maintainers may not have catch up!!
+          GOOD RULE: for stability never use latest python version, but one before!!
+   
+            
+          CONCLUSION: even if you install an old compatible python version for older package with c-extension,
+                      sometimes it still breaks because c-api in newer version of OS changes!!
+                                                          `-> newer pyobjc 10 breaks it!!
+
+
+        
+        thus:  
+        
+           pyobjc==9.0.1    ->  pyobjc==9.2
+
+
+        means in pyproject.toml for ev3dev2simulator we require:
+
+            "py3-tts" 
+            "pyobjc==9.2; platform_system == 'Darwin'"
+
+
+
+
+CONCLUSION:    works for all platforms and python version if using  py3-tts instead of pyttsx3 
+===========    and a minor depencency change for pyobjc on macos
+
+working instructions 
+
+    * mac
+       requires pyobjc  python package           -> package which bridges c lib to a python lib
+   
+       instructions:
+            pip install   py3-tts 'pyobjc==9.2'
+                                   ^^^^^^^^^^^
+    * windows
+       requires pypiwin32 python package        -> package which bridges c lib to a python lib
+    
+        instructions:
+         pip install   py3-tts
+       
+           OK on 3.8, 3.10, and 3.12  
+        
+    
+     * linux 
+ 
+       install docs says requires espeak linux package installed on system
+   
+       instructions:        
+         sudo apt update && sudo apt install espeak ffmpeg libespeak1
+         pip install  py3-tts
+   
+
+
+ means in pyproject.toml for ev3dev2simulator we require:
+
+    "py3-tts" 
+    "pyobjc==9.2; platform_system == 'Darwin'"
+     
+
+
+
+background   python 3.12 problem with   py3-tts on MACOS
+--------------------------------------------------------
+                                               
+  SOLUTION:  
+      $ pip install   'py3-tts==3.5'
+        -> requires newer pyobjc==9.0.1 which builds fine again on python3.8 on mac
+          py3-tts==3.5 -> 3.5 is latest, can leave of 3.5, so in future can have compatible updates                      
+   
+      FURTHER TESTING:
+  
+  
+        works for python3.8 on macos sonoma, however  NOT for python 3.12:        
+         $ pip install   'py3-tts==3.5'     
+          ERROR: Could not build wheels for pyobjc-core, pyobjc-framework-Cocoa, which is required to install pyproject.toml-based projects
+            -> pyobjc==9.0.1 required by py3-tts problem installing
+            -> latest is 10.2 and installs fine!
+    
+            pip install   py3-tts 'pyobjc==10.2'  -> gives install but gives same error as for pyttsx3
+                                  'pyobjc==10.0'
+     
+                          
+            pip install  py3-tts 'pyobjc==9.2' -> installs and WORKS!! with python 3.12.3 !!
+            => so py3-tts  not compatible with version 10.0, but also not with 9.0.1 for python3.12 !!
+               note: pyttsx3 required 'pyobjc>=2.4; platform_system == "Darwin"'
+   
+   
+   
+    FINAL SOLUTION:
+        python3.8, python3.10 :   pip install 'py3-tts'
+        python3.12 :              pip install 'py3-tts' 'pyobjc==9.2'
+     
+   THUS: 
+        linux: 3.8,3.10,3.12 OK.     for 'py3-tts' 'pyobjc==9.2'
+     
+     
+     
+       
+     
