@@ -37,6 +37,18 @@ For linux there are is no binary distribution available for simpleaudio.
 
 ### Installation
 
+Recommended is to use **python 3.8 - 3.10**, because for newer versions of python for some dependencies of ev3dev2simulator no wheels(binary) packages are build. In latter case a c-compiler must be installed on the system to build these packages from source when installing. Installing a c-compiler for compiling python packages is not an easy task.
+
+Install python3.8, python3.9 or python 3.10
+
+      Download Python installer from https://www.python.org/downloads/: 
+      - 3.8.10 is the latest 3.8 version with installers. 
+        https://www.python.org/downloads/release/python-3810/
+      - 3.9.13 is the latest 3.9 version with installers.
+        https://www.python.org/downloads/release/python-3913/  
+      - 3.10.11 is the latest 3.10 version with installers.
+        https://www.python.org/downloads/release/python-31011/
+
 Install with pip:
    
       pip install ev3dev2simulator
@@ -47,7 +59,7 @@ Then you can just run the simulator by running the executable:
    
       ev3dev2simulator
 
-The simulator works on all python versions 3.8 till python 3.12.
+The simulator works on all python versions 3.8 till python 3.12. For python 3.11 and 3.12 the installation requires building some dependent packages from source.
 
    
 

@@ -54,10 +54,11 @@ dependencies = ['ev3devlogging',
                 # note: pyobjc 10 and higher also gives error
                 'numpy',
                 'strictyaml',
-                # need python 3.8 and pylint < 2.6 because otherwise
-                # problems linting https://github.com/pylint-dev/pylint/issues/6813 no-space-check was removed in 2.6
-                # other problems causing python 3.8 : https://github.com/zylon-ai/private-gpt/issues/884  https://github.com/pylint-dev/pylint/issues/3882
-                'pylint==2.5.3'
+                ## pylint for development; todo: changed code but did not fix pylint errors 
+                ## need python 3.8 and pylint < 2.6 because otherwise
+                ## problems linting https://github.com/pylint-dev/pylint/issues/6813 no-space-check was removed in 2.6
+                ## other problems causing python 3.8 : https://github.com/zylon-ai/private-gpt/issues/884  https://github.com/pylint-dev/pylint/issues/3882
+                #'pylint==2.5.3'
                 ]
 
 [project.scripts]
