@@ -27,7 +27,7 @@ jobs:
       - name: test binary install
         shell: bash
         run: |
-          pip install '--only-binary=:all:'  --no-cache-dir  'ev3dev2simulator==2.0.10'  > out.txt 
+          pip install '--only-binary=:all:'  --no-cache-dir  'ev3dev2simulator==2.0.10'  >& out.txt 
           mv  out.txt log-${{ matrix.os }}-py${{ matrix.python-version }}.exit$?.txt     
 
       - name: Upload wheel artifact
