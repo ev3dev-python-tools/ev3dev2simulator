@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: log-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: log-${{ matrix.os }}-py${{ matrix.python-version }}.txt
+          path: log-${{ matrix.os }}-py${{ matrix.python-version }}*.txt
 
 
   upload:
@@ -45,15 +45,15 @@ jobs:
     - name: Download All Artifacts
       uses: actions/download-artifact@v4
       with:
-        pattern: wheel-*
+        pattern: log-*
         path: logs/
         merge-multiple: true
         
-    - name: Upload wheels in single artifact
+    - name: Upload logs in single artifact
       uses: actions/upload-artifact@v4
       with:
         name: logs
-        path: logs/*.whl
+        path: logs/*.txt
 
     - uses: geekyeggo/delete-artifact@v5
       with:
