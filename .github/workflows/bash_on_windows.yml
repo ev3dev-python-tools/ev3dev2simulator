@@ -1,4 +1,4 @@
-name: CI
+name: bash on windows
 
 on:
   workflow_dispatch:
@@ -9,4 +9,4 @@ jobs:
     steps:
       - name: bash
         shell: bash
-        run: ls -la
+        run: ls -la && pwd 
