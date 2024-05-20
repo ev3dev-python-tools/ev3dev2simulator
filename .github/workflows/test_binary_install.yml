@@ -32,6 +32,7 @@ jobs:
       - name: test binary install
         shell: bash
         run: |
+          pip install --upgrade pip
           name="log-${{ matrix.os }}-py${{ matrix.python-version }}"
           pip install '--only-binary=:all:'  --no-cache-dir  'ev3dev2simulator==2.0.10'  >& $name.txt || mv  $name.txt $name.exit$?.txt     
 
