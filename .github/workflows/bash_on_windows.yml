@@ -9,4 +9,4 @@ jobs:
     steps:
       - name: bash
         shell: bash
-        run: ls -la && pwd 
+        run: ls -la && pwd && which bash && bash --version
