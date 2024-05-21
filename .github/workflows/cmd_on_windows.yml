@@ -1,4 +1,4 @@
-name: bash on windows
+name: cmd on windows
 
 on:
   workflow_dispatch:
